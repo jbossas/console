@@ -34,7 +34,7 @@ public interface SecurityDomain extends NamedEntity {
               required=true,
               formItemTypeForEdit="TEXT",
               formItemTypeForAdd="TEXT_BOX",
-              tabName="common_label_attributes")
+              localTabName ="common_label_attributes")
     String getName();
     @Override
     void setName(String name);
@@ -45,7 +45,7 @@ public interface SecurityDomain extends NamedEntity {
               required=false,
               formItemTypeForEdit="COMBO_BOX",
               formItemTypeForAdd="COMBO_BOX",
-              tabName="common_label_attributes",
+              localTabName ="common_label_attributes",
               acceptedValues={"default","infinispan"})
     String getCacheType();
     void setCacheType(String type);

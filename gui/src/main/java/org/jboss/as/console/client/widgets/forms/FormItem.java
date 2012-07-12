@@ -37,16 +37,23 @@ public @interface FormItem {
     public static final String NULL = "FormItem#undefined";
     
     String defaultValue() default "";
+
     String label() default "";
 
     @Deprecated
     String localLabel() default "";
 
+    String tabName() default "";
+
+    @Deprecated
+    String localTabName() default "common_label_attributes";
+
+    String subgroup() default "";
+
+    int order() default 100;
+    String[] acceptedValues() default {};
     boolean required() default false;
     String formItemTypeForEdit() default "TEXT_BOX";
     String formItemTypeForAdd() default "TEXT_BOX";
-    String subgroup() default "";
-    String tabName() default "common_label_attributes";
-    int order() default 100;
-    String[] acceptedValues() default {};
+
 }

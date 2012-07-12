@@ -40,7 +40,7 @@ public interface JacOrbSubsystem extends NamedEntity, HasProperties {
               formItemTypeForEdit="TEXT",
               formItemTypeForAdd="TEXT_BOX",
               order=10,
-              tabName="subsys_jacorb_orbTab")
+              localTabName ="subsys_jacorb_orbTab")
     public String getName();
     @Override
     public void setName(String name);
@@ -52,7 +52,7 @@ public interface JacOrbSubsystem extends NamedEntity, HasProperties {
               formItemTypeForAdd="COMBO_BOX",
               acceptedValues={"off", "on"},
               order=20,
-              tabName="subsys_jacorb_orbTab")
+              localTabName ="subsys_jacorb_orbTab")
     public String getPrintVersion();
     public void setPrintVersion(String value);
 
@@ -63,7 +63,7 @@ public interface JacOrbSubsystem extends NamedEntity, HasProperties {
               formItemTypeForAdd="COMBO_BOX",
               acceptedValues={"off", "on"},
               order=30,
-              tabName="subsys_jacorb_orbTab")
+              localTabName ="subsys_jacorb_orbTab")
     public String getUseIMR();
     public void setUseIMR(String value);
 
@@ -74,7 +74,7 @@ public interface JacOrbSubsystem extends NamedEntity, HasProperties {
               formItemTypeForAdd="COMBO_BOX",
               acceptedValues={"off", "on"},
               order=40,
-              tabName="subsys_jacorb_orbTab")
+              localTabName ="subsys_jacorb_orbTab")
     public String getUseBOM();
     public void setUseBOM(String value);
 
@@ -85,7 +85,7 @@ public interface JacOrbSubsystem extends NamedEntity, HasProperties {
               formItemTypeForAdd="COMBO_BOX",
               acceptedValues={"off", "on"},
               order=50,
-              tabName="subsys_jacorb_orbTab")
+              localTabName ="subsys_jacorb_orbTab")
     public String getCacheTypecodes();
     public void setCacheTypecodes(String value);
 
@@ -96,7 +96,7 @@ public interface JacOrbSubsystem extends NamedEntity, HasProperties {
               formItemTypeForAdd="COMBO_BOX",
               acceptedValues={"off", "on"},
               order=60,
-              tabName="subsys_jacorb_orbTab")
+              localTabName ="subsys_jacorb_orbTab")
     public String getCachePOANames();
     public void setCachePOANames(String value);
 
@@ -106,7 +106,7 @@ public interface JacOrbSubsystem extends NamedEntity, HasProperties {
               formItemTypeForAdd="NUMBER_BOX",
               formItemTypeForEdit="NUMBER_BOX",
               order=70,
-              tabName="subsys_jacorb_orbTab")
+              localTabName ="subsys_jacorb_orbTab")
     public int getGiopMinorVersion();
     public void setGiopMinorVersion(int value);
 
@@ -116,7 +116,7 @@ public interface JacOrbSubsystem extends NamedEntity, HasProperties {
               formItemTypeForAdd="NUMBER_BOX",
               formItemTypeForEdit="NUMBER_BOX",
               order=80,
-              tabName="subsys_jacorb_orbTab")
+              localTabName ="subsys_jacorb_orbTab")
     public int getRetries();
     public void setRetries(int value);
 
@@ -126,7 +126,7 @@ public interface JacOrbSubsystem extends NamedEntity, HasProperties {
               formItemTypeForAdd="NUMBER_BOX",
               formItemTypeForEdit="NUMBER_BOX",
               order=90,
-              tabName="subsys_jacorb_orbTab")
+              localTabName ="subsys_jacorb_orbTab")
     public int getRetryInterval();
     public void setRetryInterval(int value);
 
@@ -136,7 +136,7 @@ public interface JacOrbSubsystem extends NamedEntity, HasProperties {
               formItemTypeForAdd="NUMBER_BOX",
               formItemTypeForEdit="NUMBER_BOX",
               order=100,
-              tabName="subsys_jacorb_orbTab")
+              localTabName ="subsys_jacorb_orbTab")
     public int getClientTimeout();
     public void setClientTimeout(int value);
 
@@ -146,7 +146,7 @@ public interface JacOrbSubsystem extends NamedEntity, HasProperties {
               formItemTypeForAdd="NUMBER_BOX",
               formItemTypeForEdit="NUMBER_BOX",
               order=110,
-              tabName="subsys_jacorb_orbTab")
+              localTabName ="subsys_jacorb_orbTab")
     public int getServerTimeout();
     public void setServerTimeout(int value);
 
@@ -156,7 +156,7 @@ public interface JacOrbSubsystem extends NamedEntity, HasProperties {
               formItemTypeForAdd="NUMBER_BOX",
               formItemTypeForEdit="NUMBER_BOX",
               order=120,
-              tabName="subsys_jacorb_orbTab")
+              localTabName ="subsys_jacorb_orbTab")
     public int getMaxServerConnections();
     public void setMaxServerConnections(int value);
 
@@ -166,7 +166,7 @@ public interface JacOrbSubsystem extends NamedEntity, HasProperties {
               formItemTypeForAdd="NUMBER_BOX",
               formItemTypeForEdit="NUMBER_BOX",
               order=130,
-              tabName="subsys_jacorb_orbTab")
+              localTabName ="subsys_jacorb_orbTab")
     public int getMaxManagedBufSize();
     public void setMaxManagedBufSize(int value);
 
@@ -176,7 +176,7 @@ public interface JacOrbSubsystem extends NamedEntity, HasProperties {
               formItemTypeForAdd="NUMBER_BOX",
               formItemTypeForEdit="NUMBER_BOX",
               order=140,
-              tabName="subsys_jacorb_orbTab")
+              localTabName ="subsys_jacorb_orbTab")
     public int getOutbufSize();
     public void setOutbufSize(int value);
 
@@ -186,7 +186,7 @@ public interface JacOrbSubsystem extends NamedEntity, HasProperties {
               formItemTypeForAdd="NUMBER_BOX_ALLOW_NEGATIVE",
               formItemTypeForEdit="NUMBER_BOX_ALLOW_NEGATIVE",
               order=150,
-              tabName="subsys_jacorb_orbTab")
+              localTabName ="subsys_jacorb_orbTab")
     public int getOutbufCacheTimeout();
     public void setOutbufCacheTimeout(int value);
 
@@ -197,7 +197,7 @@ public interface JacOrbSubsystem extends NamedEntity, HasProperties {
               formItemTypeForAdd="COMBO_BOX",
               acceptedValues={"off", "on"},
               order=160,
-              tabName="subsys_jacorb_initializersTab")
+              localTabName ="subsys_jacorb_initializersTab")
     public String getSecurity();
     public void setSecurity(String value);
 
@@ -208,7 +208,7 @@ public interface JacOrbSubsystem extends NamedEntity, HasProperties {
               formItemTypeForAdd="COMBO_BOX",
               acceptedValues={"off", "on", "spec"},
               order=170,
-              tabName="subsys_jacorb_initializersTab")
+              localTabName ="subsys_jacorb_initializersTab")
     public String getTransactions();
     public void setTransactions(String value);
 
@@ -219,7 +219,7 @@ public interface JacOrbSubsystem extends NamedEntity, HasProperties {
               formItemTypeForAdd="COMBO_BOX",
               acceptedValues={"off", "on"},
               order=180,
-              tabName="subsys_jacorb_poaTab")
+              localTabName ="subsys_jacorb_poaTab")
     public String getMonitoring();
     public void setMonitoring(String value);
 
@@ -230,7 +230,7 @@ public interface JacOrbSubsystem extends NamedEntity, HasProperties {
               formItemTypeForAdd="COMBO_BOX",
               acceptedValues={"off", "on"},
               order=190,
-              tabName="subsys_jacorb_poaTab")
+              localTabName ="subsys_jacorb_poaTab")
     public String getQueueWait();
     public void setQueueWait(String value);
 
@@ -240,7 +240,7 @@ public interface JacOrbSubsystem extends NamedEntity, HasProperties {
               formItemTypeForAdd="NUMBER_BOX",
               formItemTypeForEdit="NUMBER_BOX",
               order=200,
-              tabName="subsys_jacorb_poaTab")
+              localTabName ="subsys_jacorb_poaTab")
     public int getQueueMin();
     public void setQueueMin(int value);
 
@@ -250,7 +250,7 @@ public interface JacOrbSubsystem extends NamedEntity, HasProperties {
               formItemTypeForAdd="NUMBER_BOX",
               formItemTypeForEdit="NUMBER_BOX",
               order=210,
-              tabName="subsys_jacorb_poaTab")
+              localTabName ="subsys_jacorb_poaTab")
     public int getQueueMax();
     public void setQueueMax(int value);
 
@@ -260,7 +260,7 @@ public interface JacOrbSubsystem extends NamedEntity, HasProperties {
               formItemTypeForAdd="NUMBER_BOX",
               formItemTypeForEdit="NUMBER_BOX",
               order=220,
-              tabName="subsys_jacorb_poaTab")
+              localTabName ="subsys_jacorb_poaTab")
     public int getPoolSize();
     public void setPoolSize(int value);
 
@@ -270,7 +270,7 @@ public interface JacOrbSubsystem extends NamedEntity, HasProperties {
               formItemTypeForAdd="NUMBER_BOX",
               formItemTypeForEdit="NUMBER_BOX",
               order=230,
-              tabName="subsys_jacorb_poaTab")
+              localTabName ="subsys_jacorb_poaTab")
     public int getMaxThreads();
     public void setMaxThreads(int value);
 
@@ -278,7 +278,7 @@ public interface JacOrbSubsystem extends NamedEntity, HasProperties {
     @FormItem(defaultValue="JBoss/Naming/root",
               localLabel="subsys_jacorb_rootContext",
               order=240,
-              tabName="subsys_jacorb_namingTab")
+              localTabName ="subsys_jacorb_namingTab")
     public String getRootContext();
     public void setRootContext(String value);
 
@@ -289,7 +289,7 @@ public interface JacOrbSubsystem extends NamedEntity, HasProperties {
               formItemTypeForAdd="COMBO_BOX",
               acceptedValues={"off", "on"},
               order=250,
-              tabName="subsys_jacorb_namingTab")
+              localTabName ="subsys_jacorb_namingTab")
     public String getExportCorbaloc();
     public void setExportCorbaloc(String value);
 
@@ -300,7 +300,7 @@ public interface JacOrbSubsystem extends NamedEntity, HasProperties {
               formItemTypeForAdd="COMBO_BOX",
               acceptedValues={"off", "on"},
               order=260,
-              tabName="subsys_jacorb_interoperabilityTab")
+              localTabName ="subsys_jacorb_interoperabilityTab")
     public String getSun();
     public void setSun(String value);
 
@@ -311,7 +311,7 @@ public interface JacOrbSubsystem extends NamedEntity, HasProperties {
               formItemTypeForAdd="COMBO_BOX",
               acceptedValues={"off", "on"},
               order=270,
-              tabName="subsys_jacorb_interoperabilityTab")
+              localTabName ="subsys_jacorb_interoperabilityTab")
     public String getComet();
     public void setComet(String value);
 
@@ -322,7 +322,7 @@ public interface JacOrbSubsystem extends NamedEntity, HasProperties {
               formItemTypeForAdd="COMBO_BOX",
               acceptedValues={"off", "on"},
               order=280,
-              tabName="subsys_jacorb_interoperabilityTab")
+              localTabName ="subsys_jacorb_interoperabilityTab")
     public String getIona();
     public void setIona(String value);
 
@@ -333,7 +333,7 @@ public interface JacOrbSubsystem extends NamedEntity, HasProperties {
               formItemTypeForAdd="COMBO_BOX",
               acceptedValues={"off", "on"},
               order=290,
-              tabName="subsys_jacorb_interoperabilityTab")
+              localTabName ="subsys_jacorb_interoperabilityTab")
     public String getChunkCustomRMIValueTypes();
     public void setChunkCustomRMIValueTypes(String value);
 
@@ -344,7 +344,7 @@ public interface JacOrbSubsystem extends NamedEntity, HasProperties {
               formItemTypeForAdd="COMBO_BOX",
               acceptedValues={"off", "on"},
               order=300,
-              tabName="subsys_jacorb_interoperabilityTab")
+              localTabName ="subsys_jacorb_interoperabilityTab")
     public String getLaxBooleanEncoding();
     public void setLaxBooleanEncoding(String value);
 
@@ -355,7 +355,7 @@ public interface JacOrbSubsystem extends NamedEntity, HasProperties {
               formItemTypeForAdd="COMBO_BOX",
               acceptedValues={"off", "on"},
               order=310,
-              tabName="subsys_jacorb_interoperabilityTab")
+              localTabName ="subsys_jacorb_interoperabilityTab")
     public String getIndirectionEncodingDisable();
     public void setIndirectionEncodingDisable(String value);
 
@@ -366,7 +366,7 @@ public interface JacOrbSubsystem extends NamedEntity, HasProperties {
               formItemTypeForAdd="COMBO_BOX",
               acceptedValues={"off", "on"},
               order=320,
-              tabName="subsys_jacorb_interoperabilityTab")
+              localTabName ="subsys_jacorb_interoperabilityTab")
     public String getStrictCheckOnTCCreation();
     public void setStrictCheckOnTCCreation(String value);
 
@@ -377,7 +377,7 @@ public interface JacOrbSubsystem extends NamedEntity, HasProperties {
               formItemTypeForAdd="COMBO_BOX",
               acceptedValues={"off", "on"},
               order=330,
-              tabName="subsys_jacorb_securityTab")
+              localTabName ="subsys_jacorb_securityTab")
     public String getSupportSSL();
     public void setSupportSSL(String value);
 
@@ -385,7 +385,7 @@ public interface JacOrbSubsystem extends NamedEntity, HasProperties {
     @FormItem(localLabel="subsys_jacorb_securityDomain",
               required=false,
               order=340,
-              tabName="subsys_jacorb_securityTab")
+              localTabName ="subsys_jacorb_securityTab")
     public String getSecurityDomain();
     public void setSecurityDomain(String value);
 
@@ -396,7 +396,7 @@ public interface JacOrbSubsystem extends NamedEntity, HasProperties {
               formItemTypeForAdd="COMBO_BOX",
               acceptedValues={"off", "on"},
               order=350,
-              tabName="subsys_jacorb_securityTab")
+              localTabName ="subsys_jacorb_securityTab")
     public String getAddComponentViaInterceptor();
     public void setAddComponentViaInterceptor(String value);
 
@@ -407,7 +407,7 @@ public interface JacOrbSubsystem extends NamedEntity, HasProperties {
               formItemTypeForEdit="COMBO_BOX",
               acceptedValues={"None", "ServerAuth", "ClientAuth", "MutualAuth"},
               order=360,
-              tabName="subsys_jacorb_securityTab")
+              localTabName ="subsys_jacorb_securityTab")
     public String getClientSupports();
     public void setClientSupports(String value);
 
@@ -418,7 +418,7 @@ public interface JacOrbSubsystem extends NamedEntity, HasProperties {
               formItemTypeForEdit="COMBO_BOX",
               acceptedValues={"None", "ServerAuth", "ClientAuth", "MutualAuth"},
               order=370,
-              tabName="subsys_jacorb_securityTab")
+              localTabName ="subsys_jacorb_securityTab")
     public String getClientRequires();
     public void setClientRequires(String value);
 
@@ -429,7 +429,7 @@ public interface JacOrbSubsystem extends NamedEntity, HasProperties {
               formItemTypeForEdit="COMBO_BOX",
               acceptedValues={"None", "ServerAuth", "ClientAuth", "MutualAuth"},
               order=380,
-              tabName="subsys_jacorb_securityTab")
+              localTabName ="subsys_jacorb_securityTab")
     public String getServerSupports();
     public void setServerSupports(String value);
 
@@ -440,7 +440,7 @@ public interface JacOrbSubsystem extends NamedEntity, HasProperties {
               formItemTypeForEdit="COMBO_BOX",
               acceptedValues={"None", "ServerAuth", "ClientAuth", "MutualAuth"},
               order=390,
-              tabName="subsys_jacorb_securityTab")
+              localTabName ="subsys_jacorb_securityTab")
     public String getServerRequires();
     public void setServerRequires(String value);
 
@@ -451,7 +451,7 @@ public interface JacOrbSubsystem extends NamedEntity, HasProperties {
               formItemTypeForEdit="PROPERTY_EDITOR",
               formItemTypeForAdd="PROPERTY_EDITOR",
               order=1000,
-              tabName="CUSTOM")
+              tabName ="CUSTOM")
     List<PropertyRecord> getProperties();
     void setProperties(List<PropertyRecord> properties);
 }

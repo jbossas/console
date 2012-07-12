@@ -38,10 +38,11 @@ public class FormItemDeclaration implements FormItem  {
     private String tabName;
     private int order;
     private String[] acceptedValues;
-    
+    private String localTabName;
+
     public FormItemDeclaration(String defaultValue, String label, String localLabel, boolean isRequired,
                               String formItemTypeForEdit, String formItemTypeForAdd, String subgroup, 
-                              String tabName, int order, String[] acceptedValues) {
+                              String localTabName, int order, String[] acceptedValues, String tabName) {
         this.defaultValue = defaultValue;
         this.label = label;
         this.localLabel = localLabel;
@@ -49,9 +50,11 @@ public class FormItemDeclaration implements FormItem  {
         this.formItemTypeForEdit = formItemTypeForEdit;
         this.formItemTypeForAdd = formItemTypeForAdd;
         this.subgroup = subgroup;
-        this.tabName = tabName;
+        this.localTabName = localTabName;
         this.order = order;
         this.acceptedValues = acceptedValues;
+        this.tabName = tabName;
+
     }
 
     @Override
@@ -90,6 +93,11 @@ public class FormItemDeclaration implements FormItem  {
         return this.subgroup;
     }
     
+    @Override
+    public String localTabName() {
+        return this.localTabName;
+    }
+
     @Override
     public String tabName() {
         return this.tabName;
