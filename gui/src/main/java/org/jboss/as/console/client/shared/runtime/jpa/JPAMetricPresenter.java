@@ -220,6 +220,7 @@ public class JPAMetricPresenter extends Presenter<JPAMetricPresenter.MyView, JPA
         for(ModelNode deployment : deployments)
         {
             ModelNode deploymentValue = deployment.get(RESULT).asObject();
+
             List<Property> addressTokens = deployment.get(ADDRESS).asPropertyList();
 
             Property unit = addressTokens.get(addressTokens.size()-1);
@@ -229,7 +230,10 @@ public class JPAMetricPresenter extends Presenter<JPAMetricPresenter.MyView, JPA
             String[] tokens = tokenString.split("#");
             jpaDeployment.setDeploymentName(tokens[0]);
             jpaDeployment.setPersistenceUnit(tokens[1]);
-            jpaDeployment.setMetricEnabled(deploymentValue.get("enabled").asBoolean());
+
+            // https://issues.jboss.org/browse/AS7-5157
+            boolean enabled = deploymentValue.hasDefined("enabled") ? deploymentValue.get("enabled").asBoolean() : false;
+            jpaDeployment.setMetricEnabled(enabled);
 
             jpaUnits.add(jpaDeployment);
 
