@@ -28,6 +28,7 @@ public class BrowserPresenter extends PresenterWidget<BrowserPresenter.MyView> {
 
     private final PlaceManager placeManager;
     private DispatchAsync dispatcher;
+    private boolean hasBeenRevealed;
 
     public interface MyView extends PopupView {
         void setPresenter(BrowserPresenter presenter);
@@ -55,7 +56,11 @@ public class BrowserPresenter extends PresenterWidget<BrowserPresenter.MyView> {
 
     @Override
     protected void onReveal() {
-        readChildrenTypes(new ModelNode().setEmptyList());
+        if(!hasBeenRevealed)
+        {
+            hasBeenRevealed = true;
+            onRefresh();
+        }
     }
 
     @Override
@@ -168,6 +173,10 @@ public class BrowserPresenter extends PresenterWidget<BrowserPresenter.MyView> {
                 }
             }}
         );
+    }
+
+    public void onRefresh() {
+        readChildrenTypes(new ModelNode().setEmptyList());
     }
 
 }
