@@ -280,10 +280,10 @@ public class CoreUIModule extends AbstractPresenterModule {
                 ToolsView.class,
                 ToolsPresenter.MyProxy.class);
 
-        bindPresenter(BrowserPresenter.class,
-                BrowserPresenter.MyView.class,
-                BrowserView.class,
-                BrowserPresenter.MyProxy.class);
+        bindPresenterWidget(BrowserPresenter.class,
+                        BrowserPresenter.MyView.class,
+                        BrowserView.class
+                );
 
         bindPresenter(SettingsPresenter.class,
                 SettingsPresenter.MyView.class,

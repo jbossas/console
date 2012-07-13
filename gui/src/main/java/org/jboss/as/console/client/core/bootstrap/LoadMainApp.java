@@ -10,7 +10,9 @@ import org.jboss.as.console.client.core.BootstrapContext;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.shared.dispatch.AsyncCommand;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  *
@@ -25,6 +27,14 @@ public class LoadMainApp implements AsyncCommand<Boolean> {
     private TokenFormatter formatter;
     private BootstrapContext bootstrapContext;
 
+    // blackisted token can not be linked externally...
+    private static Set<String> BLACK_LIST = new HashSet<String>();
+
+    static {
+        BLACK_LIST.add(NameTokens.SettingsPresenter);
+        BLACK_LIST.add(NameTokens.ToolsPresenter);
+    }
+
     public LoadMainApp(BootstrapContext bootstrapContext, PlaceManager placeManager, TokenFormatter formatter) {
         this.bootstrapContext = bootstrapContext;
         this.placeManager = placeManager;
@@ -36,7 +46,7 @@ public class LoadMainApp implements AsyncCommand<Boolean> {
 
         String initialToken = History.getToken();
 
-        if(!initialToken.isEmpty() && !initialToken.equals(NameTokens.SettingsPresenter))
+        if(!initialToken.isEmpty() && !isBlackListed(initialToken))
         {
             List<PlaceRequest> hierarchy = formatter.toPlaceRequestHierarchy(initialToken);
             final PlaceRequest placeRequest = hierarchy.get(hierarchy.size() - 1);
@@ -56,5 +66,19 @@ public class LoadMainApp implements AsyncCommand<Boolean> {
         }
 
         callback.onSuccess(Boolean.TRUE);
+    }
+
+    private static boolean isBlackListed (String token)
+    {
+        boolean match = false;
+        for(String listed : BLACK_LIST)
+        {
+            if(token.startsWith(listed))
+            {
+                match =true;
+                break;
+            }
+        }
+        return match;
     }
 }

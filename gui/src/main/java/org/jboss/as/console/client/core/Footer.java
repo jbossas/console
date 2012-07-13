@@ -61,7 +61,7 @@ public class Footer {
             @Override
             public void onClick(ClickEvent event) {
                 placeManager.revealPlace(
-                        new PlaceRequest(NameTokens.DMRBrowser)
+                        new PlaceRequest(NameTokens.ToolsPresenter).with("name","browser")
                 );
             }
         });

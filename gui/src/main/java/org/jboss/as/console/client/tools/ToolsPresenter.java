@@ -11,9 +11,8 @@ import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.Place;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.Proxy;
-import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
-import org.jboss.as.console.client.core.MainLayoutPresenter;
+import com.gwtplatform.mvp.client.proxy.RevealRootPopupContentEvent;
 import org.jboss.as.console.client.core.NameTokens;
 
 /**
@@ -23,6 +22,7 @@ import org.jboss.as.console.client.core.NameTokens;
 public class ToolsPresenter extends Presenter<ToolsPresenter.MyView, ToolsPresenter.MyProxy> {
 
     private final PlaceManager placeManager;
+    private BrowserPresenter browser;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.ToolsPresenter)
@@ -38,27 +38,16 @@ public class ToolsPresenter extends Presenter<ToolsPresenter.MyView, ToolsPresen
             new GwtEvent.Type<RevealContentHandler<?>>();
 
     @Inject
-    public ToolsPresenter(EventBus eventBus, MyView view, MyProxy proxy,
-                          PlaceManager placeManager) {
+    public ToolsPresenter(
+            EventBus eventBus, MyView view, MyProxy proxy,
+            PlaceManager placeManager, BrowserPresenter browser) {
         super(eventBus, view, proxy);
-
         this.placeManager = placeManager;
-    }
-
-    @Override
-    protected void onBind() {
-        super.onBind();
-        getView().setPresenter(this);
-    }
-
-
-    @Override
-    protected void onReset() {
-        super.onReset();
+        this.browser = browser;
     }
 
     @Override
     protected void revealInParent() {
-        RevealContentEvent.fire(getEventBus(), MainLayoutPresenter.TYPE_MainContent, this);
+        RevealRootPopupContentEvent.fire(this, browser);
     }
 }
