@@ -1,6 +1,8 @@
 package org.jboss.as.console.client.tools;
 
 import com.google.gwt.dom.client.Style;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.OpenEvent;
 import com.google.gwt.event.logical.shared.OpenHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
@@ -15,6 +17,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.gwtplatform.mvp.client.PopupViewImpl;
 import org.jboss.as.console.client.widgets.tabs.DefaultTabLayoutPanel;
+import org.jboss.ballroom.client.widgets.common.DefaultButton;
 import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 import org.jboss.dmr.client.ModelNode;
 import org.jboss.dmr.client.Property;
@@ -77,7 +80,15 @@ public class BrowserView extends PopupViewImpl implements BrowserPresenter.MyVie
         layout = new SplitLayoutPanel(10);
         treeContainer = new VerticalPanel();
         treeContainer.setStyleName("fill-layout");
+
+        treeContainer.add(new DefaultButton("Refresh", new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent clickEvent) {
+                presenter.onRefresh();
+            }
+        }));
         treeContainer.add(tree);
+
 
         ScrollPanel scroll = new ScrollPanel(treeContainer);
         layout.addWest(scroll, 250);
