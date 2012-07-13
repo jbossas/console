@@ -3,20 +3,14 @@ package org.jboss.as.console.client.tools;
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
-import com.gwtplatform.mvp.client.Presenter;
-import com.gwtplatform.mvp.client.View;
-import com.gwtplatform.mvp.client.annotations.NameToken;
-import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
-import com.gwtplatform.mvp.client.proxy.Place;
+import com.gwtplatform.mvp.client.PopupView;
+import com.gwtplatform.mvp.client.PresenterWidget;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
-import com.gwtplatform.mvp.client.proxy.Proxy;
-import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
-import org.jboss.as.console.client.core.BootstrapContext;
-import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
+import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 import org.jboss.dmr.client.ModelNode;
 import org.jboss.dmr.client.ModelType;
 import org.jboss.dmr.client.Property;
@@ -30,33 +24,24 @@ import static org.jboss.dmr.client.ModelDescriptionConstants.*;
  * @author Heiko Braun
  * @date 6/15/12
  */
-public class BrowserPresenter extends Presenter<BrowserPresenter.MyView, BrowserPresenter.MyProxy> {
+public class BrowserPresenter extends PresenterWidget<BrowserPresenter.MyView> {
 
     private final PlaceManager placeManager;
     private DispatchAsync dispatcher;
 
-
-
-    @ProxyCodeSplit
-    @NameToken(NameTokens.DMRBrowser)
-    public interface MyProxy extends Proxy<BrowserPresenter>, Place {
-    }
-
-    public interface MyView extends View {
+    public interface MyView extends PopupView {
         void setPresenter(BrowserPresenter presenter);
         void updateChildrenTypes(ModelNode address, List<ModelNode> modelNodes);
         void updateChildrenNames(ModelNode address, List<ModelNode> modelNodes);
-
         void updateResource(ModelNode address, ModelNode resource);
-
         void updateDescription(ModelNode address, ModelNode description);
     }
 
     @Inject
     public BrowserPresenter(
-            EventBus eventBus, MyView view, MyProxy proxy,
+            EventBus eventBus, MyView view,
             PlaceManager placeManager, DispatchAsync dispatcher) {
-        super(eventBus, view, proxy);
+        super(eventBus, view);
 
         this.placeManager = placeManager;
         this.dispatcher = dispatcher;
@@ -68,12 +53,14 @@ public class BrowserPresenter extends Presenter<BrowserPresenter.MyView, Browser
         getView().setPresenter(this);
     }
 
+    @Override
+    protected void onReveal() {
+        readChildrenTypes(new ModelNode().setEmptyList());
+    }
 
     @Override
-    protected void onReset() {
-        super.onReset();
-
-        readChildrenTypes(new ModelNode().setEmptyList());
+    protected void onHide() {
+        placeManager.navigateBack();
     }
 
     public void readChildrenTypes(final ModelNode address) {
@@ -183,8 +170,4 @@ public class BrowserPresenter extends Presenter<BrowserPresenter.MyView, Browser
         );
     }
 
-    @Override
-    protected void revealInParent() {
-        RevealContentEvent.fire(getEventBus(), ToolsPresenter.TYPE_MainContent, this);
-    }
 }

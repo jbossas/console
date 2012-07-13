@@ -5,20 +5,21 @@ import com.google.gwt.event.logical.shared.OpenEvent;
 import com.google.gwt.event.logical.shared.OpenHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
-import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.ui.HasTreeItems;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
-import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import org.jboss.as.console.client.core.SuspendableViewImpl;
+import com.gwtplatform.mvp.client.PopupViewImpl;
 import org.jboss.as.console.client.widgets.tabs.DefaultTabLayoutPanel;
+import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 import org.jboss.dmr.client.ModelNode;
 import org.jboss.dmr.client.Property;
 
+import javax.inject.Inject;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -27,7 +28,7 @@ import java.util.List;
  * @author Heiko Braun
  * @date 6/15/12
  */
-public class BrowserView extends SuspendableViewImpl implements BrowserPresenter.MyView {
+public class BrowserView extends PopupViewImpl implements BrowserPresenter.MyView {
 
     private BrowserPresenter presenter;
     private SplitLayoutPanel layout;
@@ -36,6 +37,14 @@ public class BrowserView extends SuspendableViewImpl implements BrowserPresenter
     private RawView rawView;
     private Tree tree;
     private DescriptionView descView;
+    private DefaultWindow window;
+
+
+    @Inject
+    public BrowserView(EventBus eventBus) {
+        super(eventBus);
+        create();
+    }
 
     @Override
     public void setPresenter(BrowserPresenter presenter) {
@@ -43,7 +52,13 @@ public class BrowserView extends SuspendableViewImpl implements BrowserPresenter
     }
 
     @Override
-    public Widget createWidget() {
+    public Widget asWidget() {
+        return window;
+    }
+
+    private void create() {
+        window = new DefaultWindow("DMR Browser");
+        window.setGlassEnabled(true);
 
         tree = new Tree();
         tree.addSelectionHandler(new SelectionHandler<TreeItem>() {
@@ -72,7 +87,7 @@ public class BrowserView extends SuspendableViewImpl implements BrowserPresenter
 
 
         DefaultTabLayoutPanel tabLayoutPanel = new DefaultTabLayoutPanel(40, Style.Unit.PX);
-                tabLayoutPanel.addStyleName("default-tabpanel");
+        tabLayoutPanel.addStyleName("default-tabpanel");
         layout.add(tabLayoutPanel);
 
         tabLayoutPanel.add(descView.asWidget(), "Description");
@@ -86,7 +101,8 @@ public class BrowserView extends SuspendableViewImpl implements BrowserPresenter
             }
         });
 
-        return layout;
+        window.setWidget(layout);
+
     }
 
     private void onItemOpenend(TreeItem treeItem) {

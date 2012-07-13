@@ -69,16 +69,6 @@ public class SettingsPresenter extends Presenter<SettingsPresenter.MyView, Setti
     }
 
     @Override
-    protected void onReveal() {
-        super.onReveal();
-    }
-
-    @Override
-    protected void onReset() {
-        super.onReset();
-    }
-
-    @Override
     protected void revealInParent() {
 
         RevealRootPopupContentEvent.fire(this, settingsWidget);
