@@ -123,11 +123,14 @@ public class BrowserPresenter extends PresenterWidget<BrowserPresenter.MyView> {
 
         List<ModelNode> steps = new ArrayList<ModelNode>();
 
+        // the description
         ModelNode descriptionOp  = new ModelNode();
         descriptionOp.get(ADDRESS).set(address);
         descriptionOp.get(OP).set(READ_RESOURCE_DESCRIPTION_OPERATION);
+        descriptionOp.get(OPERATIONS).set(true);
         steps.add(descriptionOp);
 
+        // the actual values
         ModelNode resourceOp  = new ModelNode();
         resourceOp.get(ADDRESS).set(address);
         resourceOp.get(OP).set(READ_RESOURCE_OPERATION);
