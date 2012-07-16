@@ -8,6 +8,9 @@ import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import org.jboss.as.console.client.tools.mapping.DescriptionMapper;
+import org.jboss.as.console.client.tools.mapping.RequestParameter;
+import org.jboss.as.console.client.tools.mapping.ResponseParameter;
 import org.jboss.dmr.client.ModelNode;
 import org.jboss.dmr.client.Property;
 
@@ -100,106 +103,99 @@ public class DescriptionView {
         header.setHTML(builder.toSafeHtml());
 
 
-        builder = new SafeHtmlBuilder();
+        DescriptionMapper mapper = new DescriptionMapper(address, description);
 
-        if(description.hasDefined("attributes"))
-        {
+        mapper.map(new DescriptionMapper.Mapping() {
 
-            final List<Property> properties = description.get("attributes").asPropertyList();
+            SafeHtmlBuilder attributeBuilder = new SafeHtmlBuilder();
+            SafeHtmlBuilder operationsBuilder = new SafeHtmlBuilder();
+            SafeHtmlBuilder childrenBuilder = new SafeHtmlBuilder();
 
-            if(!properties.isEmpty())
-            {
-                builder.appendHtmlConstant("<table class='doc-table' cellpadding=5>");
-                for(Property att : properties)
-                {
-                    builder.appendHtmlConstant("<tr>");
-                    builder.appendHtmlConstant("<td class='doc-attribute'>").appendEscaped(att.getName()).appendHtmlConstant("</td>");
-                    builder.appendHtmlConstant("<td>").appendEscaped(att.getValue().get("type").asString()).appendHtmlConstant("</td>");
-                    builder.appendHtmlConstant("</tr>");
+            @Override
+            public void onAttribute(String name, String description, String type, boolean required) {
 
-                    builder.appendHtmlConstant("<tr class='doc-table-description'>");
-                    builder.appendHtmlConstant("<td colspan=2>").appendEscaped(att.getValue().get("description").asString()).appendHtmlConstant("</td>");
-                    builder.appendHtmlConstant("</tr>");
-                }
-                builder.appendHtmlConstant("</table>");
+                attributeBuilder.appendHtmlConstant("<tr valign=top>");
+                attributeBuilder.appendHtmlConstant("<td class='doc-attribute'>").appendEscaped(name).appendHtmlConstant("</td>");
+                attributeBuilder.appendHtmlConstant("<td>").appendEscaped(type).appendHtmlConstant("</td>");
+                attributeBuilder.appendHtmlConstant("</tr>");
+
+                attributeBuilder.appendHtmlConstant("<tr class='doc-table-description'>");
+                attributeBuilder.appendHtmlConstant("<td colspan=2>").appendEscaped(description).appendHtmlConstant("</td>");
+                attributeBuilder.appendHtmlConstant("</tr>");
+
             }
-        }
-        attributes.setHTML(builder.toSafeHtml());
 
-        builder = new SafeHtmlBuilder();
+            @Override
+            public void onOperation(String name, String description, List<RequestParameter> parameter, ResponseParameter response) {
 
-        if(description.hasDefined("operations"))
-        {
+                operationsBuilder.appendHtmlConstant("<tr valign=top>");
+                operationsBuilder.appendHtmlConstant("<td class='doc-attribute'>").appendEscaped(name).appendHtmlConstant("</td>");
+                operationsBuilder.appendHtmlConstant("<td>");
 
-            final List<Property> properties = description.get("operations").asPropertyList();
-
-            if(!properties.isEmpty())
-            {
-                builder.appendHtmlConstant("<table class='doc-table' cellpadding=5>");
-                for(Property op : properties)
+                operationsBuilder.appendHtmlConstant("<table border=0>");
+                // parameters
+                for(RequestParameter param : parameter)
                 {
-                    builder.appendHtmlConstant("<tr>");
-                    builder.appendHtmlConstant("<td class='doc-attribute'>").appendEscaped(op.getName()).appendHtmlConstant("</td>");
-                    builder.appendHtmlConstant("<td>");
-
-                    // parameters
-                    if(op.getValue().hasDefined("request-properties"))
-                    {
-                        builder.appendHtmlConstant("<ul>");
-                        for(Property param : op.getValue().get("request-properties").asPropertyList())
-                        {
-                            final ModelNode value = param.getValue();
-                            builder.appendHtmlConstant("<li>").appendEscaped(param.getName()).appendEscaped(":");
-                            builder.appendEscaped(value.get("type").asString());
-                            if(value.hasDefined("required"))
-                            {
-                                String required = value.get("required").asBoolean() ? " (*)" : "";
-                                builder.appendEscaped(required);
-                            }
-                        }
-                        builder.appendHtmlConstant("<ul>");
-                    }
-
-                    builder.appendHtmlConstant("</td>");
-                    builder.appendHtmlConstant("</tr>");
-
-                    builder.appendHtmlConstant("<tr class='doc-table-description'>");
-                    builder.appendHtmlConstant("<td colspan=2>").appendEscaped(op.getValue().get("description").asString()).appendHtmlConstant("</td>");
-                    builder.appendHtmlConstant("</tr>");
+                    operationsBuilder.appendHtmlConstant("<tr valign=top>");
+                    operationsBuilder.appendHtmlConstant("<td>");
+                    operationsBuilder.appendEscaped(param.getParamName()).appendEscaped(":");
+                    operationsBuilder.appendEscaped(param.getParamType());
+                    String required = param.isRequired() ? " (*)" : "";
+                    operationsBuilder.appendEscaped(required);
+                    operationsBuilder.appendHtmlConstant("</td>");
+                    operationsBuilder.appendHtmlConstant("</tr>");
                 }
-                builder.appendHtmlConstant("</table>");
+
+                operationsBuilder.appendHtmlConstant("</table>");
+
+                operationsBuilder.appendHtmlConstant("</td>");
+                operationsBuilder.appendHtmlConstant("</tr>");
+
+                operationsBuilder.appendHtmlConstant("<tr class='doc-table-description'>");
+                operationsBuilder.appendHtmlConstant("<td colspan=2>").appendEscaped(description).appendHtmlConstant("</td>");
+                operationsBuilder.appendHtmlConstant("</tr>");
+
+
             }
-        }
-        operations.setHTML(builder.toSafeHtml());
 
-        builder = new SafeHtmlBuilder();
+            @Override
+            public void onChild(String name, String description) {
 
-        if(description.hasDefined("children"))
-        {
-            final List<Property> properties = description.get("children").asPropertyList();
+                childrenBuilder.appendHtmlConstant("<tr valign=top>");
+                childrenBuilder.appendHtmlConstant("<td class='doc-child'>")
+                        .appendEscaped(name)
+                        .appendHtmlConstant("</td>");
+                childrenBuilder.appendHtmlConstant("</tr>");
 
-            if(!properties.isEmpty())
-            {
-                builder.appendHtmlConstant("<table class='doc-table' cellpadding=5>");
-                for(Property child : properties)
-                {
-                    builder.appendHtmlConstant("<tr>");
-                    builder.appendHtmlConstant("<td class='doc-child'>")
-                            .appendEscaped(child.getName())
-                            .appendHtmlConstant("</td>");
-                    builder.appendHtmlConstant("</tr>");
+                childrenBuilder.appendHtmlConstant("<tr class='doc-table-description'>");
+                childrenBuilder.appendHtmlConstant("<td colspan=2>")
+                        .appendEscaped(description)
+                        .appendHtmlConstant("</td>");
+                childrenBuilder.appendHtmlConstant("</tr>");
 
-                    builder.appendHtmlConstant("<tr class='doc-table-description'>");
-                    builder.appendHtmlConstant("<td colspan=2>")
-                            .appendEscaped(child.getValue().get("description").asString())
-                            .appendHtmlConstant("</td>");
-                    builder.appendHtmlConstant("</tr>");
-                }
-                builder.appendHtmlConstant("</table>");
             }
-        }
 
-        children.setHTML(builder.toSafeHtml());
+            @Override
+            public void onBegin() {
+                attributeBuilder.appendHtmlConstant("<table class='doc-table' cellpadding=5>");
+                operationsBuilder.appendHtmlConstant("<table class='doc-table' cellpadding=5>");
+                childrenBuilder.appendHtmlConstant("<table class='doc-table' cellpadding=5>");
+            }
+
+            @Override
+            public void onFinish() {
+                attributeBuilder.appendHtmlConstant("</table>");
+                attributes.setHTML(attributeBuilder.toSafeHtml());
+
+                operationsBuilder.appendHtmlConstant("</table>");
+                operations.setHTML(operationsBuilder.toSafeHtml());
+
+                childrenBuilder.appendHtmlConstant("</table>");
+                children.setHTML(childrenBuilder.toSafeHtml());
+
+            }
+        });
+
     }
 
     public DescriptionView() {
