@@ -46,7 +46,9 @@ public class DescriptionMapper {
                     final String name = att.getName();
                     final String description = att.getValue().get("description").asString();
                     final String type = att.getValue().get("type").asString();
-                    final boolean required = att.getValue().get("required").asBoolean();
+
+                    final boolean required = att.getValue().hasDefined("required") ?
+                            att.getValue().get("required").asBoolean() : false;
 
                     mapping.onAttribute(name, description, type, required);
                 }
