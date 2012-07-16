@@ -41,6 +41,7 @@ public class BrowserView extends PopupViewImpl implements BrowserPresenter.MyVie
     private Tree tree;
     private DescriptionView descView;
     private DefaultWindow window;
+    private FormView formView;
 
 
     @Inject
@@ -68,7 +69,6 @@ public class BrowserView extends PopupViewImpl implements BrowserPresenter.MyVie
             @Override
             public void onSelection(SelectionEvent<TreeItem> selection) {
                 final LinkedList<String> path = resolvePath(selection.getSelectedItem());
-                System.out.println(">> "+ path +" :: "+ toAddress(path));
 
                 rawView.clearDisplay();
                 descView.clearDisplay();
@@ -95,13 +95,14 @@ public class BrowserView extends PopupViewImpl implements BrowserPresenter.MyVie
 
         rawView = new RawView();
         descView = new DescriptionView();
-
+        formView = new FormView();
 
         DefaultTabLayoutPanel tabLayoutPanel = new DefaultTabLayoutPanel(40, Style.Unit.PX);
         tabLayoutPanel.addStyleName("default-tabpanel");
         layout.add(tabLayoutPanel);
 
         tabLayoutPanel.add(descView.asWidget(), "Description");
+        tabLayoutPanel.add(formView.asWidget(), "Form");
         tabLayoutPanel.add(rawView.asWidget(), "Model");
         tabLayoutPanel.selectTab(0);
 
@@ -161,6 +162,7 @@ public class BrowserView extends PopupViewImpl implements BrowserPresenter.MyVie
             tree.clear();
             descView.clearDisplay();
             rawView.clearDisplay();
+            formView.clearForm();
             rootItem = tree;
         }
         else
@@ -186,6 +188,7 @@ public class BrowserView extends PopupViewImpl implements BrowserPresenter.MyVie
     @Override
     public void updateDescription(ModelNode address, ModelNode description) {
         descView.updateDescription(address, description);
+        formView.updateDescription(address, description);
     }
 
     @Override
@@ -194,6 +197,7 @@ public class BrowserView extends PopupViewImpl implements BrowserPresenter.MyVie
         final List<Property> tokens = address.asPropertyList();
         String name = tokens.get(tokens.size()-1).getValue().asString();
         rawView.display(new Property(name, resource));
+        formView.display(new Property(name, resource));
     }
 
     private void addChildrenTypes(HasTreeItems rootItem, List<ModelNode> modelNodes) {

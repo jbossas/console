@@ -80,9 +80,6 @@ public class DescriptionView {
 
     public void updateDescription(ModelNode address, ModelNode description)
     {
-
-        System.out.println(description);
-
         SafeHtmlBuilder builder = new SafeHtmlBuilder();
 
         final List<Property> path = address.asPropertyList();
