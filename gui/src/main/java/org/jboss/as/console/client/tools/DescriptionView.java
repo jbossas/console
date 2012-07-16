@@ -2,9 +2,11 @@ package org.jboss.as.console.client.tools;
 
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
+import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.dmr.client.ModelNode;
 import org.jboss.dmr.client.Property;
@@ -17,18 +19,55 @@ import java.util.List;
  */
 public class DescriptionView {
 
-    private HTML html;
+    private HTML attributes;
+    private HTML operations;
+    private HTML children;
+    private HTML header;
 
     Widget asWidget() {
         LayoutPanel layout = new LayoutPanel();
         layout.setStyleName("fill-layout");
 
+        DisclosurePanel attributePanel = new DisclosurePanel("Attributes");
+        attributePanel.setStyleName("fill-layout-width");
+        DisclosurePanel operationsPanel = new DisclosurePanel("Operations");
+        operationsPanel.setStyleName("fill-layout-width");
+        DisclosurePanel childrenPanel = new DisclosurePanel("Children");
+        childrenPanel.setStyleName("fill-layout-width");
 
-        html = new HTML();
-        html.setStyleName("fill-layout");
-        html.getElement().setAttribute("style", "padding:10px");
 
-        final ScrollPanel scroll = new ScrollPanel(html);
+        header = new HTML();
+        header.setStyleName("fill-layout");
+        header.getElement().setAttribute("style", "padding:10px");
+
+        attributes = new HTML();
+        attributes.setStyleName("fill-layout");
+        attributes.getElement().setAttribute("style", "padding:10px");
+
+        operations = new HTML();
+        operations.setStyleName("fill-layout");
+        operations.getElement().setAttribute("style", "padding:10px");
+
+        children = new HTML();
+        children.setStyleName("fill-layout");
+        children.getElement().setAttribute("style", "padding:10px");
+
+
+        VerticalPanel inner = new VerticalPanel();
+        inner.setStyleName("fill-layout-width");
+        inner.getElement().setAttribute("style", "padding:15px");
+
+        attributePanel.add(attributes);
+        operationsPanel.add(operations);
+        childrenPanel.add(children);
+
+        inner.add(header);
+        inner.add(attributePanel);
+        inner.add(operationsPanel);
+        inner.add(childrenPanel);
+
+
+        final ScrollPanel scroll = new ScrollPanel(inner);
         layout.add(scroll);
 
         layout.setWidgetTopHeight(scroll, 0, Style.Unit.PX, 100, Style.Unit.PCT);
@@ -43,7 +82,6 @@ public class DescriptionView {
 
         SafeHtmlBuilder builder = new SafeHtmlBuilder();
 
-
         final List<Property> path = address.asPropertyList();
         StringBuffer sb = new StringBuffer();
         for(Property p : path)
@@ -52,55 +90,116 @@ public class DescriptionView {
         }
 
         builder.appendHtmlConstant("<h1 class='doc-address'>")
-                       .appendEscaped(sb.toString())
-                       .appendHtmlConstant("</h1>");
+                .appendEscaped(sb.toString())
+                .appendHtmlConstant("</h1>");
 
         builder.appendHtmlConstant("<h2 class='doc-description'>")
                 .appendEscaped(description.get("description").asString())
                 .appendHtmlConstant("</h2>");
 
-        builder.appendHtmlConstant("<h3>Attributes</h3>");
+        header.setHTML(builder.toSafeHtml());
+
+
+        builder = new SafeHtmlBuilder();
 
         if(description.hasDefined("attributes"))
         {
-            builder.appendHtmlConstant("<table class='doc-table' cellpadding=5>");
-            for(Property att : description.get("attributes").asPropertyList())
+
+            final List<Property> properties = description.get("attributes").asPropertyList();
+
+            if(!properties.isEmpty())
             {
-                builder.appendHtmlConstant("<tr>");
-                builder.appendHtmlConstant("<td class='doc-attribute'>").appendEscaped(att.getName()).appendHtmlConstant("</td>");
-                builder.appendHtmlConstant("<td>").appendEscaped(att.getValue().get("type").asString()).appendHtmlConstant("</td>");
-                builder.appendHtmlConstant("</tr>");
+                builder.appendHtmlConstant("<table class='doc-table' cellpadding=5>");
+                for(Property att : properties)
+                {
+                    builder.appendHtmlConstant("<tr>");
+                    builder.appendHtmlConstant("<td class='doc-attribute'>").appendEscaped(att.getName()).appendHtmlConstant("</td>");
+                    builder.appendHtmlConstant("<td>").appendEscaped(att.getValue().get("type").asString()).appendHtmlConstant("</td>");
+                    builder.appendHtmlConstant("</tr>");
 
-                builder.appendHtmlConstant("<tr class='doc-table-description'>");
-                builder.appendHtmlConstant("<td colspan=2>").appendEscaped(att.getValue().get("description").asString()).appendHtmlConstant("</td>");
-                builder.appendHtmlConstant("</tr>");
+                    builder.appendHtmlConstant("<tr class='doc-table-description'>");
+                    builder.appendHtmlConstant("<td colspan=2>").appendEscaped(att.getValue().get("description").asString()).appendHtmlConstant("</td>");
+                    builder.appendHtmlConstant("</tr>");
+                }
+                builder.appendHtmlConstant("</table>");
             }
-            builder.appendHtmlConstant("</table>");
         }
+        attributes.setHTML(builder.toSafeHtml());
 
-        builder.appendHtmlConstant("<h3>Children</h3>");
+        builder = new SafeHtmlBuilder();
+
+        if(description.hasDefined("operations"))
+        {
+
+            final List<Property> properties = description.get("operations").asPropertyList();
+
+            if(!properties.isEmpty())
+            {
+                builder.appendHtmlConstant("<table class='doc-table' cellpadding=5>");
+                for(Property op : properties)
+                {
+                    builder.appendHtmlConstant("<tr>");
+                    builder.appendHtmlConstant("<td class='doc-attribute'>").appendEscaped(op.getName()).appendHtmlConstant("</td>");
+                    builder.appendHtmlConstant("<td>");
+
+                    // parameters
+                    if(op.getValue().hasDefined("request-properties"))
+                    {
+                        builder.appendHtmlConstant("<ul>");
+                        for(Property param : op.getValue().get("request-properties").asPropertyList())
+                        {
+                            final ModelNode value = param.getValue();
+                            builder.appendHtmlConstant("<li>").appendEscaped(param.getName()).appendEscaped(":");
+                            builder.appendEscaped(value.get("type").asString());
+                            if(value.hasDefined("required"))
+                            {
+                                String required = value.get("required").asBoolean() ? " (*)" : "";
+                                builder.appendEscaped(required);
+                            }
+                        }
+                        builder.appendHtmlConstant("<ul>");
+                    }
+
+                    builder.appendHtmlConstant("</td>");
+                    builder.appendHtmlConstant("</tr>");
+
+                    builder.appendHtmlConstant("<tr class='doc-table-description'>");
+                    builder.appendHtmlConstant("<td colspan=2>").appendEscaped(op.getValue().get("description").asString()).appendHtmlConstant("</td>");
+                    builder.appendHtmlConstant("</tr>");
+                }
+                builder.appendHtmlConstant("</table>");
+            }
+        }
+        operations.setHTML(builder.toSafeHtml());
+
+        builder = new SafeHtmlBuilder();
 
         if(description.hasDefined("children"))
+        {
+            final List<Property> properties = description.get("children").asPropertyList();
+
+            if(!properties.isEmpty())
+            {
+                builder.appendHtmlConstant("<table class='doc-table' cellpadding=5>");
+                for(Property child : properties)
                 {
-                    builder.appendHtmlConstant("<table class='doc-table' cellpadding=5>");
-                    for(Property child : description.get("children").asPropertyList())
-                    {
-                        builder.appendHtmlConstant("<tr>");
-                        builder.appendHtmlConstant("<td class='doc-child'>")
-                                .appendEscaped(child.getName())
-                                .appendHtmlConstant("</td>");
-                        builder.appendHtmlConstant("</tr>");
+                    builder.appendHtmlConstant("<tr>");
+                    builder.appendHtmlConstant("<td class='doc-child'>")
+                            .appendEscaped(child.getName())
+                            .appendHtmlConstant("</td>");
+                    builder.appendHtmlConstant("</tr>");
 
-                        builder.appendHtmlConstant("<tr class='doc-table-description'>");
-                        builder.appendHtmlConstant("<td colspan=2>")
-                                .appendEscaped(child.getValue().get("description").asString())
-                                .appendHtmlConstant("</td>");
-                        builder.appendHtmlConstant("</tr>");
-                    }
-                    builder.appendHtmlConstant("</table>");
+                    builder.appendHtmlConstant("<tr class='doc-table-description'>");
+                    builder.appendHtmlConstant("<td colspan=2>")
+                            .appendEscaped(child.getValue().get("description").asString())
+                            .appendHtmlConstant("</td>");
+                    builder.appendHtmlConstant("</tr>");
                 }
+                builder.appendHtmlConstant("</table>");
+            }
+        }
 
-        html.setHTML(builder.toSafeHtml());
+        children.setHTML(builder.toSafeHtml());
     }
 
     public DescriptionView() {
@@ -108,6 +207,9 @@ public class DescriptionView {
     }
 
     public void clearDisplay() {
-        html.setHTML("");
+        attributes.setHTML("");
+        operations.setHTML("");
+        children.setHTML("");
+        header.setHTML("");
     }
 }
