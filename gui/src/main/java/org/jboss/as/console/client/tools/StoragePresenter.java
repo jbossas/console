@@ -12,4 +12,8 @@ public interface StoragePresenter {
     void closeDialogue();
 
     void onCreateTemplate(FXTemplate template);
+
+    void launchNewModelStepWizard(FXTemplate template);
+
+    void onRemoveModelStep(FXTemplate currentTemplate, String stepId);
 }
