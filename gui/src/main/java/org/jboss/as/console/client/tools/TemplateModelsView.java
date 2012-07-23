@@ -18,6 +18,8 @@ import org.jboss.ballroom.client.widgets.forms.TextItem;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
 import org.jboss.ballroom.client.widgets.tools.ToolStrip;
+import org.jboss.dmr.client.ModelNode;
+import org.jboss.dmr.client.ModelType;
 
 import java.util.HashMap;
 import java.util.List;
@@ -95,8 +97,7 @@ public class TemplateModelsView {
         final SimpleForm form = new SimpleForm();
         form.setNumColumns(2);
         final TextItem id = new TextItem("id", "ID");
-        final TextBoxItem desc = new TextBoxItem("desc", "Description", true);
-
+        final TextBoxItem desc = new TextBoxItem("description", "Description", true);
         final TextAreaItem address = new TextAreaItem("address", "Address", true);
         final ComboBoxItem type = new ComboBoxItem("execType", "ExecType")
         {
@@ -148,6 +149,25 @@ public class TemplateModelsView {
             @Override
             public void onSave(Map<String, Object> changeset) {
 
+                final FXModel modelStep = selectionModel.getSelectedObject();
+                final ModelNode modelNode = modelStep.asModelNode();
+                for(String key : changeset.keySet())
+                {
+                    for(String attribute : modelNode.keys())
+                    {
+                        if(key.equals(attribute))
+                        {
+                            final Object o = changeset.get(key);
+                            final ModelType dmrType = Types.toDMR(o);
+                            modelNode.get(attribute).set(dmrType, o);
+                            break;
+                        }
+                    }
+                }
+
+                getCurrentTemplate().removeModel(modelStep.getId());
+                getCurrentTemplate().getModels().add(FXModel.fromModelNode(modelNode));
+                presenter.onUpdateTemplate(getCurrentTemplate());
             }
 
             @Override
@@ -180,5 +200,7 @@ public class TemplateModelsView {
         this.currentTemplate = template;
         dataProvider.getList().clear();
         dataProvider.getList().addAll(models);
+        dataProvider.flush();
+        table.selectDefaultEntity();
     }
 }
