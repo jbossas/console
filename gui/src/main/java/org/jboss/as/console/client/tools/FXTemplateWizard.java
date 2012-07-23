@@ -97,6 +97,7 @@ public class FXTemplateWizard {
                                     addressNode
 
                             );
+                            model.getFieldNames().addAll(fieldNames.getValue());
 
                             template.getModels().add(model);
 
