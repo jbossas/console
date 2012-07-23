@@ -197,7 +197,7 @@ public class BrowserPresenter extends PresenterWidget<BrowserPresenter.MyView> i
         window.setHeight(420);
 
         window.trapWidget(
-                new FXTemplateWizard(BrowserPresenter.this).asWidget()
+                new NewFXTemplateWizard(BrowserPresenter.this).asWidget()
         );
 
         window.setGlassEnabled(true);

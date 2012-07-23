@@ -8,7 +8,6 @@ import org.jboss.as.console.client.widgets.forms.AddressBinding;
 import org.jboss.ballroom.client.widgets.forms.ComboBoxItem;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.FormValidation;
-import org.jboss.ballroom.client.widgets.forms.ListBoxItem;
 import org.jboss.ballroom.client.widgets.forms.ListItem;
 import org.jboss.ballroom.client.widgets.forms.TextAreaItem;
 import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
@@ -16,20 +15,17 @@ import org.jboss.ballroom.client.widgets.window.DialogueOptions;
 import org.jboss.ballroom.client.widgets.window.WindowContentBuilder;
 import org.jboss.dmr.client.ModelNode;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 /**
  * @author Heiko Braun
  * @date 7/23/12
  */
-public class FXTemplateWizard {
-
+public class NewFXTemplateWizard {
 
     private StoragePresenter presenter;
 
-    public FXTemplateWizard(StoragePresenter presenter) {
+    public NewFXTemplateWizard(StoragePresenter presenter) {
         this.presenter = presenter;
     }
 

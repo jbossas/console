@@ -1,6 +1,5 @@
 package org.jboss.as.console.client.tools;
 
-import com.google.gwt.dom.client.Document;
 import org.jboss.dmr.client.ModelNode;
 
 import java.util.ArrayList;
