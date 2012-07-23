@@ -157,6 +157,10 @@ public class FormView {
                         {
                             item.setValue(entityValue.get(attribute).asString());
                         }
+                        else if(ModelType.EXPRESSION.equals(entityValue.get(attribute).getType()))
+                        {
+                            item.setExpressionValue(entityValue.get(attribute).asString());
+                        }
                         else
                         {
                             System.out.println("Unsupported binding: "+entityValue.get(attribute).getType());

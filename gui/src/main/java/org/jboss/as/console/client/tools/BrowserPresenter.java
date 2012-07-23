@@ -17,6 +17,7 @@ import org.jboss.dmr.client.Property;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 
@@ -24,11 +25,12 @@ import static org.jboss.dmr.client.ModelDescriptionConstants.*;
  * @author Heiko Braun
  * @date 6/15/12
  */
-public class BrowserPresenter extends PresenterWidget<BrowserPresenter.MyView> {
+public class BrowserPresenter extends PresenterWidget<BrowserPresenter.MyView> implements StoragePresenter{
 
     private final PlaceManager placeManager;
     private DispatchAsync dispatcher;
     private boolean hasBeenRevealed;
+    private FXStorage storage = new LocalFXStorage();
 
     public interface MyView extends PopupView {
         void setPresenter(BrowserPresenter presenter);
@@ -36,6 +38,8 @@ public class BrowserPresenter extends PresenterWidget<BrowserPresenter.MyView> {
         void updateChildrenNames(ModelNode address, List<ModelNode> modelNodes);
         void updateResource(ModelNode address, ModelNode resource);
         void updateDescription(ModelNode address, ModelNode description);
+
+        void setTemplates(Set<FXTemplate> fxTemplates);
     }
 
     @Inject
@@ -180,6 +184,18 @@ public class BrowserPresenter extends PresenterWidget<BrowserPresenter.MyView> {
 
     public void onRefresh() {
         readChildrenTypes(new ModelNode().setEmptyList());
+        getView().setTemplates(storage.loadTemplates());
     }
 
+    // ---------- Storage Presenter  ----
+
+    @Override
+    public void launchNewTemplateWizard() {
+
+    }
+
+    @Override
+    public void onRemoveTemplate(String id) {
+
+    }
 }

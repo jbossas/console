@@ -26,6 +26,7 @@ import javax.inject.Inject;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author Heiko Braun
@@ -42,6 +43,7 @@ public class BrowserView extends PopupViewImpl implements BrowserPresenter.MyVie
     private DescriptionView descView;
     private DefaultWindow window;
     private FormView formView;
+    private StorageManagerView storageView;
 
 
     @Inject
@@ -97,6 +99,9 @@ public class BrowserView extends PopupViewImpl implements BrowserPresenter.MyVie
         descView = new DescriptionView();
         formView = new FormView();
 
+        storageView = new StorageManagerView();
+        storageView.setPresenter(presenter);
+
         DefaultTabLayoutPanel tabLayoutPanel = new DefaultTabLayoutPanel(40, Style.Unit.PX);
         tabLayoutPanel.addStyleName("default-tabpanel");
         layout.add(tabLayoutPanel);
@@ -104,6 +109,7 @@ public class BrowserView extends PopupViewImpl implements BrowserPresenter.MyVie
         tabLayoutPanel.add(descView.asWidget(), "Description");
         tabLayoutPanel.add(formView.asWidget(), "Form");
         tabLayoutPanel.add(rawView.asWidget(), "Model");
+        tabLayoutPanel.add(storageView.asWidget(), "Templates");
         tabLayoutPanel.selectTab(0);
 
         tree.addOpenHandler(new OpenHandler<TreeItem>() {
@@ -312,5 +318,10 @@ public class BrowserView extends PopupViewImpl implements BrowserPresenter.MyVie
         PlaceholderItem() {
             super("*");
         }
+    }
+
+    @Override
+    public void setTemplates(Set<FXTemplate> fxTemplates) {
+        storageView.setTemplates(fxTemplates);
     }
 }
