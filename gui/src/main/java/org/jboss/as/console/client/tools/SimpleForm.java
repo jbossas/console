@@ -126,7 +126,7 @@ public class SimpleForm {
         editPanel.add(widget);
 
         // plain view
-        PlainFormView plainView = new PlainFormView(items);
+        PlainFormView plainView = new PlainFormView(new ArrayList<FormItem>(groupItems.values()));
         plainView.setNumColumns(numColumns);
         plainViews.add(plainView);
         viewPanel.add(groupRenderer.renderPlain(metaData, "default", plainView));
