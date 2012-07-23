@@ -31,6 +31,7 @@ public class BrowserPresenter extends PresenterWidget<BrowserPresenter.MyView> i
     private DispatchAsync dispatcher;
     private boolean hasBeenRevealed;
     private FXStorage storage = new LocalFXStorage();
+    private DefaultWindow window;
 
     public interface MyView extends PopupView {
         void setPresenter(BrowserPresenter presenter);
@@ -191,11 +192,34 @@ public class BrowserPresenter extends PresenterWidget<BrowserPresenter.MyView> i
 
     @Override
     public void launchNewTemplateWizard() {
+        window = new DefaultWindow("Create Template");
+        window.setWidth(480);
+        window.setHeight(420);
 
+        window.trapWidget(
+                new FXTemplateWizard(BrowserPresenter.this).asWidget()
+        );
+
+        window.setGlassEnabled(true);
+        window.center();
     }
 
     @Override
     public void onRemoveTemplate(String id) {
 
+    }
+
+    @Override
+    public void closeDialogue() {
+        window.hide();
+    }
+
+    @Override
+    public void onCreateTemplate(FXTemplate template) {
+        System.out.println(template.getName());
+        for(FXModel model : template.getModels())
+        {
+            System.out.println(model.asModelNode());
+        }
     }
 }

@@ -55,6 +55,7 @@ public class BrowserView extends PopupViewImpl implements BrowserPresenter.MyVie
     @Override
     public void setPresenter(BrowserPresenter presenter) {
         this.presenter = presenter;
+        storageView.setPresenter(presenter);
     }
 
     @Override
@@ -100,7 +101,6 @@ public class BrowserView extends PopupViewImpl implements BrowserPresenter.MyVie
         formView = new FormView();
 
         storageView = new StorageManagerView();
-        storageView.setPresenter(presenter);
 
         DefaultTabLayoutPanel tabLayoutPanel = new DefaultTabLayoutPanel(40, Style.Unit.PX);
         tabLayoutPanel.addStyleName("default-tabpanel");

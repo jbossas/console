@@ -28,6 +28,7 @@ import com.google.gwt.core.ext.typeinfo.TypeOracle;
 import com.google.gwt.user.rebind.ClassSourceFileComposerFactory;
 import com.google.gwt.user.rebind.SourceWriter;
 import org.jboss.as.console.client.widgets.forms.Address;
+import org.jboss.as.console.client.widgets.forms.AddressBinding;
 import org.jboss.as.console.client.widgets.forms.Binding;
 import org.jboss.as.console.client.widgets.forms.FormItem;
 
@@ -259,26 +260,13 @@ public class ApplicationMetaDataGenerator extends Generator{
 
         if(annotation!=null) // TODO: mandatory at some point
         {
-            address = parseAddressString(annotation.value());
+            address = AddressBinding.parseAddressString(annotation.value());
         }
 
         return new AddressDeclaration(address);
     }
 
-    private static List<String[]> parseAddressString(String value) {
-        List<String[]> address = new LinkedList<String[]>();
 
-        if(value.equals("/")) // default parent value
-            return address;
-
-        java.util.StringTokenizer tok = new java.util.StringTokenizer(value, "/");
-        while(tok.hasMoreTokens())
-        {
-            String nextToken = tok.nextToken();
-            address.add(nextToken.split("="));
-        }
-        return address;
-    }
 
     private static FormItemDeclaration createFormItemDeclaration(Method method) {
         FormItem formItemDeclaration = method.getAnnotation(FormItem.class);
