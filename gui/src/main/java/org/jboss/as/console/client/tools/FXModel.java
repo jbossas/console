@@ -23,12 +23,14 @@ public class FXModel {
 
     private Set<String> fieldNames = new HashSet<String>();
 
-    private int id;
+    private String id;
+
+    private String description = "";
 
     public FXModel(ExecutionType type, ModelNode address) {
         this.type = type;
         this.address = address;
-        this.id = address.toString().hashCode();
+        this.id = UUID.uuid();
     }
 
     public FXModel(ExecutionType type, ModelNode address, String... fieldNames) {
@@ -36,6 +38,14 @@ public class FXModel {
 
         for(String fieldName : fieldNames)
             this.fieldNames.add(fieldName);
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public ExecutionType getType() {
@@ -50,7 +60,7 @@ public class FXModel {
         return fieldNames;
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
@@ -67,6 +77,7 @@ public class FXModel {
         ModelNode modelNode = new ModelNode();
         modelNode.get("execType").set(type.name());
         modelNode.get("address").set(address);
+        modelNode.get("description").set(description);
         modelNode.get("fieldNames").setEmptyList();
         for(String name : fieldNames)
             modelNode.get("fieldNames").add(name);
@@ -78,6 +89,7 @@ public class FXModel {
 
         final String type = modelNode.get("execType").asString();
         final ModelNode address = modelNode.get("address").asObject();
+        String description = modelNode.get("description").asString();
 
         final List<ModelNode> fieldNames = modelNode.get("fieldNames").asList();
         List<String> values = new ArrayList<String>();

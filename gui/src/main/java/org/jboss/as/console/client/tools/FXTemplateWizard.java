@@ -56,7 +56,8 @@ public class FXTemplateWizard {
                 FXModel.ExecutionType.DELETE.name()
         });
 
-        type.selectItem(0);
+        type.setDefaultToFirstOption(true);
+        type.selectItem(1);
 
         final ListItem fieldNames = new ListItem("fieldNames", "FieldNames")
         {
@@ -89,7 +90,7 @@ public class FXTemplateWizard {
                         {
                             FXTemplate template = new FXTemplate(
                                     name.getValue(),
-                                    FXTemplate.createUUID()
+                                    UUID.uuid()
                             );
 
                             FXModel model = new FXModel(
