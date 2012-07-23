@@ -80,7 +80,7 @@ public class ConnectorServiceForm {
                 .setHelp(helpPanel);
 
         if(!isCreate)
-            formLayout.setSetTools(formTools);
+            formLayout.setTools(formTools);
 
         return formLayout.build();
     }

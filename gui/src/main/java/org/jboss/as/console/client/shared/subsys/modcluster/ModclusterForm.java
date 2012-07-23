@@ -64,7 +64,7 @@ public class ModclusterForm {
 
         Widget formPanel = new FormLayout()
                 .setForm(form)
-                .setSetTools(formToolStrip)
+                .setTools(formToolStrip)
                 .setHelp(helpPanel).build();
 
 

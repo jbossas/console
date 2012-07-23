@@ -140,7 +140,7 @@ public class StackEditor {
         Widget detail = new FormLayout()
                 .setForm(form)
                 .setHelp(helpPanel)
-                .setSetTools(formToolStrip).build();
+                .setTools(formToolStrip).build();
 
         headline = new HTML();
         headline.setStyleName("content-header-label");

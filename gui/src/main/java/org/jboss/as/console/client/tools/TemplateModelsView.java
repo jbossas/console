@@ -3,14 +3,15 @@ package org.jboss.as.console.client.tools;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.cellview.client.TextColumn;
-import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.ProvidesKey;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
+import org.jboss.as.console.client.shared.viewframework.builder.FormLayout;
 import org.jboss.as.console.client.shared.viewframework.builder.MultipleToOneLayout;
+import org.jboss.as.console.client.widgets.forms.FormToolStrip;
 import org.jboss.ballroom.client.widgets.forms.ComboBoxItem;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.ListItem;
@@ -22,6 +23,7 @@ import org.jboss.ballroom.client.widgets.tools.ToolButton;
 import org.jboss.ballroom.client.widgets.tools.ToolStrip;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Heiko Braun
@@ -121,6 +123,7 @@ public class TemplateModelsView {
         };
 
         form.setFields(id, desc, type, address, fieldNames);
+        form.setEnabled(false);
 
         table.getSelectionModel().addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
             @Override
@@ -139,7 +142,22 @@ public class TemplateModelsView {
             }
         });
 
+
+        FXFormToolStrip formTools = new FXFormToolStrip(form, new FXFormToolStrip.FormCallback() {
+            @Override
+            public void onSave(Map<String, Object> changeset) {
+
+            }
+
+            @Override
+            public void onDelete(Object entity) {
+
+            }
+        }) ;
+
         VerticalPanel formLayout = new VerticalPanel();
+        formLayout.setStyleName("fill-layout-width");
+        formLayout.add(formTools.asWidget());
         formLayout.add(form.asWidget());
 
         MultipleToOneLayout layout = new MultipleToOneLayout()

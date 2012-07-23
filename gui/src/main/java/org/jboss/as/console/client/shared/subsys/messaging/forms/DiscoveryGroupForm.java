@@ -9,7 +9,6 @@ import org.jboss.as.console.client.shared.viewframework.builder.FormLayout;
 import org.jboss.as.console.client.widgets.forms.FormToolStrip;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.FormItem;
-import org.jboss.ballroom.client.widgets.forms.ListItem;
 import org.jboss.ballroom.client.widgets.forms.NumberBoxItem;
 import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
 import org.jboss.ballroom.client.widgets.forms.TextItem;
@@ -81,7 +80,7 @@ public class DiscoveryGroupForm {
                 .setHelp(helpPanel);
 
         if(!isCreate)
-            formLayout.setSetTools(formTools);
+            formLayout.setTools(formTools);
 
         return formLayout.build();
     }

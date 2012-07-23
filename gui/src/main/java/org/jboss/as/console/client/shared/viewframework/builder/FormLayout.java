@@ -27,7 +27,7 @@ public class FormLayout {
         return this;
     }
 
-    public FormLayout setSetTools(FormToolStrip tools) {
+    public FormLayout setTools(FormToolStrip tools) {
 
         this.tools = tools;
         return this;
