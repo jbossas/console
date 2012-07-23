@@ -21,7 +21,7 @@ public class FXModel {
 
     private ModelNode address;
 
-    private Set<String> fieldNames = new HashSet<String>();
+    private List<String> fieldNames = new ArrayList<String>();
 
     private String id;
 
@@ -56,7 +56,7 @@ public class FXModel {
         return address;
     }
 
-    public Set<String> getFieldNames() {
+    public List<String> getFieldNames() {
         return fieldNames;
     }
 
