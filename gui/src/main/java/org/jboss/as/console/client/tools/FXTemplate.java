@@ -1,5 +1,6 @@
 package org.jboss.as.console.client.tools;
 
+import com.google.gwt.dom.client.Document;
 import org.jboss.dmr.client.ModelNode;
 
 import java.util.ArrayList;
@@ -63,5 +64,9 @@ public class FXTemplate {
             modelNode.get("models").add(model.asModelNode());
 
         return modelNode.toBase64String();
+    }
+
+    public static String createUUID() {
+        return Document.get().createUniqueId();
     }
 }

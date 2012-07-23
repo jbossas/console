@@ -8,4 +8,8 @@ public interface StoragePresenter {
     void launchNewTemplateWizard();
 
     void onRemoveTemplate(String id);
+
+    void closeDialogue();
+
+    void onCreateTemplate(FXTemplate template);
 }

@@ -2,8 +2,11 @@ package org.jboss.as.console.client.widgets.forms;
 
 import org.jboss.dmr.client.ModelNode;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import static org.jboss.dmr.client.ModelDescriptionConstants.ADDRESS;
 import static org.jboss.dmr.client.ModelDescriptionConstants.CHILD_TYPE;
@@ -22,6 +25,10 @@ public class AddressBinding {
     private int countedWildcards = -1;
 
     public AddressBinding() {
+    }
+
+    public AddressBinding(List<String[]> tuple) {
+        this.address = tuple;
     }
 
     public void add(String parent, String child)
@@ -170,6 +177,73 @@ public class AddressBinding {
         model.get(CHILD_TYPE).set(childType);
 
         return model;
+
+    }
+
+    public static List<String[]> parseAddressString(String value) {
+        List<String[]> address = new LinkedList<String[]>();
+
+        if(value.equals("/")) // default parent value
+            return address;
+
+        StringTokenizer tok = new StringTokenizer(value, "/");
+        while(tok.hasMoreTokens())
+        {
+            String nextToken = tok.nextToken();
+            address.add(nextToken.split("="));
+        }
+        return address;
+    }
+
+    public static class StringTokenizer {
+        private final String deli;
+        private final String s;
+        private final int len;
+
+        private int pos;
+        private String next;
+
+        public StringTokenizer(String s, String deli) {
+            this.s = s;
+            this.deli = deli;
+            len = s.length();
+        }
+
+        public StringTokenizer(String s) {
+            this(s, " \t\n\r\f");
+
+        }
+
+        public String nextToken() {
+            if(!hasMoreTokens()) {
+                throw new NoSuchElementException();
+            }
+            String result = next;
+            next = null;
+            return result;
+        }
+
+        public boolean hasMoreTokens() {
+            if (next != null) {
+                return true;
+            }
+            // skip leading delimiters
+            while (pos < len && deli.indexOf(s.charAt(pos)) != -1) {
+                pos++;
+            }
+
+            if (pos >= len) {
+                return false;
+            }
+
+            int p0 = pos++;
+            while (pos < len && deli.indexOf(s.charAt(pos)) == -1) {
+                pos++;
+            }
+
+            next = s.substring(p0, pos++);
+            return true;
+        }
 
     }
 }
