@@ -22,7 +22,6 @@ import org.jboss.ballroom.client.widgets.forms.ComboBoxItem;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.NumberBoxItem;
 import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
-import org.jboss.ballroom.client.widgets.forms.TextItem;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
 import org.jboss.ballroom.client.widgets.tools.ToolStrip;
@@ -234,7 +233,7 @@ public class ThreadPoolEditor {
         Widget attributesPanel = new FormLayout()
                 .setForm(attributesForm)
                 .setHelp(helpPanel)
-                .setSetTools(attributesTools)
+                .setTools(attributesTools)
                 .build();
 
 
@@ -254,7 +253,7 @@ public class ThreadPoolEditor {
         Widget sizingPanel = new FormLayout()
                 .setForm(sizingForm)
                 .setHelp(sizingHelpPanel)
-                .setSetTools(sizingTools)
+                .setTools(sizingTools)
                 .build();
 
 

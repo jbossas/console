@@ -61,7 +61,7 @@ public class BridgeConnectionsForm {
                 .setHelp(helpPanel);
 
         if(provideTools)
-            formLayout.setSetTools(formTools);
+            formLayout.setTools(formTools);
 
         return formLayout.build();
     }

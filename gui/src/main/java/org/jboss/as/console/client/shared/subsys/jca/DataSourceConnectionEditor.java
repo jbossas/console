@@ -101,7 +101,7 @@ public class DataSourceConnectionEditor {
                 }, form)
                 )
                 .setForm(form)
-                .setSetTools(formTools);
+                .setTools(formTools);
 
         return layout.build();
     }

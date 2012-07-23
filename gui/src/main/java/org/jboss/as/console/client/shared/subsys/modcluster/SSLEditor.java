@@ -89,7 +89,7 @@ public class SSLEditor {
         FormLayout sslPanel = new FormLayout()
                 .setForm(sslForm)
                 .setHelp(sslHelp)
-                .setSetTools(sslTools);
+                .setTools(sslTools);
 
 
         sslForm.setEnabled(false);

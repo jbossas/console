@@ -81,7 +81,7 @@ public class BroadcastGroupForm {
                 .setHelp(helpPanel);
 
         if(!isCreate)
-            formLayout.setSetTools(formTools);
+            formLayout.setTools(formTools);
 
         return formLayout.build();
     }

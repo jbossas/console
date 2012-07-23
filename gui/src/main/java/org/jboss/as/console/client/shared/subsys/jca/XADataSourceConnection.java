@@ -101,7 +101,7 @@ public class XADataSourceConnection {
                       }, form)
                       )
                       .setForm(form)
-                      .setSetTools(formTools);
+                      .setTools(formTools);
 
         return layout.build();
     }

@@ -57,7 +57,7 @@ public class CFConnectionsForm {
         FormToolStrip<ConnectionFactory> formTools = new FormToolStrip<ConnectionFactory>(form, callback);
 
         FormLayout formLayout = new FormLayout()
-                .setSetTools(formTools)
+                .setTools(formTools)
                 .setForm(form)
                 .setHelp(helpPanel);
 

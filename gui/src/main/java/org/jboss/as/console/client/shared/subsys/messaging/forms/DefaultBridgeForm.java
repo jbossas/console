@@ -10,7 +10,6 @@ import org.jboss.as.console.client.widgets.forms.FormToolStrip;
 import org.jboss.ballroom.client.widgets.forms.CheckBoxItem;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.ListItem;
-import org.jboss.ballroom.client.widgets.forms.PasswordBoxItem;
 import org.jboss.ballroom.client.widgets.forms.SuggestBoxItem;
 import org.jboss.ballroom.client.widgets.forms.TextAreaItem;
 import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
@@ -113,7 +112,7 @@ public class DefaultBridgeForm {
                 .setHelp(helpPanel);
 
         if(provideTools)
-            formLayout.setSetTools(formTools);
+            formLayout.setTools(formTools);
 
         return formLayout.build();
     }
