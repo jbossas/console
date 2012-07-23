@@ -7,8 +7,6 @@ import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.ballroom.client.widgets.InlineLink;
-import org.jboss.ballroom.client.widgets.forms.Form;
-import org.jboss.ballroom.client.widgets.forms.FormAdapter;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
 import org.jboss.ballroom.client.widgets.tools.ToolStrip;
 import org.jboss.ballroom.client.widgets.window.Feedback;
@@ -23,7 +21,7 @@ import java.util.Map;
  */
 public class FXFormToolStrip {
 
-    private FormAdapter<Object> form = null;
+    private SimpleForm form = null;
     private FormCallback callback;
     private String deleteOpName = null;
     private boolean providesDeleteOp = false;
@@ -40,12 +38,12 @@ public class FXFormToolStrip {
     }
 
 
-    public FXFormToolStrip(FormAdapter<Object> form, FormCallback callback) {
+    public FXFormToolStrip(SimpleForm form, FormCallback callback) {
         this.form = form;
         this.callback = callback;
     }
 
-    public FXFormToolStrip(Form<Object> form, FormCallback callback, String deleteOpName) {
+    public FXFormToolStrip(SimpleForm form, FormCallback callback, String deleteOpName) {
         this.form = form;
         this.callback = callback;
         this.deleteOpName = deleteOpName;
@@ -114,9 +112,6 @@ public class FXFormToolStrip {
                 @Override
                 public void onClick(ClickEvent event) {
 
-                    if(null == form.getEditedEntity()) return;
-
-
                     Feedback.confirm(
                             Console.MESSAGES.deleteTitle(Console.CONSTANTS.common_label_item()),
                             Console.MESSAGES.deleteConfirm(Console.CONSTANTS.common_label_item()),
@@ -124,7 +119,7 @@ public class FXFormToolStrip {
                                 @Override
                                 public void onConfirmation(boolean isConfirmed) {
                                     if (isConfirmed) {
-                                        callback.onDelete(form.getEditedEntity());
+                                        callback.onDelete(new Object());
                                     }
                                 }
                             });

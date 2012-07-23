@@ -9,11 +9,8 @@ import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.ProvidesKey;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
-import org.jboss.as.console.client.shared.viewframework.builder.FormLayout;
 import org.jboss.as.console.client.shared.viewframework.builder.MultipleToOneLayout;
-import org.jboss.as.console.client.widgets.forms.FormToolStrip;
 import org.jboss.ballroom.client.widgets.forms.ComboBoxItem;
-import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.ListItem;
 import org.jboss.ballroom.client.widgets.forms.TextAreaItem;
 import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
@@ -22,6 +19,7 @@ import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
 import org.jboss.ballroom.client.widgets.tools.ToolStrip;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -94,7 +92,7 @@ public class TemplateModelsView {
         toolstrip.addToolButtonRight(addBtn);
         toolstrip.addToolButtonRight(removeBtn);
 
-        final Form<Object> form = new Form(Object.class);
+        final SimpleForm form = new SimpleForm();
         form.setNumColumns(2);
         final TextItem id = new TextItem("id", "ID");
         final TextBoxItem desc = new TextBoxItem("desc", "Description", true);
@@ -123,7 +121,7 @@ public class TemplateModelsView {
         };
 
         form.setFields(id, desc, type, address, fieldNames);
-        form.setEnabled(false);
+        //form.setEnabled(false);
 
         table.getSelectionModel().addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
             @Override
@@ -133,11 +131,14 @@ public class TemplateModelsView {
 
                 if(modelStep!=null)
                 {
-                    id.setValue(modelStep.getId());
-                    desc.setValue(modelStep.getDescription());
-                    type.setValue(modelStep.getType().name());
-                    address.setValue(modelStep.getAddress().asString());
-                    fieldNames.setValue(modelStep.getFieldNames());
+                    Map<String,Object> payload = new HashMap<String,Object>();
+                    payload.put("id", modelStep.getId());
+                    payload.put("description", modelStep.getDescription());
+                    payload.put("address", modelStep.getAddress().asString());
+                    payload.put("execType", modelStep.getType().name());
+                    payload.put("fieldNames", modelStep.getFieldNames());
+
+                    form.edit(payload);
                 }
             }
         });
