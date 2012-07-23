@@ -361,6 +361,14 @@ public class ModelNode implements Cloneable {
         {
             set((Boolean)propValue);
         }
+        else if(type.equals(ModelType.LIST))
+        {
+            setEmptyList();
+            List list = (List)propValue;
+
+            for(Object item : list)
+                add(String.valueOf(item));
+        }
         else
         {
             throw new RuntimeException("Type conversion not implemented for "+type);

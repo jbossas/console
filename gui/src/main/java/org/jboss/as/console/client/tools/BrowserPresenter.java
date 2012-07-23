@@ -219,7 +219,15 @@ public class BrowserPresenter extends PresenterWidget<BrowserPresenter.MyView> i
     public void onCreateTemplate(FXTemplate template) {
 
         closeDialogue();
-        System.out.println(template.asModelNode());
+        System.out.println("Create: "+template.asModelNode());
+        storage.storeTemplate(template);
+        getView().setTemplates(storage.loadTemplates());
+    }
+
+    @Override
+    public void onUpdateTemplate(FXTemplate template) {
+
+        System.out.println("Update: "+template.asModelNode());
         storage.storeTemplate(template);
         getView().setTemplates(storage.loadTemplates());
     }
@@ -233,4 +241,6 @@ public class BrowserPresenter extends PresenterWidget<BrowserPresenter.MyView> i
     public void onRemoveModelStep(FXTemplate currentTemplate, String stepId) {
 
     }
+
+
 }

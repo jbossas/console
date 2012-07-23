@@ -167,5 +167,7 @@ public class StorageView {
     public void setTemplates(Set<FXTemplate> fxTemplates) {
         dataProvider.getList().clear();
         dataProvider.getList().addAll(fxTemplates);
+        dataProvider.flush();
+        table.selectDefaultEntity();
     }
 }

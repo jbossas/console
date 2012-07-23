@@ -68,4 +68,15 @@ public class FXTemplate {
 
         return modelNode;
     }
+
+    public void removeModel(String id) {
+        for(FXModel model : models)
+        {
+            if(model.getId().equals(id))
+            {
+                models.remove(model);
+                break;
+            }
+        }
+    }
 }
