@@ -70,7 +70,7 @@ public class BrowserPresenter extends PresenterWidget<BrowserPresenter.MyView> i
 
     @Override
     protected void onHide() {
-        placeManager.navigateBack();
+
     }
 
     public void readChildrenTypes(final ModelNode address) {

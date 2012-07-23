@@ -3,9 +3,7 @@ package org.jboss.as.console.client.tools;
 import org.jboss.dmr.client.ModelNode;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * @author Heiko Braun
@@ -98,6 +96,7 @@ public class FXModel {
 
         final FXModel fxModel = new FXModel(ExecutionType.valueOf(type), address);
         fxModel.getFieldNames().addAll(values);
+        fxModel.setDescription(description);
         return fxModel;
     }
 
