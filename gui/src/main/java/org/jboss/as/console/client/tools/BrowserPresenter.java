@@ -216,10 +216,6 @@ public class BrowserPresenter extends PresenterWidget<BrowserPresenter.MyView> i
 
     @Override
     public void onCreateTemplate(FXTemplate template) {
-        System.out.println(template.getName());
-        for(FXModel model : template.getModels())
-        {
-            System.out.println(model.asModelNode());
-        }
+        System.out.println(template.asModelNode());
     }
 }

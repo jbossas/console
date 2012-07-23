@@ -56,6 +56,14 @@ public class FXTemplate {
     }
 
     public String toBase64() {
+        return asModelNode().toBase64String();
+    }
+
+    public static String createUUID() {
+        return Document.get().createUniqueId();
+    }
+
+    public ModelNode asModelNode() {
         ModelNode modelNode = new ModelNode();
         modelNode.get("name").set(name);
         modelNode.get("id").set(id);
@@ -63,10 +71,6 @@ public class FXTemplate {
         for(FXModel model : models)
             modelNode.get("models").add(model.asModelNode());
 
-        return modelNode.toBase64String();
-    }
-
-    public static String createUUID() {
-        return Document.get().createUniqueId();
+        return modelNode;
     }
 }
