@@ -45,7 +45,20 @@ public class SimpleForm {
                 if(item.getName().equals(key))
                 {
                     item.resetMetaData();
-                    item.setValue(values.get(key));
+                    final Object value = values.get(key);
+
+                    if(value!=null)
+                    {
+                        item.setUndefined(false);
+                        item.setValue(value);
+                    }
+                    else
+                    {
+                        item.setUndefined(true);
+                        item.setModified(true); // don't escape validation
+                    }
+
+                    item.setValue(value);
                     break;
                 }
             }
