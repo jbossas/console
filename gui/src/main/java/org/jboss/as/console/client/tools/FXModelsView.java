@@ -20,9 +20,7 @@ import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
 import org.jboss.ballroom.client.widgets.tools.ToolStrip;
 import org.jboss.dmr.client.ModelNode;
-import org.jboss.dmr.client.ModelType;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -60,14 +58,14 @@ public class FXModelsView {
         final SingleSelectionModel<FXModel> selectionModel = new SingleSelectionModel<FXModel>();
         table.setSelectionModel(selectionModel);
 
-        TextColumn<FXModel> idCol = new TextColumn<FXModel>() {
+
+        TextColumn<FXModel> descCol = new TextColumn<FXModel>() {
             @Override
             public String getValue(FXModel FXModel) {
-                return FXModel.getId();
+                return FXModel.getDescription();
             }
 
         };
-
         TextColumn<FXModel> typeCol = new TextColumn<FXModel>() {
             @Override
             public String getValue(FXModel FXModel) {
@@ -75,8 +73,8 @@ public class FXModelsView {
             }
         };
 
-        table.addColumn(idCol, "ID");
         table.addColumn(typeCol, "Execution Type");
+        table.addColumn(descCol, "Description");
 
         ToolStrip toolstrip = new ToolStrip();
         ToolButton addBtn = new ToolButton("Add", new ClickHandler() {
@@ -136,20 +134,13 @@ public class FXModelsView {
 
                 if(modelStep!=null)
                 {
-                    Map<String,Object> payload = new HashMap<String,Object>();
-                    payload.put("id", modelStep.getId());
-                    payload.put("description", modelStep.getDescription());
-                    payload.put("address", modelStep.getAddress().asString());
-                    payload.put("execType", modelStep.getType().name());
-                    payload.put("fieldNames", modelStep.getFieldNames());
-
-                    form.edit(payload);
+                    form.edit(modelStep.asModelNode());
                 }
             }
         });
 
 
-        FXFormToolStrip formTools = new FXFormToolStrip(form, new FXFormToolStrip.FormCallback() {
+        SimpleFormToolStrip formTools = new SimpleFormToolStrip(form, new SimpleFormToolStrip.FormCallback() {
             @Override
             public void onSave(Map<String, Object> changeset) {
 
@@ -162,8 +153,8 @@ public class FXModelsView {
                         if(key.equals(attribute))
                         {
                             final Object o = changeset.get(key);
-                            final ModelType dmrType = Types.toDMR(o);
-                            modelNode.get(attribute).set(dmrType, o);
+                            final ModelNode node = Types.toDMR(o);
+                            modelNode.get(attribute).set(node);
                             break;
                         }
                     }
@@ -200,12 +191,12 @@ public class FXModelsView {
         return this.currentTemplate;
     }
 
-    public void setModelSteps(FXTemplate template, List<FXModel> models) {
+    public void setTemplate(FXTemplate template) {
         this.currentTemplate = template;
 
         this.headline.setText("Models: Template '"+template.getName()+"'");
         dataProvider.getList().clear();
-        dataProvider.getList().addAll(models);
+        dataProvider.getList().addAll(template.getModels());
         dataProvider.flush();
         table.selectDefaultEntity();
     }

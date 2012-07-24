@@ -9,6 +9,7 @@ import org.jboss.ballroom.client.widgets.forms.FormValidation;
 import org.jboss.ballroom.client.widgets.forms.GroupRenderer;
 import org.jboss.ballroom.client.widgets.forms.PlainFormView;
 import org.jboss.ballroom.client.widgets.forms.RenderMetaData;
+import org.jboss.dmr.client.ModelNode;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,7 +27,7 @@ public class SimpleForm {
     private int numColumns = 1;
     private List<PlainFormView> plainViews = new ArrayList<PlainFormView>();
     private boolean enabled;
-    private Map<String, Object> snapshot;
+    private ModelNode snapshot;
 
     public void setFields(FormItem... fields)
     {
@@ -34,18 +35,20 @@ public class SimpleForm {
             items.add(item);
     }
 
-    public void edit(Map<String, Object> values)
+    public void edit(ModelNode values)
     {
+        System.out.println("Edit "+values);
+
         this.snapshot = values;
 
-        for(String key : values.keySet())
+        for(String key : values.keys())
         {
             for(FormItem item : items)
             {
                 if(item.getName().equals(key))
                 {
                     item.resetMetaData();
-                    final Object value = values.get(key);
+                    final Object value = Types.fromDmr(values.get(key));
 
                     if(value!=null)
                     {
