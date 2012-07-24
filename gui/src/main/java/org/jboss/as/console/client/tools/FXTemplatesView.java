@@ -42,7 +42,7 @@ public class FXTemplatesView {
 
     }
 
-    public void setPresenter(FXTemplatesPresenter presenter) {
+    public void setPresenter(BrowserPresenter presenter) {
         this.presenter = presenter;
         modelStepView.setPresenter(presenter);
     }

@@ -3,18 +3,20 @@ package org.jboss.as.console.client.tools;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.cellview.client.TextColumn;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.ProvidesKey;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.viewframework.builder.MultipleToOneLayout;
 import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
 import org.jboss.ballroom.client.widgets.forms.ComboBoxItem;
 import org.jboss.ballroom.client.widgets.forms.ListItem;
 import org.jboss.ballroom.client.widgets.forms.TextAreaItem;
-import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
 import org.jboss.ballroom.client.widgets.forms.TextItem;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
@@ -29,13 +31,14 @@ import java.util.Map;
  */
 public class FXModelsView {
 
-    private FXTemplatesPresenter presenter;
+    private BrowserPresenter presenter;
     private DefaultCellTable<FXModel> table;
     private ListDataProvider<FXModel> dataProvider;
     private FXTemplate currentTemplate  ;
     private ContentHeaderLabel headline;
+    private VerticalPanel previewContainer;
 
-    public void setPresenter(FXTemplatesPresenter presenter) {
+    public void setPresenter(BrowserPresenter presenter) {
         this.presenter = presenter;
     }
 
@@ -163,12 +166,47 @@ public class FXModelsView {
         formLayout.add(formTools.asWidget());
         formLayout.add(form.asWidget());
 
+        VerticalPanel formPreview = new VerticalPanel();
+        formPreview.setStyleName("fill-layout-width");
+
+
+        ToolStrip previewTools = new ToolStrip();
+        previewTools.addToolButtonRight(new ToolButton("Render", new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent clickEvent) {
+                final String templateId = getCurrentTemplate().getId();
+                final String modelId = selectionModel.getSelectedObject().getId();
+                presenter.createFormProxy(
+                        templateId,
+                        modelId,
+                        new AsyncCallback<FormProxy>() {
+                            @Override
+                            public void onFailure(Throwable t) {
+                                t.printStackTrace();
+                            }
+
+                            @Override
+                            public void onSuccess(FormProxy formProxy) {
+                                previewContainer.clear();
+                                previewContainer.add(formProxy.asWidget());
+                            }
+                        }
+                );
+            }
+        }));
+
+        previewContainer = new VerticalPanel();
+        previewContainer.setStyleName("fill-layout");
+        formPreview.add(previewTools);
+        formPreview.add(previewContainer);
+
         MultipleToOneLayout layout = new MultipleToOneLayout()
                 .setHeadlineWidget(headline)
                 .setPlain(true)
                 .setDescription("The actual model steps involved when working with a template.")
                 .setMaster("Available Model Steps", table)
-                .setDetail("Detail", formLayout);
+                .addDetail("MetaData", formLayout)
+                .addDetail("Form Preview", formPreview);
 
         return layout.build();
     }
