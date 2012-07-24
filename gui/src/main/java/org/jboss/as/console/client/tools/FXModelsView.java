@@ -4,14 +4,12 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.ProvidesKey;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
-import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.viewframework.builder.MultipleToOneLayout;
 import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
 import org.jboss.ballroom.client.widgets.forms.ComboBoxItem;
@@ -37,6 +35,7 @@ public class FXModelsView {
     private FXTemplate currentTemplate  ;
     private ContentHeaderLabel headline;
     private VerticalPanel previewContainer;
+    private FormProxy formProxy = null;
 
     public void setPresenter(BrowserPresenter presenter) {
         this.presenter = presenter;
@@ -187,11 +186,43 @@ public class FXModelsView {
 
                             @Override
                             public void onSuccess(FormProxy formProxy) {
+                                FXModelsView.this.formProxy = formProxy;
                                 previewContainer.clear();
                                 previewContainer.add(formProxy.asWidget());
                             }
                         }
                 );
+            }
+        }));
+
+        previewTools.addToolButtonRight(new ToolButton("Get Data", new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent clickEvent) {
+
+                if(FXModelsView.this.formProxy==null
+                        &&  FXModelsView.this.formProxy.hasData()==false)
+                {
+                    // not initialized or no data
+                    return;
+                }
+
+
+                final String templateId = getCurrentTemplate().getId();
+                final String modelId = selectionModel.getSelectedObject().getId();
+                presenter.getProxyData(templateId, modelId, new AsyncCallback<ModelNode>() {
+                    @Override
+                    public void onFailure(Throwable t) {
+                        t.printStackTrace();
+                    }
+
+                    @Override
+                    public void onSuccess(ModelNode modelNode) {
+                        if(FXModelsView.this.formProxy!=null)
+                        {
+                            FXModelsView.this.formProxy.edit(modelNode);
+                        }
+                    }
+                });
             }
         }));
 

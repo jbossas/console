@@ -274,4 +274,33 @@ public class BrowserPresenter extends PresenterWidget<BrowserPresenter.MyView>
             }}
         );
     }
+
+    @Override
+    public void getProxyData(String templateId, String modelId, final AsyncCallback<ModelNode> callback) {
+
+        final FXTemplate fxTemplate = storage.loadTemplate(templateId);
+        final FXModel fxModel = fxTemplate.getModel(modelId);
+
+        ModelNode resourceOp  = new ModelNode();
+        resourceOp.get(ADDRESS).set(fxModel.getAddress());
+        resourceOp.get(OP).set(READ_RESOURCE_OPERATION);
+
+        dispatcher.execute(new DMRAction(resourceOp), new SimpleCallback<DMRResponse>() {
+            @Override
+            public void onSuccess(DMRResponse dmrResponse) {
+
+                final ModelNode response = dmrResponse.get();
+
+                if(response.isFailure())
+                {
+                    Console.error("Failed to load resource data", response.getFailureDescription());
+                }
+                else
+                {
+                    final ModelNode result = response.get(RESULT).asObject();
+                    callback.onSuccess(result);
+                }
+            }}
+        );
+    }
 }

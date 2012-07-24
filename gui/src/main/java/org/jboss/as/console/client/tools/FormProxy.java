@@ -25,6 +25,7 @@ public class FormProxy {
     private SimpleForm form;
     private FXFormManager manager;
     private VerticalPanel formLayout;
+    private boolean hasBeenInitialized;
 
     public FormProxy(FXModel model, ModelNode dmrDescription, FXFormManager manager) {
         this.model = model;
@@ -108,6 +109,8 @@ public class FormProxy {
                 System.out.println("create "+items.size()+ " items");
                 form.setFields(items.toArray(new FormItem[0]));
                 formLayout.add(form.asWidget());
+
+                hasBeenInitialized = true;
             }
         });
     }
@@ -134,5 +137,17 @@ public class FormProxy {
     public Widget asWidget() {
 
         return formLayout;
+    }
+
+    public void edit(ModelNode payload) {
+
+        if(!hasBeenInitialized)
+            throw new RuntimeException("Form has not been initialized!");
+
+        form.edit(payload);
+    }
+
+    public boolean hasData() {
+        return (model.getType() != FXModel.ExecutionType.CREATE);
     }
 }

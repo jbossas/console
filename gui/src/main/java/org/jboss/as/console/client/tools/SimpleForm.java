@@ -53,7 +53,8 @@ public class SimpleForm {
                 if(item.getName().equals(key))
                 {
                     item.resetMetaData();
-                    final Object value = Types.fromDmr(values.get(key));
+                    final ModelNode attributeNode = values.get(key);
+                    final Object value = Types.fromDmr(attributeNode);
 
                     if(value!=null)
                     {
@@ -66,7 +67,6 @@ public class SimpleForm {
                         item.setModified(true); // don't escape validation
                     }
 
-                    item.setValue(value);
                     break;
                 }
             }
