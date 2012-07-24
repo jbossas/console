@@ -25,7 +25,7 @@ import static org.jboss.dmr.client.ModelDescriptionConstants.*;
  * @author Heiko Braun
  * @date 6/15/12
  */
-public class BrowserPresenter extends PresenterWidget<BrowserPresenter.MyView> implements StoragePresenter{
+public class BrowserPresenter extends PresenterWidget<BrowserPresenter.MyView> implements FXTemplatesPresenter {
 
     private final PlaceManager placeManager;
     private DispatchAsync dispatcher;

@@ -23,9 +23,9 @@ import java.util.List;
  */
 public class NewFXTemplateWizard {
 
-    private StoragePresenter presenter;
+    private FXTemplatesPresenter presenter;
 
-    public NewFXTemplateWizard(StoragePresenter presenter) {
+    public NewFXTemplateWizard(FXTemplatesPresenter presenter) {
         this.presenter = presenter;
     }
 
