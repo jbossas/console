@@ -50,7 +50,10 @@ public class DescriptionMapper {
                     final boolean required = att.getValue().hasDefined("required") ?
                             att.getValue().get("required").asBoolean() : false;
 
-                    mapping.onAttribute(name, description, type, required);
+                    final boolean nillable = att.getValue().hasDefined("nillable") ?
+                            att.getValue().get("nillable").asBoolean() : true;
+
+                    mapping.onAttribute(name, description, type, !nillable||required);
                 }
 
             }
