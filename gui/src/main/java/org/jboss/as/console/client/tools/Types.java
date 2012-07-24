@@ -91,6 +91,10 @@ public class Types {
         {
             result = attributeNode.asString();
         }
+        else if(ModelType.UNDEFINED== attributeType)
+        {
+            result = null;
+        }
         else if(ModelType.INT == attributeType)
         {
             result = attributeNode.asInt();
