@@ -98,7 +98,7 @@ public class FXModelsView {
         final SimpleForm form = new SimpleForm();
         form.setNumColumns(2);
         final TextItem id = new TextItem("id", "ID");
-        final TextBoxItem desc = new TextBoxItem("description", "Description", true);
+        final TextAreaItem desc = new TextAreaItem("description", "Description", true);
         final TextAreaItem address = new TextAreaItem("address", "Address", true);
         final ComboBoxItem type = new ComboBoxItem("execType", "ExecType")
         {

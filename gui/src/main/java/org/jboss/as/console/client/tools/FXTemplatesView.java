@@ -36,6 +36,7 @@ public class FXTemplatesView {
     private ListDataProvider<FXTemplate> dataProvider;
     private PagedView pages;
     private FXModelsView modelStepView;
+    private SimpleForm form;
 
     public FXTemplatesView() {
 
@@ -113,7 +114,7 @@ public class FXTemplatesView {
         toolstrip.addToolButtonRight(removeBtn);
 
 
-        final SimpleForm form = new SimpleForm();
+        form = new SimpleForm();
         final TextItem id = new TextItem("id", "ID");
         final TextAreaItem name = new TextAreaItem("name", "Name", true);
         form.setFields(id, name);
@@ -176,6 +177,7 @@ public class FXTemplatesView {
     }
 
     public void setTemplates(Set<FXTemplate> fxTemplates) {
+        form.clearValues();
         dataProvider.getList().clear();
         dataProvider.getList().addAll(fxTemplates);
         dataProvider.flush();
