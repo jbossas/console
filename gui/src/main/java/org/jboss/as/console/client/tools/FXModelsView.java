@@ -200,9 +200,10 @@ public class FXModelsView {
             public void onClick(ClickEvent clickEvent) {
 
                 if(FXModelsView.this.formProxy==null
-                        &&  FXModelsView.this.formProxy.hasData()==false)
+                        ||  FXModelsView.this.formProxy.hasData()==false)
                 {
                     // not initialized or no data
+                    System.out.println("not initialized or no data");
                     return;
                 }
 

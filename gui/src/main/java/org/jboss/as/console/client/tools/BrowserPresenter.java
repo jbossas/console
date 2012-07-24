@@ -268,8 +268,19 @@ public class BrowserPresenter extends PresenterWidget<BrowserPresenter.MyView>
                 }
                 else
                 {
-                    final ModelNode result = response.get(RESULT).asObject();
-                    callback.onSuccess(new FormProxy(fxModel, result, BrowserPresenter.this));
+                    final ModelNode result = response.get(RESULT);
+                    ModelNode actualDescriptionNode = null;
+                    if(ModelType.LIST==result.getType()) // in case of wildcard requests
+                    {
+                        final ModelNode node = result.asList().get(0).asObject();
+                        actualDescriptionNode = node.get(RESULT).asObject();
+                    }
+                    else
+                    {
+                        actualDescriptionNode = result;
+                    }
+
+                    callback.onSuccess(new FormProxy(fxModel, actualDescriptionNode, BrowserPresenter.this));
                 }
             }}
         );
