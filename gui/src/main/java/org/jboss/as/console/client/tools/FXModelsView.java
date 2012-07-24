@@ -145,19 +145,7 @@ public class FXModelsView {
 
                 final FXModel modelStep = selectionModel.getSelectedObject();
                 final ModelNode modelNode = modelStep.asModelNode();
-                for(String key : changeset.keySet())
-                {
-                    for(String attribute : modelNode.keys())
-                    {
-                        if(key.equals(attribute))
-                        {
-                            final Object o = changeset.get(key);
-                            final ModelNode node = Types.toDMR(o);
-                            modelNode.get(attribute).set(node);
-                            break;
-                        }
-                    }
-                }
+                DMR.mergeChanges(modelNode, changeset);
 
                 getCurrentTemplate().removeModel(modelStep.getId());
                 getCurrentTemplate().getModels().add(FXModel.fromModelNode(modelNode));

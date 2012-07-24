@@ -142,19 +142,7 @@ public class FXTemplatesView {
 
                 final FXTemplate template = selectionModel.getSelectedObject();
                 final ModelNode modelNode = template.asModelNode();
-                for(String key : changeset.keySet())
-                {
-                    for(String attribute : modelNode.keys())
-                    {
-                        if(key.equals(attribute))
-                        {
-                            final Object o = changeset.get(key);
-                            final ModelNode node = Types.toDMR(o);
-                            modelNode.get(attribute).set(node);
-                            break;
-                        }
-                    }
-                }
+                DMR.mergeChanges(modelNode, changeset);
 
                 presenter.onUpdateTemplate(FXTemplate.fromModelNode(modelNode));
             }
