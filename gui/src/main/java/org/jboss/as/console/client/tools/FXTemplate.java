@@ -84,4 +84,21 @@ public class FXTemplate {
             }
         }
     }
+
+    public FXModel getModel(String modelId) {
+        FXModel match = null;
+        for(FXModel model : models)
+        {
+            if(modelId.equals(model.getId()))
+            {
+                match = model;
+                break;
+            }
+        }
+
+        if(null==match)
+            throw new RuntimeException("No model with id "+modelId + " for template "+getId());
+
+        return match;
+    }
 }

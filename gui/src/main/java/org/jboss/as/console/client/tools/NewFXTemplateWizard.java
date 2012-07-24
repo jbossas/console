@@ -74,7 +74,7 @@ public class NewFXTemplateWizard {
                         ModelNode addressNode = new ModelNode();
                         try {
                             List<String[]> tuple = AddressBinding.parseAddressString(address.getValue());
-                            addressNode = new AddressBinding(tuple).asResource();
+                            addressNode = new AddressBinding(tuple).asResource().get("address");
                         } catch (Throwable e) {
                             validation.addError("Invalid address value");
                             address.setErroneous(true);

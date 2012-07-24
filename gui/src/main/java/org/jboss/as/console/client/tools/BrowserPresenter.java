@@ -2,10 +2,12 @@ package org.jboss.as.console.client.tools;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.PopupView;
 import com.gwtplatform.mvp.client.PresenterWidget;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
@@ -25,7 +27,8 @@ import static org.jboss.dmr.client.ModelDescriptionConstants.*;
  * @author Heiko Braun
  * @date 6/15/12
  */
-public class BrowserPresenter extends PresenterWidget<BrowserPresenter.MyView> implements FXTemplatesPresenter {
+public class BrowserPresenter extends PresenterWidget<BrowserPresenter.MyView>
+        implements FXTemplatesPresenter, FXFormManager {
 
     private final PlaceManager placeManager;
     private DispatchAsync dispatcher;
@@ -242,5 +245,33 @@ public class BrowserPresenter extends PresenterWidget<BrowserPresenter.MyView> i
 
     }
 
+    @Override
+    public void createFormProxy(String templateId, String modelId, final AsyncCallback<FormProxy> callback) {
 
+        final FXTemplate fxTemplate = storage.loadTemplate(templateId);
+        final FXModel fxModel = fxTemplate.getModel(modelId);
+
+        ModelNode descriptionOp  = new ModelNode();
+        descriptionOp.get(ADDRESS).set(fxModel.getAddress());
+        descriptionOp.get(OP).set(READ_RESOURCE_DESCRIPTION_OPERATION);
+        descriptionOp.get(OPERATIONS).set(true);
+
+        dispatcher.execute(new DMRAction(descriptionOp), new SimpleCallback<DMRResponse>() {
+            @Override
+            public void onSuccess(DMRResponse dmrResponse) {
+
+                final ModelNode response = dmrResponse.get();
+
+                if(response.isFailure())
+                {
+                    Console.error("Failed to load DMR description", response.getFailureDescription());
+                }
+                else
+                {
+                    final ModelNode result = response.get(RESULT).asObject();
+                    callback.onSuccess(new FormProxy(fxModel, result, BrowserPresenter.this));
+                }
+            }}
+        );
+    }
 }
