@@ -15,13 +15,14 @@ import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.viewframework.builder.MultipleToOneLayout;
 import org.jboss.as.console.client.widgets.pages.PagedView;
 import org.jboss.as.console.client.widgets.tables.TextLinkCell;
-import org.jboss.ballroom.client.widgets.forms.Form;
-import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
+import org.jboss.ballroom.client.widgets.forms.TextAreaItem;
 import org.jboss.ballroom.client.widgets.forms.TextItem;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
 import org.jboss.ballroom.client.widgets.tools.ToolStrip;
+import org.jboss.dmr.client.ModelNode;
 
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -63,13 +64,6 @@ public class FXTemplatesView {
         final SingleSelectionModel<FXTemplate> selectionModel = new SingleSelectionModel<FXTemplate>();
         table.setSelectionModel(selectionModel);
 
-        TextColumn<FXTemplate> idCol = new TextColumn<FXTemplate>() {
-            @Override
-            public String getValue(FXTemplate fxTemplate) {
-                return fxTemplate.getId();
-            }
-
-        };
 
         TextColumn<FXTemplate> nameCol = new TextColumn<FXTemplate>() {
             @Override
@@ -78,17 +72,16 @@ public class FXTemplatesView {
             }
         };
 
-        table.addColumn(idCol, "ID");
         table.addColumn(nameCol, "Name");
 
         Column<FXTemplate, FXTemplate> option = new Column<FXTemplate, FXTemplate>(
                 new TextLinkCell<FXTemplate>(Console.CONSTANTS.common_label_view(),
                         new ActionCell.Delegate<FXTemplate>() {
-                    @Override
-                    public void execute(FXTemplate selection) {
-                        pages.showPage(1);
-                    }
-                })
+                            @Override
+                            public void execute(FXTemplate selection) {
+                                pages.showPage(1);
+                            }
+                        })
         ) {
 
             @Override
@@ -120,9 +113,9 @@ public class FXTemplatesView {
         toolstrip.addToolButtonRight(removeBtn);
 
 
-        final Form<Object> form = new Form(Object.class);
+        final SimpleForm form = new SimpleForm();
         final TextItem id = new TextItem("id", "ID");
-        final TextBoxItem name = new TextBoxItem("name", "Name", true);
+        final TextAreaItem name = new TextAreaItem("name", "Name", true);
         form.setFields(id, name);
 
         modelStepView = new FXModelsView();
@@ -135,16 +128,46 @@ public class FXTemplatesView {
 
                 if(template!=null)
                 {
-                    id.setValue(template.getId());
-                    name.setValue(template.getName());
+                    form.edit(template.asModelNode());
 
                     // update the model step views
-                    modelStepView.setModelSteps(template, template.getModels());
+                    modelStepView.setTemplate(template);
                 }
             }
         });
 
+        SimpleFormToolStrip formTools = new SimpleFormToolStrip(form, new SimpleFormToolStrip.FormCallback() {
+            @Override
+            public void onSave(Map<String, Object> changeset) {
+
+                final FXTemplate template = selectionModel.getSelectedObject();
+                final ModelNode modelNode = template.asModelNode();
+                for(String key : changeset.keySet())
+                {
+                    for(String attribute : modelNode.keys())
+                    {
+                        if(key.equals(attribute))
+                        {
+                            final Object o = changeset.get(key);
+                            final ModelNode node = Types.toDMR(o);
+                            modelNode.get(attribute).set(node);
+                            break;
+                        }
+                    }
+                }
+
+                presenter.onUpdateTemplate(FXTemplate.fromModelNode(modelNode));
+            }
+
+            @Override
+            public void onDelete(Object entity) {
+
+            }
+        }) ;
+
         VerticalPanel formLayout = new VerticalPanel();
+        formLayout.setStyleName("fill-layout-width");
+        formLayout.add(formTools.asWidget());
         formLayout.add(form.asWidget());
 
         MultipleToOneLayout layout = new MultipleToOneLayout()

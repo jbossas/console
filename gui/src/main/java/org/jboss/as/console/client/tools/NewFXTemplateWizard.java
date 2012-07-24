@@ -33,9 +33,10 @@ public class NewFXTemplateWizard {
         VerticalPanel layout = new VerticalPanel();
         layout.addStyleName("window-content");
 
-        final Form<Object> form = new Form(Object.class);
+        final SimpleForm form = new SimpleForm();
+        form.setEnabled(true);
 
-        final TextBoxItem name = new TextBoxItem("name", "Name", true);
+        final TextAreaItem name = new TextAreaItem("name", "Name", true);
         final TextAreaItem address = new TextAreaItem("address", "Address", true);
         final ComboBoxItem type = new ComboBoxItem("execType", "ExecType")
         {
@@ -44,7 +45,6 @@ public class NewFXTemplateWizard {
                 return true;
             }
         };
-
 
         type.setValueMap(new String[] {
                 FXModel.ExecutionType.CREATE.name(),

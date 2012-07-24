@@ -73,6 +73,7 @@ public class FXModel {
 
     public ModelNode asModelNode() {
         ModelNode modelNode = new ModelNode();
+        modelNode.get("id").set(id);
         modelNode.get("execType").set(type.name());
         modelNode.get("address").set(address);
         modelNode.get("description").set(description);
@@ -85,6 +86,7 @@ public class FXModel {
 
     public static FXModel fromModelNode(ModelNode modelNode) {
 
+        final String id = modelNode.get("id").asString();
         final String type = modelNode.get("execType").asString();
         final ModelNode address = modelNode.get("address").asObject();
         String description = modelNode.get("description").asString();
@@ -97,7 +99,12 @@ public class FXModel {
         final FXModel fxModel = new FXModel(ExecutionType.valueOf(type), address);
         fxModel.getFieldNames().addAll(values);
         fxModel.setDescription(description);
+        fxModel.setId(id);
         return fxModel;
+    }
+
+    private void setId(String id) {
+        this.id = id;
     }
 
 }

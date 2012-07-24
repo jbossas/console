@@ -37,6 +37,11 @@ public class FXTemplate {
     public static FXTemplate fromBase64(String encoded) {
 
         ModelNode modelNode = ModelNode.fromBase64(encoded);
+        return fromModelNode(modelNode);
+    }
+
+    public static FXTemplate fromModelNode(ModelNode modelNode)
+    {
         final String name = modelNode.get("name").asString();
         final String id = modelNode.get("id").asString();
 

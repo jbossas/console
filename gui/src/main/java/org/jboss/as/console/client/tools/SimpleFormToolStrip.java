@@ -19,7 +19,7 @@ import java.util.Map;
  * @author Heiko Braun
  * @date 9/19/11
  */
-public class FXFormToolStrip {
+public class SimpleFormToolStrip {
 
     private SimpleForm form = null;
     private FormCallback callback;
@@ -38,12 +38,12 @@ public class FXFormToolStrip {
     }
 
 
-    public FXFormToolStrip(SimpleForm form, FormCallback callback) {
+    public SimpleFormToolStrip(SimpleForm form, FormCallback callback) {
         this.form = form;
         this.callback = callback;
     }
 
-    public FXFormToolStrip(SimpleForm form, FormCallback callback, String deleteOpName) {
+    public SimpleFormToolStrip(SimpleForm form, FormCallback callback, String deleteOpName) {
         this.form = form;
         this.callback = callback;
         this.deleteOpName = deleteOpName;

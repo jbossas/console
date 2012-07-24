@@ -1,6 +1,10 @@
 package org.jboss.as.console.client.tools;
 
+import org.jboss.dmr.client.ModelNode;
 import org.jboss.dmr.client.ModelType;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Heiko Braun
@@ -8,8 +12,47 @@ import org.jboss.dmr.client.ModelType;
  */
 public class Types {
 
-    public static ModelType toDMR(Object o) {
-        return resolveModelType(o.getClass().getName());
+    public static ModelNode toDMR(Object o) {
+        ModelNode node = new ModelNode();
+        final ModelType attributeType = resolveModelType(o.getClass().getName());
+
+        if(ModelType.STRING == attributeType)
+        {
+            node.set((String)o);
+        }
+        else if(ModelType.INT == attributeType)
+        {
+            node.set((Integer)o);
+        }
+        else if(ModelType.LONG == attributeType)
+        {
+            node.set((Long)o);
+        }
+        else if(ModelType.BOOLEAN == attributeType)
+        {
+            node.set((Boolean)o);
+        }
+        else if(ModelType.DOUBLE == attributeType)
+        {
+            node.set((Double)o);
+        }
+        else if(ModelType.LIST == attributeType)
+        {
+            final List<ModelNode> nodeList = node.asList();
+            node.setEmptyList();
+            for(ModelNode item : nodeList)
+                node.add(item.toString());
+
+        }
+        else if (ModelType.OBJECT == attributeType)
+        {
+            node.set(o.toString());
+        }
+        else {
+            throw new RuntimeException("Unsupported type "+attributeType);
+        }
+
+        return node;
     }
 
     private static ModelType resolveModelType(String javaTypeName) {
@@ -37,6 +80,51 @@ public class Types {
         }
 
         return type;
+    }
+
+    public static Object fromDmr(ModelNode attributeNode) {
+
+        Object result = null;
+        final ModelType attributeType = attributeNode.getType();
+
+        if(ModelType.STRING == attributeType)
+        {
+            result = attributeNode.asString();
+        }
+        else if(ModelType.INT == attributeType)
+        {
+            result = attributeNode.asInt();
+        }
+        else if(ModelType.LONG == attributeType)
+        {
+            result = attributeNode.asLong();
+        }
+        else if(ModelType.BOOLEAN == attributeType)
+        {
+            result = attributeNode.asBoolean();
+        }
+        else if(ModelType.DOUBLE == attributeType)
+        {
+            result = attributeNode.asDouble();
+        }
+        else if(ModelType.LIST == attributeType)
+        {
+            final List<ModelNode> nodeList = attributeNode.asList();
+            List list = new ArrayList(nodeList.size());
+            for(ModelNode item : nodeList)
+                list.add(item.toString());
+
+            result = list;
+        }
+        else if(ModelType.OBJECT == attributeType)
+        {
+            result = attributeNode.asString();
+        }
+        else {
+            throw new RuntimeException("Unsupported type "+attributeType);
+        }
+
+        return result;
     }
 
 }
