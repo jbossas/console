@@ -48,6 +48,7 @@ import org.jboss.ballroom.client.widgets.ContentGroupLabel;
 import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
 import org.jboss.ballroom.client.widgets.icons.Icons;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
+import org.jboss.ballroom.client.widgets.tables.DefaultPager;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
 import org.jboss.ballroom.client.widgets.tools.ToolStrip;
 import org.jboss.ballroom.client.widgets.window.Feedback;
@@ -185,6 +186,9 @@ public class XADataSourceEditor implements PropertyManagement {
         vpanel.add(topLevelTools.asWidget());
         vpanel.add(dataSourceTable);
 
+        DefaultPager pager = new DefaultPager();
+        pager.setDisplay(dataSourceTable);
+        vpanel.add(pager);
 
         // -----------
         details = new XADataSourceDetails(presenter);
