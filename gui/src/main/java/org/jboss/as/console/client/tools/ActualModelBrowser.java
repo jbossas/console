@@ -18,7 +18,8 @@ import org.jboss.dmr.client.ModelType;
 import org.jboss.dmr.client.Property;
 
 import java.util.List;
-import static org.jboss.dmr.client.ModelDescriptionConstants.*;
+
+import static org.jboss.dmr.client.ModelDescriptionConstants.RESULT;
 
 /**
  * @author Heiko Braun
