@@ -13,11 +13,16 @@ import org.jboss.dmr.client.ModelNode;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 /**
+ *
+ * A form that works on DMR values (opposed to GWT autobeans).
+ *
  * @author Heiko Braun
  * @date 7/23/12
  */
@@ -37,7 +42,7 @@ public class SimpleForm {
 
     public void edit(ModelNode values)
     {
-        System.out.println("Edit "+values);
+        //System.out.println("Edit "+values);
 
         this.snapshot = values;
 
@@ -118,7 +123,7 @@ public class SimpleForm {
         GroupRenderer groupRenderer = new DefaultGroupRenderer();;
 
 
-        Map<String, FormItem> groupItems = new HashMap<String, FormItem>();
+        Map<String, FormItem> groupItems = new LinkedHashMap<String, FormItem>();
         for(FormItem item : items)
         {
             groupItems.put(item.getName(), item);
@@ -129,7 +134,7 @@ public class SimpleForm {
         editPanel.add(widget);
 
         // plain view
-        PlainFormView plainView = new PlainFormView(new ArrayList<FormItem>(groupItems.values()));
+        PlainFormView plainView = new PlainFormView(items);
         plainView.setNumColumns(numColumns);
         plainViews.add(plainView);
         viewPanel.add(groupRenderer.renderPlain(metaData, "default", plainView));
