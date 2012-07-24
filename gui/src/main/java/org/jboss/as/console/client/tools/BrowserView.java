@@ -43,7 +43,7 @@ public class BrowserView extends PopupViewImpl implements BrowserPresenter.MyVie
     private DescriptionView descView;
     private DefaultWindow window;
     private FormView formView;
-    private StorageView storageView;
+    private FXTemplatesView storageView;
 
 
     @Inject
@@ -100,7 +100,7 @@ public class BrowserView extends PopupViewImpl implements BrowserPresenter.MyVie
         descView = new DescriptionView();
         formView = new FormView();
 
-        storageView = new StorageView();
+        storageView = new FXTemplatesView();
 
         DefaultTabLayoutPanel tabLayoutPanel = new DefaultTabLayoutPanel(40, Style.Unit.PX);
         tabLayoutPanel.addStyleName("default-tabpanel");

@@ -10,6 +10,7 @@ import com.google.gwt.view.client.ProvidesKey;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 import org.jboss.as.console.client.shared.viewframework.builder.MultipleToOneLayout;
+import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
 import org.jboss.ballroom.client.widgets.forms.ComboBoxItem;
 import org.jboss.ballroom.client.widgets.forms.ListItem;
 import org.jboss.ballroom.client.widgets.forms.TextAreaItem;
@@ -29,18 +30,21 @@ import java.util.Map;
  * @author Heiko Braun
  * @date 7/23/12
  */
-public class TemplateModelsView {
+public class FXModelsView {
 
-    private StoragePresenter presenter;
+    private FXTemplatesPresenter presenter;
     private DefaultCellTable<FXModel> table;
     private ListDataProvider<FXModel> dataProvider;
     private FXTemplate currentTemplate  ;
+    private ContentHeaderLabel headline;
 
-    public void setPresenter(StoragePresenter presenter) {
+    public void setPresenter(FXTemplatesPresenter presenter) {
         this.presenter = presenter;
     }
 
     Widget asWidget() {
+
+        headline = new ContentHeaderLabel();
 
         table = new DefaultCellTable<FXModel>(8,
                 new ProvidesKey<FXModel>() {
@@ -182,7 +186,7 @@ public class TemplateModelsView {
         formLayout.add(form.asWidget());
 
         MultipleToOneLayout layout = new MultipleToOneLayout()
-                .setHeadline("Model Steps")
+                .setHeadlineWidget(headline)
                 .setPlain(true)
                 .setDescription("The actual model steps involved when working with a template.")
                 .setMaster("Available Model Steps", table)
@@ -198,6 +202,8 @@ public class TemplateModelsView {
 
     public void setModelSteps(FXTemplate template, List<FXModel> models) {
         this.currentTemplate = template;
+
+        this.headline.setText("Models: Template '"+template.getName()+"'");
         dataProvider.getList().clear();
         dataProvider.getList().addAll(models);
         dataProvider.flush();

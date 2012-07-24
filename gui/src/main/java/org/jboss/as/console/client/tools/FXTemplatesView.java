@@ -28,19 +28,19 @@ import java.util.Set;
  * @author Heiko Braun
  * @date 7/23/12
  */
-public class StorageView {
+public class FXTemplatesView {
 
-    private StoragePresenter presenter;
+    private FXTemplatesPresenter presenter;
     private DefaultCellTable<FXTemplate> table;
     private ListDataProvider<FXTemplate> dataProvider;
     private PagedView pages;
-    private TemplateModelsView modelStepView;
+    private FXModelsView modelStepView;
 
-    public StorageView() {
+    public FXTemplatesView() {
 
     }
 
-    public void setPresenter(StoragePresenter presenter) {
+    public void setPresenter(FXTemplatesPresenter presenter) {
         this.presenter = presenter;
         modelStepView.setPresenter(presenter);
     }
@@ -125,7 +125,7 @@ public class StorageView {
         final TextBoxItem name = new TextBoxItem("name", "Name", true);
         form.setFields(id, name);
 
-        modelStepView = new TemplateModelsView();
+        modelStepView = new FXModelsView();
 
         table.getSelectionModel().addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
             @Override
@@ -152,7 +152,7 @@ public class StorageView {
                 .setPlain(true)
                 .setDescription("UI Templates for generic model updates.")
                 .setMaster("Available Templates", table)
-                .setTopLevelTools(toolstrip)
+                .setMasterTools(toolstrip)
                 .setDetail("Detail", formLayout);
 
 
