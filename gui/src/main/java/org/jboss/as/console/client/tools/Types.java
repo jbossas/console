@@ -38,9 +38,9 @@ public class Types {
         }
         else if(ModelType.LIST == attributeType)
         {
-            final List<ModelNode> nodeList = node.asList();
             node.setEmptyList();
-            for(ModelNode item : nodeList)
+            List list = (List)o;
+            for(Object item : list)
                 node.add(item.toString());
 
         }
@@ -112,7 +112,7 @@ public class Types {
             final List<ModelNode> nodeList = attributeNode.asList();
             List list = new ArrayList(nodeList.size());
             for(ModelNode item : nodeList)
-                list.add(item.toString());
+                list.add(item.asString());
 
             result = list;
         }
