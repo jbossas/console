@@ -112,8 +112,14 @@ public class DescriptionView {
             public void onAttribute(String name, String description, String type, boolean required) {
 
                 attributeBuilder.appendHtmlConstant("<tr valign=top>");
-                attributeBuilder.appendHtmlConstant("<td class='doc-attribute'>").appendEscaped(name).appendHtmlConstant("</td>");
-                attributeBuilder.appendHtmlConstant("<td>").appendEscaped(type).appendHtmlConstant("</td>");
+                attributeBuilder.appendHtmlConstant("<td class='doc-attribute'>");
+                attributeBuilder.appendEscaped(name);
+                attributeBuilder.appendHtmlConstant("</td>");
+                attributeBuilder.appendHtmlConstant("<td>");
+                attributeBuilder.appendEscaped(type);
+                String requiredSuffix = required ? " (*)" : "";
+                attributeBuilder.appendEscaped(requiredSuffix);
+                attributeBuilder.appendHtmlConstant("</td>");
                 attributeBuilder.appendHtmlConstant("</tr>");
 
                 attributeBuilder.appendHtmlConstant("<tr class='doc-table-description'>");
