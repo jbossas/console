@@ -11,4 +11,7 @@ public interface FXFormManager {
 
     void createFormProxy(String templateId, String modelId, AsyncCallback<FormProxy> callback);
     void getProxyData(String templateId, String modelId, final AsyncCallback<ModelNode> callback);
+
+    void loadDmrDescription(ModelNode address, final AsyncCallback<ModelNode> callback);
+    void loadResourceData(ModelNode address, final AsyncCallback<ModelNode> callback);
 }

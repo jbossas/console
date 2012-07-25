@@ -251,8 +251,18 @@ public class BrowserPresenter extends PresenterWidget<BrowserPresenter.MyView>
         final FXTemplate fxTemplate = storage.loadTemplate(templateId);
         final FXModel fxModel = fxTemplate.getModel(modelId);
 
+        loadDmrDescription(fxModel.getAddress(), new SimpleCallback<ModelNode>() {
+
+            @Override
+            public void onSuccess(ModelNode modelNode) {
+                callback.onSuccess(new FormProxy(fxModel, modelNode, BrowserPresenter.this));
+            }
+        });
+    }
+
+    public void loadDmrDescription(ModelNode address, final AsyncCallback<ModelNode> callback) {
         ModelNode descriptionOp  = new ModelNode();
-        descriptionOp.get(ADDRESS).set(fxModel.getAddress());
+        descriptionOp.get(ADDRESS).set(address);
         descriptionOp.get(OP).set(READ_RESOURCE_DESCRIPTION_OPERATION);
         descriptionOp.get(OPERATIONS).set(true);
 
@@ -280,7 +290,7 @@ public class BrowserPresenter extends PresenterWidget<BrowserPresenter.MyView>
                         actualDescriptionNode = result;
                     }
 
-                    callback.onSuccess(new FormProxy(fxModel, actualDescriptionNode, BrowserPresenter.this));
+                    callback.onSuccess(actualDescriptionNode);
                 }
             }}
         );
@@ -291,9 +301,13 @@ public class BrowserPresenter extends PresenterWidget<BrowserPresenter.MyView>
 
         final FXTemplate fxTemplate = storage.loadTemplate(templateId);
         final FXModel fxModel = fxTemplate.getModel(modelId);
+        loadResourceData(fxModel.getAddress(), callback);
+    }
 
+    public void loadResourceData(ModelNode address, final AsyncCallback<ModelNode> callback)
+    {
         ModelNode resourceOp  = new ModelNode();
-        resourceOp.get(ADDRESS).set(fxModel.getAddress());
+        resourceOp.get(ADDRESS).set(address);
         resourceOp.get(OP).set(READ_RESOURCE_OPERATION);
 
         dispatcher.execute(new DMRAction(resourceOp), new SimpleCallback<DMRResponse>() {
