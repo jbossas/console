@@ -49,7 +49,8 @@ public class FormProxy {
             public void onAttribute(String name, String description, String type, boolean required) {
 
                 // whitelist
-                if(!model.getFieldNames().contains(name))
+                if(model.getFieldNames().size()>0
+                    && !model.getFieldNames().contains(name))
                     return;
 
                 if("STRING".equals(type))
