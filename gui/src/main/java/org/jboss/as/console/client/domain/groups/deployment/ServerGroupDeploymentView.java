@@ -11,18 +11,23 @@ import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.ProvidesKey;
 import com.google.gwt.view.client.SingleSelectionModel;
 import org.jboss.as.console.client.Console;
+import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.shared.deployment.DeployCommandExecutor;
 import org.jboss.as.console.client.shared.deployment.DeploymentCommand;
 import org.jboss.as.console.client.shared.deployment.DeploymentCommandDelegate;
 import org.jboss.as.console.client.shared.deployment.TitleColumn;
 import org.jboss.as.console.client.shared.model.DeploymentRecord;
 import org.jboss.as.console.client.shared.viewframework.builder.MultipleToOneLayout;
+import org.jboss.ballroom.client.widgets.ContentGroupLabel;
+import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.TextAreaItem;
 import org.jboss.ballroom.client.widgets.icons.Icons;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
 import org.jboss.ballroom.client.widgets.tools.ToolStrip;
+
+import java.util.List;
 
 /**
  * @author Heiko Braun
@@ -33,6 +38,8 @@ public class ServerGroupDeploymentView {
     private DefaultCellTable<DeploymentRecord> table;
     private ListDataProvider<DeploymentRecord> dataProvider;
     private DeployCommandExecutor executor;
+    private ContentHeaderLabel header;
+    private ServerGroupRecord currentSelection;
 
     public ServerGroupDeploymentView(DeployCommandExecutor executor) {
         this.executor = executor;
@@ -118,14 +125,27 @@ public class ServerGroupDeploymentView {
             }
         }));
 
+
+        header = new ContentHeaderLabel();
+
         MultipleToOneLayout layout = new MultipleToOneLayout()
                 .setPlain(true)
-                .setHeadline(Console.CONSTANTS.common_label_contentRepository())
+                .setHeadlineWidget(header)
                 .setMaster(Console.MESSAGES.available("Group Deployments"), table)
                 .setMasterTools(tools)
-                //.setDescription("The content repository contains all deployed content. Contents need to be assigned to sever groups in order to become effective (deployed).")
+                .setDescription("Deployments assigned to this server group.")
                 .addDetail(Console.CONSTANTS.common_label_selection(), form.asWidget());
 
         return layout.build();
+    }
+
+    public void setGroup(ServerGroupRecord selection) {
+        this.currentSelection = selection;
+
+        header.setText("Deployments in group: "+ selection.getGroupName());
+    }
+
+    public void setDeploymentInfo(List<DeploymentRecord> deploymentRecords) {
+        dataProvider.setList(deploymentRecords);
     }
 }

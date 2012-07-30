@@ -13,6 +13,7 @@ import com.google.gwt.view.client.SingleSelectionModel;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.shared.deployment.DeployCommandExecutor;
+import org.jboss.as.console.client.shared.model.DeploymentRecord;
 import org.jboss.as.console.client.shared.viewframework.builder.MultipleToOneLayout;
 import org.jboss.as.console.client.shared.viewframework.builder.SimpleLayout;
 import org.jboss.as.console.client.widgets.ContentDescription;
@@ -22,6 +23,7 @@ import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Heiko Braun
@@ -34,6 +36,7 @@ public class GroupDeploymentsOverview {
     private DefaultCellTable<ServerGroupRecord> serverGroupTable;
     private ListDataProvider<ServerGroupRecord> dataProvider;
     private PagedView panel;
+    private Map<String, List<DeploymentRecord>> deploymentPerGroup;
 
     public GroupDeploymentsOverview(DeployCommandExecutor executor) {
         this.executor = executor;
@@ -76,6 +79,8 @@ public class GroupDeploymentsOverview {
                 new TextLinkCell<ServerGroupRecord>(Console.CONSTANTS.common_label_view(), new ActionCell.Delegate<ServerGroupRecord>() {
                     @Override
                     public void execute(ServerGroupRecord selection) {
+                        groupDeployments.setGroup(selection);
+                        groupDeployments.setDeploymentInfo(deploymentPerGroup.get(selection.getGroupName()));
                         panel.showPage(1);
                     }
                 })
@@ -90,7 +95,7 @@ public class GroupDeploymentsOverview {
         SimpleLayout overviewPanel = new SimpleLayout()
                 .setPlain(true)
                 .setHeadline("Server Groups")
-                .setDescription("Deployment contents assigned to specific server groups.")
+                .setDescription("Please chose a server group to assign deployment contents.")
                 .addContent("Available Groups", serverGroupTable.asWidget());
 
         // --
@@ -106,7 +111,6 @@ public class GroupDeploymentsOverview {
         Widget panelWidget = panel.asWidget();
 
         layout.add(panelWidget);
-        //layout.setWidgetLeftWidth(panelWidget, 0, Style.Unit.PX, 100, Style.Unit.PCT);
 
         return layout;
 
@@ -114,5 +118,9 @@ public class GroupDeploymentsOverview {
 
     public void setGroups(List<ServerGroupRecord> serverGroups) {
         dataProvider.setList(serverGroups);
+    }
+
+    public void setGroupDeployments(Map<String, List<DeploymentRecord>> deploymentPerGroup) {
+        this.deploymentPerGroup = deploymentPerGroup;
     }
 }
