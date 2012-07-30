@@ -1,25 +1,19 @@
 package org.jboss.as.console.client.domain.groups.deployment;
 
 import com.google.gwt.cell.client.ActionCell;
-import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.LayoutPanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.ProvidesKey;
 import com.google.gwt.view.client.SingleSelectionModel;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
-import org.jboss.as.console.client.shared.deployment.DeployCommandExecutor;
 import org.jboss.as.console.client.shared.model.DeploymentRecord;
-import org.jboss.as.console.client.shared.viewframework.builder.MultipleToOneLayout;
 import org.jboss.as.console.client.shared.viewframework.builder.SimpleLayout;
-import org.jboss.as.console.client.widgets.ContentDescription;
 import org.jboss.as.console.client.widgets.pages.PagedView;
 import org.jboss.as.console.client.widgets.tables.TextLinkCell;
-import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 
 import java.util.List;
@@ -32,14 +26,14 @@ import java.util.Map;
 public class GroupDeploymentsOverview {
 
     private ServerGroupDeploymentView groupDeployments;
-    private DeployCommandExecutor executor;
+    private DeploymentsPresenter presenter;
     private DefaultCellTable<ServerGroupRecord> serverGroupTable;
     private ListDataProvider<ServerGroupRecord> dataProvider;
     private PagedView panel;
     private Map<String, List<DeploymentRecord>> deploymentPerGroup;
 
-    public GroupDeploymentsOverview(DeployCommandExecutor executor) {
-        this.executor = executor;
+    public GroupDeploymentsOverview(DeploymentsPresenter presenter) {
+        this.presenter = presenter;
     }
 
     Widget asWidget() {
@@ -100,10 +94,10 @@ public class GroupDeploymentsOverview {
 
         // --
 
-        groupDeployments = new ServerGroupDeploymentView(executor);
+        groupDeployments = new ServerGroupDeploymentView(presenter);
 
         panel.addPage(Console.CONSTANTS.common_label_back(), overviewPanel.build());
-        panel.addPage("Group Deployments", groupDeployments.asWidget());
+        panel.addPage("Assigned Contents", groupDeployments.asWidget());
 
         panel.showPage(0);
 

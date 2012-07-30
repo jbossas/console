@@ -12,13 +12,11 @@ import com.google.gwt.view.client.ProvidesKey;
 import com.google.gwt.view.client.SingleSelectionModel;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
-import org.jboss.as.console.client.shared.deployment.DeployCommandExecutor;
 import org.jboss.as.console.client.shared.deployment.DeploymentCommand;
 import org.jboss.as.console.client.shared.deployment.DeploymentCommandDelegate;
 import org.jboss.as.console.client.shared.deployment.TitleColumn;
 import org.jboss.as.console.client.shared.model.DeploymentRecord;
 import org.jboss.as.console.client.shared.viewframework.builder.MultipleToOneLayout;
-import org.jboss.ballroom.client.widgets.ContentGroupLabel;
 import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.TextAreaItem;
@@ -37,12 +35,12 @@ public class ServerGroupDeploymentView {
 
     private DefaultCellTable<DeploymentRecord> table;
     private ListDataProvider<DeploymentRecord> dataProvider;
-    private DeployCommandExecutor executor;
+    private DeploymentsPresenter presenter;
     private ContentHeaderLabel header;
     private ServerGroupRecord currentSelection;
 
-    public ServerGroupDeploymentView(DeployCommandExecutor executor) {
-        this.executor = executor;
+    public ServerGroupDeploymentView(DeploymentsPresenter presenter) {
+        this.presenter = presenter;
     }
 
     Widget asWidget() {
@@ -111,17 +109,27 @@ public class ServerGroupDeploymentView {
         tools.addToolButtonRight(new ToolButton("Enable/Disable", new ClickHandler() {
             @Override
             public void onClick(ClickEvent clickEvent) {
-                new DeploymentCommandDelegate(executor, DeploymentCommand.ENABLE_DISABLE).execute(
-                        selectionModel.getSelectedObject()
-                );
+                DeploymentRecord selection = selectionModel.getSelectedObject();
+                if(selection!=null)
+                {
+                    new DeploymentCommandDelegate(presenter, DeploymentCommand.ENABLE_DISABLE).execute(
+                            selection
+                    );
+
+                }
             }
         }));
         tools.addToolButtonRight(new ToolButton("Remove", new ClickHandler() {
             @Override
             public void onClick(ClickEvent clickEvent) {
-                new DeploymentCommandDelegate(executor, DeploymentCommand.REMOVE_FROM_GROUP).execute(
-                        selectionModel.getSelectedObject()
-                );
+
+                DeploymentRecord selection = selectionModel.getSelectedObject();
+                if(selection!=null)
+                {
+                    new DeploymentCommandDelegate(presenter, DeploymentCommand.REMOVE_FROM_GROUP).execute(
+                            selection
+                    );
+                }
             }
         }));
 
@@ -131,7 +139,7 @@ public class ServerGroupDeploymentView {
         MultipleToOneLayout layout = new MultipleToOneLayout()
                 .setPlain(true)
                 .setHeadlineWidget(header)
-                .setMaster(Console.MESSAGES.available("Group Deployments"), table)
+                .setMaster(Console.MESSAGES.available("Deployments"), table)
                 .setMasterTools(tools)
                 .setDescription("Deployments assigned to this server group.")
                 .addDetail(Console.CONSTANTS.common_label_selection(), form.asWidget());
