@@ -14,6 +14,7 @@ import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.shared.deployment.DeployCommandExecutor;
 import org.jboss.as.console.client.shared.viewframework.builder.MultipleToOneLayout;
+import org.jboss.as.console.client.shared.viewframework.builder.SimpleLayout;
 import org.jboss.as.console.client.widgets.ContentDescription;
 import org.jboss.as.console.client.widgets.pages.PagedView;
 import org.jboss.as.console.client.widgets.tables.TextLinkCell;
@@ -86,18 +87,17 @@ public class GroupDeploymentsOverview {
         };
         serverGroupTable.addColumn(option, Console.CONSTANTS.common_label_option());
 
-        VerticalPanel overviewPanel = new VerticalPanel();
-        overviewPanel.setStyleName("fill-layout-width");
-        overviewPanel.getElement().setAttribute("style", "padding:10px");
+        SimpleLayout overviewPanel = new SimpleLayout()
+                .setPlain(true)
+                .setHeadline("Server Groups")
+                .setDescription("Deployment contents assigned to specific server groups.")
+                .addContent("Available Groups", serverGroupTable.asWidget());
 
-        overviewPanel.add(new ContentHeaderLabel("Server Groups"));
-        overviewPanel.add(new ContentDescription("Deployment contents assigned to specific server groups."));
-        overviewPanel.add(serverGroupTable);
         // --
 
         groupDeployments = new ServerGroupDeploymentView(executor);
 
-        panel.addPage(Console.CONSTANTS.common_label_back(), overviewPanel);
+        panel.addPage(Console.CONSTANTS.common_label_back(), overviewPanel.build());
         panel.addPage("Group Deployments", groupDeployments.asWidget());
 
         panel.showPage(0);
