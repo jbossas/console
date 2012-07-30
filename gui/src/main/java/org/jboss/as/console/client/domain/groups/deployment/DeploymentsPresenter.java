@@ -42,6 +42,7 @@ import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.domain.runtime.DomainRuntimePresenter;
 import org.jboss.as.console.client.shared.deployment.DeployCommandExecutor;
 import org.jboss.as.console.client.shared.deployment.DeploymentCommand;
+import org.jboss.as.console.client.shared.deployment.DeploymentCommandDelegate;
 import org.jboss.as.console.client.shared.deployment.NewDeploymentWizard;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
@@ -70,6 +71,18 @@ public class DeploymentsPresenter extends Presenter<DeploymentsPresenter.MyView,
     private DefaultWindow window;
     private DispatchAsync dispatcher;
     private DomainDeploymentInfo domainDeploymentInfo;
+
+    public void onDisableDeploymentInGroup(DeploymentRecord selection) {
+        new DeploymentCommandDelegate(this, DeploymentCommand.ENABLE_DISABLE).execute(
+                selection
+        );
+    }
+
+    public void onRemoveDeploymentInGroup(DeploymentRecord selection) {
+        new DeploymentCommandDelegate(this, DeploymentCommand.REMOVE_FROM_GROUP).execute(
+                selection
+        );
+    }
 
     @ProxyCodeSplit
     @NameToken(NameTokens.DeploymentsPresenter)
