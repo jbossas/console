@@ -40,13 +40,6 @@ public class ServerGroupDeploymentView {
 
     Widget asWidget() {
 
-
-        String[] columnHeaders = new String[]{Console.CONSTANTS.common_label_name(),
-                Console.CONSTANTS.common_label_runtimeName(),
-                Console.CONSTANTS.common_label_enabled(),
-                Console.CONSTANTS.common_label_enOrDisable(),
-                Console.CONSTANTS.common_label_remove()};
-
         final TitleColumn titleColumn = new TitleColumn();
 
         TextColumn<DeploymentRecord> dplRuntimeColumn = new TextColumn<DeploymentRecord>() {

@@ -43,7 +43,9 @@ import org.jboss.ballroom.client.widgets.tools.ToolButton;
 import org.jboss.ballroom.client.widgets.tools.ToolStrip;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Heiko Braun
@@ -57,7 +59,7 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
     private ListDataProvider<DeploymentRecord> domainDeploymentProvider = new ListDataProvider<DeploymentRecord>();
 
     private GroupDeploymentsOverview groupOverview;
-
+    private Map<String, List<DeploymentRecord>> serverGroupDeployments = new HashMap<String,List<DeploymentRecord>>();
 
     @Override
     public void setPresenter(DeploymentsPresenter presenter) {
@@ -117,7 +119,7 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
                 .setHeadline(Console.CONSTANTS.common_label_contentRepository())
                 .setMaster(Console.MESSAGES.available("Deployment Content"), contentTable)
                 .setMasterTools(makeAddContentButton())
-                .setDescription("The content repository contains all deployed content. Contents need to be assigned to sever groups in order to become effective (deployed).")
+                .setDescription("The content repository contains all deployed content. Contents need to be assigned to sever groups in order to become effective.")
                 .addDetail(Console.CONSTANTS.common_label_selection(), form.asWidget());
 
 
@@ -136,12 +138,12 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
 
         ServerGroupRecord serverGroupTarget = findSingleTarget(serverGroups, targets);
 
-        //this.serverGroupDeploymentProvider.setList(serverGroups);
+        this.groupOverview.setGroups(serverGroups);
 
         // Set the backing data for domain tables
         domainDeploymentProvider.setList(domainDeploymentInfo.getDomainDeployments());
 
-        //this.serverGroupDeployments = domainDeploymentInfo.getServerGroupDeployments();
+        this.serverGroupDeployments = domainDeploymentInfo.getServerGroupDeployments();
 
         setServerGroupTableSelection(serverGroupTarget);
     }
