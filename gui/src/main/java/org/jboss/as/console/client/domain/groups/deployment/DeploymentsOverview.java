@@ -78,8 +78,8 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
 
         groupOverview = new GroupDeploymentsOverview(presenter);
 
-        tabLayoutPanel.add(makeDeploymentsPanel(), Console.CONSTANTS.common_label_deploymentContent(), true);
-        tabLayoutPanel.add(groupOverview.asWidget(), "Server Group Assignments", true);
+        tabLayoutPanel.add(makeDeploymentsPanel(), "Content Repository", true);
+        tabLayoutPanel.add(groupOverview.asWidget(), "Server Groups", true);
 
         tabLayoutPanel.addBeforeSelectionHandler(new BeforeSelectionHandler<Integer>() {
             @Override
