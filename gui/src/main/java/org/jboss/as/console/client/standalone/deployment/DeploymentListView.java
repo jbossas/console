@@ -30,19 +30,26 @@ import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.TextColumn;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
+import com.google.gwt.view.client.ProvidesKey;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.shared.deployment.DeploymentCommand;
 import org.jboss.as.console.client.shared.deployment.DeploymentCommandColumn;
 import org.jboss.as.console.client.shared.deployment.TitleColumn;
 import org.jboss.as.console.client.shared.model.DeploymentRecord;
+import org.jboss.as.console.client.shared.viewframework.builder.MultipleToOneLayout;
 import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
+import org.jboss.ballroom.client.widgets.forms.Form;
+import org.jboss.ballroom.client.widgets.forms.TextAreaItem;
+import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
+import org.jboss.ballroom.client.widgets.forms.TextItem;
 import org.jboss.ballroom.client.widgets.icons.Icons;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 import org.jboss.ballroom.client.widgets.tables.DefaultPager;
@@ -78,12 +85,6 @@ public class DeploymentListView extends SuspendableViewImpl implements Deploymen
     @Override
     public Widget createWidget() {
 
-        LayoutPanel layout = new LayoutPanel();
-
-        FakeTabPanel titleBar = new FakeTabPanel(Console.CONSTANTS.common_label_deployments());
-        layout.add(titleBar);
-
-
 
         final ToolStrip toolStrip = new ToolStrip();
         ToolButton addBtn = new ToolButton(Console.CONSTANTS.common_label_addContent(), new ClickHandler() {
@@ -97,21 +98,15 @@ public class DeploymentListView extends SuspendableViewImpl implements Deploymen
         toolStrip.addToolButtonRight(addBtn);
 
 
-        VerticalPanel panel = new VerticalPanel();
-        panel.setStyleName("rhs-content-panel");
-
         // -----------
 
-        ContentHeaderLabel nameLabel = new ContentHeaderLabel(Console.CONSTANTS.common_label_deployments());
+        deploymentTable = new DefaultCellTable<DeploymentRecord>(8, new ProvidesKey<DeploymentRecord>() {
+            @Override
+            public Object getKey(DeploymentRecord deploymentRecord) {
+                return deploymentRecord.getName();
+            }
+        });
 
-        HorizontalPanel horzPanel = new HorizontalPanel();
-        horzPanel.getElement().setAttribute("style", "width:100%;");
-
-        horzPanel.add(nameLabel);
-
-        panel.add(horzPanel);
-
-        deploymentTable = new DefaultCellTable<DeploymentRecord>(8);
         deploymentProvider = new ListDataProvider<DeploymentRecord>();
         deploymentProvider.addDataDisplay(deploymentTable);
 
@@ -138,22 +133,25 @@ public class DeploymentListView extends SuspendableViewImpl implements Deploymen
         deploymentTable.addColumn(new DeploymentCommandColumn(this.presenter, DeploymentCommand.REMOVE_FROM_STANDALONE), Console.CONSTANTS.common_label_remove());
 
 
-        panel.add(toolStrip);
-        panel.add(deploymentTable);
+        Form<DeploymentRecord> form = new Form<DeploymentRecord>(DeploymentRecord.class);
+        form.setNumColumns(2);
+        form.setEnabled(true);
+        TextAreaItem name = new TextAreaItem("name", "Name");
+        TextAreaItem runtimeName = new TextAreaItem("runtimeName", "Runtime Name");
+        //TextBoxItem sha = new TextBoxItem("sha", "SHA");
+        form.setFields(name,runtimeName);
 
-        DefaultPager pager = new DefaultPager();
-        pager.setDisplay(deploymentTable);
-        panel.add(pager);
+        form.bind(deploymentTable);
 
-        ScrollPanel scroll = new ScrollPanel();
-        scroll.add(panel);
+        MultipleToOneLayout layout = new MultipleToOneLayout()
+                .setTitle(Console.CONSTANTS.common_label_deployments())
+                .setHeadline(Console.CONSTANTS.common_label_deployments())
+                .setDescription("Currently deployed application components. Deployments that have been added through the filesystem will not be managable through the web interface.")
+                .setMaster(Console.MESSAGES.available("Deployments"), deploymentTable)
+                .setMasterTools(toolStrip)
+                .addDetail(Console.CONSTANTS.common_label_selection(), form.asWidget());
 
-        layout.add(scroll);
-
-        layout.setWidgetTopHeight(titleBar, 0, Style.Unit.PX, 40, Style.Unit.PX);
-        layout.setWidgetTopHeight(scroll, 40, Style.Unit.PX, 100, Style.Unit.PCT);
-
-        return layout;
+        return layout.build();
     }
 
     // Refactor Me!  Copied from org.jboss.as.console.client.domain.groups.deployment.DeploymentsOverview
