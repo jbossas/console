@@ -212,9 +212,11 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
 
     @Override
     public void updateDeploymentInfo(DomainDeploymentInfo domainDeploymentInfo, DeploymentRecord... targets) {
+
         List<ServerGroupRecord> serverGroups = this.presenter.getServerGroups();
 
         ServerGroupRecord serverGroupTarget = findSingleTarget(serverGroups, targets);
+        setServerGroupTableSelection(serverGroupTarget);
 
         this.groupOverview.setGroups(serverGroups);
         this.groupOverview.setGroupDeployments(domainDeploymentInfo.getServerGroupDeployments());
@@ -223,8 +225,6 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
         contentTable.selectDefaultEntity();
 
         currentAssignments = matchAssignments(domainDeploymentInfo);
-
-        setServerGroupTableSelection(serverGroupTarget);
     }
 
     private Map<String,Integer>  matchAssignments(DomainDeploymentInfo domainDeploymentInfo) {

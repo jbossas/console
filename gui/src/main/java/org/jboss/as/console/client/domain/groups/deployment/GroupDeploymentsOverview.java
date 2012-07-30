@@ -117,6 +117,16 @@ public class GroupDeploymentsOverview {
 
     public void setGroupDeployments(Map<String, List<DeploymentRecord>> deploymentPerGroup) {
         this.deploymentPerGroup = deploymentPerGroup;
+        if(panel.getPage()==1)
+        {
+            // update the paged view
+            ServerGroupRecord currentSelection = groupDeployments.getCurrentSelection();
+            if(currentSelection!=null)
+            {
+                groupDeployments.setDeploymentInfo(deploymentPerGroup.get(currentSelection.getGroupName()));
+            }
+
+        }
     }
 
     public void resetPages() {

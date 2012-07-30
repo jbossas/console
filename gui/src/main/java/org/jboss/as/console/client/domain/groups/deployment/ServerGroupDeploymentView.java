@@ -112,9 +112,8 @@ public class ServerGroupDeploymentView {
                 DeploymentRecord selection = selectionModel.getSelectedObject();
                 if(selection!=null)
                 {
-                    new DeploymentCommandDelegate(presenter, DeploymentCommand.ENABLE_DISABLE).execute(
-                            selection
-                    );
+
+                    presenter.onDisableDeploymentInGroup(selection);
 
                 }
             }
@@ -126,9 +125,7 @@ public class ServerGroupDeploymentView {
                 DeploymentRecord selection = selectionModel.getSelectedObject();
                 if(selection!=null)
                 {
-                    new DeploymentCommandDelegate(presenter, DeploymentCommand.REMOVE_FROM_GROUP).execute(
-                            selection
-                    );
+                   presenter.onRemoveDeploymentInGroup(selection);
                 }
             }
         }));
@@ -142,7 +139,7 @@ public class ServerGroupDeploymentView {
                 .setMaster(Console.MESSAGES.available("Deployments"), table)
                 .setMasterTools(tools)
                 .setDescription("Deployments assigned to this server group.")
-                .addDetail(Console.CONSTANTS.common_label_selection(), form.asWidget());
+                .setDetail(Console.CONSTANTS.common_label_selection(), form.asWidget());
 
         return layout.build();
     }
@@ -155,6 +152,11 @@ public class ServerGroupDeploymentView {
 
     public void setDeploymentInfo(List<DeploymentRecord> deploymentRecords) {
         dataProvider.setList(deploymentRecords);
+        dataProvider.flush();
         table.selectDefaultEntity();
+    }
+
+    public ServerGroupRecord getCurrentSelection() {
+        return currentSelection;
     }
 }
