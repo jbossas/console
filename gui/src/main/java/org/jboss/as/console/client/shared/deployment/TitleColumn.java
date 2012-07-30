@@ -15,7 +15,16 @@ public class TitleColumn extends Column<DeploymentRecord, SafeHtml> {
     @Override
     public SafeHtml getValue(DeploymentRecord record) {
         SafeHtmlBuilder html = new SafeHtmlBuilder();
-        html.appendEscaped(record.getName());
+
+        String title = null;
+        if(record.getRuntimeName().length()>27)
+            title = record.getName().substring(0,26)+"...";
+        else
+            title = record.getName();
+        //html.appendHtmlConstant("<a href='javascript:void(0)' style='outline:none'>");
+        html.appendEscaped(title);
+        //html.appendHtmlConstant("</a>");
+
         if(!record.isPersistent())
             html.appendHtmlConstant("<br/><span style='font-size:10px;color:#A7ABB4'>File System Deployment</span>");
 
