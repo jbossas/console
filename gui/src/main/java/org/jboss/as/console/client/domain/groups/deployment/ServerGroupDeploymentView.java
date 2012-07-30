@@ -147,5 +147,6 @@ public class ServerGroupDeploymentView {
 
     public void setDeploymentInfo(List<DeploymentRecord> deploymentRecords) {
         dataProvider.setList(deploymentRecords);
+        table.selectDefaultEntity();
     }
 }
