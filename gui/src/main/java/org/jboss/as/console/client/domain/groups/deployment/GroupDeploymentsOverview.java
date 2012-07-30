@@ -118,9 +118,14 @@ public class GroupDeploymentsOverview {
 
     public void setGroups(List<ServerGroupRecord> serverGroups) {
         dataProvider.setList(serverGroups);
+        serverGroupTable.selectDefaultEntity();
     }
 
     public void setGroupDeployments(Map<String, List<DeploymentRecord>> deploymentPerGroup) {
         this.deploymentPerGroup = deploymentPerGroup;
+    }
+
+    public void resetPages() {
+        panel.showPage(0);
     }
 }

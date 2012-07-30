@@ -21,6 +21,8 @@ package org.jboss.as.console.client.domain.groups.deployment;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.BeforeSelectionEvent;
+import com.google.gwt.event.logical.shared.BeforeSelectionHandler;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.Widget;
@@ -60,6 +62,7 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
 
     private GroupDeploymentsOverview groupOverview;
     private Map<String, Integer> currentAssignments = new HashMap<String, Integer>();
+    private DefaultCellTable<DeploymentRecord> contentTable;
 
     @Override
     public void setPresenter(DeploymentsPresenter presenter) {
@@ -76,6 +79,15 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
         tabLayoutPanel.add(makeDeploymentsPanel(), Console.CONSTANTS.common_label_deploymentContent(), true);
         tabLayoutPanel.add(groupOverview.asWidget(), "Group Assignments", true);
 
+        tabLayoutPanel.addBeforeSelectionHandler(new BeforeSelectionHandler<Integer>() {
+            @Override
+            public void onBeforeSelection(BeforeSelectionEvent<Integer> event) {
+                if(event.getItem()==1)
+                {
+                    groupOverview.resetPages();
+                }
+            }
+        });
         return tabLayoutPanel;
     }
 
@@ -85,7 +97,7 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
                 Console.CONSTANTS.common_label_runtimeName()};
         List<Column> columns = makeNameAndRuntimeColumns();
 
-        DefaultCellTable contentTable = new DefaultCellTable<DeploymentRecord>(8, new ProvidesKey<DeploymentRecord>() {
+        contentTable = new DefaultCellTable<DeploymentRecord>(8, new ProvidesKey<DeploymentRecord>() {
             @Override
             public Object getKey(DeploymentRecord deploymentRecord) {
                 return deploymentRecord.getName();
@@ -208,6 +220,7 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
         this.groupOverview.setGroupDeployments(domainDeploymentInfo.getServerGroupDeployments());
 
         domainDeploymentProvider.setList(domainDeploymentInfo.getDomainDeployments());
+        contentTable.selectDefaultEntity();
 
         currentAssignments = matchAssignments(domainDeploymentInfo);
 
