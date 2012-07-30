@@ -120,7 +120,12 @@ public class DeploymentListView extends SuspendableViewImpl implements Deploymen
         TextColumn<DeploymentRecord> dplRuntimeColumn = new TextColumn<DeploymentRecord>() {
             @Override
             public String getValue(DeploymentRecord record) {
-                return record.getRuntimeName();
+                String title = null;
+                if(record.getRuntimeName().length()>27)
+                    title = record.getRuntimeName().substring(0,26)+"...";
+                else
+                    title = record.getRuntimeName();
+                return title;
             }
         };
 
