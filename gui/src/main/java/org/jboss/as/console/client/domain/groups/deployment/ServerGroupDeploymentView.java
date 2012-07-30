@@ -12,8 +12,6 @@ import com.google.gwt.view.client.ProvidesKey;
 import com.google.gwt.view.client.SingleSelectionModel;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
-import org.jboss.as.console.client.shared.deployment.DeploymentCommand;
-import org.jboss.as.console.client.shared.deployment.DeploymentCommandDelegate;
 import org.jboss.as.console.client.shared.deployment.TitleColumn;
 import org.jboss.as.console.client.shared.model.DeploymentRecord;
 import org.jboss.as.console.client.shared.viewframework.builder.MultipleToOneLayout;
@@ -100,8 +98,8 @@ public class ServerGroupDeploymentView {
         form.setNumColumns(2);
         form.setEnabled(true);
         TextAreaItem name = new TextAreaItem("name", "Name");
-        TextAreaItem runtimeName = new TextAreaItem("runtimeName", "Runtime Name");
-        form.setFields(name,runtimeName);
+        //TextAreaItem runtimeName = new TextAreaItem("runtimeName", "Runtime Name");
+        form.setFields(name);
 
         form.bind(table);
 

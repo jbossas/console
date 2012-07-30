@@ -28,6 +28,7 @@ import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.ProvidesKey;
+import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
@@ -39,6 +40,7 @@ import org.jboss.as.console.client.shared.model.DeploymentRecord;
 import org.jboss.as.console.client.shared.viewframework.builder.MultipleToOneLayout;
 import org.jboss.as.console.client.widgets.tabs.DefaultTabLayoutPanel;
 import org.jboss.ballroom.client.widgets.forms.Form;
+import org.jboss.ballroom.client.widgets.forms.ListItem;
 import org.jboss.ballroom.client.widgets.forms.TextAreaItem;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
@@ -61,7 +63,7 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
     private ListDataProvider<DeploymentRecord> domainDeploymentProvider = new ListDataProvider<DeploymentRecord>();
 
     private GroupDeploymentsOverview groupOverview;
-    private Map<String, Integer> currentAssignments = new HashMap<String, Integer>();
+    private Map<String,List<String>> currentAssignments = new HashMap<String, List<String>>();
     private DefaultCellTable<DeploymentRecord> contentTable;
 
     @Override
@@ -115,7 +117,7 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
         contentTable.addColumn(new TextColumn<DeploymentRecord>() {
             @Override
             public String getValue(DeploymentRecord deployment) {
-                return String.valueOf(currentAssignments.get(deployment.getName()));
+                return String.valueOf(currentAssignments.get(deployment.getName()).size());
             }
         }, "Assignments");
 
@@ -123,9 +125,20 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
         form.setNumColumns(2);
         form.setEnabled(true);
         TextAreaItem name = new TextAreaItem("name", "Name");
-        TextAreaItem runtimeName = new TextAreaItem("runtimeName", "Runtime Name");
-        form.setFields(name, runtimeName);
+        //TextAreaItem runtimeName = new TextAreaItem("runtimeName", "Runtime Name");
+        final ListItem groups = new ListItem("assignments", "Assigned Groups");
+        form.setFields(name, groups);
 
+        selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
+            @Override
+            public void onSelectionChange(SelectionChangeEvent event) {
+                DeploymentRecord selection = selectionModel.getSelectedObject();
+                if(selection!=null)
+                {
+                    groups.setValue(currentAssignments.get(selection.getName()));
+                }
+            }
+        });
         form.bind(contentTable);
 
         // ---
@@ -227,31 +240,29 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
         currentAssignments = matchAssignments(domainDeploymentInfo);
     }
 
-    private Map<String,Integer>  matchAssignments(DomainDeploymentInfo domainDeploymentInfo) {
-        Map<String,Integer> assignments = new HashMap<String, Integer>();
+    private Map<String,List<String>>  matchAssignments(DomainDeploymentInfo domainDeploymentInfo) {
+        Map<String,List<String>> assignments = new HashMap<String, List<String>>();
         for(String deployment : domainDeploymentInfo.getAllDeploymentNames())
         {
 
             if(null==assignments.get(deployment))
-                assignments.put(deployment, 0);
+                assignments.put(deployment, new ArrayList<String>());
 
             final Map<String, List<DeploymentRecord>> groupDeployments = domainDeploymentInfo.getServerGroupDeployments();
-            int assignmentsInGroup = 0;
             for(String group : groupDeployments.keySet())
             {
                 for(DeploymentRecord item : groupDeployments.get(group))
                 {
                     if(item.getName().equals(deployment))
                     {
-                        assignmentsInGroup++;
+                        assignments.get(deployment).add(group);
                         break;
                     }
                 }
             }
 
-            Integer updated = assignments.get(deployment);
-            updated+=assignmentsInGroup;
-            assignments.put(deployment, updated);
+
+
         }
 
         return assignments;
