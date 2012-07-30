@@ -43,7 +43,9 @@ import org.jboss.ballroom.client.widgets.tools.ToolButton;
 import org.jboss.ballroom.client.widgets.tools.ToolStrip;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Heiko Braun
@@ -57,6 +59,7 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
     private ListDataProvider<DeploymentRecord> domainDeploymentProvider = new ListDataProvider<DeploymentRecord>();
 
     private GroupDeploymentsOverview groupOverview;
+    private Map<String, Integer> currentAssignments = new HashMap<String, Integer>();
 
     @Override
     public void setPresenter(DeploymentsPresenter presenter) {
@@ -96,6 +99,13 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
         for (int i = 0; i < columnHeaders.length; i++) {
             contentTable.addColumn(columns.get(i), columnHeaders[i]);
         }
+
+        contentTable.addColumn(new TextColumn<DeploymentRecord>() {
+            @Override
+            public String getValue(DeploymentRecord deployment) {
+                return String.valueOf(currentAssignments.get(deployment.getName()));
+            }
+        }, "Assignments");
 
         Form<DeploymentRecord> form = new Form<DeploymentRecord>(DeploymentRecord.class);
         form.setNumColumns(2);
@@ -199,7 +209,39 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
 
         domainDeploymentProvider.setList(domainDeploymentInfo.getDomainDeployments());
 
+        currentAssignments = matchAssignments(domainDeploymentInfo);
+
         setServerGroupTableSelection(serverGroupTarget);
+    }
+
+    private Map<String,Integer>  matchAssignments(DomainDeploymentInfo domainDeploymentInfo) {
+        Map<String,Integer> assignments = new HashMap<String, Integer>();
+        for(String deployment : domainDeploymentInfo.getAllDeploymentNames())
+        {
+
+            if(null==assignments.get(deployment))
+                assignments.put(deployment, 0);
+
+            final Map<String, List<DeploymentRecord>> groupDeployments = domainDeploymentInfo.getServerGroupDeployments();
+            int assignmentsInGroup = 0;
+            for(String group : groupDeployments.keySet())
+            {
+                for(DeploymentRecord item : groupDeployments.get(group))
+                {
+                    if(item.getName().equals(deployment))
+                    {
+                        assignmentsInGroup++;
+                        break;
+                    }
+                }
+            }
+
+            Integer updated = assignments.get(deployment);
+            updated+=assignmentsInGroup;
+            assignments.put(deployment, updated);
+        }
+
+        return assignments;
     }
 
     private void setServerGroupTableSelection(ServerGroupRecord serverGroupTarget) {
