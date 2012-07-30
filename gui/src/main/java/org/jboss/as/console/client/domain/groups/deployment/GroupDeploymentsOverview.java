@@ -1,8 +1,10 @@
 package org.jboss.as.console.client.domain.groups.deployment;
 
 import com.google.gwt.cell.client.ActionCell;
+import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.TextColumn;
+import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
@@ -12,9 +14,13 @@ import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.shared.deployment.DeployCommandExecutor;
 import org.jboss.as.console.client.shared.viewframework.builder.MultipleToOneLayout;
+import org.jboss.as.console.client.widgets.ContentDescription;
 import org.jboss.as.console.client.widgets.pages.PagedView;
 import org.jboss.as.console.client.widgets.tables.TextLinkCell;
+import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
+
+import java.util.List;
 
 /**
  * @author Heiko Braun
@@ -82,8 +88,11 @@ public class GroupDeploymentsOverview {
 
         VerticalPanel overviewPanel = new VerticalPanel();
         overviewPanel.setStyleName("fill-layout-width");
-        overviewPanel.add(serverGroupTable);
+        overviewPanel.getElement().setAttribute("style", "padding:10px");
 
+        overviewPanel.add(new ContentHeaderLabel("Server Groups"));
+        overviewPanel.add(new ContentDescription("Deployment contents assigned to specific server groups."));
+        overviewPanel.add(serverGroupTable);
         // --
 
         groupDeployments = new ServerGroupDeploymentView(executor);
@@ -93,12 +102,17 @@ public class GroupDeploymentsOverview {
 
         panel.showPage(0);
 
-        MultipleToOneLayout layout = new MultipleToOneLayout()
-                .setPlain(true)
-                .setHeadline("Server Groups")
-                .setMaster(Console.MESSAGES.available("Server Groups"), serverGroupTable)
-                .setDescription("Contents deployed to specific server groups.");
+        LayoutPanel layout = new LayoutPanel();
+        Widget panelWidget = panel.asWidget();
 
-        return layout.build();
+        layout.add(panelWidget);
+        //layout.setWidgetLeftWidth(panelWidget, 0, Style.Unit.PX, 100, Style.Unit.PCT);
+
+        return layout;
+
+    }
+
+    public void setGroups(List<ServerGroupRecord> serverGroups) {
+        dataProvider.setList(serverGroups);
     }
 }
