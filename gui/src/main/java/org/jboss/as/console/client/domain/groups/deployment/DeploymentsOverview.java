@@ -31,7 +31,7 @@ import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.shared.deployment.DeploymentCommand;
-import org.jboss.as.console.client.shared.deployment.DeploymentCommandColumn;
+import org.jboss.as.console.client.shared.deployment.DeploymentCommandDelegate;
 import org.jboss.as.console.client.shared.deployment.TitleColumn;
 import org.jboss.as.console.client.shared.model.DeploymentRecord;
 import org.jboss.as.console.client.shared.viewframework.builder.MultipleToOneLayout;
@@ -43,9 +43,7 @@ import org.jboss.ballroom.client.widgets.tools.ToolButton;
 import org.jboss.ballroom.client.widgets.tools.ToolStrip;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author Heiko Braun
@@ -59,7 +57,6 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
     private ListDataProvider<DeploymentRecord> domainDeploymentProvider = new ListDataProvider<DeploymentRecord>();
 
     private GroupDeploymentsOverview groupOverview;
-    private Map<String, List<DeploymentRecord>> serverGroupDeployments = new HashMap<String,List<DeploymentRecord>>();
 
     @Override
     public void setPresenter(DeploymentsPresenter presenter) {
@@ -74,7 +71,7 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
         groupOverview = new GroupDeploymentsOverview(presenter);
 
         tabLayoutPanel.add(makeDeploymentsPanel(), Console.CONSTANTS.common_label_deploymentContent(), true);
-        tabLayoutPanel.add(groupOverview.asWidget(), Console.CONSTANTS.common_label_serverGroupDeployments(), true);
+        tabLayoutPanel.add(groupOverview.asWidget(), "Group Assignments", true);
 
         return tabLayoutPanel;
     }
@@ -82,14 +79,8 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
     private Widget makeDeploymentsPanel() {
 
         String[] columnHeaders = new String[]{Console.CONSTANTS.common_label_name(),
-                Console.CONSTANTS.common_label_runtimeName(),
-                Console.CONSTANTS.common_label_addToGroups(),
-                Console.CONSTANTS.common_label_updateContent(),
-                Console.CONSTANTS.common_label_remove()};
+                Console.CONSTANTS.common_label_runtimeName()};
         List<Column> columns = makeNameAndRuntimeColumns();
-        columns.add(new DeploymentCommandColumn(this.presenter, DeploymentCommand.ADD_TO_GROUP));
-        columns.add(new DeploymentCommandColumn(this.presenter, DeploymentCommand.UPDATE_CONTENT));
-        columns.add(new DeploymentCommandColumn(this.presenter, DeploymentCommand.REMOVE_FROM_DOMAIN));
 
         DefaultCellTable contentTable = new DefaultCellTable<DeploymentRecord>(8, new ProvidesKey<DeploymentRecord>() {
             @Override
@@ -97,7 +88,8 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
                 return deploymentRecord.getName();
             }
         });
-        contentTable.setSelectionModel(new SingleSelectionModel());
+        final SingleSelectionModel<DeploymentRecord> selectionModel = new SingleSelectionModel<DeploymentRecord>();
+        contentTable.setSelectionModel(selectionModel);
 
         domainDeploymentProvider.addDataDisplay(contentTable);
 
@@ -110,17 +102,81 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
         form.setEnabled(true);
         TextAreaItem name = new TextAreaItem("name", "Name");
         TextAreaItem runtimeName = new TextAreaItem("runtimeName", "Runtime Name");
-        form.setFields(name,runtimeName);
+        form.setFields(name, runtimeName);
 
         form.bind(contentTable);
+
+        // ---
+
+        final ToolStrip toolStrip = new ToolStrip();
+
+        ToolButton addContentBtn = new ToolButton("Add", new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                presenter.launchNewDeploymentDialoge(null, false);
+            }
+        });
+        addContentBtn.ensureDebugId(Console.DEBUG_CONSTANTS.debug_label_addContent_deploymentsOverview());
+        toolStrip.addToolButtonRight(addContentBtn);
+
+        toolStrip.addToolButtonRight(new ToolButton(Console.CONSTANTS.common_label_remove()
+                , new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent clickEvent) {
+                final DeploymentRecord selection = selectionModel.getSelectedObject();
+                if(selection!=null) {
+                    new DeploymentCommandDelegate(
+                            DeploymentsOverview.this.presenter,
+                            DeploymentCommand.REMOVE_FROM_DOMAIN).execute(
+                            selection
+                    );
+                }
+            }
+        }));
+
+        // --
+
+        toolStrip.addToolButtonRight(new ToolButton("Assign"
+                , new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent clickEvent) {
+                final DeploymentRecord selection = selectionModel.getSelectedObject();
+                if(selection!=null)
+                {
+                    new DeploymentCommandDelegate(
+                            DeploymentsOverview.this.presenter,
+                            DeploymentCommand.ADD_TO_GROUP).execute(
+                            selection
+                    );
+                }
+            }
+        }));
+
+
+        toolStrip.addToolButtonRight(new ToolButton("Update"
+                , new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent clickEvent) {
+
+                final DeploymentRecord selection = selectionModel.getSelectedObject();
+                if(selection!=null)
+                {
+                    new DeploymentCommandDelegate(
+                            DeploymentsOverview.this.presenter,
+                            DeploymentCommand.UPDATE_CONTENT).execute(
+                            selection
+                    );
+                }
+            }
+        }));
 
         MultipleToOneLayout layout = new MultipleToOneLayout()
                 .setPlain(true)
                 .setHeadline(Console.CONSTANTS.common_label_contentRepository())
                 .setMaster(Console.MESSAGES.available("Deployment Content"), contentTable)
-                .setMasterTools(makeAddContentButton())
+                .setMasterTools(toolStrip)
                 .setDescription("The content repository contains all deployed content. Contents need to be assigned to sever groups in order to become effective.")
-                .addDetail(Console.CONSTANTS.common_label_selection(), form.asWidget());
+                .setDetail(Console.CONSTANTS.common_label_selection(), form.asWidget());
 
 
         return layout.build();
@@ -139,11 +195,9 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
         ServerGroupRecord serverGroupTarget = findSingleTarget(serverGroups, targets);
 
         this.groupOverview.setGroups(serverGroups);
+        this.groupOverview.setGroupDeployments(domainDeploymentInfo.getServerGroupDeployments());
 
-        // Set the backing data for domain tables
         domainDeploymentProvider.setList(domainDeploymentInfo.getDomainDeployments());
-
-        this.serverGroupDeployments = domainDeploymentInfo.getServerGroupDeployments();
 
         setServerGroupTableSelection(serverGroupTarget);
     }
@@ -183,21 +237,6 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
         }
 
         return null;
-    }
-
-
-    private ToolStrip makeAddContentButton() {
-        final ToolStrip toolStrip = new ToolStrip();
-        ToolButton addContentBtn = new ToolButton(Console.CONSTANTS.common_label_addContent(), new ClickHandler() {
-
-            @Override
-            public void onClick(ClickEvent event) {
-                presenter.launchNewDeploymentDialoge(null, false);
-            }
-        });
-        addContentBtn.ensureDebugId(Console.DEBUG_CONSTANTS.debug_label_addContent_deploymentsOverview());
-        toolStrip.addToolButtonRight(addContentBtn);
-        return toolStrip;
     }
 
     private List<Column> makeNameAndRuntimeColumns() {
