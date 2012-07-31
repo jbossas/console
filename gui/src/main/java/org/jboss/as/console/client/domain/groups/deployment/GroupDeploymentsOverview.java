@@ -97,7 +97,7 @@ public class GroupDeploymentsOverview {
         groupDeployments = new ServerGroupDeploymentView(presenter);
 
         panel.addPage(Console.CONSTANTS.common_label_back(), overviewPanel.build());
-        panel.addPage("Assigned Contents", groupDeployments.asWidget());
+        panel.addPage("Group Deployments", groupDeployments.asWidget());
 
         panel.showPage(0);
 
