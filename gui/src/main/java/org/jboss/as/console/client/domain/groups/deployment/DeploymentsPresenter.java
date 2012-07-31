@@ -54,6 +54,7 @@ import org.jboss.dmr.client.ModelNode;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author Heiko Braun
@@ -72,17 +73,6 @@ public class DeploymentsPresenter extends Presenter<DeploymentsPresenter.MyView,
     private DispatchAsync dispatcher;
     private DomainDeploymentInfo domainDeploymentInfo;
 
-    public void onDisableDeploymentInGroup(DeploymentRecord selection) {
-        new DeploymentCommandDelegate(this, DeploymentCommand.ENABLE_DISABLE).execute(
-                selection
-        );
-    }
-
-    public void onRemoveDeploymentInGroup(DeploymentRecord selection) {
-        new DeploymentCommandDelegate(this, DeploymentCommand.REMOVE_FROM_GROUP).execute(
-                selection
-        );
-    }
 
     @ProxyCodeSplit
     @NameToken(NameTokens.DeploymentsPresenter)
@@ -238,11 +228,11 @@ public class DeploymentsPresenter extends Presenter<DeploymentsPresenter.MyView,
                 Console.CONSTANTS.common_label_plaseWait(),
                 Console.CONSTANTS.common_label_requestProcessed(),
                 new Feedback.LoadingCallback() {
-            @Override
-            public void onCancel() {
+                    @Override
+                    public void onCancel() {
 
-            }
-        });
+                    }
+                });
 
         deploymentStore.removeContent(deployment, new SimpleCallback<DMRResponse>() {
 
@@ -317,4 +307,58 @@ public class DeploymentsPresenter extends Presenter<DeploymentsPresenter.MyView,
     void setServerGroups(List<ServerGroupRecord> serverGroups) {
         this.serverGroups = serverGroups;
     }
+
+    public void onDisableDeploymentInGroup(DeploymentRecord selection) {
+        new DeploymentCommandDelegate(this, DeploymentCommand.ENABLE_DISABLE).execute(
+                selection
+        );
+    }
+
+    public void onRemoveDeploymentInGroup(DeploymentRecord selection) {
+        new DeploymentCommandDelegate(this, DeploymentCommand.REMOVE_FROM_GROUP).execute(
+                selection
+        );
+    }
+
+    public void onAssignDeploymentToGroup(ServerGroupRecord serverGroup) {
+
+
+        List<DeploymentRecord> available = new ArrayList<DeploymentRecord>();
+        for(DeploymentRecord deployment : domainDeploymentInfo.getDomainDeployments())
+        {
+            if(!domainDeploymentInfo.isAssignedToGroup(serverGroup.getGroupName(), deployment))
+                available.add(deployment);
+        }
+
+        if(available.isEmpty())
+        {
+            Console.warning("All contents assigned to group "+serverGroup.getGroupName());
+            return;
+        }
+
+        window = new DefaultWindow("Assign Content");
+        window.setWidth(480);
+        window.setHeight(360);
+
+        window.trapWidget(
+                new AssignToGroupWizard(this, available, serverGroup).asWidget());
+
+        window.setGlassEnabled(true);
+        window.center();
+    }
+
+    public void closeDialogue() {
+        window.hide();
+    }
+
+    public void onAssignDeployments(ServerGroupRecord serverGroup, Set<DeploymentRecord> selectedSet) {
+        closeDialogue();
+
+        for(DeploymentRecord deployment : selectedSet)
+        {
+            addToServerGroup(deployment, false, serverGroup.getGroupName());
+        }
+
+    }
+
 }
