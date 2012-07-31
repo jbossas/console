@@ -46,16 +46,16 @@ public class ServerGroupDeploymentView {
         final TitleColumn titleColumn = new TitleColumn();
 
         TextColumn<DeploymentRecord> dplRuntimeColumn = new TextColumn<DeploymentRecord>() {
-                    @Override
-                    public String getValue(DeploymentRecord record) {
-                        String title = null;
-                        if(record.getRuntimeName().length()>27)
-                            title = record.getRuntimeName().substring(0,26)+"...";
-                        else
-                            title = record.getRuntimeName();
-                        return title;
-                    }
-                };
+            @Override
+            public String getValue(DeploymentRecord record) {
+                String title = null;
+                if(record.getRuntimeName().length()>27)
+                    title = record.getRuntimeName().substring(0,26)+"...";
+                else
+                    title = record.getRuntimeName();
+                return title;
+            }
+        };
 
 
         final Column<DeploymentRecord, ImageResource> statusColumn = new Column<DeploymentRecord, ImageResource>(new ImageResourceCell()) {
@@ -104,6 +104,27 @@ public class ServerGroupDeploymentView {
         form.bind(table);
 
         ToolStrip tools = new ToolStrip();
+
+        tools.addToolButtonRight(new ToolButton("Assign", new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent clickEvent) {
+
+                presenter.onAssignDeploymentToGroup(currentSelection);
+            }
+        }));
+
+        tools.addToolButtonRight(new ToolButton("Remove", new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent clickEvent) {
+
+                DeploymentRecord selection = selectionModel.getSelectedObject();
+                if(selection!=null)
+                {
+                    presenter.onRemoveDeploymentInGroup(selection);
+                }
+            }
+        }));
+
         tools.addToolButtonRight(new ToolButton("Enable/Disable", new ClickHandler() {
             @Override
             public void onClick(ClickEvent clickEvent) {
@@ -116,18 +137,6 @@ public class ServerGroupDeploymentView {
                 }
             }
         }));
-        tools.addToolButtonRight(new ToolButton("Remove", new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent clickEvent) {
-
-                DeploymentRecord selection = selectionModel.getSelectedObject();
-                if(selection!=null)
-                {
-                   presenter.onRemoveDeploymentInGroup(selection);
-                }
-            }
-        }));
-
 
         header = new ContentHeaderLabel();
 
