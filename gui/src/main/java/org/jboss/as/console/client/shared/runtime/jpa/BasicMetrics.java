@@ -135,7 +135,7 @@ public class BasicMetrics {
         NumberColumn sessionOpenCount = new NumberColumn("session-open-count", "Session Open Count");
         Column[] connectionCols = new Column[] {
                 sessionOpenCount.setBaseline(true),
-                new TextColumn("session-close-count","Sesison Close Count").setComparisonColumn(sessionOpenCount),
+                new TextColumn("session-close-count","Session Close Count").setComparisonColumn(sessionOpenCount),
                 new NumberColumn("connect-count","Connection Count")
 
         };
