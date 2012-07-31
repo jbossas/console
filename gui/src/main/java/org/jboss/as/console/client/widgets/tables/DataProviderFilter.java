@@ -23,6 +23,7 @@ public class DataProviderFilter<T> {
     private ListDataProvider<T> delegate;
     private ArrayList<T> origValues;
     private Predicate predicate;
+    private TextBox filter;
 
     public interface Predicate<T> {
         boolean match(String prefix, T candiate);
@@ -37,11 +38,13 @@ public class DataProviderFilter<T> {
         this.origValues = new ArrayList<T>(delegate.getList().size());
         this.origValues.addAll(delegate.getList());
         clearFilter();
+        filter.setText("");
+
     }
 
     public Widget asWidget() {
 
-        final TextBox filter = new TextBox();
+        filter = new TextBox();
         filter.setMaxLength(30);
         filter.setVisibleLength(20);
         filter.getElement().setAttribute("style", "width:120px;");
