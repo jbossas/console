@@ -21,10 +21,13 @@ package org.jboss.as.console.client.domain.groups.deployment;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.KeyDownEvent;
+import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.event.logical.shared.BeforeSelectionEvent;
 import com.google.gwt.event.logical.shared.BeforeSelectionHandler;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.TextColumn;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.ProvidesKey;
@@ -35,6 +38,7 @@ import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.shared.deployment.DeploymentCommand;
 import org.jboss.as.console.client.shared.deployment.DeploymentCommandDelegate;
+import org.jboss.as.console.client.shared.deployment.DeploymentFilter;
 import org.jboss.as.console.client.shared.deployment.TitleColumn;
 import org.jboss.as.console.client.shared.model.DeploymentRecord;
 import org.jboss.as.console.client.shared.viewframework.builder.MultipleToOneLayout;
@@ -65,6 +69,7 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
     private GroupDeploymentsOverview groupOverview;
     private Map<String,List<String>> currentAssignments = new HashMap<String, List<String>>();
     private DefaultCellTable<DeploymentRecord> contentTable;
+    private DeploymentFilter filter;
 
     @Override
     public void setPresenter(DeploymentsPresenter presenter) {
@@ -144,6 +149,11 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
         // ---
 
         final ToolStrip toolStrip = new ToolStrip();
+
+        filter = new DeploymentFilter(domainDeploymentProvider);
+        toolStrip.addToolWidget(filter.asWidget());
+
+        // ---
 
         ToolButton addContentBtn = new ToolButton("Add", new ClickHandler() {
             @Override
@@ -238,6 +248,7 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
         contentTable.selectDefaultEntity();
 
         currentAssignments = matchAssignments(domainDeploymentInfo);
+        filter.reset();
     }
 
     private Map<String,List<String>>  matchAssignments(DomainDeploymentInfo domainDeploymentInfo) {

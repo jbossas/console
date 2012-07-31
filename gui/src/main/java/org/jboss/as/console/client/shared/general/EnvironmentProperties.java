@@ -8,6 +8,8 @@ import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.event.dom.client.KeyPressEvent;
 import com.google.gwt.event.dom.client.KeyPressHandler;
+import com.google.gwt.event.dom.client.KeyUpEvent;
+import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.cellview.client.Column;
@@ -121,9 +123,9 @@ public class EnvironmentProperties {
         filter.setMaxLength(30);
         filter.setVisibleLength(20);
         filter.getElement().setAttribute("style", "float:right; width:120px;");
-        filter.addKeyDownHandler(new KeyDownHandler() {
+        filter.addKeyUpHandler(new KeyUpHandler() {
             @Override
-            public void onKeyDown(KeyDownEvent keyDownEvent) {
+            public void onKeyUp(KeyUpEvent keyUpEvent) {
                 String prefix = filter.getText();
                 if(prefix!=null && !prefix.equals(""))
                 {

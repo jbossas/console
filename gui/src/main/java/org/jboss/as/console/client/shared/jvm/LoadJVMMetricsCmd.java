@@ -1,5 +1,6 @@
 package org.jboss.as.console.client.shared.jvm;
 
+import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
@@ -162,6 +163,8 @@ public class LoadJVMMetricsCmd extends AddressableModelCmd implements AsyncComma
                 else
                 {
                     callback.onFailure(new RuntimeException("The server doesn't seem to be running: "+address));
+                    Log.error("Failed to load sever status: "+ response.getFailureDescription());
+
                     //callback.onFailure(new RuntimeException("Failed to load VM metrics: "+response.toString()));
                 }
             }
