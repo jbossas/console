@@ -224,19 +224,10 @@ public class ContentRepositoryView extends SuspendableViewImpl implements Deploy
         return layout.build();
     }
 
-    private void refreshServerGroupDeploymentsTable(ServerGroupRecord selectedServerGroup) {
-        /*List<DeploymentRecord> deployments = serverGroupDeployments.get(selectedServerGroup.getGroupName());
-        serverGroupDeploymentsDataProvider.setList(deployments);
-        this.selectedServerGroupLabel.setHTML(Console.MESSAGES.deploymentsFor(selectedServerGroup.getGroupName()));*/
-    }
-
     @Override
     public void updateDeploymentInfo(DomainDeploymentInfo domainDeploymentInfo, DeploymentRecord... targets) {
 
         List<ServerGroupRecord> serverGroups = this.presenter.getServerGroups();
-
-        ServerGroupRecord serverGroupTarget = findSingleTarget(serverGroups, targets);
-        setServerGroupTableSelection(serverGroupTarget);
 
         this.groupOverview.setGroups(serverGroups);
         this.groupOverview.setGroupDeployments(domainDeploymentInfo.getServerGroupDeployments());
@@ -275,43 +266,6 @@ public class ContentRepositoryView extends SuspendableViewImpl implements Deploy
         }
 
         return assignments;
-    }
-
-    private void setServerGroupTableSelection(ServerGroupRecord serverGroupTarget) {
-        /*if (this.serverGroupTable.isEmpty()) return;
-
-        List<ServerGroupRecord> serverGroups = this.presenter.getServerGroups();
-        ServerGroupRecord previouslySelectedServerGroup = findPreviouslySelectedGroup();
-        if (previouslySelectedServerGroup == null) {
-            serverGroupTableSelectionModel.setSelected(serverGroups.get(0), true);
-        } else if (serverGroupTarget != null) {
-            serverGroupTableSelectionModel.setSelected(serverGroupTarget, true);
-        } else {
-            serverGroupTableSelectionModel.setSelected(previouslySelectedServerGroup, true);
-        }   */
-    }
-
-    private ServerGroupRecord findPreviouslySelectedGroup() {
-        /*ServerGroupRecord previouslySelected = serverGroupTableSelectionModel.getSelectedObject();
-        if (previouslySelected == null) return null;
-        for (ServerGroupRecord serverGroup : this.presenter.getServerGroups()) {
-            if (serverGroup.getGroupName().equals(previouslySelected.getGroupName())) return serverGroup;
-        }
-
-        return null; // group not found. deleted?*/
-        return null;
-    }
-
-    // find the server group, if any, that was last the serverGroupTarget of a remove or enable/disable on one of its deployments
-    private ServerGroupRecord findSingleTarget(List<ServerGroupRecord> serverGroups, DeploymentRecord... targets) {
-        if (targets.length != 1) return null;
-        DeploymentRecord singleTarget = targets[0];
-
-        for (ServerGroupRecord serverGroup : serverGroups) {
-            if (singleTarget.getServerGroup().equals(serverGroup.getGroupName())) return serverGroup;
-        }
-
-        return null;
     }
 
     private List<Column> makeNameAndRuntimeColumns() {

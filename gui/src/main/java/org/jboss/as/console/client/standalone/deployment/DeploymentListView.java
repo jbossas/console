@@ -19,41 +19,28 @@
 
 package org.jboss.as.console.client.standalone.deployment;
 
-import com.google.gwt.cell.client.Cell;
 import com.google.gwt.cell.client.ImageResourceCell;
-import com.google.gwt.cell.client.SafeHtmlCell;
-import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.resources.client.ImageResource;
-import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.TextColumn;
-import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.LayoutPanel;
-import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.ProvidesKey;
+import com.google.gwt.view.client.SingleSelectionModel;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.shared.deployment.DeploymentCommand;
-import org.jboss.as.console.client.shared.deployment.DeploymentCommandColumn;
+import org.jboss.as.console.client.shared.deployment.DeploymentCommandDelegate;
+import org.jboss.as.console.client.shared.deployment.DeploymentFilter;
 import org.jboss.as.console.client.shared.deployment.TitleColumn;
 import org.jboss.as.console.client.shared.model.DeploymentRecord;
 import org.jboss.as.console.client.shared.viewframework.builder.MultipleToOneLayout;
-import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.TextAreaItem;
-import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
-import org.jboss.ballroom.client.widgets.forms.TextItem;
 import org.jboss.ballroom.client.widgets.icons.Icons;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
-import org.jboss.ballroom.client.widgets.tables.DefaultPager;
-import org.jboss.ballroom.client.widgets.tabs.FakeTabPanel;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
 import org.jboss.ballroom.client.widgets.tools.ToolStrip;
 
@@ -70,24 +57,32 @@ public class DeploymentListView extends SuspendableViewImpl implements Deploymen
 
     private DeploymentListPresenter presenter;
     private DefaultCellTable<DeploymentRecord> deploymentTable;
-    private ListDataProvider<DeploymentRecord> deploymentProvider;
-
-    @Override
-    public void setPresenter(DeploymentListPresenter presenter) {
-        this.presenter = presenter;
-    }
-
-    @Override
-    public void updateDeploymentInfo(List<DeploymentRecord> deployments) {
-      deploymentProvider.setList(deployments);
-    }
+    private ListDataProvider<DeploymentRecord> dataProvider;
+    private DeploymentFilter filter;
 
     @Override
     public Widget createWidget() {
 
 
+
+        ProvidesKey<DeploymentRecord> key = new ProvidesKey<DeploymentRecord>() {
+            @Override
+            public Object getKey(DeploymentRecord deploymentRecord) {
+                return deploymentRecord.getName();
+            }
+        };
+        deploymentTable = new DefaultCellTable<DeploymentRecord>(8, key);
+        final SingleSelectionModel<DeploymentRecord> selectionModel = new SingleSelectionModel<DeploymentRecord>();
+        deploymentTable.setSelectionModel(selectionModel);
+
+        dataProvider = new ListDataProvider<DeploymentRecord>(key);
+        dataProvider.addDataDisplay(deploymentTable);
+
+
+        // ---
+
         final ToolStrip toolStrip = new ToolStrip();
-        ToolButton addBtn = new ToolButton(Console.CONSTANTS.common_label_addContent(), new ClickHandler() {
+        ToolButton addBtn = new ToolButton(Console.CONSTANTS.common_label_add(), new ClickHandler() {
 
             @Override
             public void onClick(ClickEvent event) {
@@ -97,18 +92,55 @@ public class DeploymentListView extends SuspendableViewImpl implements Deploymen
         addBtn.ensureDebugId(Console.DEBUG_CONSTANTS.debug_label_add_deploymentListView());
         toolStrip.addToolButtonRight(addBtn);
 
-
-        // -----------
-
-        deploymentTable = new DefaultCellTable<DeploymentRecord>(8, new ProvidesKey<DeploymentRecord>() {
+        toolStrip.addToolButtonRight(new ToolButton(Console.CONSTANTS.common_label_remove(), new ClickHandler() {
             @Override
-            public Object getKey(DeploymentRecord deploymentRecord) {
-                return deploymentRecord.getName();
+            public void onClick(ClickEvent clickEvent) {
+                DeploymentRecord selection = selectionModel.getSelectedObject();
+                if(selection!=null)
+                {
+                    new DeploymentCommandDelegate(
+                            DeploymentListView.this.presenter,
+                            DeploymentCommand.REMOVE_FROM_STANDALONE).execute(
+                            selection
+                    );
+                }
             }
-        });
+        }));
 
-        deploymentProvider = new ListDataProvider<DeploymentRecord>();
-        deploymentProvider.addDataDisplay(deploymentTable);
+        toolStrip.addToolButtonRight(new ToolButton(Console.CONSTANTS.common_label_enOrDisable(), new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent clickEvent) {
+                DeploymentRecord selection = selectionModel.getSelectedObject();
+                if(selection!=null)
+                {
+                    new DeploymentCommandDelegate(
+                            DeploymentListView.this.presenter,
+                            DeploymentCommand.ENABLE_DISABLE).execute(
+                            selection
+                    );
+                }
+            }
+        }));
+
+        toolStrip.addToolButtonRight(new ToolButton("Update", new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent clickEvent) {
+                DeploymentRecord selection = selectionModel.getSelectedObject();
+                if(selection!=null)
+                {
+                    new DeploymentCommandDelegate(
+                            DeploymentListView.this.presenter,
+                            DeploymentCommand.UPDATE_CONTENT).execute(
+                            selection
+                    );
+                }
+            }
+        }));
+
+
+
+        filter = new DeploymentFilter(dataProvider);
+        toolStrip.addToolWidget(filter.asWidget());
 
         TitleColumn dplNameColumn = new TitleColumn() {};
 
@@ -128,11 +160,6 @@ public class DeploymentListView extends SuspendableViewImpl implements Deploymen
         deploymentTable.addColumn(dplRuntimeColumn, Console.CONSTANTS.common_label_runtimeName());
         deploymentTable.addColumn(makeEnabledColumn(), Console.CONSTANTS.common_label_enabled());
 
-        deploymentTable.addColumn(new DeploymentCommandColumn(this.presenter, DeploymentCommand.ENABLE_DISABLE), Console.CONSTANTS.common_label_enOrDisable());
-        deploymentTable.addColumn(new DeploymentCommandColumn(this.presenter, DeploymentCommand.UPDATE_CONTENT), Console.CONSTANTS.common_label_updateContent());
-        deploymentTable.addColumn(new DeploymentCommandColumn(this.presenter, DeploymentCommand.REMOVE_FROM_STANDALONE), Console.CONSTANTS.common_label_remove());
-
-
         Form<DeploymentRecord> form = new Form<DeploymentRecord>(DeploymentRecord.class);
         form.setNumColumns(2);
         form.setEnabled(true);
@@ -149,7 +176,7 @@ public class DeploymentListView extends SuspendableViewImpl implements Deploymen
                 .setDescription("Currently deployed application components. Deployments that have been added through the filesystem will not be managable through the web interface.")
                 .setMaster(Console.MESSAGES.available("Deployments"), deploymentTable)
                 .setMasterTools(toolStrip)
-                .addDetail(Console.CONSTANTS.common_label_selection(), form.asWidget());
+                .setDetail(Console.CONSTANTS.common_label_selection(), form.asWidget());
 
         return layout.build();
     }
@@ -173,4 +200,22 @@ public class DeploymentListView extends SuspendableViewImpl implements Deploymen
             }
         };
     }
+
+    @Override
+    public void setPresenter(DeploymentListPresenter presenter) {
+        this.presenter = presenter;
+    }
+
+    @Override
+    public void updateDeploymentInfo(List<DeploymentRecord> deployments) {
+        dataProvider.getList().clear();
+        dataProvider.getList().addAll(deployments);
+        dataProvider.flush();
+
+        deploymentTable.selectDefaultEntity();
+
+        filter.reset(true);
+
+    }
+
 }

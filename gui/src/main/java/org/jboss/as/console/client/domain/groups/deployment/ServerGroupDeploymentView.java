@@ -118,7 +118,7 @@ public class ServerGroupDeploymentView {
             }
         }));
 
-        tools.addToolButtonRight(new ToolButton("Remove", new ClickHandler() {
+        tools.addToolButtonRight(new ToolButton(Console.CONSTANTS.common_label_remove(), new ClickHandler() {
             @Override
             public void onClick(ClickEvent clickEvent) {
 
@@ -130,7 +130,7 @@ public class ServerGroupDeploymentView {
             }
         }));
 
-        tools.addToolButtonRight(new ToolButton("Enable/Disable", new ClickHandler() {
+        tools.addToolButtonRight(new ToolButton(Console.CONSTANTS.common_label_enOrDisable(), new ClickHandler() {
             @Override
             public void onClick(ClickEvent clickEvent) {
                 DeploymentRecord selection = selectionModel.getSelectedObject();
