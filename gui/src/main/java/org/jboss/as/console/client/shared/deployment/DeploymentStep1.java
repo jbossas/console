@@ -56,7 +56,7 @@ public class DeploymentStep1 {
     public Widget asWidget()
     {
         VerticalPanel layout = new VerticalPanel();
-        layout.getElement().setAttribute("style", "width:95%; margin:15px;");
+        layout.setStyleName("window-content");
 
         // Create a FormPanel and point it at a service.
         final FormPanel form = new FormPanel();
@@ -76,6 +76,12 @@ public class DeploymentStep1 {
         upload.setName("uploadFormElement");
         panel.add(upload);
 
+
+        final HTML errorMessages = new HTML("Please chose a file!");
+        errorMessages.setStyleName("error-panel");
+        errorMessages.setVisible(false);
+        panel.add(errorMessages);
+
         // Add a 'submit' button.
 
 
@@ -90,16 +96,27 @@ public class DeploymentStep1 {
             @Override
             public void onClick(ClickEvent event) {
 
-                loading = Feedback.loading(
-                        Console.CONSTANTS.common_label_plaseWait(),
-                        Console.CONSTANTS.common_label_requestProcessed(),
-                        new Feedback.LoadingCallback() {
-                            @Override
-                            public void onCancel() {
+                errorMessages.setVisible(false);
 
-                            }
-                        });
-                form.submit();
+                // verify form
+                String filename = upload.getFilename();
+                if(filename!=null && !filename.equals(""))
+                {
+                    loading = Feedback.loading(
+                            Console.CONSTANTS.common_label_plaseWait(),
+                            Console.CONSTANTS.common_label_requestProcessed(),
+                            new Feedback.LoadingCallback() {
+                                @Override
+                                public void onCancel() {
+
+                                }
+                            });
+                    form.submit();
+                }
+                else
+                {
+                    errorMessages.setVisible(true);
+                }
             }
         };
 
