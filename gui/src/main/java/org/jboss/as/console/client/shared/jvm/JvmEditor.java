@@ -33,6 +33,7 @@ import org.jboss.as.console.client.widgets.forms.FormToolStrip;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.FormItem;
 import org.jboss.ballroom.client.widgets.forms.FormValidation;
+import org.jboss.ballroom.client.widgets.forms.ListItem;
 import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
 import org.jboss.ballroom.client.widgets.forms.TextItem;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
@@ -144,7 +145,9 @@ public class JvmEditor {
         HeapBoxItem maxPermgen = new HeapBoxItem("maxPermgen", "Max Permgen Size", false);
         HeapBoxItem permgen = new HeapBoxItem("permgen", "Permgen Size", false);
 
-        form.setFields(nameItem, BlankItem.INSTANCE, heapItem, maxHeapItem, permgen, maxPermgen);
+        ListItem options = new ListItem("options", "JVM Options");
+
+        form.setFields(nameItem, BlankItem.INSTANCE, heapItem, maxHeapItem, permgen, maxPermgen, options);
         form.setEnabled(false);
 
         // ---
