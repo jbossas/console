@@ -45,6 +45,7 @@ import org.jboss.as.console.client.shared.deployment.DeploymentCommand;
 import org.jboss.as.console.client.shared.deployment.DeploymentCommandDelegate;
 import org.jboss.as.console.client.shared.deployment.NewDeploymentWizard;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
+import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.as.console.client.shared.model.DeploymentRecord;
 import org.jboss.as.console.client.shared.model.DeploymentStore;
@@ -54,8 +55,11 @@ import org.jboss.dmr.client.ModelNode;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+
+import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 
 /**
  * @author Heiko Braun
@@ -226,11 +230,8 @@ public class DeploymentsPresenter extends Presenter<DeploymentsPresenter.MyView,
 
     @Override
     public void removeContent(final DeploymentRecord deployment) {
-        if (domainDeploymentInfo.isAssignedToAnyGroup(deployment)) {
-            Exception e = new Exception(Console.CONSTANTS.common_error_contentStillAssignedToGroup());
-            DeploymentCommand.REMOVE_FROM_DOMAIN.displayFailureMessage(DeploymentsPresenter.this, deployment, e);
-            return;
-        }
+
+        Set<String> assignedGroups = domainDeploymentInfo.getAssignedGroups(deployment);
 
         final PopupPanel loading = Feedback.loading(
                 Console.CONSTANTS.common_label_plaseWait(),
@@ -242,18 +243,42 @@ public class DeploymentsPresenter extends Presenter<DeploymentsPresenter.MyView,
                     }
                 });
 
-        deploymentStore.removeContent(deployment, new SimpleCallback<DMRResponse>() {
+        ModelNode operation = new ModelNode();
+        operation.get(OP).set(COMPOSITE);
+        operation.get(ADDRESS).setEmptyList();
 
+        List<ModelNode> steps = new LinkedList<ModelNode>();
+
+        for(String group : assignedGroups)
+        {
+            ModelNode groupOp = new ModelNode();
+            groupOp.get(OP).set(REMOVE);
+            groupOp.get(ADDRESS).add("server-group", group);
+            groupOp.get(ADDRESS).add("deployment", deployment.getName());
+            steps.add(groupOp);
+        }
+
+
+        ModelNode removeContentOp = new ModelNode();
+        removeContentOp.get(OP).set(REMOVE);
+        removeContentOp.get(ADDRESS).add("deployment", deployment.getName());
+        steps.add(removeContentOp);
+
+        operation.get(STEPS).set(steps);
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
-            public void onSuccess(DMRResponse response) {
-
+            public void onSuccess(DMRResponse dmrResponse) {
                 loading.hide();
 
-                ModelNode result = response.get();
+                ModelNode result = dmrResponse.get();
 
                 if(result.isFailure())
                 {
-                    Console.error(Console.MESSAGES.deletionFailed("Deployment "+deployment.getRuntimeName()), result.getFailureDescription());
+                    Console.error(Console.MESSAGES.deletionFailed(
+                            "Deployment "+deployment.getRuntimeName()),
+                            result.getFailureDescription()
+                    );
                 }
                 else
                 {
@@ -262,9 +287,9 @@ public class DeploymentsPresenter extends Presenter<DeploymentsPresenter.MyView,
 
 
                 domainDeploymentInfo.refreshView();
-
             }
         });
+
     }
 
     @Override

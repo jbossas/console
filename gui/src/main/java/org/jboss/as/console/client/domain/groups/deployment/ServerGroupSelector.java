@@ -170,7 +170,7 @@ public class ServerGroupSelector {
         selectionTable.addColumn(profileColumn, Console.CONSTANTS.common_label_profile());
 
         selectionTable.setWidth("100%", true);
-        selectionTable.setColumnWidth(selectedColumn, 20, Style.Unit.PCT);
+        selectionTable.setColumnWidth(selectedColumn, 10, Style.Unit.PCT);
         selectionTable.setColumnWidth(nameColumn, 40, Style.Unit.PCT);
         selectionTable.setColumnWidth(profileColumn, 40, Style.Unit.PCT);
 

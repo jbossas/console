@@ -93,8 +93,8 @@ public class AssignToGroupWizard {
         table.addColumn(checkBoxColumn, "Assign");
         table.addColumn(titleColumn, "Name");
 
-        table.setColumnWidth(checkBoxColumn, 30, Style.Unit.PCT);
-        table.setColumnWidth(titleColumn, 70, Style.Unit.PCT);
+        table.setColumnWidth(checkBoxColumn, 10, Style.Unit.PCT);
+        table.setColumnWidth(titleColumn, 90, Style.Unit.PCT);
 
 
         DefaultPager pager = new DefaultPager();

@@ -28,8 +28,10 @@ import org.jboss.as.console.client.shared.model.DeploymentStore;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * This class encapsulates all the data needed to refresh the DeploymentsOverview.
@@ -78,14 +80,15 @@ public class DomainDeploymentInfo implements DeploymentViewRefresher {
     /**
      * Is the deployment assigned to any server group?
      */
-    boolean isAssignedToAnyGroup(DeploymentRecord deployment) {
+    Set<String> getAssignedGroups(DeploymentRecord deployment) {
+        Set<String> names = new HashSet<String>();
         for (Map.Entry<String, List<DeploymentRecord>> entry : serverGroupDeployments.entrySet()) {
             if (isAssignedToGroup(entry.getKey(), deployment)) {
-                return true;
+                names.add(entry.getKey());
             }
         }
 
-        return false;
+        return names;
     }
 
     @Override
