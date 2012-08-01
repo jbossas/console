@@ -29,6 +29,7 @@ import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.as.console.client.shared.model.ModelAdapter;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
+import org.jboss.as.console.client.widgets.forms.EntityAdapter;
 import org.jboss.as.console.client.widgets.forms.PropertyBinding;
 import org.jboss.dmr.client.ModelNode;
 
@@ -44,10 +45,12 @@ import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 public class UpdateJvmCmd extends AddressableModelCmd implements AsyncCommand<Boolean>{
 
     private ApplicationMetaData metaData;
+    private EntityAdapter<Jvm> adapter;
 
     public UpdateJvmCmd(DispatchAsync dispatcher, BeanFactory factory, ApplicationMetaData metaData, ModelNode address) {
         super(dispatcher, factory, address);
         this.metaData = metaData;
+        this.adapter = new EntityAdapter<Jvm>(Jvm.class, metaData);
     }
 
     @Override
@@ -56,12 +59,11 @@ public class UpdateJvmCmd extends AddressableModelCmd implements AsyncCommand<Bo
     }
 
     public void execute(Map<String, Object> changedValues, final AsyncCallback<Boolean> callback) {
-        ModelNode proto = new ModelNode();
-        proto.get(OP).set(WRITE_ATTRIBUTE_OPERATION);
-        proto.get(ADDRESS).set(address);
+        ModelNode addressNode= new ModelNode();
+        addressNode.get(ADDRESS).set(address);
 
-        List<PropertyBinding> bindings = metaData.getBindingsForType(Jvm.class);
-        ModelNode operation  = ModelAdapter.detypedFromChangeset(proto, changedValues, bindings);
+
+        ModelNode operation = adapter.fromChangeset(changedValues, addressNode);
 
         dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
             @Override

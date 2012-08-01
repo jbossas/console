@@ -21,6 +21,8 @@ package org.jboss.as.console.client.shared.jvm;
 
 import org.jboss.as.console.client.widgets.forms.Binding;
 
+import java.util.List;
+
 /**
  * @author Heiko Braun
  * @date 4/20/11
@@ -58,6 +60,10 @@ public interface Jvm {
     @Binding(skip = true)
     boolean isInherited();
     void setInherited(boolean inherited);
+
+    @Binding(detypedName = "jvm-options", listType="java.lang.String")
+    List<String> getOptions();
+    void setOptions(List<String> options);
 
 
 }
