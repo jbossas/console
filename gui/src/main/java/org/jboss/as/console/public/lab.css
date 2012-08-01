@@ -118,3 +118,8 @@ a:hover, a:active { outline: none; }
     border: 1px dotted #3F3F3F!important;
     background-color:#ffffff;
 }
+
+
+input[type="checkbox"] {
+    width: 15px!important;
+}
