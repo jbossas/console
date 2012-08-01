@@ -22,7 +22,7 @@
     </description>
 
     <properties>
-        <ballroom.version>1.3.0.Final</ballroom.version>
+        <ballroom.version>1.4.0-SNAPSHOT</ballroom.version>
         <gwt.version>2.3.2-redhat</gwt.version>
         <gwtp.version>0.6</gwtp.version>
         <gwt.maven>2.3.0</gwt.maven>

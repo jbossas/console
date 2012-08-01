@@ -115,11 +115,11 @@ public class ObservableFormItem extends FormItem {
         wrapped.setRequired(required);
     }
 
-    void setModified(boolean modified) {
+    public void setModified(boolean modified) {
         wrapped.setModified(modified);
     }
 
-    protected void setUndefined(boolean undefined) {
+    public  void setUndefined(boolean undefined) {
         wrapped.setUndefined(undefined);
     }
 
