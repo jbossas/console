@@ -21,13 +21,10 @@ package org.jboss.as.console.client.domain.groups.deployment;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.KeyDownEvent;
-import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.event.logical.shared.BeforeSelectionEvent;
 import com.google.gwt.event.logical.shared.BeforeSelectionHandler;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.TextColumn;
-import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.ProvidesKey;
@@ -60,7 +57,7 @@ import java.util.Map;
  * @author Stan Silvert <ssilvert@redhat.com> (C) 2011 Red Hat Inc.
  * @date 3/1/11
  */
-public class DeploymentsOverview extends SuspendableViewImpl implements DeploymentsPresenter.MyView {
+public class ContentRepositoryView extends SuspendableViewImpl implements DeploymentsPresenter.MyView {
 
     private DeploymentsPresenter presenter;
 
@@ -171,7 +168,7 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
                 final DeploymentRecord selection = selectionModel.getSelectedObject();
                 if(selection!=null) {
                     new DeploymentCommandDelegate(
-                            DeploymentsOverview.this.presenter,
+                            ContentRepositoryView.this.presenter,
                             DeploymentCommand.REMOVE_FROM_DOMAIN).execute(
                             selection
                     );
@@ -189,7 +186,7 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
                 if(selection!=null)
                 {
                     new DeploymentCommandDelegate(
-                            DeploymentsOverview.this.presenter,
+                            ContentRepositoryView.this.presenter,
                             DeploymentCommand.ADD_TO_GROUP).execute(
                             selection
                     );
@@ -207,7 +204,7 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
                 if(selection!=null)
                 {
                     new DeploymentCommandDelegate(
-                            DeploymentsOverview.this.presenter,
+                            ContentRepositoryView.this.presenter,
                             DeploymentCommand.UPDATE_CONTENT).execute(
                             selection
                     );
