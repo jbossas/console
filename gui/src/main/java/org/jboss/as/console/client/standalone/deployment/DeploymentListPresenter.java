@@ -35,6 +35,7 @@ import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.core.StandaloneGateKeeper;
+import org.jboss.as.console.client.domain.groups.deployment.ServerGroupSelection;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.shared.deployment.DeployCommandExecutor;
@@ -51,6 +52,7 @@ import org.jboss.dmr.client.ModelNode;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author Heiko Braun
@@ -169,7 +171,7 @@ public class DeploymentListPresenter extends Presenter<DeploymentListPresenter.M
     }
 
     @Override
-    public void addToServerGroup(DeploymentRecord record, boolean enable, String... selectedGroups) {
+    public void addToServerGroup(DeploymentRecord record, boolean enable, Set<ServerGroupSelection> selectedGroups) {
         throw new UnsupportedOperationException("Not supported in standalone mode.");
     }
 

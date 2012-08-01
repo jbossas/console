@@ -19,10 +19,12 @@
 
 package org.jboss.as.console.client.shared.deployment;
 
+import org.jboss.as.console.client.domain.groups.deployment.ServerGroupSelection;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.shared.model.DeploymentRecord;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * Implementers of this interface carry out sending the actual command to the
@@ -62,7 +64,7 @@ public interface DeployCommandExecutor {
    * @param selectedGroups The selected server groups.
    * @throws UnsupportedOperationException if in standalone mode.
    */
-  public void addToServerGroup(DeploymentRecord record, boolean enable, String... selectedGroups);
+  public void addToServerGroup(DeploymentRecord record, boolean enable, Set<ServerGroupSelection> selectedGroups);
 
   /**
    * Remove a deployment from the server.
