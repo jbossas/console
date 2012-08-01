@@ -90,7 +90,7 @@ public class AssignToGroupWizard {
                 };
 
         table.setWidth("100%", true);
-        table.addColumn(checkBoxColumn, "");
+        table.addColumn(checkBoxColumn, "Assign");
         table.addColumn(titleColumn, "Name");
 
         table.setColumnWidth(checkBoxColumn, 30, Style.Unit.PCT);

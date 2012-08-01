@@ -31,6 +31,7 @@ import org.jboss.dmr.client.Property;
 import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 
@@ -167,7 +168,7 @@ public class DeploymentStoreImpl implements DeploymentStore {
     }
 
     @Override
-    public void addToServerGroups(String[] serverGroups,
+    public void addToServerGroups( Set<String> serverGroups,
                                   boolean enable,
                                   DeploymentRecord deploymentRecord,
                                   AsyncCallback<DMRResponse> callback) {

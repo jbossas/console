@@ -23,6 +23,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * Responsible for loading deployment data
@@ -35,7 +36,7 @@ import java.util.List;
 public interface DeploymentStore {
     void loadServerGroupDeployments(AsyncCallback<List<DeploymentRecord>> callback);
     void loadDeploymentContent(AsyncCallback<List<DeploymentRecord>> callback);
-    void addToServerGroups(String[] serverGroups, boolean enable, DeploymentRecord deploymentRecord, AsyncCallback<DMRResponse> callback);
+    void addToServerGroups( Set<String> serverGroups, boolean enable, DeploymentRecord deploymentRecord, AsyncCallback<DMRResponse> callback);
     void removeContent(DeploymentRecord deploymentRecord, AsyncCallback<DMRResponse> callback);
     void enableDisableDeployment(DeploymentRecord deploymentRecord, AsyncCallback<DMRResponse> callback);
     void removeDeploymentFromGroup(DeploymentRecord deploymentRecord, AsyncCallback<DMRResponse> callback);

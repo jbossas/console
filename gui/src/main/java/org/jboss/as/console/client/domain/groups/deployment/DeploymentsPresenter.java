@@ -53,6 +53,7 @@ import org.jboss.ballroom.client.widgets.window.Feedback;
 import org.jboss.dmr.client.ModelNode;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -179,8 +180,10 @@ public class DeploymentsPresenter extends Presenter<DeploymentsPresenter.MyView,
     }
 
     @Override
-    public void addToServerGroup(final DeploymentRecord deployment, final boolean enable, final String... serverGroups) {
-
+    public void addToServerGroup(
+            final DeploymentRecord deployment,
+            final boolean enable,
+            Set<ServerGroupSelection> selection) {
 
         final PopupPanel loading = Feedback.loading(
                 Console.CONSTANTS.common_label_plaseWait(),
@@ -192,7 +195,12 @@ public class DeploymentsPresenter extends Presenter<DeploymentsPresenter.MyView,
                     }
                 });
 
-        deploymentStore.addToServerGroups(serverGroups, enable, deployment, new SimpleCallback<DMRResponse>() {
+
+        Set<String> names = new HashSet<String>();
+        for(ServerGroupSelection group : selection)
+            names.add(group.getName());
+
+        deploymentStore.addToServerGroups(names, enable, deployment, new SimpleCallback<DMRResponse>() {
 
             @Override
             public void onSuccess(DMRResponse response) {
@@ -207,7 +215,7 @@ public class DeploymentsPresenter extends Presenter<DeploymentsPresenter.MyView,
                 }
                 else
                 {
-                    Console.info(Console.MESSAGES.added("Deployment "+deployment.getRuntimeName()));
+                    Console.info(Console.MESSAGES.added("Deployment "+deployment.getRuntimeName()+ " to group "+serverGroups));
                 }
 
                 domainDeploymentInfo.refreshView();
@@ -356,7 +364,10 @@ public class DeploymentsPresenter extends Presenter<DeploymentsPresenter.MyView,
 
         for(DeploymentRecord deployment : selectedSet)
         {
-            addToServerGroup(deployment, false, serverGroup.getGroupName());
+            HashSet<ServerGroupSelection> groups = new HashSet<ServerGroupSelection>();
+            ServerGroupSelection selection = new ServerGroupSelection(serverGroup);
+            groups.add(selection);
+            addToServerGroup(deployment, false, groups);
         }
 
     }
