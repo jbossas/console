@@ -13,7 +13,7 @@ public class DeploymentFilter extends DataProviderFilter<DeploymentRecord> {
     public DeploymentFilter(ListDataProvider<DeploymentRecord> delegate) {
         super(delegate, new Predicate<DeploymentRecord>() {
             @Override
-            public boolean match(String prefix, DeploymentRecord candiate) {
+            public boolean apply(String prefix, DeploymentRecord candiate) {
                 return candiate.getName().startsWith(prefix);
             }
         });

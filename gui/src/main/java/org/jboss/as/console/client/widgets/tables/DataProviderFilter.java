@@ -1,7 +1,6 @@
 package org.jboss.as.console.client.widgets.tables;
 
-import com.google.gwt.event.dom.client.KeyDownEvent;
-import com.google.gwt.event.dom.client.KeyDownHandler;
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -11,7 +10,6 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -26,7 +24,7 @@ public class DataProviderFilter<T> {
     private TextBox filter;
 
     public interface Predicate<T> {
-        boolean match(String prefix, T candiate);
+        boolean apply(String prefix, T candiate);
     }
 
     public DataProviderFilter(ListDataProvider<T> delegate, Predicate<T> predicate) {
@@ -52,14 +50,22 @@ public class DataProviderFilter<T> {
         filter.addKeyUpHandler(new KeyUpHandler() {
             @Override
             public void onKeyUp(KeyUpEvent keyUpEvent) {
-                String prefix = filter.getText();
 
-                if (prefix != null && !prefix.equals("")) {
-                    // filter by prefix
-                    filterByPrefix(prefix);
-                } else {
-                    clearFilter();
-                }
+                Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+
+                    @Override
+                    public void execute() {
+                        String prefix = filter.getText();
+
+                        if (prefix != null && !prefix.equals("")) {
+                            // filter by prefix
+                            filterByPrefix(prefix);
+                        } else {
+                            clearFilter();
+                        }
+                    }
+
+                });
             }
         });
         HorizontalPanel panel = new HorizontalPanel();
@@ -76,7 +82,7 @@ public class DataProviderFilter<T> {
         final List<T> next  = new ArrayList<T>();
         for(T item : origValues)
         {
-            if(predicate.match(prefix, item))
+            if(predicate.apply(prefix, item))
                 next.add(item);
         }
 
