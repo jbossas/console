@@ -7,7 +7,11 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.view.client.HasData;
 import com.google.gwt.view.client.ListDataProvider;
+import com.google.gwt.view.client.SelectionChangeEvent;
+import com.google.gwt.view.client.SelectionModel;
+import com.google.gwt.view.client.SingleSelectionModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +44,20 @@ public class DataProviderFilter<T> {
         this.filter = new TextBox();
 
         snapshot();
+    }
+
+    private void clearSelection() {
+        for(HasData<T> table : delegate.getDataDisplays())
+        {
+            SelectionModel<? super T> selectionModel = table.getSelectionModel();
+            if(selectionModel instanceof SingleSelectionModel)
+            {
+                SingleSelectionModel<T> sm = (SingleSelectionModel<T>)selectionModel;
+                T selectedObject = sm.getSelectedObject();
+                if(selectedObject!=null)
+                    ((SingleSelectionModel<T>) selectionModel).setSelected(selectedObject, false);
+            }
+        }
     }
 
     /**
@@ -107,6 +125,8 @@ public class DataProviderFilter<T> {
     }
 
     public void filterByPrefix(String prefix) {
+
+        clearSelection();
 
         final List<T> next  = new ArrayList<T>();
         for(T item : origValues)
