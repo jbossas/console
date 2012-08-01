@@ -245,7 +245,8 @@ public class ContentRepositoryView extends SuspendableViewImpl implements Deploy
         contentTable.selectDefaultEntity();
 
         currentAssignments = matchAssignments(domainDeploymentInfo);
-        filter.reset();
+
+        filter.reset(true);
     }
 
     private Map<String,List<String>>  matchAssignments(DomainDeploymentInfo domainDeploymentInfo) {
