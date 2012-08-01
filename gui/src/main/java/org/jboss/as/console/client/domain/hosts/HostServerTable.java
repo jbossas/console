@@ -154,7 +154,7 @@ public class HostServerTable {
             @Override
             public void onSelectionChange(SelectionChangeEvent event) {
                 ServerInstance server = getSelectedServer();
-                presenter.onServerSelected(getSelectedHost(), getSelectedServer());
+                presenter.onServerSelected(getSelectedHost(), server);
                 updateDisplay();
             }
         });
