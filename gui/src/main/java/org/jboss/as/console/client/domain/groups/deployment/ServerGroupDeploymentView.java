@@ -12,6 +12,7 @@ import com.google.gwt.view.client.ProvidesKey;
 import com.google.gwt.view.client.SingleSelectionModel;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
+import org.jboss.as.console.client.shared.deployment.DeploymentFilter;
 import org.jboss.as.console.client.shared.deployment.TitleColumn;
 import org.jboss.as.console.client.shared.model.DeploymentRecord;
 import org.jboss.as.console.client.shared.viewframework.builder.MultipleToOneLayout;
@@ -36,6 +37,7 @@ public class ServerGroupDeploymentView {
     private DeploymentsPresenter presenter;
     private ContentHeaderLabel header;
     private ServerGroupRecord currentSelection;
+    private DeploymentFilter filter;
 
     public ServerGroupDeploymentView(DeploymentsPresenter presenter) {
         this.presenter = presenter;
@@ -105,6 +107,9 @@ public class ServerGroupDeploymentView {
 
         ToolStrip tools = new ToolStrip();
 
+        filter = new DeploymentFilter(dataProvider);
+        tools.addToolWidget(filter.asWidget());
+
         tools.addToolButtonRight(new ToolButton("Assign", new ClickHandler() {
             @Override
             public void onClick(ClickEvent clickEvent) {
@@ -161,6 +166,8 @@ public class ServerGroupDeploymentView {
         dataProvider.setList(deploymentRecords);
         dataProvider.flush();
         table.selectDefaultEntity();
+        filter.reset(true);
+
     }
 
     public ServerGroupRecord getCurrentSelection() {

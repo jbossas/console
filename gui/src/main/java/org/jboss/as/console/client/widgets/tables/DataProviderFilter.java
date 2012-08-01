@@ -13,13 +13,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * <b>Caveat</b>: You need to provide set the data provider list before creating the filter instance.
+ *
  * @author Heiko Braun
  * @date 7/31/12
  */
 public class DataProviderFilter<T> {
 
     private ListDataProvider<T> delegate;
-    private ArrayList<T> origValues;
+    private ArrayList<T> origValues = new ArrayList<T>();
     private Predicate predicate;
     private TextBox filter;
 
@@ -27,22 +29,49 @@ public class DataProviderFilter<T> {
         boolean apply(String prefix, T candiate);
     }
 
+    /**
+     *  initialized the filter by calling {@link #snapshot()}
+     * @param delegate
+     * @param predicate
+     */
     public DataProviderFilter(ListDataProvider<T> delegate, Predicate<T> predicate) {
         this.delegate = delegate;
         this.predicate = predicate;
+        this.filter = new TextBox();
+
+        snapshot();
     }
 
-    public void reset() {
-        this.origValues = new ArrayList<T>(delegate.getList().size());
-        this.origValues.addAll(delegate.getList());
-        clearFilter();
-        filter.setText("");
+    /**
+     * if {@link #snapshot()} is set, a new backup if the data provider list will be made. <br/>
+     * you need to do it when the data provider gets new records.
+     *
+     * @param snapshot  create a snapshot
+     */
+    public void reset(boolean snapshot) {
+        if(snapshot)
+            snapshot();
 
+        // flush
+        clearFilter();
+
+        // clear input
+        filter.setText("");
+    }
+
+    /**
+     * creates a backup of the orig data provider values
+     * that a re used to reset the provider when the filter is cleared.
+     */
+    public void snapshot() {
+        // backup original
+        this.origValues.clear();
+        this.origValues.addAll(delegate.getList());
     }
 
     public Widget asWidget() {
 
-        filter = new TextBox();
+
         filter.setMaxLength(30);
         filter.setVisibleLength(20);
         filter.getElement().setAttribute("style", "width:120px;");

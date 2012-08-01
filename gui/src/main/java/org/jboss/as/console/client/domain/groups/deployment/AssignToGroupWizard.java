@@ -13,11 +13,13 @@ import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.MultiSelectionModel;
 import com.google.gwt.view.client.ProvidesKey;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
+import org.jboss.as.console.client.shared.deployment.DeploymentFilter;
 import org.jboss.as.console.client.shared.model.DeploymentRecord;
 import org.jboss.ballroom.client.widgets.ContentGroupLabel;
 import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 import org.jboss.ballroom.client.widgets.tables.DefaultPager;
+import org.jboss.ballroom.client.widgets.tools.ToolStrip;
 import org.jboss.ballroom.client.widgets.window.DialogueOptions;
 import org.jboss.ballroom.client.widgets.window.WindowContentBuilder;
 
@@ -48,8 +50,6 @@ public class AssignToGroupWizard {
         VerticalPanel layout = new VerticalPanel();
         layout.addStyleName("window-content");
 
-        // TODO
-
         ProvidesKey<DeploymentRecord> key = new ProvidesKey<DeploymentRecord>() {
             @Override
             public Object getKey(DeploymentRecord o) {
@@ -60,7 +60,7 @@ public class AssignToGroupWizard {
         final DefaultCellTable<DeploymentRecord> table = new DefaultCellTable<DeploymentRecord>(8, key);
         dataProvider = new ListDataProvider<DeploymentRecord>();
         dataProvider.addDataDisplay(table);
-
+        dataProvider.setList(availableDeployments);
 
         final MultiSelectionModel<DeploymentRecord> selectionModel =
                 new MultiSelectionModel<DeploymentRecord>(key);
@@ -100,8 +100,13 @@ public class AssignToGroupWizard {
         DefaultPager pager = new DefaultPager();
         pager.setDisplay(table);
 
+        ToolStrip toolStrip = new ToolStrip();
+        DeploymentFilter filter = new DeploymentFilter(dataProvider);
+        toolStrip.addToolWidget(filter.asWidget());
+
         layout.add(new ContentHeaderLabel("Server Group: "+serverGroup.getGroupName()));
         layout.add(new ContentGroupLabel("Available Deployment Content"));
+        layout.add(toolStrip.asWidget());
         layout.add(table.asWidget());
         layout.add(pager);
 
@@ -109,8 +114,6 @@ public class AssignToGroupWizard {
         errorMessages.setStyleName("error-panel");
         errorMessages.setVisible(false);
         layout.add(errorMessages);
-
-        dataProvider.setList(availableDeployments);
 
         DialogueOptions options = new DialogueOptions(
                 new ClickHandler() {
