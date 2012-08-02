@@ -1,6 +1,5 @@
 package org.jboss.as.console.client.tools;
 
-import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.OpenEvent;
@@ -11,12 +10,12 @@ import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.ui.HasTreeItems;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
+import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.gwtplatform.mvp.client.PopupViewImpl;
-import org.jboss.as.console.client.widgets.tabs.DefaultTabLayoutPanel;
 import org.jboss.ballroom.client.widgets.common.DefaultButton;
 import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 import org.jboss.dmr.client.ModelNode;
@@ -44,6 +43,7 @@ public class BrowserView extends PopupViewImpl implements BrowserPresenter.MyVie
     private DefaultWindow window;
 
     private FXTemplatesView storageView;
+    private NodeHeader nodeHeader;
 
 
     @Inject
@@ -77,6 +77,7 @@ public class BrowserView extends PopupViewImpl implements BrowserPresenter.MyVie
 
                 rawView.clearDisplay();
                 descView.clearDisplay();
+                nodeHeader.clearDisplay();
                 if(path.size()%2==0)
                     presenter.readResource(toAddress(path));
             }
@@ -85,6 +86,8 @@ public class BrowserView extends PopupViewImpl implements BrowserPresenter.MyVie
         layout = new SplitLayoutPanel(10);
         treeContainer = new VerticalPanel();
         treeContainer.setStyleName("fill-layout");
+        treeContainer.getElement().setAttribute("style", "padding:10px");
+
 
         treeContainer.add(new DefaultButton("Refresh", new ClickHandler() {
             @Override
@@ -100,18 +103,29 @@ public class BrowserView extends PopupViewImpl implements BrowserPresenter.MyVie
 
         rawView = new RawView();
         descView = new DescriptionView();
-
-
+        nodeHeader = new NodeHeader();
         storageView = new FXTemplatesView();
 
-        DefaultTabLayoutPanel tabLayoutPanel = new DefaultTabLayoutPanel(40, Style.Unit.PX);
-        tabLayoutPanel.addStyleName("default-tabpanel");
-        layout.add(tabLayoutPanel);
+        TabPanel tabs = new TabPanel();
+        tabs.setStyleName("default-tabpanel");
+        tabs.getElement().setAttribute("style", "margin-top:15px;");
 
-        tabLayoutPanel.add(descView.asWidget(), "Description");
-        tabLayoutPanel.add(rawView.asWidget(), "Model");
-        //TODO tabLayoutPanel.add(storageView.asWidget(), "Templates");
-        tabLayoutPanel.selectTab(0);
+        tabs.add(descView.asWidget(), "Description");
+        tabs.add(rawView.asWidget(), "Data");
+
+        tabs.selectTab(0);
+
+        // --
+
+        VerticalPanel contentPanel = new VerticalPanel();
+        contentPanel.setStyleName("rhs-content-panel");
+
+        Widget headerWidget = nodeHeader.asWidget();
+        contentPanel.add(headerWidget);
+        contentPanel.add(tabs);
+
+        ScrollPanel contentScroll = new ScrollPanel(contentPanel);
+        layout.add(contentScroll);
 
         tree.addOpenHandler(new OpenHandler<TreeItem>() {
             @Override
@@ -169,6 +183,7 @@ public class BrowserView extends PopupViewImpl implements BrowserPresenter.MyVie
             tree.clear();
             descView.clearDisplay();
             rawView.clearDisplay();
+            nodeHeader.clearDisplay();
             rootItem = tree;
         }
         else
@@ -193,6 +208,7 @@ public class BrowserView extends PopupViewImpl implements BrowserPresenter.MyVie
 
     @Override
     public void updateDescription(ModelNode address, ModelNode description) {
+        nodeHeader.updateDescription(address,description);
         descView.updateDescription(address, description);
     }
 
