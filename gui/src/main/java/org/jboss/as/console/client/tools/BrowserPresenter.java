@@ -142,6 +142,7 @@ public class BrowserPresenter extends PresenterWidget<BrowserPresenter.MyView>
         ModelNode resourceOp  = new ModelNode();
         resourceOp.get(ADDRESS).set(address);
         resourceOp.get(OP).set(READ_RESOURCE_OPERATION);
+        resourceOp.get(INCLUDE_RUNTIME).set(true);
         steps.add(resourceOp);
 
         operation.get(STEPS).set(steps);
