@@ -173,7 +173,6 @@ public class DescriptionView {
                     operationsBuilder.appendHtmlConstant("</tr>");
                 }
 
-
                 operationsBuilder.appendHtmlConstant("<tr valign=top>");
                 operationsBuilder.appendHtmlConstant("<td class='doc-attribute'>");
                 operationsBuilder.appendHtmlConstant("Response:");
