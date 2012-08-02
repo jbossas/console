@@ -64,7 +64,7 @@ public class BrowserView extends PopupViewImpl implements BrowserPresenter.MyVie
     }
 
     private void create() {
-        window = new DefaultWindow("DMR Browser");
+        window = new DefaultWindow("Configuration Browser");
         window.setGlassEnabled(true);
 
         tree = new Tree();
