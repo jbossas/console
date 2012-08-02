@@ -65,6 +65,8 @@ public class DescriptionView {
         inner.add(operationsPanel);
         inner.add(childrenPanel);
 
+        attributePanel.setOpen(true);
+
         layout.add(inner);
         return layout;
     }

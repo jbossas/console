@@ -1,10 +1,9 @@
 package org.jboss.as.console.client.tools;
 
-import com.google.gwt.user.client.ui.TextArea;
-import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
 import org.jboss.dmr.client.Property;
 
 /**
@@ -13,28 +12,15 @@ import org.jboss.dmr.client.Property;
  */
 public class RawView {
 
-    private TextArea dump;
-    private TextBox name;
-    private TextBox type;
-    private ContentHeaderLabel address;
+
+    private HTML dump;
 
     Widget asWidget() {
         VerticalPanel layout = new VerticalPanel();
         layout.setStyleName("fill-layout-width");
         layout.getElement().setAttribute("style", "padding:10px");
 
-        dump = new TextArea();
-        dump.setVisibleLines(10);
-        dump.setCharacterWidth(200);
-
-
-        name = new TextBox();
-        type = new TextBox();
-        address = new ContentHeaderLabel();
-
-        layout.add(address);
-        layout.add(name);
-        layout.add(type);
+        dump = new HTML("");
         layout.add(dump);
 
         return layout;
@@ -42,15 +28,30 @@ public class RawView {
 
     public void display(Property model)
     {
-        name.setText(model.getName());
-        type.setText(model.getValue().getType().name());
-        dump.setText(model.getValue().toString());
+        SafeHtmlBuilder parsed = parse(model.getValue().toString());
+        dump.setHTML(parsed.toSafeHtml());
+    }
+
+    private static SafeHtmlBuilder parse(String s) {
+
+        SafeHtmlBuilder html = new SafeHtmlBuilder();
+
+        html.appendHtmlConstant("<pre class='model-dump'>");
+
+        String[] lines = s.split("\n");
+        for(String line : lines)
+        {
+            html.appendHtmlConstant("<span class='browser-dump-line'>");
+            html.appendEscaped(line).appendHtmlConstant("<br/>");
+            html.appendHtmlConstant("</span>");
+        }
+
+        html.appendHtmlConstant("</pre>");
+        return html;
     }
 
     public void clearDisplay()
-       {
-           name.setText("");
-           type.setText("");
-           dump.setText("");
-       }
+    {
+        dump.setHTML("");
+    }
 }
