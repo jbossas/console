@@ -162,3 +162,12 @@ a:hover, a:active { outline: none; }
 input[type="checkbox"] {
     width: 15px!important;
 }
+
+.browser-tree .gwt-TreeItem {
+    color: #404040;
+}
+
+.browser-tree .gwt-TreeItem-selected {
+    font-weight: BOLD;
+    color: #000000;
+}
