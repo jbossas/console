@@ -10,45 +10,70 @@ import org.jboss.as.console.client.widgets.forms.Binding;
 @Address("/subsystem=transactions")
 public interface TransactionManager {
 
-    @Binding(detypedName = "socket-binding")
-    String getSocketBinding();
-    void setSocketBinding(String s);
-
-    @Binding(detypedName = "status-socket-binding")
-    String getStatusSocketBinding();
-    void setStatusSocketBinding(String s);
-
-    String getPath();
-    void setPath(String s);
-
-    @Binding(detypedName = "relative-to")
-    String getRelativeTo();
-    void setRelativeTo(String s);
-
-    @Binding(detypedName = "object-store-relative-to")
-    String getObjectStoreRelativeTo();
-    void setObjectStoreRelativeTo(String s);
-
-    @Binding(detypedName = "object-store-path")
-    String getObjectStorePath();
-    void setObjectStorePath(String s);
-
-    @Binding(detypedName = "default-timeout")
+    @Binding(detypedName = "default-timeout", expr = true)
     int getDefaultTimeout();
     void setDefaultTimeout(int t);
 
-    @Binding(detypedName = "enable-statistics")
+    @Binding(detypedName = "enable-statistics", expr = true)
     boolean isEnableStatistics();
     void setEnableStatistics(boolean b);
 
-    @Binding(detypedName = "enable-tsm-status")
+    @Binding(detypedName = "enable-tsm-status", expr = true)
     boolean isEnableTsmStatus();
     void setEnableTsmStatus(boolean b);
 
-    @Binding(detypedName = "recovery-listener")
+    @Binding(detypedName = "jts", expr = true)
+    boolean isJts();
+    void setJts(boolean b);
+
+    @Binding(detypedName = "node-identifier", expr = true)
+    String getNodeIdentifier();
+    void setNodeIdentifier(String s);
+
+    @Binding(detypedName = "object-store-path", expr = true)
+    String getObjectStorePath();
+    void setObjectStorePath(String s);
+
+    @Binding(detypedName = "object-store-relative-to", expr = true)
+    String getObjectStoreRelativeTo();
+    void setObjectStoreRelativeTo(String s);
+
+    @Binding(expr = true)
+    String getPath();
+    void setPath(String s);
+
+    @Binding(detypedName = "process-id-socket-binding", expr=true)
+    String getProcessIdSocketBinding();
+    void setProcessIdSocketBinding(String s);
+
+    @Binding(detypedName = "process-id-socket-max-ports", expr = true)
+    int getProcessIdMaxPorts();
+    void setProcessIdMaxPorts(int i);
+
+    @Binding(detypedName = "process-id-uuid")
+    boolean isProcessIdUUID();
+    void setProcessIdUUID(boolean b);
+
+
+    @Binding(detypedName = "recovery-listener", expr=true)
     boolean isRecoveryListener();
     void setRecoveryListener(boolean b);
 
+    @Binding(detypedName = "relative-to", expr = true)
+    String getRelativeTo();
+    void setRelativeTo(String s);
+
+    @Binding(detypedName = "socket-binding", expr = true)
+    String getSocketBinding();
+    void setSocketBinding(String s);
+
+    @Binding(detypedName = "status-socket-binding", expr = true)
+    String getStatusSocketBinding();
+    void setStatusSocketBinding(String s);
+
+    @Binding(detypedName = "use-hornetq-store", expr=true)
+    boolean isHornetqStore();
+    void setHornetqStore(boolean b);
 
     // Metrics
 
@@ -87,6 +112,5 @@ public interface TransactionManager {
     @Binding(detypedName = "number-of-heuristics")
     long getNumHeuristics();
     void setNumHeuristics(long l);
-
 
 }
