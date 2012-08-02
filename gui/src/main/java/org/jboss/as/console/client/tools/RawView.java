@@ -4,6 +4,7 @@ import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import org.jboss.as.console.client.shared.help.StaticHelpPanel;
 import org.jboss.dmr.client.Property;
 
 /**
@@ -21,6 +22,15 @@ public class RawView {
         layout.getElement().setAttribute("style", "padding:10px");
 
         dump = new HTML("");
+
+        SafeHtmlBuilder helpText = new SafeHtmlBuilder();
+        helpText.appendHtmlConstant("<ul>");
+        helpText.appendHtmlConstant("<li>");
+        helpText.appendEscaped("This is a raw dump of the current configuration values on this node. It only resolves values on the current level, hence some attributes (or children) may show up as UNDEFINED.");
+        helpText.appendHtmlConstant("</ul>");
+        StaticHelpPanel help = new StaticHelpPanel(helpText.toSafeHtml());
+        layout.add(help.asWidget());
+
         layout.add(dump);
 
         return layout;
