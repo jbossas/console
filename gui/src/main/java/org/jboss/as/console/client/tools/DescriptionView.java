@@ -1,18 +1,14 @@
 package org.jboss.as.console.client.tools;
 
-import com.google.gwt.dom.client.Style;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.LayoutPanel;
-import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.tools.mapping.DescriptionMapper;
 import org.jboss.as.console.client.tools.mapping.RequestParameter;
 import org.jboss.as.console.client.tools.mapping.ResponseParameter;
 import org.jboss.dmr.client.ModelNode;
-import org.jboss.dmr.client.Property;
 
 import java.util.List;
 
@@ -25,11 +21,12 @@ public class DescriptionView {
     private HTML attributes;
     private HTML operations;
     private HTML children;
-    private HTML header;
+    //private HTML header;
 
     Widget asWidget() {
-        LayoutPanel layout = new LayoutPanel();
-        layout.setStyleName("fill-layout");
+        VerticalPanel layout = new VerticalPanel();
+        layout.setStyleName("fill-layout-width");
+        layout.getElement().setAttribute("style", "padding:15px");
 
         DisclosurePanel attributePanel = new DisclosurePanel("Attributes");
         attributePanel.setStyleName("fill-layout-width");
@@ -39,9 +36,9 @@ public class DescriptionView {
         childrenPanel.setStyleName("fill-layout-width");
 
 
-        header = new HTML();
+        /*header = new HTML();
         header.setStyleName("fill-layout");
-        header.getElement().setAttribute("style", "padding:10px");
+        header.getElement().setAttribute("style", "padding:10px");*/
 
         attributes = new HTML();
         attributes.setStyleName("fill-layout");
@@ -58,29 +55,23 @@ public class DescriptionView {
 
         VerticalPanel inner = new VerticalPanel();
         inner.setStyleName("fill-layout-width");
-        inner.getElement().setAttribute("style", "padding:15px");
 
         attributePanel.add(attributes);
         operationsPanel.add(operations);
         childrenPanel.add(children);
 
-        inner.add(header);
+        //inner.add(header);
         inner.add(attributePanel);
         inner.add(operationsPanel);
         inner.add(childrenPanel);
 
-
-        final ScrollPanel scroll = new ScrollPanel(inner);
-        layout.add(scroll);
-
-        layout.setWidgetTopHeight(scroll, 0, Style.Unit.PX, 100, Style.Unit.PCT);
-
+        layout.add(inner);
         return layout;
     }
 
     public void updateDescription(ModelNode address, ModelNode description)
     {
-        SafeHtmlBuilder builder = new SafeHtmlBuilder();
+       /* SafeHtmlBuilder builder = new SafeHtmlBuilder();
 
         final List<Property> path = address.asPropertyList();
         StringBuffer sb = new StringBuffer();
@@ -97,7 +88,7 @@ public class DescriptionView {
                 .appendEscaped(description.get("description").asString())
                 .appendHtmlConstant("</p>");
 
-        header.setHTML(builder.toSafeHtml());
+        header.setHTML(builder.toSafeHtml());*/
 
 
         DescriptionMapper mapper = new DescriptionMapper(address, description);
@@ -211,6 +202,6 @@ public class DescriptionView {
         attributes.setHTML("");
         operations.setHTML("");
         children.setHTML("");
-        header.setHTML("");
+        //header.setHTML("");
     }
 }

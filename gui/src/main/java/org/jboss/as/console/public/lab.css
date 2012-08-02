@@ -123,8 +123,13 @@ a:hover, a:active { outline: none; }
 /* doc browser */
 
 .doc-table {
-    border: 1px solid grey;
     width:90%;
+    background-color: #FFFFFF;
+    border: 1px solid #DCDCDC;
+    border-radius: 4px 4px 4px 4px;
+    color: black;
+    font-family: Arial,Verdana,sans-serif;
+    font-size: 11px;
     margin-left:5px;
     margin-right:5px;
 }
@@ -152,7 +157,7 @@ a:hover, a:active { outline: none; }
 }
 
 .doc-table-description td {
-    border-bottom: 1px solid grey;
+    border-bottom: 1px solid #DCDCDC;
 }
 
 .doc-table-description:last-child td {
@@ -163,6 +168,9 @@ input[type="checkbox"] {
     width: 15px!important;
 }
 
+.browser-tree {
+    padding-top:15px;
+}
 .browser-tree .gwt-TreeItem {
     color: #404040;
 }
