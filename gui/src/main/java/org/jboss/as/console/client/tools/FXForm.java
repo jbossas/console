@@ -130,7 +130,7 @@ public class FXForm {
         mapper.map(new DescriptionMapper.Mapping() {
 
             @Override
-            public void onAttribute(String name, String description, String type, boolean required) {
+            public void onAttribute(String name, String description, String type, boolean required, boolean expressions) {
 
                 if("STRING".equals(type))
                 {

@@ -21,7 +21,7 @@ public class DescriptionMapper {
     }
 
     public interface Mapping {
-        void onAttribute(String name, String description, String type, boolean required);
+        void onAttribute(String name, String description, String type, boolean required, boolean expressions);
         void onOperation(String name, String description, List<RequestParameter> parameter, ResponseParameter response);
         void onChild(String name, String description);
 
@@ -53,7 +53,11 @@ public class DescriptionMapper {
                     final boolean nillable = att.getValue().hasDefined("nillable") ?
                             att.getValue().get("nillable").asBoolean() : true;
 
-                    mapping.onAttribute(name, description, type, !nillable||required);
+
+                    final boolean expressions = att.getValue().hasDefined("expressions-allowed") ?
+                                                att.getValue().get("expressions-allowed").asBoolean() : false;
+
+                    mapping.onAttribute(name, description, type, (!nillable||required), expressions);
                 }
 
             }

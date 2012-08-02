@@ -1,9 +1,12 @@
 package org.jboss.as.console.client.tools;
 
+import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.storage.client.Storage;
 import com.google.gwt.storage.client.StorageMap;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -12,15 +15,21 @@ import java.util.Set;
  */
 public class LocalFXStorage implements FXStorage {
 
-    private StorageMap delegate;
+    private Map<String,String> delegate;
 
     public LocalFXStorage() {
         Storage storage = Storage.getLocalStorageIfSupported();
 
         if(null==storage)
-            throw new RuntimeException("Local storage not supported");
+        {
+            Log.warn("Local storage not supported");
+            this.delegate = new HashMap<String,String>();
+        }
+        else
+        {
+            this.delegate = new StorageMap(storage);
+        }
 
-        this.delegate = new StorageMap(storage);
     }
 
     @Override

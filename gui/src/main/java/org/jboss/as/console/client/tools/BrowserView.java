@@ -55,7 +55,7 @@ public class BrowserView extends PopupViewImpl implements BrowserPresenter.MyVie
     @Override
     public void setPresenter(BrowserPresenter presenter) {
         this.presenter = presenter;
-        storageView.setPresenter(presenter);
+        //TODO storageView.setPresenter(presenter);
     }
 
     @Override
@@ -108,7 +108,7 @@ public class BrowserView extends PopupViewImpl implements BrowserPresenter.MyVie
 
         tabLayoutPanel.add(descView.asWidget(), "Description");
         tabLayoutPanel.add(rawView.asWidget(), "Model");
-        tabLayoutPanel.add(storageView.asWidget(), "Templates");
+        //TODO tabLayoutPanel.add(storageView.asWidget(), "Templates");
         tabLayoutPanel.selectTab(0);
 
         tree.addOpenHandler(new OpenHandler<TreeItem>() {
@@ -318,6 +318,6 @@ public class BrowserView extends PopupViewImpl implements BrowserPresenter.MyVie
 
     @Override
     public void setTemplates(Set<FXTemplate> fxTemplates) {
-        storageView.setTemplates(fxTemplates);
+        //TODO storageView.setTemplates(fxTemplates);
     }
 }
