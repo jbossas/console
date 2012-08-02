@@ -56,6 +56,7 @@ public class BrowserView extends PopupViewImpl implements BrowserPresenter.MyVie
     public void setPresenter(BrowserPresenter presenter) {
         this.presenter = presenter;
         //TODO storageView.setPresenter(presenter);
+        this.rawView.setPresenter(presenter);
     }
 
     @Override
@@ -217,7 +218,7 @@ public class BrowserView extends PopupViewImpl implements BrowserPresenter.MyVie
 
         final List<Property> tokens = address.asPropertyList();
         String name = tokens.get(tokens.size()-1).getValue().asString();
-        rawView.display(new Property(name, resource));
+        rawView.display(address, new Property(name, resource));
     }
 
     private void addChildrenTypes(HasTreeItems rootItem, List<ModelNode> modelNodes) {
