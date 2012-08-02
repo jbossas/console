@@ -66,8 +66,9 @@ public class DescriptionView {
 
         SafeHtmlBuilder helpText = new SafeHtmlBuilder();
         helpText.appendHtmlConstant("<ul>");
-        helpText.appendHtmlConstant("<li>").appendEscaped("(*) : Marks a required attribute");
-        helpText.appendHtmlConstant("<li>").appendEscaped("($) : Indicates that expressions are supported");
+        helpText.appendHtmlConstant("<li>").appendEscaped("(*): Required attribute");
+        helpText.appendHtmlConstant("<li>").appendEscaped("+expression: Expressions are supported");
+        helpText.appendHtmlConstant("<li>").appendEscaped("runtime: Runtime value");
         helpText.appendHtmlConstant("</ul>");
         StaticHelpPanel help = new StaticHelpPanel(helpText.toSafeHtml());
         inner.add(help.asWidget());
@@ -113,23 +114,28 @@ public class DescriptionView {
             SafeHtmlBuilder childrenBuilder = new SafeHtmlBuilder();
 
             @Override
-            public void onAttribute(String name, String description, String type, boolean required, boolean expressions) {
+            public void onAttribute(String name, String description, String type, boolean required, boolean expressions, boolean runtime) {
 
                 attributeBuilder.appendHtmlConstant("<tr valign=top>");
                 attributeBuilder.appendHtmlConstant("<td class='doc-attribute'>");
                 attributeBuilder.appendEscaped(name);
                 attributeBuilder.appendHtmlConstant("</td>");
+
                 attributeBuilder.appendHtmlConstant("<td>");
                 attributeBuilder.appendEscaped(type);
                 String requiredSuffix = required ? " (*)" : "";
                 attributeBuilder.appendEscaped(requiredSuffix);
-                String expressionSuffix = expressions? " ($)" : "";
-                attributeBuilder.appendEscaped(expressionSuffix);
                 attributeBuilder.appendHtmlConstant("</td>");
                 attributeBuilder.appendHtmlConstant("</tr>");
 
                 attributeBuilder.appendHtmlConstant("<tr class='doc-table-description'>");
-                attributeBuilder.appendHtmlConstant("<td colspan=2>").appendEscaped(description).appendHtmlConstant("</td>");
+                attributeBuilder.appendHtmlConstant("<td width=70%>").appendEscaped(description).appendHtmlConstant("</td>");
+                attributeBuilder.appendHtmlConstant("<td width=30% style='color:#cccccc'>");
+                String expressionSuffix = expressions? " +expression" : "";
+                attributeBuilder.appendEscaped(expressionSuffix);
+                String runtimeSuffix = runtime? " runtime" : "";
+                attributeBuilder.appendEscaped(runtimeSuffix);
+                attributeBuilder.appendHtmlConstant("</td>");
                 attributeBuilder.appendHtmlConstant("</tr>");
 
             }

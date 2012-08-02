@@ -134,6 +134,10 @@ a:hover, a:active { outline: none; }
     margin-right:5px;
 }
 
+.doc-table tr:hover {
+    background-color: #e5e5e5;
+}
+
 .doc-attribute {
     font-weight: BOLD;
     color: #3B4D64;
@@ -189,7 +193,7 @@ input[type="checkbox"] {
     margin-left:5px;
     margin-right:5px;
     padding:10px;
-    line-height: 1.4;
+    line-height: 1.4!important;
 }
 
 .browser-dump-line:hover {

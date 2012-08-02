@@ -3,6 +3,8 @@ package org.jboss.as.console.client.tools.mapping;
 import org.jboss.dmr.client.ModelNode;
 import org.jboss.dmr.client.Property;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -21,7 +23,7 @@ public class DescriptionMapper {
     }
 
     public interface Mapping {
-        void onAttribute(String name, String description, String type, boolean required, boolean expressions);
+        void onAttribute(String name, String description, String type, boolean required, boolean expressions, boolean runtime);
         void onOperation(String name, String description, List<RequestParameter> parameter, ResponseParameter response);
         void onChild(String name, String description);
 
@@ -37,6 +39,13 @@ public class DescriptionMapper {
         {
 
             final List<Property> properties = description.get("attributes").asPropertyList();
+
+            Collections.sort(properties, new Comparator<Property>() {
+                @Override
+                public int compare(Property property, Property property1) {
+                    return property.getName().compareTo(property1.getName());
+                }
+            });
 
             if(!properties.isEmpty())
             {
@@ -57,7 +66,10 @@ public class DescriptionMapper {
                     final boolean expressions = att.getValue().hasDefined("expressions-allowed") ?
                                                 att.getValue().get("expressions-allowed").asBoolean() : false;
 
-                    mapping.onAttribute(name, description, type, (!nillable||required), expressions);
+                    final boolean runtime = att.getValue().hasDefined("storage") ?
+                                                                   att.getValue().get("storage").asString().equals("runtime"): false;
+
+                    mapping.onAttribute(name, description, type, (!nillable||required), expressions,runtime);
                 }
 
             }
