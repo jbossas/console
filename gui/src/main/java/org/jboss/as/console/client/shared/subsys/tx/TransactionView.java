@@ -3,25 +3,18 @@ package org.jboss.as.console.client.shared.subsys.tx;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
-import org.jboss.as.console.client.shared.help.FormHelpPanel;
-import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.tx.model.TransactionManager;
 import org.jboss.as.console.client.widgets.ContentDescription;
-import org.jboss.as.console.client.widgets.forms.FormToolStrip;
 import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
 import org.jboss.ballroom.client.widgets.forms.CheckBoxItem;
-import org.jboss.ballroom.client.widgets.forms.DisclosureGroupRenderer;
-import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.NumberBoxItem;
 import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
 import org.jboss.ballroom.client.widgets.tabs.FakeTabPanel;
-import org.jboss.dmr.client.ModelNode;
-
-import java.util.Map;
 
 /**
  * @author Heiko Braun
@@ -30,7 +23,11 @@ import java.util.Map;
 public class TransactionView extends SuspendableViewImpl implements TransactionPresenter.MyView{
 
     private TransactionPresenter presenter = null;
-    private Form<TransactionManager> form ;
+    private TXModelForm defaultForm;
+    private TXModelForm pathForm;
+    private TXModelForm processIDForm;
+    private TXModelForm recoveryForm;
+
 
     @Override
     public void setPresenter(TransactionPresenter presenter) {
@@ -44,26 +41,6 @@ public class TransactionView extends SuspendableViewImpl implements TransactionP
         FakeTabPanel titleBar = new FakeTabPanel("Transactions");
         layout.add(titleBar);
 
-        form = new Form<TransactionManager>(TransactionManager.class);
-        form.setNumColumns(2);
-
-        FormToolStrip<TransactionManager> toolstrip =
-                new FormToolStrip<TransactionManager>(form, new FormToolStrip.FormCallback<TransactionManager>() {
-                    @Override
-                    public void onSave(Map<String, Object> changeset) {
-                        presenter.onSaveConfig(changeset);
-                    }
-
-                    @Override
-                    public void onDelete(TransactionManager entity) {
-
-                    }
-                });
-        toolstrip.providesDeleteOp(false);
-
-        Widget toolstripWidget = toolstrip.asWidget();
-        layout.add(toolstripWidget);
-
         VerticalPanel panel = new VerticalPanel();
         panel.setStyleName("rhs-content-panel");
 
@@ -75,14 +52,21 @@ public class TransactionView extends SuspendableViewImpl implements TransactionP
 
         panel.add(new ContentHeaderLabel("Transaction Manager"));
         panel.add(new ContentDescription(Console.CONSTANTS.subys_tx_desc()));
+
         // -----
-
-
-        panel.add(toolstripWidget);
 
         NumberBoxItem defaultTimeout = new NumberBoxItem("defaultTimeout", "Default Timeout");
         CheckBoxItem enableStatistics = new CheckBoxItem("enableStatistics", "Enable Statistics");
         CheckBoxItem enableTsm = new CheckBoxItem("enableTsmStatus", "Enable TSM Status");
+
+        CheckBoxItem jts = new CheckBoxItem("jts", "Enable JTS");
+        TextBoxItem nodeId = new TextBoxItem("nodeIdentifier", "Node Identifier");
+
+        TextBoxItem processIdSocket = new TextBoxItem("processIdSocketBinding", "Process ID Socket");
+        NumberBoxItem processIdPortMax = new NumberBoxItem("processIdMaxPorts", "Max Ports");
+        CheckBoxItem processIdUUID = new CheckBoxItem("processIdUUID", "Process ID UUID?");
+
+        CheckBoxItem useHornetq = new CheckBoxItem("hornetqStore", "Use HornetQ Store?");
 
         TextBoxItem path = new TextBoxItem("path", "Path");
         TextBoxItem relativeTo = new TextBoxItem("relativeTo", "Relative To");
@@ -93,24 +77,27 @@ public class TransactionView extends SuspendableViewImpl implements TransactionP
         TextBoxItem socketBinding = new TextBoxItem("socketBinding", "Socket Binding");
         TextBoxItem statusSocketBinding = new TextBoxItem("statusSocketBinding", "Status Socket Binding");
 
-        form.setFields(enableStatistics, enableTsm, defaultTimeout, path, relativeTo, objectStorePath, objectStorePathRelativeTo);
-        form.setFieldsInGroup("Recovery", new DisclosureGroupRenderer(), socketBinding, statusSocketBinding, recoveryListener);
 
-        form.setEnabled(false);
+        //  ---
 
+        defaultForm = new TXModelForm(presenter, enableStatistics, enableTsm, jts, useHornetq, defaultTimeout, nodeId);
+        pathForm = new TXModelForm(presenter, path, relativeTo, objectStorePath, objectStorePathRelativeTo);
+        processIDForm = new TXModelForm(presenter, processIdUUID, processIdSocket, processIdPortMax);
+        recoveryForm = new TXModelForm(presenter, socketBinding, statusSocketBinding, recoveryListener);
 
-        FormHelpPanel helpPanel = new FormHelpPanel(new FormHelpPanel.AddressCallback() {
-            @Override
-            public ModelNode getAddress() {
-                ModelNode address = Baseadress.get();
-                address.add("subsystem", "transactions");
-                return address;
-            }
-        }, form);
+        panel.add(defaultForm.asWidget());
 
-        panel.add(helpPanel.asWidget());
+        TabPanel tabs = new TabPanel();
+        tabs.setStyleName("default-tabpanel");
+        tabs.getElement().setAttribute("style", "margin-top:15px;");
 
-        panel.add(form.asWidget());
+        tabs.add(processIDForm.asWidget(), "Process ID");
+        tabs.add(recoveryForm.asWidget(), "Recovery");
+        tabs.add(pathForm.asWidget(), "Path");
+
+        tabs.selectTab(0);
+
+        panel.add(tabs);
 
         return layout;
     }
@@ -118,6 +105,9 @@ public class TransactionView extends SuspendableViewImpl implements TransactionP
 
     @Override
     public void setTransactionManager(TransactionManager tm) {
-        form.edit(tm);
+        defaultForm.edit(tm);
+        pathForm.edit(tm);
+        processIDForm.edit(tm);
+        recoveryForm.edit(tm);
     }
 }
