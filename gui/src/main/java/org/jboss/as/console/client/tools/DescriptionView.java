@@ -109,7 +109,7 @@ public class DescriptionView {
             SafeHtmlBuilder childrenBuilder = new SafeHtmlBuilder();
 
             @Override
-            public void onAttribute(String name, String description, String type, boolean required) {
+            public void onAttribute(String name, String description, String type, boolean required, boolean expressions) {
 
                 attributeBuilder.appendHtmlConstant("<tr valign=top>");
                 attributeBuilder.appendHtmlConstant("<td class='doc-attribute'>");
@@ -119,6 +119,8 @@ public class DescriptionView {
                 attributeBuilder.appendEscaped(type);
                 String requiredSuffix = required ? " (*)" : "";
                 attributeBuilder.appendEscaped(requiredSuffix);
+                String expressionSuffix = expressions? " ($)" : "";
+                attributeBuilder.appendEscaped(expressionSuffix);
                 attributeBuilder.appendHtmlConstant("</td>");
                 attributeBuilder.appendHtmlConstant("</tr>");
 

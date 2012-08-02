@@ -46,7 +46,7 @@ public class FormProxy {
             List<FormItem> items = new LinkedList<FormItem>();
 
             @Override
-            public void onAttribute(String name, String description, String type, boolean required) {
+            public void onAttribute(String name, String description, String type, boolean required, boolean expressions) {
 
                 // whitelist
                 if(model.getFieldNames().size()>0
