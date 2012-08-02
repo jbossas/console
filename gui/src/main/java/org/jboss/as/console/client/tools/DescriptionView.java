@@ -93,9 +93,9 @@ public class DescriptionView {
                 .appendEscaped(sb.toString())
                 .appendHtmlConstant("</h1>");
 
-        builder.appendHtmlConstant("<h2 class='doc-description'>")
+        builder.appendHtmlConstant("<p class='content-description'>")
                 .appendEscaped(description.get("description").asString())
-                .appendHtmlConstant("</h2>");
+                .appendHtmlConstant("</p>");
 
         header.setHTML(builder.toSafeHtml());
 

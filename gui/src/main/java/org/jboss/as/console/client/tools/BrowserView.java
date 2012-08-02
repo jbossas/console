@@ -68,10 +68,12 @@ public class BrowserView extends PopupViewImpl implements BrowserPresenter.MyVie
         window.setGlassEnabled(true);
 
         tree = new Tree();
+        tree.getElement().addClassName("browser-tree");
         tree.addSelectionHandler(new SelectionHandler<TreeItem>() {
             @Override
             public void onSelection(SelectionEvent<TreeItem> selection) {
-                final LinkedList<String> path = resolvePath(selection.getSelectedItem());
+                TreeItem selectedItem = selection.getSelectedItem();
+                final LinkedList<String> path = resolvePath(selectedItem);
 
                 rawView.clearDisplay();
                 descView.clearDisplay();
