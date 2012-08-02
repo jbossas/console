@@ -5,6 +5,7 @@ import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import org.jboss.as.console.client.shared.help.StaticHelpPanel;
 import org.jboss.as.console.client.tools.mapping.DescriptionMapper;
 import org.jboss.as.console.client.tools.mapping.RequestParameter;
 import org.jboss.as.console.client.tools.mapping.ResponseParameter;
@@ -61,6 +62,16 @@ public class DescriptionView {
         childrenPanel.add(children);
 
         //inner.add(header);
+
+
+        SafeHtmlBuilder helpText = new SafeHtmlBuilder();
+        helpText.appendHtmlConstant("<ul>");
+        helpText.appendHtmlConstant("<li>").appendEscaped("(*) : Marks a required attribute");
+        helpText.appendHtmlConstant("<li>").appendEscaped("($) : Indicates that expressions are supported");
+        helpText.appendHtmlConstant("</ul>");
+        StaticHelpPanel help = new StaticHelpPanel(helpText.toSafeHtml());
+        inner.add(help.asWidget());
+
         inner.add(attributePanel);
         inner.add(operationsPanel);
         inner.add(childrenPanel);
