@@ -120,11 +120,24 @@ public class DescriptionMapper {
                     if(op.getValue().hasDefined("reply-properties"))
                     {
                         final ModelNode reply = op.getValue().get("reply-properties");
-                        final String replyDesc = reply.get("description").asString();
-                        final String replyType = reply.get("type").asString();
+                        final String replyDesc = reply.get("description").isDefined() ? reply.get("description").asString() : "";
+                        final String replyType = reply.get("type").isDefined() ? reply.get("type").asString() : "";
 
                         response = new ResponseParameter(replyDesc, replyType);
                     }
+                    else
+                    {
+                        response = new ResponseParameter("", "");
+                    }
+
+
+                    // sort order
+                    Collections.sort(parameters, new Comparator<RequestParameter>() {
+                        @Override
+                        public int compare(RequestParameter requestParameter, RequestParameter requestParameter1) {
+                            return requestParameter.getParamName().compareTo(requestParameter1.getParamName());
+                        }
+                    });
 
 
                     mapping.onOperation(opName, opDesc, parameters, response);

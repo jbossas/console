@@ -85,7 +85,7 @@ public class DescriptionView {
 
     public void updateDescription(ModelNode address, ModelNode description)
     {
-       /* SafeHtmlBuilder builder = new SafeHtmlBuilder();
+        /* SafeHtmlBuilder builder = new SafeHtmlBuilder();
 
         final List<Property> path = address.asPropertyList();
         StringBuffer sb = new StringBuffer();
@@ -144,16 +144,28 @@ public class DescriptionView {
             public void onOperation(String name, String description, List<RequestParameter> parameter, ResponseParameter response) {
 
                 operationsBuilder.appendHtmlConstant("<tr valign=top>");
-                operationsBuilder.appendHtmlConstant("<td class='doc-attribute'>").appendEscaped(name).appendHtmlConstant("</td>");
-                operationsBuilder.appendHtmlConstant("<td>");
+                operationsBuilder.appendHtmlConstant("<td width=70%>");
+                operationsBuilder.appendHtmlConstant("<span class='doc-attribute' style='margin-bottom:10px'>");
+                operationsBuilder.appendEscaped(name).appendHtmlConstant("<br/>");
+                operationsBuilder.appendHtmlConstant("</span>");
+                operationsBuilder.appendEscaped(description);
+                operationsBuilder.appendHtmlConstant("</td>");
+                operationsBuilder.appendHtmlConstant("<td width=30%>");
+
+                // -- inner
 
                 operationsBuilder.appendHtmlConstant("<table border=0>");
+                operationsBuilder.appendHtmlConstant("<tr valign=top>");
+                operationsBuilder.appendHtmlConstant("<td class='doc-attribute'>");
+                operationsBuilder.appendHtmlConstant("Parameter:");
+                operationsBuilder.appendHtmlConstant("</td>");
+                operationsBuilder.appendHtmlConstant("</tr>");
                 // parameters
                 for(RequestParameter param : parameter)
                 {
                     operationsBuilder.appendHtmlConstant("<tr valign=top>");
-                    operationsBuilder.appendHtmlConstant("<td>");
-                    operationsBuilder.appendEscaped(param.getParamName()).appendEscaped(":");
+                    operationsBuilder.appendHtmlConstant("<td style='white-space:nowrap'>");
+                    operationsBuilder.appendEscaped(param.getParamName()).appendEscaped(": ");
                     operationsBuilder.appendEscaped(param.getParamType());
                     String required = param.isRequired() ? " (*)" : "";
                     operationsBuilder.appendEscaped(required);
@@ -161,14 +173,34 @@ public class DescriptionView {
                     operationsBuilder.appendHtmlConstant("</tr>");
                 }
 
+
+                operationsBuilder.appendHtmlConstant("<tr valign=top>");
+                operationsBuilder.appendHtmlConstant("<td class='doc-attribute'>");
+                operationsBuilder.appendHtmlConstant("Response:");
+                operationsBuilder.appendHtmlConstant("</td>");
+                operationsBuilder.appendHtmlConstant("</tr>");
+
+                operationsBuilder.appendHtmlConstant("<tr valign=top>");
+                operationsBuilder.appendHtmlConstant("<td style='white-space:wrap'>");
+                //operationsBuilder.appendEscaped(response.getReplyDesc()).appendEscaped(" ");
+                operationsBuilder.appendEscaped(response.getReplyType());
+                operationsBuilder.appendHtmlConstant("</td>");
+                operationsBuilder.appendHtmlConstant("</tr>");
+
+
                 operationsBuilder.appendHtmlConstant("</table>");
+
+
+                // -- end inner
 
                 operationsBuilder.appendHtmlConstant("</td>");
                 operationsBuilder.appendHtmlConstant("</tr>");
 
-                operationsBuilder.appendHtmlConstant("<tr class='doc-table-description'>");
-                operationsBuilder.appendHtmlConstant("<td colspan=2>").appendEscaped(description).appendHtmlConstant("</td>");
+              /*  operationsBuilder.appendHtmlConstant("<tr class='doc-table-description'>");
+                operationsBuilder.appendHtmlConstant("<td width=70%>").appendEscaped(description).appendHtmlConstant("</td>");
+                operationsBuilder.appendHtmlConstant("<td width=30%>").appendHtmlConstant("</td>");
                 operationsBuilder.appendHtmlConstant("</tr>");
+                */
 
 
             }
