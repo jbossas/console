@@ -109,8 +109,6 @@ public class MainLayoutPresenter
 
     @Override
     public void onResolveExpressionEvent(String expr) {
-        System.out.println("Resolve "+ expr);
-
         expressionTool.launch();
         expressionTool.resolve(expr);
 
