@@ -14,12 +14,14 @@ import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
 import com.gwtplatform.mvp.client.proxy.RevealRootPopupContentEvent;
 import org.jboss.as.console.client.core.NameTokens;
+import org.jboss.ballroom.client.widgets.forms.ResolveExpressionEvent;
 
 /**
  * @author Heiko Braun
  * @date 6/15/12
  */
-public class ToolsPresenter extends Presenter<ToolsPresenter.MyView, ToolsPresenter.MyProxy> {
+public class ToolsPresenter extends Presenter<ToolsPresenter.MyView, ToolsPresenter.MyProxy>
+{
 
     private final PlaceManager placeManager;
     private BrowserPresenter browser;
