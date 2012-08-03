@@ -5,4 +5,6 @@ package org.jboss.as.console.client.tools;
  * @date 8/3/12
  */
 public interface Tool {
+    void launch();
+    void dispose();
 }
