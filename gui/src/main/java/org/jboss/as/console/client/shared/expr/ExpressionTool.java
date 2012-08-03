@@ -109,7 +109,15 @@ public class ExpressionTool implements Tool {
             @Override
             public void onSuccess(Map<String,String> serverValues) {
                 output.setErroneous(serverValues.isEmpty());
-                output.setValue(serverValues.toString());
+
+                StringBuilder sb = new StringBuilder();
+                for(String server : serverValues.keySet())
+                {
+                    sb.append(server).append("=").append(serverValues.get(server));
+                    sb.append("\n");
+                }
+
+                output.setValue(sb.toString());
             }
         });
     }
