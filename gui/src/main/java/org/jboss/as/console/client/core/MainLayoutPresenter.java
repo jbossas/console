@@ -33,10 +33,14 @@ import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
 import com.gwtplatform.mvp.client.proxy.RevealRootLayoutContentEvent;
 import org.jboss.as.console.client.domain.events.HostSelectionEvent;
 import org.jboss.as.console.client.domain.model.ServerInstance;
+import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
+import org.jboss.as.console.client.shared.expr.ExpressionResolver;
+import org.jboss.as.console.client.shared.expr.ExpressionTool;
 import org.jboss.as.console.client.shared.state.CurrentHostSelection;
 import org.jboss.as.console.client.shared.state.CurrentServerSelection;
 import org.jboss.as.console.client.shared.state.ServerSelectionEvent;
 import org.jboss.ballroom.client.util.LoadingOverlay;
+import org.jboss.ballroom.client.widgets.forms.ResolveExpressionEvent;
 
 /**
  * @author Heiko Braun
@@ -45,12 +49,14 @@ import org.jboss.ballroom.client.util.LoadingOverlay;
 public class MainLayoutPresenter
         extends Presenter<MainLayoutPresenter.MainLayoutView,
         MainLayoutPresenter.MainLayoutProxy>
-        implements ServerSelectionEvent.ServerSelectionListener, HostSelectionEvent.HostSelectionListener   {
+        implements ServerSelectionEvent.ServerSelectionListener, HostSelectionEvent.HostSelectionListener,
+        ResolveExpressionEvent.ExpressionResolveListener{
 
     boolean revealDefault = true;
     private BootstrapContext bootstrap;
     private CurrentServerSelection serverSelection;
     private CurrentHostSelection hostSelection;
+    private ExpressionTool expressionTool;
 
     public interface MainLayoutView extends View {
     }
@@ -67,11 +73,13 @@ public class MainLayoutPresenter
             EventBus eventBus,
             MainLayoutView view,
             MainLayoutProxy proxy, BootstrapContext bootstrap,
-            CurrentServerSelection serverSelection, CurrentHostSelection hostSelection) {
+            CurrentServerSelection serverSelection, CurrentHostSelection hostSelection,
+            ExpressionResolver resolver) {
         super(eventBus, view, proxy);
         this.bootstrap = bootstrap;
         this.hostSelection = hostSelection;
         this.serverSelection = serverSelection;
+        this.expressionTool = new ExpressionTool(resolver);
 
     }
 
@@ -80,6 +88,7 @@ public class MainLayoutPresenter
         super.onBind();
         getEventBus().addHandler(HostSelectionEvent.TYPE, this);
         getEventBus().addHandler(ServerSelectionEvent.TYPE, this);
+        getEventBus().addHandler(ResolveExpressionEvent.TYPE, this);
     }
 
     @Override
@@ -96,5 +105,14 @@ public class MainLayoutPresenter
     @Override
     protected void revealInParent() {
         RevealRootLayoutContentEvent.fire(this, this);
+    }
+
+    @Override
+    public void onResolveExpressionEvent(String expr) {
+        System.out.println("Resolve "+ expr);
+
+        expressionTool.launch();
+        expressionTool.resolve(expr);
+
     }
 }
