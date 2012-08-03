@@ -26,7 +26,6 @@ import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.proxy.PlaceManagerImpl;
 import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.TokenFormatter;
-import org.jboss.as.console.client.core.message.MessageCenter;
 import org.jboss.ballroom.client.layout.LHSHighlightEvent;
 
 import java.util.ArrayList;
@@ -38,16 +37,14 @@ import java.util.List;
  */
 public class DefaultPlaceManager extends PlaceManagerImpl {
 
-    private MessageCenter messageCenter;
     private BootstrapContext bootstrap;
     private EventBus eventBus;
 
     @Inject
     public DefaultPlaceManager(
             EventBus eventBus,
-            TokenFormatter tokenFormatter, MessageCenter messageCenter, BootstrapContext bootstrap ) {
+            TokenFormatter tokenFormatter, BootstrapContext bootstrap ) {
         super(eventBus, tokenFormatter);
-        this.messageCenter = messageCenter;
         this.bootstrap = bootstrap;
         this.eventBus = eventBus;
     }
