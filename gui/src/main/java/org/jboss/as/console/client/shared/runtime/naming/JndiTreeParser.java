@@ -21,6 +21,7 @@ package org.jboss.as.console.client.shared.runtime.naming;
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.cellview.client.CellTree;
+import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.SingleSelectionModel;
@@ -42,9 +43,16 @@ public class JndiTreeParser {
     private Stack<JndiEntry> stack = new Stack<JndiEntry>();
     private JndiEntry root = new JndiEntry("JNDI", "", null);
     private TreeViewModel treeModel = new JndiTreeModel(root);
-    private CellTree cellTree = new DefaultCellTree(treeModel, "root");
+
     private static Command finishCmd = null;
     private SingleSelectionModel<JndiEntry> selectionModel = new SingleSelectionModel<JndiEntry>();
+    private DefaultCellTree cellTree;
+
+    public JndiTreeParser() {
+        cellTree = new DefaultCellTree(treeModel, "root");
+        cellTree.setStyleName("jndi-tree");
+        cellTree.setKeyboardSelectionPolicy(HasKeyboardSelectionPolicy.KeyboardSelectionPolicy.ENABLED);
+    }
 
     SingleSelectionModel<JndiEntry> getSelectionModel() {
         return selectionModel;
@@ -131,7 +139,7 @@ public class JndiTreeParser {
     class JndiEntryCell extends AbstractCell<JndiEntry> {
         @Override
         public void render(Context context, JndiEntry value, SafeHtmlBuilder sb) {
-            sb.appendHtmlConstant("<table width='100%'>");
+            sb.appendHtmlConstant("<table width='100%' border=0>");
             sb.appendHtmlConstant("<tr>");
                 sb.appendHtmlConstant("<td width='60%'>");
                 sb.appendEscaped(value.getName());
