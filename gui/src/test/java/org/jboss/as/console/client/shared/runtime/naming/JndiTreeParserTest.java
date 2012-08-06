@@ -1,4 +1,4 @@
-package org.jboss.as.console.client.shared.subsys.naming;
+package org.jboss.as.console.client.shared.runtime.naming;
 
 import com.google.gwt.junit.client.GWTTestCase;
 import com.google.gwt.user.cellview.client.CellTree;

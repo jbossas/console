@@ -69,6 +69,7 @@ public class StandaloneRuntimeNavigation {
         LHSNavTreeItem tx = new LHSNavTreeItem("Transactions", "tx-metrics");
         LHSNavTreeItem jpa = new LHSNavTreeItem("JPA", NameTokens.JPAMetricPresenter);
         LHSNavTreeItem ws = new LHSNavTreeItem("Webservices", NameTokens.WebServiceRuntimePresenter);
+        LHSNavTreeItem naming = new LHSNavTreeItem("JNDI View", NameTokens.JndiPresenter);
 
         metricPredicates.add(new Predicate("datasources", datasources));
         metricPredicates.add(new Predicate("messaging", jmsQueues));
@@ -76,6 +77,7 @@ public class StandaloneRuntimeNavigation {
         metricPredicates.add(new Predicate("transactions", tx));
         metricPredicates.add(new Predicate("jpa", jpa));
         metricPredicates.add(new Predicate("webservices", ws));
+        metricPredicates.add(new Predicate("naming", naming));
 
         navigation.addItem(metricLeaf);
 

@@ -172,8 +172,8 @@ import org.jboss.as.console.client.shared.subsys.messaging.connections.MsgConnec
 import org.jboss.as.console.client.shared.subsys.messaging.connections.MsgConnectionsView;
 import org.jboss.as.console.client.shared.subsys.modcluster.ModclusterPresenter;
 import org.jboss.as.console.client.shared.subsys.modcluster.ModclusterView;
-import org.jboss.as.console.client.shared.subsys.naming.JndiPresenter;
-import org.jboss.as.console.client.shared.subsys.naming.JndiView;
+import org.jboss.as.console.client.shared.runtime.naming.JndiPresenter;
+import org.jboss.as.console.client.shared.runtime.naming.JndiView;
 import org.jboss.as.console.client.shared.subsys.osgi.config.OSGiConfigurationPresenter;
 import org.jboss.as.console.client.shared.subsys.osgi.config.OSGiSubsystemView;
 import org.jboss.as.console.client.shared.subsys.osgi.runtime.OSGiRuntimePresenter;

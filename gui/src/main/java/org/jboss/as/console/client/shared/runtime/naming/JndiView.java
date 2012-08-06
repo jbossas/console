@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.as.console.client.shared.subsys.naming;
+package org.jboss.as.console.client.shared.runtime.naming;
 
 import com.google.gwt.user.cellview.client.CellTree;
 import com.google.gwt.user.cellview.client.TreeNode;
@@ -106,5 +106,10 @@ public class JndiView extends DisposableViewImpl implements JndiPresenter.MyView
                 walk(node.setChildOpen(i, true));
             }
         }
+    }
+
+    @Override
+    public void clearValues() {
+        container.clear();
     }
 }
