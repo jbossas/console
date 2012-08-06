@@ -20,6 +20,8 @@ package org.jboss.as.console.client.shared.runtime.naming;
 
 import com.google.gwt.user.cellview.client.CellTree;
 import com.google.gwt.user.cellview.client.TreeNode;
+import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -55,6 +57,7 @@ public class JndiView extends DisposableViewImpl implements JndiPresenter.MyView
 
         uriLabel = new HTML(SELECTED_URI_PREFIX, true);
         layout.add(uriLabel);
+        uriLabel.getElement().setAttribute("style", "margin-bottom:10px");
 
         layout.add(container);
 
@@ -111,5 +114,11 @@ public class JndiView extends DisposableViewImpl implements JndiPresenter.MyView
     @Override
     public void clearValues() {
         container.clear();
+
+
+        /*Element div = DOM.createDiv();
+        div.setInnerHTML("No items!");
+        div.setAttribute("style", "text-align:center;width:100%; height:50px; color:#cccccc; padding-top:22px;");
+        container.getElement().appendChild(div);*/
     }
 }
