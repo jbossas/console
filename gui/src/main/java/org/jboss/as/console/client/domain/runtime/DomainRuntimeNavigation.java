@@ -87,6 +87,7 @@ class DomainRuntimeNavigation {
         LHSNavTreeItem web = new LHSNavTreeItem("Web", NameTokens.WebMetricPresenter);
         LHSNavTreeItem tx = new LHSNavTreeItem("Transactions", NameTokens.TXMetrics);
         LHSNavTreeItem jpa = new LHSNavTreeItem("JPA", NameTokens.JPAMetricPresenter);
+        LHSNavTreeItem naming = new LHSNavTreeItem("JNDI View", NameTokens.JndiPresenter);
 
 
         metricPredicates.add(new Predicate("datasources", datasources));
@@ -94,6 +95,7 @@ class DomainRuntimeNavigation {
         metricPredicates.add(new Predicate("web", web));
         metricPredicates.add(new Predicate("transactions", tx));
         metricPredicates.add(new Predicate("jpa", jpa));
+        metricPredicates.add(new Predicate("naming", naming));
 
         // ---
 

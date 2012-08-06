@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.as.console.client.shared.subsys.naming;
+package org.jboss.as.console.client.shared.runtime.naming;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.cellview.client.CellTree;
@@ -31,14 +31,20 @@ import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.Proxy;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
+import org.jboss.as.console.client.domain.model.ServerInstance;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
+import org.jboss.as.console.client.shared.runtime.RuntimeBaseAddress;
+import org.jboss.as.console.client.shared.state.CurrentServerSelection;
+import org.jboss.as.console.client.shared.state.ServerSelectionEvent;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
 import org.jboss.dmr.client.ModelNode;
+
+import java.util.Collections;
 
 import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 
@@ -46,12 +52,14 @@ import static org.jboss.dmr.client.ModelDescriptionConstants.*;
  * @author Heiko Braun
  * @date 7/20/11
  */
-public class JndiPresenter extends Presenter<JndiPresenter.MyView, JndiPresenter.MyProxy> {
+public class JndiPresenter extends Presenter<JndiPresenter.MyView, JndiPresenter.MyProxy>
+        implements ServerSelectionEvent.ServerSelectionListener {
 
     private final PlaceManager placeManager;
     private RevealStrategy revealStrategy;
     private DispatchAsync dispatcher;
     private BeanFactory factory;
+    private CurrentServerSelection serverSelection;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.JndiPresenter)
@@ -61,13 +69,16 @@ public class JndiPresenter extends Presenter<JndiPresenter.MyView, JndiPresenter
     public interface MyView extends View {
         void setPresenter(JndiPresenter presenter);
         void setJndiTree(CellTree tree, SingleSelectionModel<JndiEntry> selectionModel);
+
+        void clearValues();
     }
 
     @Inject
     public JndiPresenter(
             EventBus eventBus, MyView view, MyProxy proxy,
             PlaceManager placeManager, RevealStrategy revealStrategy,
-            DispatchAsync dispatcher, BeanFactory factory) {
+            DispatchAsync dispatcher, BeanFactory factory,
+            CurrentServerSelection serverSelection) {
 
         super(eventBus, view, proxy);
 
@@ -75,15 +86,27 @@ public class JndiPresenter extends Presenter<JndiPresenter.MyView, JndiPresenter
         this.revealStrategy = revealStrategy;
         this.dispatcher = dispatcher;
         this.factory = factory;
+        this.serverSelection = serverSelection;
 
+    }
+
+    @Override
+    public void onServerSelection(String hostName, ServerInstance server) {
+        if(isVisible())
+        {
+            System.out.println(hostName+">"+server.getName());
+
+            loadJndiTree();
+        }
     }
 
     @Override
     protected void onBind() {
         super.onBind();
         getView().setPresenter(this);
-    }
+        getEventBus().addHandler(ServerSelectionEvent.TYPE, this);
 
+    }
 
     @Override
     protected void onReset() {
@@ -92,11 +115,18 @@ public class JndiPresenter extends Presenter<JndiPresenter.MyView, JndiPresenter
     }
 
     private void loadJndiTree() {
+
+        getView().clearValues();
+
+        if(!serverSelection.isActive()) {
+            Console.warning(Console.CONSTANTS.common_err_server_not_active());
+            return;
+        }
+
         ModelNode operation = new ModelNode();
         operation.get(OP).set("jndi-view");
-        operation.get(ADDRESS).set(Baseadress.get());
+        operation.get(ADDRESS).set(RuntimeBaseAddress.get());
         operation.get(ADDRESS).add("subsystem", "naming");
-
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
@@ -126,6 +156,6 @@ public class JndiPresenter extends Presenter<JndiPresenter.MyView, JndiPresenter
 
     @Override
     protected void revealInParent() {
-        revealStrategy.revealInParent(this);
+        revealStrategy.revealInRuntimeParent(this);
     }
 }

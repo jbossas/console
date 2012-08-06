@@ -23,7 +23,7 @@ import com.google.gwt.junit.tools.GWTTestSuite;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-import org.jboss.as.console.client.shared.subsys.naming.JndiTreeParserTest;
+import org.jboss.as.console.client.shared.runtime.naming.JndiTreeParserTest;
 import org.jboss.as.console.client.shared.viewframework.EntityToDmrBridgeImplTest;
 
 /**
