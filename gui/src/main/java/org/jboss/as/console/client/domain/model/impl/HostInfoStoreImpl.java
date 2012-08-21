@@ -77,36 +77,41 @@ public class HostInfoStoreImpl implements HostInformationStore {
     }
 
     @Override
-    public void getHosts(final AsyncCallback<List<Host>> callback) {
-        final ModelNode operation = new ModelNode();
-        operation.get(OP).set(READ_CHILDREN_NAMES_OPERATION);
-        operation.get(CHILD_TYPE).set("host");
-        operation.get(ADDRESS).setEmptyList();
+        public void getHosts(final AsyncCallback<List<Host>> callback) {
+            final ModelNode operation = new ModelNode();
+            operation.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
+            operation.get(CHILD_TYPE).set("host");
+            operation.get(ADDRESS).setEmptyList();
 
-        dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
-            @Override
-            public void onFailure(Throwable caught) {
-                callback.onFailure(caught);
-            }
-
-            @Override
-            public void onSuccess(DMRResponse result) {
-                ModelNode response = result.get();
-                List<ModelNode> payload = response.get("result").asList();
-
-                List<Host> records = new LinkedList<Host>();
-                for(int i=0; i<payload.size(); i++)
-                {
-                    Host record = factory.host().as();
-                    record.setName(payload.get(i).asString());
-                    records.add(record);
+            dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
+                @Override
+                public void onFailure(Throwable caught) {
+                    callback.onFailure(caught);
                 }
 
-                callback.onSuccess(records);
-            }
+                @Override
+                public void onSuccess(DMRResponse result) {
+                    ModelNode response = result.get();
+                    List<Property> hostModels = response.get("result").asPropertyList();
 
-        });
-    }
+                    List<Host> records = new LinkedList<Host>();
+                    for(Property hostModel : hostModels)
+                    {
+                        Host record = factory.host().as();
+                        record.setName(hostModel.getName());
+
+                        // controller
+                        ModelNode hostValues = hostModel.getValue();
+                        boolean isController = hostValues.get("domain-controller").hasDefined("local");
+                        record.setController(isController);
+                        records.add(record);
+                    }
+
+                    callback.onSuccess(records);
+                }
+
+            });
+        }
 
     @Override
     public void getServerConfigurations(String host, final AsyncCallback<List<Server>> callback) {

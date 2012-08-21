@@ -26,4 +26,7 @@ package org.jboss.as.console.client.domain.model;
 public interface Host {
     String getName();
     void setName(String name);
+
+    boolean isController();
+    void setController(boolean b);
 }

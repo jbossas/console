@@ -19,28 +19,26 @@
 
 package org.jboss.as.console.client.domain.overview;
 
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.cellview.client.CellList;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.LayoutPanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.Element;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
-import com.google.gwt.view.client.SelectionChangeEvent;
-import com.google.gwt.view.client.SingleSelectionModel;
-import com.gwtplatform.mvp.client.proxy.PlaceRequest;
-import org.jboss.as.console.client.Console;
-import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
-import org.jboss.as.console.client.domain.groups.ServerGroupCell;
 import org.jboss.as.console.client.domain.model.ProfileRecord;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
-import org.jboss.as.console.client.domain.profiles.ProfileCell;
+import org.jboss.as.console.client.domain.model.ServerInstance;
 import org.jboss.as.console.client.shared.model.DeploymentRecord;
-import org.jboss.ballroom.client.layout.RHSContentPanel;
-import org.jboss.ballroom.client.widgets.ContentGroupLabel;
+import org.jboss.as.console.client.shared.viewframework.builder.SimpleLayout;
 
-import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeMap;
 
 /**
  * @author Heiko Braun
@@ -55,8 +53,18 @@ public class DomainOverview
 
     ListDataProvider<ProfileRecord> profileProvider;
     ListDataProvider<ServerGroupRecord> groupProvider;
+    private HTMLPanel htmlPanel;
 
     //private CellTable<DeploymentRecord> deploymentTable;
+
+    private static String[] colors = {
+      "#A0C55F", "#C2CBCE", "#81A8B8",
+      "#E8F3F8", "#AAB3AB", "#E8CAAF", "#91A398", "#ED834E",
+      "#EBCC6E", "#F06B50", "#E4D829",
+
+    };
+
+    private static TreeMap<String, String> group2Color = new TreeMap<String,String>();
 
     @Override
     public void setPresenter(DomainOverviewPresenter presenter) {
@@ -66,78 +74,21 @@ public class DomainOverview
     @Override
     public Widget createWidget() {
 
-        LayoutPanel layout = new RHSContentPanel("Domain Overview");
+        SimpleLayout layout = new SimpleLayout()
+                .setTitle("Domain Overview")
+                .setHeadline("Host & Servers")
+                .setDescription("");
 
-        HorizontalPanel hlayout = new HorizontalPanel();
-        hlayout.setStyleName("fill-layout-width");
-        hlayout.getElement().setAttribute("cellpadding", "10");
+        SafeHtmlBuilder html= new SafeHtmlBuilder();
 
-        VerticalPanel vlayoutLeft = new VerticalPanel();
-        vlayoutLeft.setStyleName("fill-layout-width");
+        html.appendHtmlConstant("<table style='border:1px solid #cccccc' cellpadding='5' width='100%' id='host-overview'>");
+        html.appendHtmlConstant("<tr id='hosts-row'>");
+        html.appendHtmlConstant("</tr>");
+        html.appendHtmlConstant("</table>");
 
-        profileList = new CellList<ProfileRecord>(new ProfileCell());
-        profileList.setPageSize(25);
-
-        ContentGroupLabel leftLabel = new ContentGroupLabel("Available Profiles");
-        leftLabel.setIcon("common/profile.png");
-        vlayoutLeft.add(leftLabel);
-        vlayoutLeft.add(profileList);
-
-        // --------------------------------------
-
-        VerticalPanel vlayoutRight = new VerticalPanel();
-        vlayoutRight.setStyleName("fill-layout-width");
-
-        ContentGroupLabel rightLabel = new ContentGroupLabel("Server Groups");
-        rightLabel.setIcon("common/server_group.png");
-
-        vlayoutRight.add(rightLabel);
-
-        ServerGroupCell groupCell = new ServerGroupCell();
-        groupList = new CellList<ServerGroupRecord>(groupCell);
-        groupList.setPageSize(25);
-
-
-        groupProvider = new ListDataProvider<ServerGroupRecord>();
-        profileProvider = new ListDataProvider<ProfileRecord>();
-
-
-        groupProvider.addDataDisplay(groupList);
-        profileProvider.addDataDisplay(profileList);
-
-        final SingleSelectionModel<ServerGroupRecord> selectionModel = new SingleSelectionModel<ServerGroupRecord>();
-        groupList.setSelectionModel(selectionModel);
-        selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
-            public void onSelectionChange(SelectionChangeEvent event) {
-                ServerGroupRecord selectedRecord = selectionModel.getSelectedObject();
-                final String groupName = selectedRecord.getGroupName();
-
-                Console.getPlaceManager().revealPlaceHierarchy(
-                        new ArrayList<PlaceRequest>() {{
-                            add(new PlaceRequest("domain"));
-                            add(new PlaceRequest(NameTokens.ServerGroupPresenter).with("name", groupName));
-                        }}
-                );
-            }
-        });
-
-
-        vlayoutRight.add(groupList);
-        // --------------------------------------
-
-        hlayout.add(vlayoutLeft);
-        hlayout.add(vlayoutRight);
-
-        layout.add(hlayout);
-
-        // --------------------------------------
-
-        //layout.add(new ContentGroupLabel("Domain Level Deployments"));
-
-        //deploymentTable = new DeploymentTable();
-        //layout.add(deploymentTable);
-
-        return layout;
+        htmlPanel = new HTMLPanel(html.toSafeHtml());
+        layout.addContent("Hosts", htmlPanel);
+        return layout.build();
     }
 
     public void updateProfiles(List<ProfileRecord> profiles)
@@ -148,6 +99,105 @@ public class DomainOverview
     public void updateGroups(List<ServerGroupRecord> groups)
     {
         groupProvider.setList(groups);
+    }
+
+    public void updateHosts(List<HostInfo> hosts) {
+
+        // the known server groups and their colors
+        group2Color.clear();
+        List<String> groups = deriveGroups(hosts);
+
+
+        for(HostInfo host : hosts)
+        {
+            SafeHtmlBuilder html = new SafeHtmlBuilder();
+            String id = "h_" + host.getName();
+
+            String ctrl = host.isController ? " * " : "";
+
+            // host
+            html.appendHtmlConstant("<td id='" + id + "'>")
+                    .appendHtmlConstant("<h3>")
+                    .appendEscaped("Host: " + host.getName())
+                    .appendEscaped(ctrl)
+                    .appendHtmlConstant("</h3>");
+
+
+            html.appendHtmlConstant("<table width='100%'>");
+            for(ServerInstance server : host.getServerInstances())
+            {
+
+                String color = pickColor(groups, server);
+
+                html.appendHtmlConstant("<tr>");
+                html.appendHtmlConstant("<td style='background:"+color+"'>");
+
+                // server
+                html.appendEscaped("Server: "+server.getName()).appendHtmlConstant("<br/>");
+                html.appendEscaped("Group: "+server.getGroup()).appendHtmlConstant("<br/>");
+                html.appendEscaped("Active: "+server.isRunning());
+
+                html.appendHtmlConstant("</td>");
+                html.appendHtmlConstant("</tr>");
+
+                // blank
+                html.appendHtmlConstant("<tr><td>&nbsp;</td></tr>");
+            }
+            html.appendHtmlConstant("</table>");
+
+            html.appendHtmlConstant("</td>");
+
+            Element td = DOM.createTD();
+            td.setInnerHTML(html.toSafeHtml().asString());
+            htmlPanel.getElementById("hosts-row").appendChild(td);
+        }
+    }
+
+    private List<String> deriveGroups(List<HostInfo> hosts) {
+
+        List<String> groups = new LinkedList<String>();
+
+        for(HostInfo host : hosts)
+        {
+            List<ServerInstance> serverInstances = host.getServerInstances();
+            for(ServerInstance server : serverInstances)
+            {
+                groups.add(server.getGroup());
+            }
+        }
+
+        Collections.sort(groups);
+        return groups;
+    }
+
+    private static String pickColor(List<String> groups, ServerInstance server) {
+
+        String color = null;
+        if(group2Color.containsKey(server.getGroup()))
+        {
+            color = group2Color.get(server.getGroup());
+        }
+        else
+        {
+            int index = 0;
+            for(String group : groups)
+            {
+                if(group.equals(server.getGroup()))
+                {
+                    break;
+                }
+                index++;
+            }
+
+            if(index>colors.length)
+                color = "#cccccc"; // fallback if number of groups too large
+            else
+                color = colors[index];
+
+            group2Color.put(server.getGroup(), color);
+        }
+
+        return color;
     }
 
     public void updateDeployments(List<DeploymentRecord> deploymentRecords) {

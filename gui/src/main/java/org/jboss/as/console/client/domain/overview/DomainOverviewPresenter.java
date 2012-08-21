@@ -32,19 +32,30 @@ import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import org.jboss.as.console.client.core.DomainGateKeeper;
+import org.jboss.as.console.client.core.MainLayoutPresenter;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.core.SuspendableView;
 import org.jboss.as.console.client.domain.events.StaleModelEvent;
+import org.jboss.as.console.client.domain.model.Host;
+import org.jboss.as.console.client.domain.model.HostInformationStore;
 import org.jboss.as.console.client.domain.model.ProfileRecord;
 import org.jboss.as.console.client.domain.model.ProfileStore;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.domain.model.ServerGroupStore;
+import org.jboss.as.console.client.domain.model.ServerInstance;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
-import org.jboss.as.console.client.domain.profiles.ProfileMgmtPresenter;
+import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
+import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
+import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.as.console.client.shared.model.DeploymentRecord;
 import org.jboss.as.console.client.shared.model.DeploymentStore;
+import org.jboss.as.console.client.shared.viewframework.DmrCallback;
+import org.jboss.dmr.client.ModelNode;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 
 
 /**
@@ -59,6 +70,8 @@ public class DomainOverviewPresenter
     private ProfileStore profileStore;
     private ServerGroupStore serverGroupStore;
     private DeploymentStore deploymentStore;
+    private DispatchAsync dispatcher;
+    private HostInformationStore hostInfo;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.DomainOverviewPresenter)
@@ -71,6 +84,7 @@ public class DomainOverviewPresenter
         void updateProfiles(List<ProfileRecord> profiles);
         void updateGroups(List<ServerGroupRecord> groups);
         void updateDeployments(List<DeploymentRecord> deploymentRecords);
+        void updateHosts(List<HostInfo> hosts);
     }
 
     @Inject
@@ -78,13 +92,14 @@ public class DomainOverviewPresenter
             EventBus eventBus, MyView view, MyProxy proxy,
             PlaceManager placeManager, ProfileStore profileStore,
             ServerGroupStore serverGroupStore,
-            DeploymentStore deploymentStore) {
+            DispatchAsync dispatcher, HostInformationStore hostInfo) {
 
         super(eventBus, view, proxy);
         this.placeManager = placeManager;
         this.profileStore = profileStore;
         this.serverGroupStore = serverGroupStore;
-        this.deploymentStore = deploymentStore;
+        this.dispatcher = dispatcher;
+        this.hostInfo = hostInfo;
     }
 
     @Override
@@ -103,24 +118,40 @@ public class DomainOverviewPresenter
 
     @Override
     protected void onReset() {
+        loadHostsData();
+    }
 
-        profileStore.loadProfiles(new SimpleCallback<List<ProfileRecord>>() {
-            @Override
-            public void onSuccess(List<ProfileRecord> result) {
-                getView().updateProfiles(result);
-            }
-        });
+    private void loadHostsData() {
 
-        refreshGroups();
+       hostInfo.getHosts(new SimpleCallback<List<Host>>() {
+           @Override
+           public void onSuccess(final List<Host> hosts) {
 
-        // TODO: this needs to reference a server group
-        /*deploymentStore.loadDeployments(new SimpleCallback<List<DeploymentRecord>>() {
-            @Override
-            public void onSuccess(List<DeploymentRecord> result) {
-                getView().updateDeployments(result);
-            }
-        });*/
+               final List<HostInfo> hostInfos = new ArrayList<HostInfo>();
 
+               for(final Host host : hosts)
+               {
+                   hostInfo.getServerInstances(host.getName(), new SimpleCallback<List<ServerInstance>>() {
+                       @Override
+                       public void onSuccess(List<ServerInstance> serverInstances) {
+
+                           HostInfo info = new HostInfo(host.getName(), host.isController());
+                           info.setServerInstances(serverInstances);
+
+                           hostInfos.add(info);
+
+
+                           if(hostInfos.size() == hosts.size())
+                           {
+                               // done
+                               getView().updateHosts(hostInfos);
+
+                           }
+                       }
+                   });
+               }
+           }
+       });
     }
 
     private void refreshGroups() {
@@ -134,7 +165,7 @@ public class DomainOverviewPresenter
 
     @Override
     protected void revealInParent() {
-        RevealContentEvent.fire(getEventBus(), ProfileMgmtPresenter.TYPE_MainContent, this);
+        RevealContentEvent.fire(getEventBus(), MainLayoutPresenter.TYPE_MainContent, this);
     }
 
     // --------------------------------
@@ -143,7 +174,7 @@ public class DomainOverviewPresenter
     public void onStaleModel(String modelName) {
         if(modelName.equals(StaleModelEvent.SERVER_GROUPS))
         {
-            refreshGroups();
+            //refreshGroups();
         }
     }
 }
