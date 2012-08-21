@@ -223,3 +223,26 @@ input[type="checkbox"] {
 .cellTreeTopItemImageValue {
     border:none!important;
 }
+
+/* domain overview */
+
+.domain-hostcontainer {
+    border-right:1px solid #666;
+    font-size:12px;
+    min-width:100px;
+    margin-right:4px;
+    margin-bottom:4px;
+}
+
+.domain-servercontainer {
+
+}
+
+.domain-serverinfo{
+    font-size:10px;
+    padding:4px;
+}
+
+.domain-hostinfo {
+
+}

@@ -26,6 +26,7 @@ import com.google.gwt.user.cellview.client.CellList;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
@@ -35,6 +36,7 @@ import org.jboss.as.console.client.domain.model.ServerInstance;
 import org.jboss.as.console.client.shared.model.DeploymentRecord;
 import org.jboss.as.console.client.shared.viewframework.builder.SimpleLayout;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -83,13 +85,13 @@ public class DomainOverview
 
         SafeHtmlBuilder html= new SafeHtmlBuilder();
 
-        html.appendHtmlConstant("<table style='border:1px solid #cccccc' cellpadding='5' width='100%' id='host-overview'>");
-        html.appendHtmlConstant("<tr id='hosts-row'>");
+        html.appendHtmlConstant("<table cellpadding='5' width='100%' id='host-overview'>");
+        html.appendHtmlConstant("<tr id='hosts-row' valign='top'>");
         html.appendHtmlConstant("</tr>");
         html.appendHtmlConstant("</table>");
 
         htmlPanel = new HTMLPanel(html.toSafeHtml());
-        layout.addContent("Hosts", htmlPanel);
+        layout.addContent("Hosts", new ScrollPanel(htmlPanel));
         return layout.build();
     }
 
@@ -109,6 +111,7 @@ public class DomainOverview
         group2Color.clear();
         List<String> groups = deriveGroups(hosts);
 
+        List<SafeHtmlBuilder> builders = new ArrayList<SafeHtmlBuilder>(hosts.size());
 
         for(HostInfo host : hosts)
         {
@@ -118,8 +121,8 @@ public class DomainOverview
             String ctrl = host.isController ? " * " : "";
 
             // host
-            html.appendHtmlConstant("<td id='" + id + "'>")
-                    .appendHtmlConstant("<h3>")
+            html.appendHtmlConstant("<td class='domain-hostcontainer' id='" + id + "'>")
+                    .appendHtmlConstant("<span class='domain-hostinfo'>")
                     .appendEscaped("Host: " + host.getName())
                     .appendEscaped(ctrl)
                     .appendHtmlConstant("</h3>");
@@ -132,7 +135,7 @@ public class DomainOverview
                 String color = pickColor(groups, server);
 
                 html.appendHtmlConstant("<tr>");
-                html.appendHtmlConstant("<td style='background:"+color+"'>");
+                html.appendHtmlConstant("<td class='domain-serverinfo domain-servercontainer' style='background:"+color+"'>");
 
                 // server
                 html.appendEscaped("Server: "+server.getName()).appendHtmlConstant("<br/>");
@@ -149,18 +152,24 @@ public class DomainOverview
 
             html.appendHtmlConstant("</td>");
 
+            builders.add(html);
+        }
+
+        // clear the container table
+        Element container = htmlPanel.getElementById("hosts-row");
+
+        NodeList<Node> childNodes = container.getChildNodes();
+        for(int i=0; i<childNodes.getLength(); i++)
+        {
+            container.removeChild(childNodes.getItem(i));
+        }
+
+        // update the container table
+        for(SafeHtmlBuilder builder : builders)
+        {
             Element td = DOM.createTD();
-            td.setInnerHTML(html.toSafeHtml().asString());
-
-            // clear the panel
-            Element container = htmlPanel.getElementById("hosts-row");
-
-            NodeList<Node> childNodes = container.getChildNodes();
-            for(int i=0; i<childNodes.getLength(); i++)
-            {
-                container.removeChild(childNodes.getItem(i));
-            }
-
+            td.setClassName("domain-hostcontainer");
+            td.setInnerHTML(builder.toSafeHtml().asString());
             container.appendChild(td);
         }
     }
@@ -174,7 +183,8 @@ public class DomainOverview
             List<ServerInstance> serverInstances = host.getServerInstances();
             for(ServerInstance server : serverInstances)
             {
-                groups.add(server.getGroup());
+                if(!groups.contains(server.getGroup()))
+                    groups.add(server.getGroup());
             }
         }
 
@@ -183,6 +193,8 @@ public class DomainOverview
     }
 
     private static String pickColor(List<String> groups, ServerInstance server) {
+
+        System.out.println(groups.size());
 
         String color = null;
         if(group2Color.containsKey(server.getGroup()))
@@ -194,6 +206,7 @@ public class DomainOverview
             int index = 0;
             for(String group : groups)
             {
+
                 if(group.equals(server.getGroup()))
                 {
                     break;
@@ -201,8 +214,8 @@ public class DomainOverview
                 index++;
             }
 
-            if(index>colors.length)
-                color = "#cccccc"; // fallback if number of groups too large
+            if(index>colors.length-1)
+                color = "#ffffff"; // fallback if number of groups too large
             else
                 color = colors[index];
 

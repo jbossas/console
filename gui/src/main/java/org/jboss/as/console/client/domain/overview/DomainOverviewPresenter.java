@@ -21,6 +21,7 @@ package org.jboss.as.console.client.domain.overview;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.user.client.Random;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.annotations.NameToken;
@@ -44,6 +45,7 @@ import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.domain.model.ServerGroupStore;
 import org.jboss.as.console.client.domain.model.ServerInstance;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
+import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
@@ -72,6 +74,7 @@ public class DomainOverviewPresenter
     private DeploymentStore deploymentStore;
     private DispatchAsync dispatcher;
     private HostInformationStore hostInfo;
+    private BeanFactory factory;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.DomainOverviewPresenter)
@@ -92,7 +95,8 @@ public class DomainOverviewPresenter
             EventBus eventBus, MyView view, MyProxy proxy,
             PlaceManager placeManager, ProfileStore profileStore,
             ServerGroupStore serverGroupStore,
-            DispatchAsync dispatcher, HostInformationStore hostInfo) {
+            DispatchAsync dispatcher, HostInformationStore hostInfo,
+            BeanFactory factory) {
 
         super(eventBus, view, proxy);
         this.placeManager = placeManager;
@@ -100,6 +104,7 @@ public class DomainOverviewPresenter
         this.serverGroupStore = serverGroupStore;
         this.dispatcher = dispatcher;
         this.hostInfo = hostInfo;
+        this.factory = factory;
     }
 
     @Override
@@ -123,7 +128,7 @@ public class DomainOverviewPresenter
 
     private void loadHostsData() {
 
-       hostInfo.getHosts(new SimpleCallback<List<Host>>() {
+       /*hostInfo.getHosts(new SimpleCallback<List<Host>>() {
            @Override
            public void onSuccess(final List<Host> hosts) {
 
@@ -151,7 +156,48 @@ public class DomainOverviewPresenter
                    });
                }
            }
-       });
+       });*/
+
+
+       getView().updateHosts(generateFakeDomain());
+
+
+    }
+
+    private List<HostInfo> generateFakeDomain() {
+
+        String[] hostNames =    new String[] {"lightning", "eeak-a-mouse", "dirty-harry"};
+        String[] groupNames =   new String[] {"staging", "production", "uat", "messaging", "backoffice", "starlight", "moonlight"};
+        String[] profiles =     new String[] {"default", "default", "default", "messaging", "web", "full-ha", "full-ha"};
+
+        final List<HostInfo> hostInfos = new ArrayList<HostInfo>();
+
+        int numHosts = Random.nextInt(5) + 10;
+        for(int i=0;i<numHosts; i++)
+        {
+            // host info
+            String name = hostNames[Random.nextInt(2)]+"-"+i;
+            boolean isController = (i<1);
+
+            HostInfo host = new HostInfo(name, isController);
+            host.setServerInstances(new ArrayList<ServerInstance>());
+
+            // server instances
+            for(int x = 0; x<(Random.nextInt(5)+1); x++)
+            {
+                int groupIndex = Random.nextInt(groupNames.length-1);
+                ServerInstance serverInstance = factory.serverInstance().as();
+                serverInstance.setGroup(groupNames[groupIndex]);
+                serverInstance.setRunning((groupIndex%2==0));
+                serverInstance.setName(groupNames[groupIndex]+"-"+x);
+
+                host.getServerInstances().add(serverInstance);
+            }
+
+            hostInfos.add(host);
+        }
+
+        return hostInfos;
     }
 
     private void refreshGroups() {
