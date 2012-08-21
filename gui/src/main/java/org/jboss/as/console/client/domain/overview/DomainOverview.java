@@ -19,6 +19,8 @@
 
 package org.jboss.as.console.client.domain.overview;
 
+import com.google.gwt.dom.client.Node;
+import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.cellview.client.CellList;
 import com.google.gwt.user.client.DOM;
@@ -149,7 +151,17 @@ public class DomainOverview
 
             Element td = DOM.createTD();
             td.setInnerHTML(html.toSafeHtml().asString());
-            htmlPanel.getElementById("hosts-row").appendChild(td);
+
+            // clear the panel
+            Element container = htmlPanel.getElementById("hosts-row");
+
+            NodeList<Node> childNodes = container.getChildNodes();
+            for(int i=0; i<childNodes.getLength(); i++)
+            {
+                container.removeChild(childNodes.getItem(i));
+            }
+
+            container.appendChild(td);
         }
     }
 
