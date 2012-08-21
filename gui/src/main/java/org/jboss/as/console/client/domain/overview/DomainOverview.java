@@ -26,7 +26,10 @@ import com.google.gwt.user.cellview.client.CellList;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.TabPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
@@ -57,14 +60,14 @@ public class DomainOverview
 
     ListDataProvider<ProfileRecord> profileProvider;
     ListDataProvider<ServerGroupRecord> groupProvider;
-    private HTMLPanel htmlPanel;
+    private TabPanel container;
 
     //private CellTable<DeploymentRecord> deploymentTable;
 
     private static String[] colors = {
-      "#A0C55F", "#C2CBCE", "#81A8B8",
-      "#E8F3F8", "#AAB3AB", "#E8CAAF", "#91A398", "#ED834E",
-      "#EBCC6E", "#F06B50", "#E4D829",
+            "#A0C55F", "#C2CBCE", "#81A8B8",
+            "#E8F3F8", "#AAB3AB", "#E8CAAF", "#91A398", "#ED834E",
+            "#EBCC6E", "#F06B50", "#E4D829",
 
     };
 
@@ -83,15 +86,9 @@ public class DomainOverview
                 .setHeadline("Host & Servers")
                 .setDescription("");
 
-        SafeHtmlBuilder html= new SafeHtmlBuilder();
-
-        html.appendHtmlConstant("<table cellpadding='5' width='100%' id='host-overview'>");
-        html.appendHtmlConstant("<tr id='hosts-row' valign='top'>");
-        html.appendHtmlConstant("</tr>");
-        html.appendHtmlConstant("</table>");
-
-        htmlPanel = new HTMLPanel(html.toSafeHtml());
-        layout.addContent("Hosts", new ScrollPanel(htmlPanel));
+        container = new TabPanel();
+        container.setStyleName("default-tabpanel");
+        layout.addContent("Hosts", container);
         return layout.build();
     }
 
@@ -105,73 +102,116 @@ public class DomainOverview
         groupProvider.setList(groups);
     }
 
+
+    private SafeHtmlBuilder createContainerTable() {
+        SafeHtmlBuilder containerTable= new SafeHtmlBuilder();
+
+        containerTable.appendHtmlConstant("<table cellpadding='5' width='100%' id='host-overview'>");
+        containerTable.appendHtmlConstant("<tr id='hosts-row' valign='top'>");
+        containerTable.appendHtmlConstant("</tr>");
+        containerTable.appendHtmlConstant("</table>");
+
+        return containerTable;
+    }
+
     public void updateHosts(List<HostInfo> hosts) {
 
-        // the known server groups and their colors
+        System.out.println("Hosts: "+hosts.size());
+
+        // clear view
+        container.clear();
         group2Color.clear();
+
+
+        // the known server groups and their colors
         List<String> groups = deriveGroups(hosts);
 
-        List<SafeHtmlBuilder> builders = new ArrayList<SafeHtmlBuilder>(hosts.size());
+        int itemsPerPage = 5;
+        int lastPageSize = hosts.size()%itemsPerPage;
+        int numberOfPages = ((hosts.size()-lastPageSize) / itemsPerPage)+1;
 
-        for(HostInfo host : hosts)
+        for(int page=0; page<numberOfPages; page++)
         {
-            SafeHtmlBuilder html = new SafeHtmlBuilder();
-            String id = "h_" + host.getName();
 
-            String ctrl = host.isController ? " * " : "";
+            // generate wrapper table
+            SafeHtmlBuilder containerTable = createContainerTable();
+            HTMLPanel htmlPanel = new HTMLPanel(containerTable.toSafeHtml());
 
-            // host
-            html.appendHtmlConstant("<td class='domain-hostcontainer' id='" + id + "'>")
-                    .appendHtmlConstant("<span class='domain-hostinfo'>")
-                    .appendEscaped("Host: " + host.getName())
-                    .appendEscaped(ctrl)
-                    .appendHtmlConstant("</h3>");
+            // host data
+            List<SafeHtmlBuilder> hostColumns = new ArrayList<SafeHtmlBuilder>(hosts.size());
 
-
-            html.appendHtmlConstant("<table width='100%'>");
-            for(ServerInstance server : host.getServerInstances())
+            for(int item=0; item<itemsPerPage; item++)
             {
 
-                String color = pickColor(groups, server);
+                int index = item+(itemsPerPage*page);
+                if(index>=hosts.size()) break;
 
-                html.appendHtmlConstant("<tr>");
-                html.appendHtmlConstant("<td class='domain-serverinfo domain-servercontainer' style='background:"+color+"'>");
+                HostInfo host = hosts.get(index);
 
-                // server
-                html.appendEscaped("Server: "+server.getName()).appendHtmlConstant("<br/>");
-                html.appendEscaped("Group: "+server.getGroup()).appendHtmlConstant("<br/>");
-                html.appendEscaped("Active: "+server.isRunning());
+                SafeHtmlBuilder html = new SafeHtmlBuilder();
+                String id = "h_" + host.getName();
+
+                String ctrl = host.isController ? " * " : "";
+
+                // host
+                html.appendHtmlConstant("<td class='domain-hostcontainer' id='" + id + "'>")
+                        .appendHtmlConstant("<span class='domain-hostinfo'>")
+                        .appendEscaped("Host: " + host.getName())
+                        .appendEscaped(ctrl)
+                        .appendHtmlConstant("</h3>");
+
+
+                html.appendHtmlConstant("<table width='100%'>");
+                for(ServerInstance server : host.getServerInstances())
+                {
+
+                    String color = pickColor(groups, server);
+
+                    html.appendHtmlConstant("<tr>");
+                    html.appendHtmlConstant("<td class='domain-serverinfo domain-servercontainer' style='background:"+color+"'>");
+
+                    // server
+                    html.appendEscaped("Server: "+server.getName()).appendHtmlConstant("<br/>");
+                    html.appendEscaped("Group: "+server.getGroup()).appendHtmlConstant("<br/>");
+                    html.appendEscaped("Active: "+server.isRunning());
+
+                    html.appendHtmlConstant("</td>");
+                    html.appendHtmlConstant("</tr>");
+
+                    // blank
+                    html.appendHtmlConstant("<tr><td>&nbsp;</td></tr>");
+                }
+                html.appendHtmlConstant("</table>");
 
                 html.appendHtmlConstant("</td>");
-                html.appendHtmlConstant("</tr>");
 
-                // blank
-                html.appendHtmlConstant("<tr><td>&nbsp;</td></tr>");
+                hostColumns.add(html);
+
             }
-            html.appendHtmlConstant("</table>");
 
-            html.appendHtmlConstant("</td>");
 
-            builders.add(html);
+            if(hostColumns.isEmpty())  // skip empty pages
+                break;
+
+            // update the tr table
+            Element tr = htmlPanel.getElementById("hosts-row");
+            for(SafeHtmlBuilder builder : hostColumns)
+            {
+                Element td = DOM.createTD();
+                td.setClassName("domain-hostcontainer");
+                td.setInnerHTML(builder.toSafeHtml().asString());
+                tr.appendChild(td);
+            }
+
+            // created one page
+            String pageName = "Page " + (page + 1);
+            System.out.println(pageName + " > "+hostColumns.size());
+            container.add(htmlPanel, pageName);
+
         }
 
-        // clear the container table
-        Element container = htmlPanel.getElementById("hosts-row");
+        container.selectTab(0);
 
-        NodeList<Node> childNodes = container.getChildNodes();
-        for(int i=0; i<childNodes.getLength(); i++)
-        {
-            container.removeChild(childNodes.getItem(i));
-        }
-
-        // update the container table
-        for(SafeHtmlBuilder builder : builders)
-        {
-            Element td = DOM.createTD();
-            td.setClassName("domain-hostcontainer");
-            td.setInnerHTML(builder.toSafeHtml().asString());
-            container.appendChild(td);
-        }
     }
 
     private List<String> deriveGroups(List<HostInfo> hosts) {
@@ -193,8 +233,6 @@ public class DomainOverview
     }
 
     private static String pickColor(List<String> groups, ServerInstance server) {
-
-        System.out.println(groups.size());
 
         String color = null;
         if(group2Color.containsKey(server.getGroup()))

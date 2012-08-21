@@ -227,11 +227,15 @@ input[type="checkbox"] {
 /* domain overview */
 
 .domain-hostcontainer {
-    border-right:1px solid #666;
+    border-right:1px solid #DCDCDC;
     font-size:12px;
     min-width:100px;
     margin-right:4px;
     margin-bottom:4px;
+}
+
+.domain-hostcontainer:last-child {
+    border:none;
 }
 
 .domain-servercontainer {
