@@ -299,7 +299,7 @@ public class DomainOverview
                 VerticalPanel toolContent = new VerticalPanel();
                 toolContent.addStyleName("fill-layout");
 
-                InlineLink startStop = new InlineLink("Start/stop Server<br/>");
+                InlineLink startStop = new InlineLink("Start/Stop Server<br/>");
                 startStop.addClickHandler(new ClickHandler() {
                     @Override
                     public void onClick(ClickEvent clickEvent) {
