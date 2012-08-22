@@ -37,7 +37,6 @@ import org.jboss.as.console.client.core.MainLayoutPresenter;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.core.SuspendableView;
 import org.jboss.as.console.client.domain.events.StaleModelEvent;
-import org.jboss.as.console.client.domain.model.Host;
 import org.jboss.as.console.client.domain.model.HostInformationStore;
 import org.jboss.as.console.client.domain.model.ProfileRecord;
 import org.jboss.as.console.client.domain.model.ProfileStore;
@@ -47,18 +46,12 @@ import org.jboss.as.console.client.domain.model.ServerInstance;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
-import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
-import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.as.console.client.shared.model.DeploymentRecord;
 import org.jboss.as.console.client.shared.model.DeploymentStore;
-import org.jboss.as.console.client.shared.viewframework.DmrCallback;
 import org.jboss.ballroom.client.widgets.window.Feedback;
-import org.jboss.dmr.client.ModelNode;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 
 
 /**
@@ -89,6 +82,10 @@ public class DomainOverviewPresenter
                     }
                 });
 
+    }
+
+    public void onSelectServer(DomainOverview.ServerPanelReference serverTuple) {
+        System.out.println("Select "+serverTuple.getServer().getName());
     }
 
     @ProxyCodeSplit

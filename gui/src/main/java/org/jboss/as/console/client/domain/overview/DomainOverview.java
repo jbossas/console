@@ -21,20 +21,15 @@ package org.jboss.as.console.client.domain.overview;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.logical.shared.CloseEvent;
-import com.google.gwt.event.logical.shared.CloseHandler;
-import com.google.gwt.event.logical.shared.OpenEvent;
-import com.google.gwt.event.logical.shared.OpenHandler;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.cellview.client.CellList;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
-import com.google.gwt.user.client.ui.DisclosurePanel;
-import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.Event;
+import com.google.gwt.user.client.EventListener;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Image;
-import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -47,10 +42,7 @@ import org.jboss.as.console.client.shared.model.DeploymentRecord;
 import org.jboss.as.console.client.shared.viewframework.builder.SimpleLayout;
 import org.jboss.as.console.client.widgets.icons.ConsoleIcons;
 import org.jboss.ballroom.client.widgets.InlineLink;
-import org.jboss.ballroom.client.widgets.common.DefaultButton;
-import org.jboss.ballroom.client.widgets.icons.DefaultTreeResources;
 import org.jboss.ballroom.client.widgets.icons.Icons;
-import org.jboss.ballroom.client.widgets.window.Feedback;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -85,16 +77,19 @@ public class DomainOverview
     };
 
     private static TreeMap<String, String> group2Color = new TreeMap<String,String>();
+    private ServerPanelReference prevSelection = null;
 
-    class ServerTuple {
+    class ServerPanelReference {
         String hostName;
         ServerInstance server;
-        private String serverPanelId;
+        String serverPanelId;
+        String toolBoxId;
 
-        ServerTuple(String hostName, ServerInstance server, String serverPanelId) {
+        ServerPanelReference(String hostName, ServerInstance server, String toolBoxId, String serverPanelId) {
             this.hostName = hostName;
             this.server = server;
             this.serverPanelId = serverPanelId;
+            this.toolBoxId = toolBoxId;
         }
 
         public String getHostName() {
@@ -107,6 +102,10 @@ public class DomainOverview
 
         public String getServerPanelId() {
             return serverPanelId;
+        }
+
+        public String getToolBoxId() {
+            return toolBoxId;
         }
     }
 
@@ -153,11 +152,10 @@ public class DomainOverview
 
     public void updateHosts(List<HostInfo> hosts) {
 
-        System.out.println("Hosts: "+hosts.size());
-
         // clear view
         container.clear();
         group2Color.clear();
+        prevSelection = null;
 
 
         // the known server groups and their colors
@@ -170,7 +168,7 @@ public class DomainOverview
         for(int page=0; page<numberOfPages; page++)
         {
 
-            Map<String, ServerTuple> pendingTools = new HashMap<String,ServerTuple>();
+            Map<String, ServerPanelReference> pendingTools = new HashMap<String,ServerPanelReference>();
 
             // generate wrapper table
             SafeHtmlBuilder containerTable = createContainerTable();
@@ -210,7 +208,6 @@ public class DomainOverview
                 html.appendHtmlConstant("<br/>");
                 html.appendHtmlConstant("</div>");
 
-
                 html.appendHtmlConstant("<table width='100%'>");
                 for(ServerInstance server : host.getServerInstances())
                 {
@@ -234,7 +231,7 @@ public class DomainOverview
 
                     String toolboxId = "tb_"+host.getName()+"_"+server.getName();
                     html.appendHtmlConstant("<div id='"+toolboxId+"'/>");
-                    pendingTools.put(toolboxId, new ServerTuple(host.getName(), server, serverPanelId));
+                    pendingTools.put(toolboxId, new ServerPanelReference(host.getName(), server, toolboxId, serverPanelId));
 
                     html.appendHtmlConstant("</td>");
                     html.appendHtmlConstant("</tr>");
@@ -266,48 +263,69 @@ public class DomainOverview
 
             for(String elementId : pendingTools.keySet())
             {
-                final DisclosurePanel tools =new DisclosurePanel(
-                        DefaultTreeResources.INSTANCE.treeOpen(),
-                        DefaultTreeResources.INSTANCE.treeClosed(),
-                        "");
+                final VerticalPanel tools = new VerticalPanel();
+                tools.setStyleName("fill-layout");
+                tools.setVisible(false);
 
-                final ServerTuple serverTuple = pendingTools.get(elementId);
+                final ServerPanelReference serverPanelReference = pendingTools.get(elementId);
 
-                tools.getElement().setAttribute("style", "width:100%;");
-                tools.getHeader().getElement().setAttribute("style", "width:100%");
+
+                // -------------------------------------
+                // process click events on server panel
+                // -------------------------------------
+
+                Element serverPanelElement = htmlPanel.getElementById(serverPanelReference.serverPanelId);
+                DOM.setEventListener(serverPanelElement, new EventListener() {
+                    @Override
+                    public void onBrowserEvent(Event event) {
+                        if(event.getTypeInt()==Event.ONCLICK)
+                        {
+
+                            if(prevSelection!=null)
+                            {
+                                deactivate(htmlPanel, prevSelection);
+                            }
+
+                            activate(htmlPanel, serverPanelReference);
+
+                            prevSelection = serverPanelReference;
+
+                            /*if(tools.isVisible())
+                            {
+                                prevSelectedServerId = null;
+                                tools.setVisible(false);
+                                htmlPanel.getElementById(serverPanelReference.serverPanelId).removeClassName("domain-serverinfo-active");
+                            }
+                            else
+                            {
+                                // activate server
+                                presenter.onSelectServer(serverPanelReference);
+
+                                prevSelectedServerId = serverPanelReference.getServerPanelId();
+                                tools.setVisible(true);
+                                htmlPanel.getElementById(serverPanelReference.serverPanelId).addClassName("domain-serverinfo-active");
+                            }    */
+                        }
+                    }
+                });
+
+                DOM.sinkEvents(serverPanelElement, Event.ONCLICK);
 
                 VerticalPanel toolContent = new VerticalPanel();
-                toolContent.getElement().setAttribute("style", "padding-left:10px;");
-                toolContent.setStyleName("fill-layout");
+                toolContent.addStyleName("fill-layout");
+                toolContent.addStyleName("server-tools");
 
                 InlineLink startStop = new InlineLink("start/stop<br/>");
                 startStop.addClickHandler(new ClickHandler() {
                     @Override
                     public void onClick(ClickEvent clickEvent) {
-                        presenter.onStartStopSever(serverTuple.getHostName(), serverTuple.getServer());
+                        presenter.onStartStopSever(serverPanelReference.getHostName(), serverPanelReference.getServer());
                     }
                 });
 
                 toolContent.add(startStop);
 
-                tools.setContent(toolContent);
-
-
-                tools.addOpenHandler(new OpenHandler<DisclosurePanel>() {
-                    @Override
-                    public void onOpen(OpenEvent<DisclosurePanel> disclosurePanelOpenEvent) {
-                        htmlPanel.getElementById(serverTuple.serverPanelId).addClassName("domain-serverinfo-active");
-                        tools.getElement().addClassName("server-tool-open");
-                    }
-                });
-
-                tools.addCloseHandler(new CloseHandler<DisclosurePanel>() {
-                    @Override
-                    public void onClose(CloseEvent<DisclosurePanel> disclosurePanelCloseEvent) {
-                        htmlPanel.getElementById(serverTuple.serverPanelId).removeClassName("domain-serverinfo-active");
-                        tools.getElement().removeClassName("server-tool-open");
-                    }
-                });
+                tools.add(toolContent);
 
                 htmlPanel.add(tools, elementId);
             }
@@ -321,6 +339,19 @@ public class DomainOverview
 
         container.selectTab(0);
 
+    }
+
+    private void deactivate(HTMLPanel htmlPanel, ServerPanelReference prevSelection) {
+        Element serverPanel = htmlPanel.getElementById(prevSelection.serverPanelId);
+        assert serverPanel!=null : "server panel cannot be found "+prevSelection.serverPanelId;
+
+        serverPanel.removeClassName("domain-serverinfo-active");
+        htmlPanel.getElementById(prevSelection.getToolBoxId()).removeClassName("is-visible");
+    }
+
+    private void activate(HTMLPanel htmlPanel, ServerPanelReference prevSelection) {
+        htmlPanel.getElementById(prevSelection.serverPanelId).addClassName("domain-serverinfo-active");
+        htmlPanel.getElementById(prevSelection.getToolBoxId()).addClassName("is-visible");
     }
 
 

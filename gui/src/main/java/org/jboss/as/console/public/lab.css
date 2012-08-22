@@ -249,17 +249,21 @@ input[type="checkbox"] {
     font-size:10px;
     padding:4px;
     opacity: 0.6;
+    cursor: pointer;
 }
 
 .domain-serverinfo-active {
     opacity: 1.0;
+    border:1px dashed #000000;
 }
 
 .domain-serverinfo:hover {
     opacity: 1.0;
 }
 
-.server-tool-open {
+.server-tools {
+    padding-left:10px;
+    visibility: collapse;
 }
 
 .domain-hostinfo {
@@ -273,4 +277,8 @@ input[type="checkbox"] {
 
 .domain-controller {
 
+}
+
+.is-visible {
+    visibility: inherit;
 }
