@@ -360,9 +360,13 @@ public class DomainOverview
         htmlPanel.getElementById(prevSelection.getToolBoxId()).removeClassName("is-visible");
     }
 
-    private void activate(HTMLPanel htmlPanel, ServerPanelReference prevSelection) {
-        htmlPanel.getElementById(prevSelection.serverPanelId).addClassName("domain-serverinfo-active");
-        htmlPanel.getElementById(prevSelection.getToolBoxId()).addClassName("is-visible");
+    private void activate(HTMLPanel htmlPanel, ServerPanelReference currentSelection) {
+
+
+        htmlPanel.getElementById(currentSelection.serverPanelId).addClassName("domain-serverinfo-active");
+        htmlPanel.getElementById(currentSelection.getToolBoxId()).addClassName("is-visible");
+
+        presenter.onSelectServer(currentSelection);
     }
 
 

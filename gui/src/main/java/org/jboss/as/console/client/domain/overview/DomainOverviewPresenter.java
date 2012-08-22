@@ -20,6 +20,7 @@
 package org.jboss.as.console.client.domain.overview;
 
 import com.allen_sauer.gwt.log.client.Log;
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.Random;
 import com.google.inject.Inject;
@@ -32,7 +33,9 @@ import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.DomainGateKeeper;
+import org.jboss.as.console.client.core.Header;
 import org.jboss.as.console.client.core.MainLayoutPresenter;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.core.SuspendableView;
@@ -49,6 +52,8 @@ import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.model.DeploymentRecord;
 import org.jboss.as.console.client.shared.model.DeploymentStore;
+import org.jboss.as.console.client.shared.state.CurrentServerSelection;
+import org.jboss.as.console.client.shared.state.ServerSelectionEvent;
 import org.jboss.ballroom.client.widgets.window.Feedback;
 
 import java.util.ArrayList;
@@ -70,37 +75,8 @@ public class DomainOverviewPresenter
     private DispatchAsync dispatcher;
     private HostInformationStore hostInfo;
     private BeanFactory factory;
-
-    public void onStartStopServer(final String hostName, final ServerInstance server) {
-        final String next = server.isRunning() ?  "stop" : "start";
-
-        Feedback.confirm("Modify Server", "Do really want to "+next+ " server "+server.getName()+"?",
-                new Feedback.ConfirmationHandler() {
-                    @Override
-                    public void onConfirmation(boolean isConfirmed) {
-                        if(isConfirmed)
-                            System.out.println(next + " server "+server.getName() + " on host: " +hostName);
-                    }
-                });
-
-    }
-
-    public void onSelectServer(DomainOverview.ServerPanelReference serverTuple) {
-        System.out.println("Select "+serverTuple.getServer().getName());
-    }
-
-    public void onStartStopGroup(final String hostName, final String group, boolean startIt) {
-        final String next = startIt ?  "start" : "stop";
-
-        Feedback.confirm("Modify Server", "Do really want to "+next+ " all servers in group "+group+"?",
-                new Feedback.ConfirmationHandler() {
-                    @Override
-                    public void onConfirmation(boolean isConfirmed) {
-                        if(isConfirmed)
-                            System.out.println(next + " group "+group);
-                    }
-                });
-    }
+    private CurrentServerSelection serverSelection;
+    private Header header;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.DomainOverviewPresenter)
@@ -122,7 +98,7 @@ public class DomainOverviewPresenter
             PlaceManager placeManager, ProfileStore profileStore,
             ServerGroupStore serverGroupStore,
             DispatchAsync dispatcher, HostInformationStore hostInfo,
-            BeanFactory factory) {
+            BeanFactory factory, CurrentServerSelection serverSelection, Header header) {
 
         super(eventBus, view, proxy);
         this.placeManager = placeManager;
@@ -131,6 +107,8 @@ public class DomainOverviewPresenter
         this.dispatcher = dispatcher;
         this.hostInfo = hostInfo;
         this.factory = factory;
+        this.serverSelection  = serverSelection;
+        this.header = header;
     }
 
     @Override
@@ -149,6 +127,8 @@ public class DomainOverviewPresenter
 
     @Override
     protected void onReset() {
+
+        header.highlight(NameTokens.DomainOverviewPresenter);
         loadHostsData();
     }
 
@@ -248,5 +228,45 @@ public class DomainOverviewPresenter
         {
             //refreshGroups();
         }
+    }
+
+    public void onStartStopServer(final String hostName, final ServerInstance server) {
+        final String next = server.isRunning() ?  "stop" : "start";
+
+        Feedback.confirm("Modify Server", "Do really want to "+next+ " server "+server.getName()+"?",
+                new Feedback.ConfirmationHandler() {
+                    @Override
+                    public void onConfirmation(boolean isConfirmed) {
+                        if(isConfirmed)
+                            System.out.println(next + " server "+server.getName() + " on host: " +hostName);
+                    }
+                });
+
+    }
+
+    public void onSelectServer(final DomainOverview.ServerPanelReference serverTuple) {
+        Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+            @Override
+            public void execute() {
+                Console.getEventBus().fireEvent(
+                        new ServerSelectionEvent(
+                                serverTuple.getHostName(),
+                                serverTuple.getServer())
+                );
+            }
+        });
+    }
+
+    public void onStartStopGroup(final String hostName, final String group, boolean startIt) {
+        final String next = startIt ?  "start" : "stop";
+
+        Feedback.confirm("Modify Server", "Do really want to "+next+ " all servers in group "+group+"?",
+                new Feedback.ConfirmationHandler() {
+                    @Override
+                    public void onConfirmation(boolean isConfirmed) {
+                        if(isConfirmed)
+                            System.out.println(next + " group "+group);
+                    }
+                });
     }
 }

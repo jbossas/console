@@ -99,7 +99,7 @@ public class OSGiRuntimePresenter extends Presenter<OSGiRuntimePresenter.MyView,
     }
 
     @Override
-    public void onServerSelection(String hostName, ServerInstance server) {
+    public void onServerSelection(String hostName, ServerInstance server, ServerSelectionEvent.Source source) {
 
          Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
             @Override

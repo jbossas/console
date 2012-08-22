@@ -208,14 +208,17 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
     }
 
     @Override
-    public void onServerSelection(final String hostName, final ServerInstance server) {
+    public void onServerSelection(final String hostName, final ServerInstance server, ServerSelectionEvent.Source source) {
 
+        System.out.println("Server selection: "+server.getName() + "("+source+")");
 
         Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
             @Override
             public void execute() {
                 if(server!=null)
+                {
                     loadSubsystems(server);
+                }
                 else
                 {
                     getView().setServer(Collections.EMPTY_LIST);

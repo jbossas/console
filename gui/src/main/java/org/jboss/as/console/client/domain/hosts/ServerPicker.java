@@ -12,7 +12,6 @@ import org.jboss.as.console.client.domain.model.ServerInstance;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.shared.state.ServerSelectionEvent;
 
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -118,15 +117,11 @@ public class ServerPicker implements HostServerManagement {
     @Override
     public void onServerSelected(final Host host, final ServerInstance server) {
 
-        String name = server!=null ? server.getName(): "";
-
-        //System.out.println("** Fire " + host.getName()+"/"+ name);
-
         Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
             @Override
             public void execute() {
                 Console.getEventBus().fireEvent(
-                        new ServerSelectionEvent(host.getName(), server)
+                        new ServerSelectionEvent(host.getName(), server, ServerSelectionEvent.Source.Picker)
                 );
             }
         });

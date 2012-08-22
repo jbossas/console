@@ -66,8 +66,15 @@ class DomainRuntimeNavigation {
 
         //domainLeaf.addItem(new LHSNavTreeItem("Overview", ""));
 
-        LHSNavTreeItem serverInstances= new LHSNavTreeItem(Console.CONSTANTS.common_label_serverInstances(), NameTokens.InstancesPresenter);
-        domainLeaf.addItem(serverInstances);
+        LHSNavTreeItem serverInstances= new LHSNavTreeItem(
+                Console.CONSTANTS.common_label_serverInstances(),
+                NameTokens.InstancesPresenter);
+
+        /*LHSNavTreeItem domainOverview= new LHSNavTreeItem(
+                        "Domain",
+                        NameTokens.DomainOverviewPresenter);
+
+        domainLeaf.addItem(domainOverview);*/
         domainLeaf.addItem(serverInstances);
 
         domainLeaf.addItem(new LHSNavTreeItem("Manage Deployments", NameTokens.DeploymentsPresenter));

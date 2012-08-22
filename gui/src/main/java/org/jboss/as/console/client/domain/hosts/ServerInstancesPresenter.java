@@ -36,7 +36,6 @@ import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.DomainGateKeeper;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.core.SuspendableView;
-import org.jboss.as.console.client.domain.events.StaleModelEvent;
 import org.jboss.as.console.client.domain.model.EntityFilter;
 import org.jboss.as.console.client.domain.model.HostInformationStore;
 import org.jboss.as.console.client.domain.model.Predicate;
@@ -50,7 +49,6 @@ import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
-import org.jboss.as.console.client.shared.runtime.RuntimeBaseAddress;
 import org.jboss.as.console.client.shared.schedule.LongRunningTask;
 import org.jboss.as.console.client.shared.state.CurrentServerSelection;
 import org.jboss.as.console.client.shared.state.ReloadState;
@@ -166,7 +164,7 @@ public class ServerInstancesPresenter extends Presenter<ServerInstancesPresenter
     }
 
     @Override
-    public void onServerSelection(final String hostName, final ServerInstance server) {
+    public void onServerSelection(final String hostName, final ServerInstance server, ServerSelectionEvent.Source source) {
 
 
         Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
