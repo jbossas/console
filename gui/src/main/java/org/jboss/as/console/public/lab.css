@@ -262,8 +262,9 @@ input[type="checkbox"] {
 }
 
 .server-tools {
-    padding-left:10px;
+    padding:8px;
     visibility: collapse;
+    background-color: #ffffff;
 }
 
 .domain-hostinfo {

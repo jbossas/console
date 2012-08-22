@@ -23,7 +23,6 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
-import com.google.gwt.user.cellview.client.CellList;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Event;
@@ -33,7 +32,6 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.view.client.ListDataProvider;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.domain.model.ProfileRecord;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
@@ -60,11 +58,6 @@ public class DomainOverview
         extends SuspendableViewImpl implements DomainOverviewPresenter.MyView {
 
     private DomainOverviewPresenter presenter;
-    private CellList<ProfileRecord> profileList;
-    private CellList<ServerGroupRecord> groupList;
-
-    ListDataProvider<ProfileRecord> profileProvider;
-    ListDataProvider<ServerGroupRecord> groupProvider;
     private TabPanel container;
 
     //private CellTable<DeploymentRecord> deploymentTable;
@@ -130,12 +123,12 @@ public class DomainOverview
 
     public void updateProfiles(List<ProfileRecord> profiles)
     {
-        profileProvider.setList(profiles);
+
     }
 
     public void updateGroups(List<ServerGroupRecord> groups)
     {
-        groupProvider.setList(groups);
+
     }
 
 
@@ -188,7 +181,10 @@ public class DomainOverview
                 SafeHtmlBuilder html = new SafeHtmlBuilder();
                 String id = "h_" + host.getName();
 
+                // ----------------------
                 // host
+                // ----------------------
+
                 String domainType = host.isController ? "Controller" : "Member";
                 String ctrlCss = host.isController ? "domain-controller" : "domain-member";
 
@@ -212,6 +208,10 @@ public class DomainOverview
                 for(ServerInstance server : host.getServerInstances())
                 {
 
+                    // ----------------------
+                    // server
+                    // ----------------------
+
                     String color = pickColor(groups, server);
                     ImageResource status = server.isRunning() ? Icons.INSTANCE.status_good() : Icons.INSTANCE.status_bad();
                     String statusImgUrl = new Image(status).getUrl();
@@ -221,13 +221,12 @@ public class DomainOverview
                     String serverPanelId = "sp_"+host.getName()+"_"+server.getName();
                     html.appendHtmlConstant("<td id='"+serverPanelId+"' class='domain-serverinfo domain-servercontainer' style='background:" + color + "'>");
 
-                    // server
                     html.appendEscaped("Server: "+server.getName()).appendHtmlConstant("&nbsp;");
                     html.appendHtmlConstant("<img src='" + statusImgUrl + "' width=16 height=16 align=right>");
                     html.appendHtmlConstant("<br/>");
                     html.appendEscaped("Group: "+server.getGroup()).appendHtmlConstant("<br/>");
 
-                    // expandable toolbox
+                    // toolbox layout
 
                     String toolboxId = "tb_"+host.getName()+"_"+server.getName();
                     html.appendHtmlConstant("<div id='"+toolboxId+"' class='server-tools'/>");
@@ -259,7 +258,9 @@ public class DomainOverview
                 tr.appendChild(td);
             }
 
+            // ----------------------
             // bind tools
+            // ----------------------
 
             for(String elementId : pendingTools.keySet())
             {
@@ -289,21 +290,6 @@ public class DomainOverview
 
                             prevSelection = serverPanelReference;
 
-                            /*if(tools.isVisible())
-                            {
-                                prevSelectedServerId = null;
-                                tools.setVisible(false);
-                                htmlPanel.getElementById(serverPanelReference.serverPanelId).removeClassName("domain-serverinfo-active");
-                            }
-                            else
-                            {
-                                // activate server
-                                presenter.onSelectServer(serverPanelReference);
-
-                                prevSelectedServerId = serverPanelReference.getServerPanelId();
-                                tools.setVisible(true);
-                                htmlPanel.getElementById(serverPanelReference.serverPanelId).addClassName("domain-serverinfo-active");
-                            }    */
                         }
                     }
                 });
@@ -404,6 +390,6 @@ public class DomainOverview
 
     public void updateDeployments(List<DeploymentRecord> deploymentRecords) {
 
-        //deploymentTable.setRowData(0, deploymentRecords);
+
     }
 }
