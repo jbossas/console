@@ -280,5 +280,5 @@ input[type="checkbox"] {
 }
 
 .is-visible {
-    visibility: inherit;
+    visibility: visible;
 }

@@ -230,7 +230,7 @@ public class DomainOverview
                     // expandable toolbox
 
                     String toolboxId = "tb_"+host.getName()+"_"+server.getName();
-                    html.appendHtmlConstant("<div id='"+toolboxId+"'/>");
+                    html.appendHtmlConstant("<div id='"+toolboxId+"' class='server-tools'/>");
                     pendingTools.put(toolboxId, new ServerPanelReference(host.getName(), server, toolboxId, serverPanelId));
 
                     html.appendHtmlConstant("</td>");
@@ -265,7 +265,6 @@ public class DomainOverview
             {
                 final VerticalPanel tools = new VerticalPanel();
                 tools.setStyleName("fill-layout");
-                tools.setVisible(false);
 
                 final ServerPanelReference serverPanelReference = pendingTools.get(elementId);
 
@@ -313,7 +312,6 @@ public class DomainOverview
 
                 VerticalPanel toolContent = new VerticalPanel();
                 toolContent.addStyleName("fill-layout");
-                toolContent.addStyleName("server-tools");
 
                 InlineLink startStop = new InlineLink("start/stop<br/>");
                 startStop.addClickHandler(new ClickHandler() {
