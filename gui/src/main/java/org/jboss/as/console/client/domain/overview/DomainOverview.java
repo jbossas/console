@@ -89,10 +89,12 @@ public class DomainOverview
     class ServerTuple {
         String hostName;
         ServerInstance server;
+        private String serverPanelId;
 
-        ServerTuple(String hostName, ServerInstance server) {
+        ServerTuple(String hostName, ServerInstance server, String serverPanelId) {
             this.hostName = hostName;
             this.server = server;
+            this.serverPanelId = serverPanelId;
         }
 
         public String getHostName() {
@@ -101,6 +103,10 @@ public class DomainOverview
 
         public ServerInstance getServer() {
             return server;
+        }
+
+        public String getServerPanelId() {
+            return serverPanelId;
         }
     }
 
@@ -168,7 +174,7 @@ public class DomainOverview
 
             // generate wrapper table
             SafeHtmlBuilder containerTable = createContainerTable();
-            HTMLPanel htmlPanel = new HTMLPanel(containerTable.toSafeHtml());
+            final HTMLPanel htmlPanel = new HTMLPanel(containerTable.toSafeHtml());
 
             // host data
             List<SafeHtmlBuilder> hostColumns = new ArrayList<SafeHtmlBuilder>(hosts.size());
@@ -214,7 +220,9 @@ public class DomainOverview
                     String statusImgUrl = new Image(status).getUrl();
 
                     html.appendHtmlConstant("<tr>");
-                    html.appendHtmlConstant("<td class='domain-serverinfo domain-servercontainer' style='background:" + color + "'>");
+
+                    String serverPanelId = "sp_"+host.getName()+"_"+server.getName();
+                    html.appendHtmlConstant("<td id='"+serverPanelId+"' class='domain-serverinfo domain-servercontainer' style='background:" + color + "'>");
 
                     // server
                     html.appendEscaped("Server: "+server.getName()).appendHtmlConstant("&nbsp;");
@@ -224,9 +232,9 @@ public class DomainOverview
 
                     // expandable toolbox
 
-                    String toolboxId = createToolboxId(host, server);
+                    String toolboxId = "tb_"+host.getName()+"_"+server.getName();
                     html.appendHtmlConstant("<div id='"+toolboxId+"'/>");
-                    pendingTools.put(toolboxId, new ServerTuple(host.getName(), server));
+                    pendingTools.put(toolboxId, new ServerTuple(host.getName(), server, serverPanelId));
 
                     html.appendHtmlConstant("</td>");
                     html.appendHtmlConstant("</tr>");
@@ -288,6 +296,7 @@ public class DomainOverview
                 tools.addOpenHandler(new OpenHandler<DisclosurePanel>() {
                     @Override
                     public void onOpen(OpenEvent<DisclosurePanel> disclosurePanelOpenEvent) {
+                        htmlPanel.getElementById(serverTuple.serverPanelId).addClassName("domain-serverinfo-active");
                         tools.getElement().addClassName("server-tool-open");
                     }
                 });
@@ -295,6 +304,7 @@ public class DomainOverview
                 tools.addCloseHandler(new CloseHandler<DisclosurePanel>() {
                     @Override
                     public void onClose(CloseEvent<DisclosurePanel> disclosurePanelCloseEvent) {
+                        htmlPanel.getElementById(serverTuple.serverPanelId).removeClassName("domain-serverinfo-active");
                         tools.getElement().removeClassName("server-tool-open");
                     }
                 });
@@ -313,9 +323,6 @@ public class DomainOverview
 
     }
 
-    private String createToolboxId(HostInfo host, ServerInstance server) {
-        return "tb_"+host.getName()+"_"+server.getName();
-    }
 
     private List<String> deriveGroups(List<HostInfo> hosts) {
 

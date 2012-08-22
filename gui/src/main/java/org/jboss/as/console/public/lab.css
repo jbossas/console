@@ -248,6 +248,15 @@ input[type="checkbox"] {
 .domain-serverinfo{
     font-size:10px;
     padding:4px;
+    opacity: 0.6;
+}
+
+.domain-serverinfo-active {
+    opacity: 1.0;
+}
+
+.domain-serverinfo:hover {
+    opacity: 1.0;
 }
 
 .server-tool-open {
