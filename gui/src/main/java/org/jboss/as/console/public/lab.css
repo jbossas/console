@@ -250,6 +250,10 @@ input[type="checkbox"] {
     padding:4px;
 }
 
+.server-tool-open {
+    background-color:#ffffff;
+}
+
 .domain-hostinfo {
     border-bottom: 1px solid #BABABA;
     color: #000000;

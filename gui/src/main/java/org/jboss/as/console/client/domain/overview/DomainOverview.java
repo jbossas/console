@@ -19,19 +19,20 @@
 
 package org.jboss.as.console.client.domain.overview;
 
-import com.google.gwt.dom.client.Node;
-import com.google.gwt.dom.client.NodeList;
+import com.google.gwt.event.logical.shared.CloseEvent;
+import com.google.gwt.event.logical.shared.CloseHandler;
+import com.google.gwt.event.logical.shared.OpenEvent;
+import com.google.gwt.event.logical.shared.OpenHandler;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.cellview.client.CellList;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
+import com.google.gwt.user.client.ui.DisclosurePanel;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Image;
-import com.google.gwt.user.client.ui.LayoutPanel;
-import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TabPanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
@@ -41,14 +42,15 @@ import org.jboss.as.console.client.domain.model.ServerInstance;
 import org.jboss.as.console.client.shared.model.DeploymentRecord;
 import org.jboss.as.console.client.shared.viewframework.builder.SimpleLayout;
 import org.jboss.as.console.client.widgets.icons.ConsoleIcons;
+import org.jboss.ballroom.client.widgets.icons.DefaultTreeResources;
 import org.jboss.ballroom.client.widgets.icons.Icons;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 import java.util.TreeMap;
 
 /**
@@ -76,6 +78,24 @@ public class DomainOverview
     };
 
     private static TreeMap<String, String> group2Color = new TreeMap<String,String>();
+
+    class ServerTuple {
+        String hostName;
+        ServerInstance server;
+
+        ServerTuple(String hostName, ServerInstance server) {
+            this.hostName = hostName;
+            this.server = server;
+        }
+
+        public String getHostName() {
+            return hostName;
+        }
+
+        public ServerInstance getServer() {
+            return server;
+        }
+    }
 
     @Override
     public void setPresenter(DomainOverviewPresenter presenter) {
@@ -137,6 +157,8 @@ public class DomainOverview
         for(int page=0; page<numberOfPages; page++)
         {
 
+            Map<String, ServerTuple> pendingTools = new HashMap<String,ServerTuple>();
+
             // generate wrapper table
             SafeHtmlBuilder containerTable = createContainerTable();
             HTMLPanel htmlPanel = new HTMLPanel(containerTable.toSafeHtml());
@@ -189,9 +211,15 @@ public class DomainOverview
 
                     // server
                     html.appendEscaped("Server: "+server.getName()).appendHtmlConstant("&nbsp;");
-                    html.appendHtmlConstant("<img src='"+statusImgUrl+"' width=16 height=16 align=right>");
+                    html.appendHtmlConstant("<img src='" + statusImgUrl + "' width=16 height=16 align=right>");
                     html.appendHtmlConstant("<br/>");
                     html.appendEscaped("Group: "+server.getGroup()).appendHtmlConstant("<br/>");
+
+                    // expandable toolbox
+
+                    String toolboxId = createToolboxId(host, server);
+                    html.appendHtmlConstant("<div id='"+toolboxId+"'/>");
+                    pendingTools.put(toolboxId, new ServerTuple(host.getName(), server));
 
                     html.appendHtmlConstant("</td>");
                     html.appendHtmlConstant("</tr>");
@@ -219,15 +247,49 @@ public class DomainOverview
                 tr.appendChild(td);
             }
 
+            // bind tools
+
+            for(String elementId : pendingTools.keySet())
+            {
+                final DisclosurePanel tools =new DisclosurePanel(
+                        DefaultTreeResources.INSTANCE.treeOpen(),
+                        DefaultTreeResources.INSTANCE.treeClosed(),
+                        "");
+                tools.getElement().setAttribute("style", "width:100%;");
+                tools.getHeader().getElement().setAttribute("style", "width:100%");
+                tools.setContent(new HTML("Hello World"));
+
+
+                tools.addOpenHandler(new OpenHandler<DisclosurePanel>() {
+                    @Override
+                    public void onOpen(OpenEvent<DisclosurePanel> disclosurePanelOpenEvent) {
+                        tools.getElement().addClassName("server-tool-open");
+                    }
+                });
+
+                tools.addCloseHandler(new CloseHandler<DisclosurePanel>() {
+                    @Override
+                    public void onClose(CloseEvent<DisclosurePanel> disclosurePanelCloseEvent) {
+                        tools.getElement().removeClassName("server-tool-open");
+                    }
+                });
+
+                htmlPanel.add(tools, elementId);
+            }
+
             // created one page
             String pageName = "Page " + (page + 1);
-            System.out.println(pageName + " > "+hostColumns.size());
             container.add(htmlPanel, pageName);
+
 
         }
 
         container.selectTab(0);
 
+    }
+
+    private String createToolboxId(HostInfo host, ServerInstance server) {
+        return "tb_"+host.getName()+"_"+server.getName();
     }
 
     private List<String> deriveGroups(List<HostInfo> hosts) {
