@@ -19,7 +19,6 @@
 
 package org.jboss.as.console.client.domain.overview;
 
-import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.Random;
@@ -30,7 +29,6 @@ import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.annotations.UseGatekeeper;
 import com.gwtplatform.mvp.client.proxy.Place;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
-import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import org.jboss.as.console.client.Console;
@@ -39,7 +37,6 @@ import org.jboss.as.console.client.core.Header;
 import org.jboss.as.console.client.core.MainLayoutPresenter;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.core.SuspendableView;
-import org.jboss.as.console.client.domain.events.StaleModelEvent;
 import org.jboss.as.console.client.domain.model.Host;
 import org.jboss.as.console.client.domain.model.HostInformationStore;
 import org.jboss.as.console.client.domain.model.ProfileRecord;
@@ -66,7 +63,7 @@ import java.util.List;
  */
 public class DomainOverviewPresenter
         extends Presenter<DomainOverviewPresenter.MyView, DomainOverviewPresenter.MyProxy>
-        implements StaleModelEvent.StaleModelListener {
+        implements ServerSelectionEvent.ServerSelectionListener {
 
     private final PlaceManager placeManager;
     private ProfileStore profileStore;
@@ -77,6 +74,7 @@ public class DomainOverviewPresenter
     private BeanFactory factory;
     private CurrentServerSelection serverSelection;
     private Header header;
+    private ServerPanelReference preselectedServer;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.DomainOverviewPresenter)
@@ -86,10 +84,7 @@ public class DomainOverviewPresenter
 
     public interface MyView extends SuspendableView {
         void setPresenter(DomainOverviewPresenter presenter);
-        void updateProfiles(List<ProfileRecord> profiles);
-        void updateGroups(List<ServerGroupRecord> groups);
-        void updateDeployments(List<DeploymentRecord> deploymentRecords);
-        void updateHosts(List<HostInfo> hosts);
+        void updateHosts(List<HostInfo> hosts, ServerPanelReference preselectedServer);
     }
 
     @Inject
@@ -115,14 +110,7 @@ public class DomainOverviewPresenter
     protected void onBind() {
         super.onBind();
         getView().setPresenter(this);
-    }
-
-    @Override
-    public void prepareFromRequest(PlaceRequest request) {
-        super.prepareFromRequest(request);
-        String profileName = request.getParameter("name", "none");
-        Log.debug("requested profile: "+ profileName);
-
+        getEventBus().addHandler(ServerSelectionEvent.TYPE, this);
     }
 
     @Override
@@ -155,7 +143,7 @@ public class DomainOverviewPresenter
                             if(hostInfos.size() == hosts.size())
                             {
                                 // done
-                                getView().updateHosts(hostInfos);
+                                getView().updateHosts(hostInfos, preselectedServer);
 
                             }
                         }
@@ -206,27 +194,40 @@ public class DomainOverviewPresenter
         return hostInfos;
     }
 
-    private void refreshGroups() {
+    /*private void refreshGroups() {
         serverGroupStore.loadServerGroups(new SimpleCallback<List<ServerGroupRecord>>() {
             @Override
             public void onSuccess(List<ServerGroupRecord> result) {
                 getView().updateGroups(result);
             }
         });
-    }
+    } */
 
     @Override
     protected void revealInParent() {
         RevealContentEvent.fire(getEventBus(), MainLayoutPresenter.TYPE_MainContent, this);
     }
 
-    // --------------------------------
+    public void onSelectServer(final ServerPanelReference serverTuple) {
+
+
+        Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+            @Override
+            public void execute() {
+                Console.getEventBus().fireEvent(
+                        new ServerSelectionEvent(
+                                serverTuple.getHostName(),
+                                serverTuple.getServer())
+                );
+            }
+        });
+    }
 
     @Override
-    public void onStaleModel(String modelName) {
-        if(modelName.equals(StaleModelEvent.SERVER_GROUPS))
+    public void onServerSelection(String hostName, ServerInstance server, ServerSelectionEvent.Source source) {
+        if(source.equals(ServerSelectionEvent.Source.Picker))
         {
-            //refreshGroups();
+            this.preselectedServer = new ServerPanelReference(hostName, server, "", "");
         }
     }
 
@@ -242,19 +243,6 @@ public class DomainOverviewPresenter
                     }
                 });
 
-    }
-
-    public void onSelectServer(final DomainOverview.ServerPanelReference serverTuple) {
-        Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
-            @Override
-            public void execute() {
-                Console.getEventBus().fireEvent(
-                        new ServerSelectionEvent(
-                                serverTuple.getHostName(),
-                                serverTuple.getServer())
-                );
-            }
-        });
     }
 
     public void onStartStopGroup(final String hostName, final String group, boolean startIt) {

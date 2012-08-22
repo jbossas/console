@@ -19,6 +19,7 @@
 
 package org.jboss.as.console.client.domain.overview;
 
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.resources.client.ImageResource;
@@ -71,36 +72,7 @@ public class DomainOverview
 
     private static TreeMap<String, String> group2Color = new TreeMap<String,String>();
     private ServerPanelReference prevSelection = null;
-
-    class ServerPanelReference {
-        String hostName;
-        ServerInstance server;
-        String serverPanelId;
-        String toolBoxId;
-
-        ServerPanelReference(String hostName, ServerInstance server, String toolBoxId, String serverPanelId) {
-            this.hostName = hostName;
-            this.server = server;
-            this.serverPanelId = serverPanelId;
-            this.toolBoxId = toolBoxId;
-        }
-
-        public String getHostName() {
-            return hostName;
-        }
-
-        public ServerInstance getServer() {
-            return server;
-        }
-
-        public String getServerPanelId() {
-            return serverPanelId;
-        }
-
-        public String getToolBoxId() {
-            return toolBoxId;
-        }
-    }
+    private List<HTMLPanel> hostPanels = new ArrayList<HTMLPanel>();
 
     @Override
     public void setPresenter(DomainOverviewPresenter presenter) {
@@ -121,17 +93,6 @@ public class DomainOverview
         return layout.build();
     }
 
-    public void updateProfiles(List<ProfileRecord> profiles)
-    {
-
-    }
-
-    public void updateGroups(List<ServerGroupRecord> groups)
-    {
-
-    }
-
-
     private SafeHtmlBuilder createContainerTable() {
         SafeHtmlBuilder containerTable= new SafeHtmlBuilder();
 
@@ -143,13 +104,13 @@ public class DomainOverview
         return containerTable;
     }
 
-    public void updateHosts(List<HostInfo> hosts) {
+    public void updateHosts(List<HostInfo> hosts, final ServerPanelReference preselectedServer) {
 
         // clear view
         container.clear();
         group2Color.clear();
         prevSelection = null;
-
+        hostPanels.clear();
 
         // the known server groups and their colors
         List<String> groups = deriveGroups(hosts);
@@ -232,6 +193,16 @@ public class DomainOverview
                     html.appendHtmlConstant("<div id='"+toolboxId+"' class='server-tools'/>");
                     pendingTools.put(toolboxId, new ServerPanelReference(host.getName(), server, toolboxId, serverPanelId));
 
+
+                    // try to match the preselection
+                    if(preselectedServer!=null
+                            && preselectedServer.getHostName().equals(host.getName())
+                            && preselectedServer.getServer().getName().equals(server.getName()))
+                    {
+                        // matched, update dom element references
+                        preselectedServer.updateDomReferences(serverPanelId, toolboxId);
+                    }
+
                     html.appendHtmlConstant("</td>");
                     html.appendHtmlConstant("</tr>");
 
@@ -288,8 +259,6 @@ public class DomainOverview
 
                             activate(htmlPanel, serverPanelReference);
 
-                            prevSelection = serverPanelReference;
-
                         }
                     }
                 });
@@ -345,11 +314,38 @@ public class DomainOverview
             String pageName = "Page " + (page + 1);
             container.add(htmlPanel, pageName);
 
+            // for matching against preselection
+            hostPanels.add(htmlPanel);
+
 
         }
 
         container.selectTab(0);
 
+        // toggle preselection
+
+        if(preselectedServer!=null && preselectedServer.hasDomReferences())
+        {
+            Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+                @Override
+                public void execute() {
+                    activate(preselectedServer);
+                }
+            });
+        }
+
+    }
+
+    private void activate(ServerPanelReference preselectedServer) {
+        for(HTMLPanel panel : hostPanels)
+        {
+            Element serverPanel = panel.getElementById(preselectedServer.getServerPanelId());
+            if(serverPanel!=null) // exists
+            {
+                activate(panel, preselectedServer);
+                break;
+            }
+        }
     }
 
     private void deactivate(HTMLPanel htmlPanel, ServerPanelReference prevSelection) {
@@ -365,6 +361,8 @@ public class DomainOverview
 
         htmlPanel.getElementById(currentSelection.serverPanelId).addClassName("domain-serverinfo-active");
         htmlPanel.getElementById(currentSelection.getToolBoxId()).addClassName("is-visible");
+
+        prevSelection = currentSelection;
 
         presenter.onSelectServer(currentSelection);
     }
