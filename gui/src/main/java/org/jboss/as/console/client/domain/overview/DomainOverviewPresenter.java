@@ -37,6 +37,7 @@ import org.jboss.as.console.client.core.MainLayoutPresenter;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.core.SuspendableView;
 import org.jboss.as.console.client.domain.events.StaleModelEvent;
+import org.jboss.as.console.client.domain.model.Host;
 import org.jboss.as.console.client.domain.model.HostInformationStore;
 import org.jboss.as.console.client.domain.model.ProfileRecord;
 import org.jboss.as.console.client.domain.model.ProfileStore;
@@ -70,7 +71,7 @@ public class DomainOverviewPresenter
     private HostInformationStore hostInfo;
     private BeanFactory factory;
 
-    public void onStartStopSever(final String hostName, final ServerInstance server) {
+    public void onStartStopServer(final String hostName, final ServerInstance server) {
         final String next = server.isRunning() ?  "stop" : "start";
 
         Feedback.confirm("Modify Server", "Do really want to "+next+ " server "+server.getName()+"?",
@@ -86,6 +87,19 @@ public class DomainOverviewPresenter
 
     public void onSelectServer(DomainOverview.ServerPanelReference serverTuple) {
         System.out.println("Select "+serverTuple.getServer().getName());
+    }
+
+    public void onStartStopGroup(final String hostName, final String group, boolean startIt) {
+        final String next = startIt ?  "start" : "stop";
+
+        Feedback.confirm("Modify Server", "Do really want to "+next+ " all servers in group "+group+"?",
+                new Feedback.ConfirmationHandler() {
+                    @Override
+                    public void onConfirmation(boolean isConfirmed) {
+                        if(isConfirmed)
+                            System.out.println(next + " group "+group);
+                    }
+                });
     }
 
     @ProxyCodeSplit
@@ -140,7 +154,7 @@ public class DomainOverviewPresenter
 
     private void loadHostsData() {
 
-        /*hostInfo.getHosts(new SimpleCallback<List<Host>>() {
+        hostInfo.getHosts(new SimpleCallback<List<Host>>() {
             @Override
             public void onSuccess(final List<Host> hosts) {
 
@@ -168,10 +182,10 @@ public class DomainOverviewPresenter
                     });
                 }
             }
-        });*/
+        });
 
 
-        getView().updateHosts(generateFakeDomain());
+        //getView().updateHosts(generateFakeDomain());
 
 
     }

@@ -299,15 +299,42 @@ public class DomainOverview
                 VerticalPanel toolContent = new VerticalPanel();
                 toolContent.addStyleName("fill-layout");
 
-                InlineLink startStop = new InlineLink("start/stop<br/>");
+                InlineLink startStop = new InlineLink("Start/stop Server<br/>");
                 startStop.addClickHandler(new ClickHandler() {
                     @Override
                     public void onClick(ClickEvent clickEvent) {
-                        presenter.onStartStopSever(serverPanelReference.getHostName(), serverPanelReference.getServer());
+                        presenter.onStartStopServer(serverPanelReference.getHostName(), serverPanelReference.getServer());
+                    }
+                });
+
+
+                InlineLink startGroup = new InlineLink("Start Group<br/>");
+                startGroup.addClickHandler(new ClickHandler() {
+                    @Override
+                    public void onClick(ClickEvent clickEvent) {
+                        presenter.onStartStopGroup(
+                                serverPanelReference.getHostName(),
+                                serverPanelReference.getServer().getGroup(),
+                                true
+                        );
+                    }
+                });
+
+                InlineLink stopGroup = new InlineLink("Stop Group<br/>");
+                stopGroup.addClickHandler(new ClickHandler() {
+                    @Override
+                    public void onClick(ClickEvent clickEvent) {
+                        presenter.onStartStopGroup(
+                                serverPanelReference.getHostName(),
+                                serverPanelReference.getServer().getGroup(),
+                                false
+                        );
                     }
                 });
 
                 toolContent.add(startStop);
+                toolContent.add(startGroup);
+                toolContent.add(stopGroup);
 
                 tools.add(toolContent);
 
