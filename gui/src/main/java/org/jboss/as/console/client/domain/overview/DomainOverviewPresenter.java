@@ -167,7 +167,7 @@ public class DomainOverviewPresenter
     private List<HostInfo> generateFakeDomain() {
 
         String[] hostNames =    new String[] {"lightning", "eeak-a-mouse", "dirty-harry"};
-        String[] groupNames =   new String[] {"staging", "production", "uat", "messaging", "backoffice", "starlight", "moonlight"};
+        String[] groupNames =   new String[] {"staging", "production", "messaging-back-server-test", "uat", "messaging", "backoffice", "starlight"};
         String[] profiles =     new String[] {"default", "default", "default", "messaging", "web", "full-ha", "full-ha"};
 
         final List<HostInfo> hostInfos = new ArrayList<HostInfo>();

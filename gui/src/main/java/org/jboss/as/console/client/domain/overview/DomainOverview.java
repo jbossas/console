@@ -21,11 +21,13 @@ package org.jboss.as.console.client.domain.overview;
 
 import com.google.gwt.dom.client.Node;
 import com.google.gwt.dom.client.NodeList;
+import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.cellview.client.CellList;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TabPanel;
@@ -38,6 +40,8 @@ import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.domain.model.ServerInstance;
 import org.jboss.as.console.client.shared.model.DeploymentRecord;
 import org.jboss.as.console.client.shared.viewframework.builder.SimpleLayout;
+import org.jboss.as.console.client.widgets.icons.ConsoleIcons;
+import org.jboss.ballroom.client.widgets.icons.Icons;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -151,14 +155,25 @@ public class DomainOverview
                 SafeHtmlBuilder html = new SafeHtmlBuilder();
                 String id = "h_" + host.getName();
 
-                String ctrl = host.isController ? " * " : "";
-
                 // host
+                String domainType = host.isController ? "Controller" : "Member";
+                String ctrlCss = host.isController ? "domain-controller" : "domain-member";
+
+
                 html.appendHtmlConstant("<td class='domain-hostcontainer' id='" + id + "'>")
-                        .appendHtmlConstant("<span class='domain-hostinfo'>")
-                        .appendEscaped("Host: " + host.getName())
-                        .appendEscaped(ctrl)
-                        .appendHtmlConstant("</h3>");
+                        .appendHtmlConstant("<div class='domain-hostinfo " + ctrlCss + "'>")
+                        .appendEscaped("Host: " + host.getName()).appendHtmlConstant("<br/>")
+                        .appendEscaped("Domain: " + domainType).appendHtmlConstant("&nbsp;");
+
+                if(host.isController())
+                {
+                    ImageResource star = ConsoleIcons.INSTANCE.star();
+                    String imgUrl = new Image(star).getUrl();
+                    html.appendHtmlConstant("<img src='"+imgUrl+"' width=16 height=16 align=right>");
+                }
+
+                html.appendHtmlConstant("<br/>");
+                html.appendHtmlConstant("</div>");
 
 
                 html.appendHtmlConstant("<table width='100%'>");
@@ -166,24 +181,25 @@ public class DomainOverview
                 {
 
                     String color = pickColor(groups, server);
+                    ImageResource status = server.isRunning() ? Icons.INSTANCE.status_good() : Icons.INSTANCE.status_bad();
+                    String statusImgUrl = new Image(status).getUrl();
 
                     html.appendHtmlConstant("<tr>");
-                    html.appendHtmlConstant("<td class='domain-serverinfo domain-servercontainer' style='background:"+color+"'>");
+                    html.appendHtmlConstant("<td class='domain-serverinfo domain-servercontainer' style='background:" + color + "'>");
 
                     // server
-                    html.appendEscaped("Server: "+server.getName()).appendHtmlConstant("<br/>");
+                    html.appendEscaped("Server: "+server.getName()).appendHtmlConstant("&nbsp;");
+                    html.appendHtmlConstant("<img src='"+statusImgUrl+"' width=16 height=16 align=right>");
+                    html.appendHtmlConstant("<br/>");
                     html.appendEscaped("Group: "+server.getGroup()).appendHtmlConstant("<br/>");
-                    html.appendEscaped("Active: "+server.isRunning());
 
                     html.appendHtmlConstant("</td>");
                     html.appendHtmlConstant("</tr>");
 
-                    // blank
-                    html.appendHtmlConstant("<tr><td>&nbsp;</td></tr>");
                 }
                 html.appendHtmlConstant("</table>");
 
-                html.appendHtmlConstant("</td>");
+                html.appendHtmlConstant("</td>"); // end host
 
                 hostColumns.add(html);
 
