@@ -10,6 +10,7 @@ import org.jboss.as.console.client.domain.hosts.ServerPicker;
 import org.jboss.as.console.client.domain.model.Host;
 import org.jboss.as.console.client.domain.model.ServerInstance;
 import org.jboss.as.console.client.shared.model.SubsystemRecord;
+import org.jboss.as.console.client.shared.state.ServerSelectionEvent;
 import org.jboss.as.console.client.widgets.nav.Predicate;
 import org.jboss.ballroom.client.layout.LHSNavTree;
 import org.jboss.ballroom.client.layout.LHSNavTreeItem;
@@ -24,7 +25,7 @@ import java.util.List;
  * @author Heiko Braun
  * @date 11/2/11
  */
-class DomainRuntimeNavigation {
+class DomainRuntimeNavigation implements ServerSelectionEvent.ServerSelectionListener {
 
     private VerticalPanel stack;
     private VerticalPanel layout;
@@ -60,7 +61,7 @@ class DomainRuntimeNavigation {
 
         //Tree statusTree = new LHSNavTree("domain-runtime");
 
-        LHSTreeSection domainLeaf = new LHSTreeSection("Domain");
+        LHSTreeSection domainLeaf = new LHSTreeSection("Host");
         navigation.addItem(domainLeaf);
 
 
@@ -169,4 +170,12 @@ class DomainRuntimeNavigation {
 
     }
 
+    @Override
+    public void onServerSelection(String hostName, ServerInstance server, ServerSelectionEvent.Source source) {
+        if(!source.equals(ServerSelectionEvent.Source.Picker))
+        {
+            // triggered external to this view
+            serverPicker.setPreselection(hostName, server);
+        }
+    }
 }

@@ -10,6 +10,7 @@ import org.jboss.as.console.client.domain.hosts.HostSelector;
 import org.jboss.as.console.client.domain.model.Host;
 import org.jboss.as.console.client.domain.model.ServerInstance;
 import org.jboss.as.console.client.shared.model.SubsystemRecord;
+import org.jboss.as.console.client.shared.state.ServerSelectionEvent;
 
 import java.util.List;
 
@@ -39,6 +40,11 @@ public class DomainRuntimeView extends ViewImpl implements DomainRuntimePresente
 
         layout.add(contentCanvas);
 
+    }
+
+    @Override
+    public ServerSelectionEvent.ServerSelectionListener getLhsNavigation() {
+        return lhsNavigation;
     }
 
     @Override

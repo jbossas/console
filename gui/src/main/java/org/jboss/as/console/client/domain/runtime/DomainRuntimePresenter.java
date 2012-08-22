@@ -74,6 +74,8 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
         void setHosts(List<Host> hosts);
         void setServer(List<ServerInstance> server);
         void setSubsystems(List<SubsystemRecord> result);
+
+        ServerSelectionEvent.ServerSelectionListener getLhsNavigation();
     }
 
     @Inject
@@ -103,6 +105,7 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
         getEventBus().addHandler(StaleModelEvent.TYPE, this);
         getEventBus().addHandler(ServerSelectionEvent.TYPE, DomainRuntimePresenter.this);
         getEventBus().addHandler(HostSelectionEvent.TYPE, DomainRuntimePresenter.this);
+        getEventBus().addHandler(ServerSelectionEvent.TYPE, getView().getLhsNavigation());
 
     }
 
@@ -215,12 +218,9 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
         Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
             @Override
             public void execute() {
-                if(server!=null)
-                {
+                if (server != null) {
                     loadSubsystems(server);
-                }
-                else
-                {
+                } else {
                     getView().setServer(Collections.EMPTY_LIST);
                 }
 

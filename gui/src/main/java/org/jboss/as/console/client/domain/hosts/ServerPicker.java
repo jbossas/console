@@ -127,4 +127,8 @@ public class ServerPicker implements HostServerManagement {
         });
 
     }
+
+    public void setPreselection(String hostName, ServerInstance server) {
+        serverSelection.selectServer(server);
+    }
 }
