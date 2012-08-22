@@ -52,6 +52,7 @@ import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.as.console.client.shared.model.DeploymentRecord;
 import org.jboss.as.console.client.shared.model.DeploymentStore;
 import org.jboss.as.console.client.shared.viewframework.DmrCallback;
+import org.jboss.ballroom.client.widgets.window.Feedback;
 import org.jboss.dmr.client.ModelNode;
 
 import java.util.ArrayList;
@@ -75,6 +76,20 @@ public class DomainOverviewPresenter
     private DispatchAsync dispatcher;
     private HostInformationStore hostInfo;
     private BeanFactory factory;
+
+    public void onStartStopSever(final String hostName, final ServerInstance server) {
+        final String next = server.isRunning() ?  "stop" : "start";
+
+        Feedback.confirm("Modify Server", "Do really want to "+next+ " server "+server.getName()+"?",
+                new Feedback.ConfirmationHandler() {
+                    @Override
+                    public void onConfirmation(boolean isConfirmed) {
+                        if(isConfirmed)
+                            System.out.println(next + " server "+server.getName() + " on host: " +hostName);
+                    }
+                });
+
+    }
 
     @ProxyCodeSplit
     @NameToken(NameTokens.DomainOverviewPresenter)
@@ -128,38 +143,38 @@ public class DomainOverviewPresenter
 
     private void loadHostsData() {
 
-       /*hostInfo.getHosts(new SimpleCallback<List<Host>>() {
-           @Override
-           public void onSuccess(final List<Host> hosts) {
+        /*hostInfo.getHosts(new SimpleCallback<List<Host>>() {
+            @Override
+            public void onSuccess(final List<Host> hosts) {
 
-               final List<HostInfo> hostInfos = new ArrayList<HostInfo>();
+                final List<HostInfo> hostInfos = new ArrayList<HostInfo>();
 
-               for(final Host host : hosts)
-               {
-                   hostInfo.getServerInstances(host.getName(), new SimpleCallback<List<ServerInstance>>() {
-                       @Override
-                       public void onSuccess(List<ServerInstance> serverInstances) {
+                for(final Host host : hosts)
+                {
+                    hostInfo.getServerInstances(host.getName(), new SimpleCallback<List<ServerInstance>>() {
+                        @Override
+                        public void onSuccess(List<ServerInstance> serverInstances) {
 
-                           HostInfo info = new HostInfo(host.getName(), host.isController());
-                           info.setServerInstances(serverInstances);
+                            HostInfo info = new HostInfo(host.getName(), host.isController());
+                            info.setServerInstances(serverInstances);
 
-                           hostInfos.add(info);
-
-
-                           if(hostInfos.size() == hosts.size())
-                           {
-                               // done
-                               getView().updateHosts(hostInfos);
-
-                           }
-                       }
-                   });
-               }
-           }
-       });*/
+                            hostInfos.add(info);
 
 
-       getView().updateHosts(generateFakeDomain());
+                            if(hostInfos.size() == hosts.size())
+                            {
+                                // done
+                                getView().updateHosts(hostInfos);
+
+                            }
+                        }
+                    });
+                }
+            }
+        });*/
+
+
+        getView().updateHosts(generateFakeDomain());
 
 
     }

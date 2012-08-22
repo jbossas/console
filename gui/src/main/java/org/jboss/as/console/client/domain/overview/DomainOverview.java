@@ -19,6 +19,8 @@
 
 package org.jboss.as.console.client.domain.overview;
 
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.event.logical.shared.OpenEvent;
@@ -32,7 +34,9 @@ import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.TabPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
@@ -42,8 +46,11 @@ import org.jboss.as.console.client.domain.model.ServerInstance;
 import org.jboss.as.console.client.shared.model.DeploymentRecord;
 import org.jboss.as.console.client.shared.viewframework.builder.SimpleLayout;
 import org.jboss.as.console.client.widgets.icons.ConsoleIcons;
+import org.jboss.ballroom.client.widgets.InlineLink;
+import org.jboss.ballroom.client.widgets.common.DefaultButton;
 import org.jboss.ballroom.client.widgets.icons.DefaultTreeResources;
 import org.jboss.ballroom.client.widgets.icons.Icons;
+import org.jboss.ballroom.client.widgets.window.Feedback;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -255,9 +262,27 @@ public class DomainOverview
                         DefaultTreeResources.INSTANCE.treeOpen(),
                         DefaultTreeResources.INSTANCE.treeClosed(),
                         "");
+
+                final ServerTuple serverTuple = pendingTools.get(elementId);
+
                 tools.getElement().setAttribute("style", "width:100%;");
                 tools.getHeader().getElement().setAttribute("style", "width:100%");
-                tools.setContent(new HTML("Hello World"));
+
+                VerticalPanel toolContent = new VerticalPanel();
+                toolContent.getElement().setAttribute("style", "padding-left:10px;");
+                toolContent.setStyleName("fill-layout");
+
+                InlineLink startStop = new InlineLink("start/stop<br/>");
+                startStop.addClickHandler(new ClickHandler() {
+                    @Override
+                    public void onClick(ClickEvent clickEvent) {
+                        presenter.onStartStopSever(serverTuple.getHostName(), serverTuple.getServer());
+                    }
+                });
+
+                toolContent.add(startStop);
+
+                tools.setContent(toolContent);
 
 
                 tools.addOpenHandler(new OpenHandler<DisclosurePanel>() {
