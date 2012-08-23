@@ -62,7 +62,24 @@ public class ProfileSelector {
     {
         profiles.clearSelection();
         profiles.setValues(profileNames);
-        profiles.setItemSelected(0, true);
+
+        int preselected = -1;
+        int i=0;
+        for(String name : profileNames)
+        {
+            if(name.equals("full"))
+            {
+                preselected = i;
+                break;
+            }
+            i++;
+        }
+
+
+        if(preselected>=0)
+            profiles.setItemSelected(preselected, true);
+        else
+            profiles.setItemSelected(0, true);
 
 
     }
