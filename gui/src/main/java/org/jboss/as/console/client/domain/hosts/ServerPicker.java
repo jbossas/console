@@ -10,6 +10,7 @@ import org.jboss.as.console.client.domain.events.HostSelectionEvent;
 import org.jboss.as.console.client.domain.model.Host;
 import org.jboss.as.console.client.domain.model.ServerInstance;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
+import org.jboss.as.console.client.shared.state.CurrentServerSelection;
 import org.jboss.as.console.client.shared.state.ServerSelectionEvent;
 
 import java.util.List;
@@ -20,11 +21,13 @@ import java.util.List;
  */
 public class ServerPicker implements HostServerManagement {
 
-    private HostServerTable serverSelection;
+    private HostServerTable hostServerTable;
     private LoadServerCmd loadServerCmd;
+    private CurrentServerSelection serverSelectionState;
 
-    public ServerPicker() {
+    public ServerPicker(CurrentServerSelection serverSelectionState) {
         this.loadServerCmd = new LoadServerCmd(Console.MODULES.getHostInfoStore());
+        this.serverSelectionState = serverSelectionState;
     }
 
     public Widget asWidget() {
@@ -34,12 +37,12 @@ public class ServerPicker implements HostServerManagement {
         layout.addStyleName("lhs-selector");
         layout.getElement().setAttribute("style","padding:4px;");
 
-        serverSelection = new HostServerTable(this);
+        hostServerTable = new HostServerTable(this);
 
-        serverSelection.setPopupWidth(400);
-        serverSelection.setDescription(Console.CONSTANTS.server_instance_pleaseSelect());
+        hostServerTable.setPopupWidth(400);
+        hostServerTable.setDescription(Console.CONSTANTS.server_instance_pleaseSelect());
 
-        Widget widget = serverSelection.asWidget();
+        Widget widget = hostServerTable.asWidget();
         widget.getElement().setAttribute("style", "width:100%;");
 
         Label label = new Label(Console.CONSTANTS.common_label_server()+":");
@@ -53,41 +56,35 @@ public class ServerPicker implements HostServerManagement {
         return layout;
     }
 
-    public void setServers(List<ServerInstance> servers) {
-
-        //should be done upon request
-        // @see loadServer(hostName)
-        //serverSelection.setServer(servers);
-    }
-
-    public void setSelected(ServerInstance server, boolean isSelected)
-    {
-        if(null==server) return;
-
-        if(!server.isRunning())
-        {
-            Console.warning("Selected in-active server instance:"+server.getName());
-        }
-
-        serverSelection.selectServer(server);
-
-    }
-
     public void setHosts(List<Host> hosts) {
 
+        Host previousHost = hostServerTable.getSelectedHost();
 
-        Host previousHost = serverSelection.getSelectedHost();
+        hostServerTable.setHosts(hosts);
 
-        serverSelection.setHosts(hosts);
-
-        if(null==previousHost)
+        if(serverSelectionState.isSet())
         {
-            serverSelection.defaultHostSelection();
+            // preselected (external) server/host combination
+
+            for(Host host : hosts)
+            {
+                if(host.getName().equals(serverSelectionState.getHost()))
+                {
+                    //hostServerTable.selectHost(host);
+                    //hostServerTable.selectServer(serverSelectionState.getServer());
+                    break;
+                }
+            }
+
+        }
+        else if(null==previousHost)
+        {
+            hostServerTable.defaultHostSelection();
         }
         else
         {
             // restore previous selection
-            serverSelection.selectHost(previousHost);
+            hostServerTable.selectHost(previousHost);
         }
 
 
@@ -100,7 +97,7 @@ public class ServerPicker implements HostServerManagement {
             @Override
             public void onSuccess(List<ServerInstance> result) {
 
-                serverSelection.setServer(selectedHost, result);
+                hostServerTable.setServer(selectedHost, result);
 
                 if(result.isEmpty())
                 {
@@ -129,6 +126,8 @@ public class ServerPicker implements HostServerManagement {
     }
 
     public void setPreselection(String hostName, ServerInstance server) {
-        serverSelection.selectServer(server);
+
+        //hostServerTable.selectHost(hostName);
+        hostServerTable.selectServer(server);
     }
 }

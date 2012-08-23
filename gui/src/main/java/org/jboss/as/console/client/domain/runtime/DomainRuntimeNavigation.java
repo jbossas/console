@@ -1,6 +1,5 @@
 package org.jboss.as.console.client.domain.runtime;
 
-import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -10,15 +9,15 @@ import org.jboss.as.console.client.domain.hosts.ServerPicker;
 import org.jboss.as.console.client.domain.model.Host;
 import org.jboss.as.console.client.domain.model.ServerInstance;
 import org.jboss.as.console.client.shared.model.SubsystemRecord;
+import org.jboss.as.console.client.shared.state.CurrentServerSelection;
 import org.jboss.as.console.client.shared.state.ServerSelectionEvent;
 import org.jboss.as.console.client.widgets.nav.Predicate;
 import org.jboss.ballroom.client.layout.LHSNavTree;
 import org.jboss.ballroom.client.layout.LHSNavTreeItem;
 import org.jboss.ballroom.client.layout.LHSTreeSection;
-import org.jboss.ballroom.client.widgets.forms.ComboBox;
 
+import javax.inject.Inject;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -40,6 +39,13 @@ class DomainRuntimeNavigation implements ServerSelectionEvent.ServerSelectionLis
     private LHSTreeSection metricLeaf;
     private LHSTreeSection runtimeLeaf;
 
+
+    private CurrentServerSelection serverSelection;
+
+    public DomainRuntimeNavigation(CurrentServerSelection serverSelection) {
+        this.serverSelection = serverSelection;
+    }
+
     public Widget asWidget()
     {
         layout = new VerticalPanel();
@@ -51,7 +57,7 @@ class DomainRuntimeNavigation implements ServerSelectionEvent.ServerSelectionLis
 
         // ----------------------------------------------------
 
-        serverPicker = new ServerPicker();
+        serverPicker = new ServerPicker(serverSelection);
         stack.add(serverPicker.asWidget());
 
         // ----------------------------------------------------
@@ -130,11 +136,6 @@ class DomainRuntimeNavigation implements ServerSelectionEvent.ServerSelectionLis
 
         serverPicker.setHosts(hosts);
 
-    }
-
-    public void setServer(List<ServerInstance> server) {
-
-        serverPicker.setServers(server);
     }
 
     public void setSubsystems(List<SubsystemRecord> subsystems) {

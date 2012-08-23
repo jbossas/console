@@ -10,8 +10,10 @@ import org.jboss.as.console.client.domain.hosts.HostSelector;
 import org.jboss.as.console.client.domain.model.Host;
 import org.jboss.as.console.client.domain.model.ServerInstance;
 import org.jboss.as.console.client.shared.model.SubsystemRecord;
+import org.jboss.as.console.client.shared.state.CurrentServerSelection;
 import org.jboss.as.console.client.shared.state.ServerSelectionEvent;
 
+import javax.inject.Inject;
 import java.util.List;
 
 /**
@@ -28,13 +30,16 @@ public class DomainRuntimeView extends ViewImpl implements DomainRuntimePresente
 
     private HostSelector hostSelector;
 
-    public DomainRuntimeView() {
+    private CurrentServerSelection serverSelectionState;
+
+    @Inject
+    public DomainRuntimeView(CurrentServerSelection serverSelectionState) {
         super();
 
         layout = new SplitLayoutPanel(10);
 
         contentCanvas = new LayoutPanel();
-        lhsNavigation = new DomainRuntimeNavigation();
+        lhsNavigation = new DomainRuntimeNavigation(serverSelectionState);
 
         layout.addWest(lhsNavigation.asWidget(), 180);
 
@@ -79,11 +84,6 @@ public class DomainRuntimeView extends ViewImpl implements DomainRuntimePresente
     @Override
     public void setHosts(List<Host> hosts) {
         lhsNavigation.setHosts(hosts);
-    }
-
-    @Override
-    public void setServer(List<ServerInstance> server) {
-        lhsNavigation.setServer(server);
     }
 
     @Override

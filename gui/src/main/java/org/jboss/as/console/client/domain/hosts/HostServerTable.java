@@ -64,6 +64,8 @@ public class HostServerTable {
 
     private int clipAt = 20;
 
+    private HTML debugOut = new HTML("n/a > n/a");
+
     public HostServerTable(HostServerManagement presenter) {
         this.presenter = presenter;
     }
@@ -216,8 +218,6 @@ public class HostServerTable {
         doneBtn.getElement().setAttribute("style","float:right");
         layout.add(doneBtn);
 
-
-
         // --------------
 
 
@@ -256,7 +256,21 @@ public class HostServerTable {
         currentDisplayedValue.addClickHandler(clickHandler);
         img.addClickHandler(clickHandler);
 
-        return header;
+        VerticalPanel vpanel = new VerticalPanel();
+        vpanel.setStyleName("fill-layout-width");
+        vpanel.add(debugOut);
+        vpanel.add(header);
+        return vpanel;
+    }
+
+    private void debug() {
+
+        SingleSelectionModel<Host> hosts = (SingleSelectionModel<Host>)hostList.getSelectionModel();
+        SingleSelectionModel<ServerInstance> server = (SingleSelectionModel<ServerInstance>)serverList.getSelectionModel();
+
+        String hostName = hosts.getSelectedObject() != null ? hosts.getSelectedObject().getName() : "n/a";
+        String serverName = server.getSelectedObject() != null ? server.getSelectedObject().getName() : "n/a";
+        debugOut.setText(hostName + " > " +serverName);
     }
 
     private void updateDisplay() {
@@ -265,6 +279,8 @@ public class HostServerTable {
         String server = clip(getSelectedServer().getName(), clipAt);
 
         currentDisplayedValue.setText(server);
+
+        debug();
     }
 
     public Host getSelectedHost() {
@@ -345,6 +361,22 @@ public class HostServerTable {
         }
     }
 
+    public void selectHost(String hostName) {
+
+        for(Host host : hostProvider.getList())
+        {
+            if(hostName.equals(host.getName()))
+            {
+                hostList.getSelectionModel().setSelected(host, true);
+                break;
+            }
+        }
+    }
+
+    /**
+     * will reload the server list
+     * @param host
+     */
     public void selectHost(Host host) {
         hostList.getSelectionModel().setSelected(host, true);
 

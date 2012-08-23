@@ -35,7 +35,6 @@ import org.jboss.as.console.client.shared.state.CurrentServerSelection;
 import org.jboss.as.console.client.shared.state.ServerSelectionEvent;
 import org.jboss.ballroom.client.layout.LHSHighlightEvent;
 
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -72,7 +71,6 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
     public interface MyView extends View {
         void setPresenter(DomainRuntimePresenter presenter);
         void setHosts(List<Host> hosts);
-        void setServer(List<ServerInstance> server);
         void setSubsystems(List<SubsystemRecord> result);
 
         ServerSelectionEvent.ServerSelectionListener getLhsNavigation();
@@ -106,6 +104,20 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
         getEventBus().addHandler(ServerSelectionEvent.TYPE, DomainRuntimePresenter.this);
         getEventBus().addHandler(HostSelectionEvent.TYPE, DomainRuntimePresenter.this);
         getEventBus().addHandler(ServerSelectionEvent.TYPE, getView().getLhsNavigation());
+
+        // check if server has been preselected
+        /*if(serverSelection.isSet())
+        {
+            Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+                @Override
+                public void execute() {
+                    System.out.println("Force preselection: "+serverSelection.getServer().getName());
+                    getEventBus().fireEvent(
+                            new ServerSelectionEvent(serverSelection.getHost(), serverSelection.getServer())
+                    );
+                }
+            });
+        } */
 
     }
 
@@ -165,27 +177,8 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
                     @Override
                     public void onSuccess(List<ServerInstance> server) {
 
-                        if(!serverSelection.hasSetServer())
-                        {
-                            if(!server.isEmpty())
-                            {
-                                final ServerInstance serverInstance = server.get(0);
-                                Console.info("Default server selection: " + serverInstance.getName());
-
-                                Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
-                                    @Override
-                                    public void execute() {
-
-                                        // make this fires
-                                        getEventBus().fireEvent(new ServerSelectionEvent(host, serverInstance));
-                                    }
-                                });
-                            }
-                        }
-
                         // update the LHS in all cases
                         getView().setHosts(hosts);
-                        getView().setServer(server);
 
                     }
                 });
@@ -220,10 +213,7 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
             public void execute() {
                 if (server != null) {
                     loadSubsystems(server);
-                } else {
-                    getView().setServer(Collections.EMPTY_LIST);
                 }
-
             }
         });
 
