@@ -175,7 +175,6 @@ class DomainRuntimeNavigation implements ServerSelectionEvent.ServerSelectionLis
 
         if(!source.equals(ServerSelectionEvent.Source.Picker))
         {
-            System.out.println("[onServerSelection] "+hostName+" / "+server.getName());
             // triggered external to this view
             serverPicker.setPreselection(hostName, server);
         }

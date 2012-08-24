@@ -111,12 +111,20 @@ public class DomainOverviewPresenter
         super.onBind();
         getView().setPresenter(this);
         getEventBus().addHandler(ServerSelectionEvent.TYPE, this);
+
+
+        // synchronize preselection
+        if(serverSelection.isSet())
+        {
+            this.preselectedServer = new ServerPanelReference(serverSelection.getHost(), serverSelection.getServer());
+        }
     }
 
     @Override
     protected void onReset() {
 
         header.highlight(NameTokens.DomainOverviewPresenter);
+
         loadHostsData();
     }
 
@@ -227,7 +235,7 @@ public class DomainOverviewPresenter
     public void onServerSelection(String hostName, ServerInstance server, ServerSelectionEvent.Source source) {
         if(source.equals(ServerSelectionEvent.Source.Picker))
         {
-            this.preselectedServer = new ServerPanelReference(hostName, server, "", "");
+            this.preselectedServer = new ServerPanelReference(hostName, server);
         }
     }
 

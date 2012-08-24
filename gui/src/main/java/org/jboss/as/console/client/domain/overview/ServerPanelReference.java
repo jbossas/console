@@ -12,6 +12,13 @@ public class ServerPanelReference {
     String serverPanelId;
     String toolBoxId;
 
+    public ServerPanelReference(String hostName, ServerInstance server) {
+        this.hostName = hostName;
+        this.server = server;
+        this.serverPanelId = "";
+        this.toolBoxId = "";
+    }
+
     public ServerPanelReference(String hostName, ServerInstance server, String toolBoxId, String serverPanelId) {
         this.hostName = hostName;
         this.server = server;

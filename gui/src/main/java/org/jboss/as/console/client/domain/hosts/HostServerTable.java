@@ -350,7 +350,6 @@ public class HostServerTable {
      */
     public void setServer(Host selectedHost, List<ServerInstance> servers) {
 
-        System.out.println("set servers");
         serverProvider.setList(servers);
 
         serverPager.setVisible(servers.size() >= 5);
@@ -366,8 +365,6 @@ public class HostServerTable {
     }
 
     public void setHosts(List<Host> hosts) {
-
-        System.out.println("set hosts");
 
         ratio.setText("");
 
@@ -410,8 +407,6 @@ public class HostServerTable {
      * @param host
      */
     private void selectHost(Host host) {
-
-        System.out.println("select host: "+host.getName() + " (prevent refresh: "+preventRefreshServerList+")");
         hostList.getSelectionModel().setSelected(host, true);
     }
 

@@ -91,9 +91,7 @@ public class ServerPicker implements HostServerManagement {
 
         if(preselection.getHost()!=null)
         {
-            System.out.println("apply host: "+preselection.getHost());
             hostServerTable.pickHost(preselection.getHost());
-            System.out.println("apply server: "+preselection.getServer().getName());
             hostServerTable.selectServer(preselection.getServer());
         }
         else
@@ -114,7 +112,6 @@ public class ServerPicker implements HostServerManagement {
                 // apply selection policy
                 if(preselection.getServer()!=null)
                 {
-                    System.out.println("apply server: "+preselection.getServer().getName());
                     hostServerTable.selectServer(preselection.getServer());
                 }
             }
