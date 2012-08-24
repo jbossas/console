@@ -114,6 +114,10 @@ public class ServerPicker implements HostServerManagement {
                 {
                     hostServerTable.selectServer(preselection.getServer());
                 }
+                else if(result.size()>0)
+                {
+                    hostServerTable.selectServer(result.get(0));
+                }
             }
         });
     }
@@ -122,6 +126,11 @@ public class ServerPicker implements HostServerManagement {
     public void onServerSelected(final Host host, final ServerInstance server) {
 
         assert host!=null : "No host set";
+
+        // update the preselection
+        preselection.setHost(host.getName());
+        preselection.setServer(server);
+
 
         Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
             @Override

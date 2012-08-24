@@ -354,11 +354,7 @@ public class HostServerTable {
 
         serverPager.setVisible(servers.size() >= 5);
 
-        if(!servers.isEmpty())
-        {
-            serverList.getSelectionModel().setSelected(servers.get(0), true);
-        }
-        else
+        if(servers.isEmpty())
         {
             currentDisplayedValue.setText("");
         }
