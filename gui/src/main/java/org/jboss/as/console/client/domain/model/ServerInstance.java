@@ -19,6 +19,8 @@
 
 package org.jboss.as.console.client.domain.model;
 
+import org.jboss.as.console.client.widgets.forms.Binding;
+
 /**
  * @author Heiko Braun
  * @date 3/3/11
@@ -40,5 +42,9 @@ public interface ServerInstance {
 
     ServerFlag getFlag();
     void setFlag(ServerFlag state);
+
+    @Binding(skip = true)
+    String getHost();
+    void setHost(String hostName);
 
 }

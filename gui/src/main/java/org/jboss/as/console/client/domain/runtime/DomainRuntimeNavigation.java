@@ -39,7 +39,6 @@ class DomainRuntimeNavigation implements ServerSelectionEvent.ServerSelectionLis
     private LHSTreeSection metricLeaf;
     private LHSTreeSection runtimeLeaf;
 
-
     private CurrentServerSelection serverSelection;
 
     public DomainRuntimeNavigation(CurrentServerSelection serverSelection) {
@@ -57,7 +56,7 @@ class DomainRuntimeNavigation implements ServerSelectionEvent.ServerSelectionLis
 
         // ----------------------------------------------------
 
-        serverPicker = new ServerPicker(serverSelection);
+        serverPicker = new ServerPicker();
         stack.add(serverPicker.asWidget());
 
         // ----------------------------------------------------
@@ -173,8 +172,10 @@ class DomainRuntimeNavigation implements ServerSelectionEvent.ServerSelectionLis
 
     @Override
     public void onServerSelection(String hostName, ServerInstance server, ServerSelectionEvent.Source source) {
+
         if(!source.equals(ServerSelectionEvent.Source.Picker))
         {
+            System.out.println("[onServerSelection] "+hostName+" / "+server.getName());
             // triggered external to this view
             serverPicker.setPreselection(hostName, server);
         }

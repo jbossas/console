@@ -265,6 +265,7 @@ public class HostInfoStoreImpl implements HostInformationStore {
                                     numResponses++;
 
                                     ServerInstance instance = createInstanceModel(handle);
+                                    instance.setHost(host);
                                     instance.setRunning(false);
                                     instanceList.add(instance);
 

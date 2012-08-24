@@ -158,7 +158,7 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
 
     @Override
     public void onHostSelection(String hostName) {
-
+        // TODO: necessary ?
     }
 
     private void loadHostData() {
@@ -168,34 +168,17 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
             @Override
             public void onSuccess(final List<Host> hosts) {
 
-                if(!hosts.isEmpty())
-                    selectDefaultHost(hosts);
 
+                if(hosts.isEmpty())
+                {
+                    Console.warning("No hosts found!");
+                    return;
+                }
 
-                final String host = serverSelection.getHost();
-                hostInfoStore.getServerInstances(host, new SimpleCallback<List<ServerInstance>>() {
-                    @Override
-                    public void onSuccess(List<ServerInstance> server) {
-
-                        // update the LHS in all cases
-                        getView().setHosts(hosts);
-
-                    }
-                });
+                getView().setHosts(hosts);
 
             }
         });
-    }
-
-    private void selectDefaultHost(List<Host> hosts) {
-
-        if(!serverSelection.hasSetHost())
-        {
-            String name = hosts.get(0).getName();
-            Console.info("Default host selection: "+name);
-            serverSelection.setHost(name);
-        }
-
     }
 
     @Override

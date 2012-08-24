@@ -6,11 +6,9 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
-import org.jboss.as.console.client.domain.events.HostSelectionEvent;
 import org.jboss.as.console.client.domain.model.Host;
 import org.jboss.as.console.client.domain.model.ServerInstance;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
-import org.jboss.as.console.client.shared.state.CurrentServerSelection;
 import org.jboss.as.console.client.shared.state.ServerSelectionEvent;
 
 import java.util.List;
@@ -23,11 +21,37 @@ public class ServerPicker implements HostServerManagement {
 
     private HostServerTable hostServerTable;
     private LoadServerCmd loadServerCmd;
-    private CurrentServerSelection serverSelectionState;
 
-    public ServerPicker(CurrentServerSelection serverSelectionState) {
+    static class Preselection {
+        private String host;
+        private ServerInstance server;
+
+        public String getHost() {
+            return host;
+        }
+
+        public void setHost(String host) {
+            this.host = host;
+        }
+
+        public ServerInstance getServer() {
+            return server;
+        }
+
+        public void setServer(ServerInstance server) {
+            this.server = server;
+        }
+
+        public void clear() {
+            this.host=null;
+            this.server=null;
+        }
+    }
+
+    static Preselection preselection = new Preselection();
+
+    public ServerPicker() {
         this.loadServerCmd = new LoadServerCmd(Console.MODULES.getHostInfoStore());
-        this.serverSelectionState = serverSelectionState;
     }
 
     public Widget asWidget() {
@@ -56,38 +80,26 @@ public class ServerPicker implements HostServerManagement {
         return layout;
     }
 
+    /**
+     * Update the host list and applies a selection.
+     * Either default (first one) or preselected (if given)
+     *
+     * @param hosts
+     */
     public void setHosts(List<Host> hosts) {
-
-        Host previousHost = hostServerTable.getSelectedHost();
-
         hostServerTable.setHosts(hosts);
 
-        if(serverSelectionState.isSet())
+        if(preselection.getHost()!=null)
         {
-            // preselected (external) server/host combination
-
-            for(Host host : hosts)
-            {
-                if(host.getName().equals(serverSelectionState.getHost()))
-                {
-                    //hostServerTable.selectHost(host);
-                    //hostServerTable.selectServer(serverSelectionState.getServer());
-                    break;
-                }
-            }
-
-        }
-        else if(null==previousHost)
-        {
-            hostServerTable.defaultHostSelection();
+            System.out.println("apply host: "+preselection.getHost());
+            hostServerTable.pickHost(preselection.getHost());
+            System.out.println("apply server: "+preselection.getServer().getName());
+            hostServerTable.selectServer(preselection.getServer());
         }
         else
         {
-            // restore previous selection
-            hostServerTable.selectHost(previousHost);
+            hostServerTable.defaultHostSelection();
         }
-
-
     }
 
     @Override
@@ -99,13 +111,11 @@ public class ServerPicker implements HostServerManagement {
 
                 hostServerTable.setServer(selectedHost, result);
 
-                if(result.isEmpty())
+                // apply selection policy
+                if(preselection.getServer()!=null)
                 {
-                    // no server on host. some operation are not available
-                    Console.getEventBus().fireEvent(
-                            new HostSelectionEvent(selectedHost.getName())
-                    );
-
+                    System.out.println("apply server: "+preselection.getServer().getName());
+                    hostServerTable.selectServer(preselection.getServer());
                 }
             }
         });
@@ -113,6 +123,8 @@ public class ServerPicker implements HostServerManagement {
 
     @Override
     public void onServerSelected(final Host host, final ServerInstance server) {
+
+        assert host!=null : "No host set";
 
         Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
             @Override
@@ -125,9 +137,13 @@ public class ServerPicker implements HostServerManagement {
 
     }
 
+    /**
+     * invoked by event bus
+     * @param hostName
+     * @param server
+     */
     public void setPreselection(String hostName, ServerInstance server) {
-
-        //hostServerTable.selectHost(hostName);
-        hostServerTable.selectServer(server);
+        preselection.setHost(hostName);
+        preselection.setServer(server);
     }
 }
