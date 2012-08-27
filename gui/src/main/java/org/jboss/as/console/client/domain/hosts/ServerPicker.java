@@ -93,14 +93,22 @@ public class ServerPicker implements HostServerManagement {
         if(preselection.getHost()!=null)
         {
 
-            Command applySelection = new Command() {
+            final Command applySelection = new Command() {
                 @Override
                 public void execute() {
                     hostServerTable.pickHost(preselection.getHost());
                     hostServerTable.selectServer(preselection.getServer());
                 }
             };
-            loadServer(preselection.getHost(), applySelection);
+
+
+            Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+                @Override
+                public void execute() {
+                    loadServer(preselection.getHost(), applySelection);
+                }
+            });
+
 
         }
         else
