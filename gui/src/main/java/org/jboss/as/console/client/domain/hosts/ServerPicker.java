@@ -1,6 +1,7 @@
 package org.jboss.as.console.client.domain.hosts;
 
 import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -91,8 +92,16 @@ public class ServerPicker implements HostServerManagement {
 
         if(preselection.getHost()!=null)
         {
-            hostServerTable.pickHost(preselection.getHost());
-            hostServerTable.selectServer(preselection.getServer());
+
+            Command applySelection = new Command() {
+                @Override
+                public void execute() {
+                    hostServerTable.pickHost(preselection.getHost());
+                    hostServerTable.selectServer(preselection.getServer());
+                }
+            };
+            loadServer(preselection.getHost(), applySelection);
+
         }
         else
         {
@@ -101,13 +110,13 @@ public class ServerPicker implements HostServerManagement {
     }
 
     @Override
-    public void loadServer(final Host selectedHost) {
+    public void loadServer(final String selectedHost, final Command... commands) {
 
-        loadServerCmd.execute(selectedHost.getName(), new SimpleCallback<List<ServerInstance>>() {
+        loadServerCmd.execute(selectedHost, new SimpleCallback<List<ServerInstance>>() {
             @Override
             public void onSuccess(List<ServerInstance> result) {
 
-                hostServerTable.setServer(selectedHost, result);
+                hostServerTable.setServer(result);
 
                 // apply selection policy
                 if(preselection.getServer()!=null)
@@ -118,6 +127,10 @@ public class ServerPicker implements HostServerManagement {
                 {
                     hostServerTable.selectServer(result.get(0));
                 }
+
+                // execute post loading commands
+                for(Command c : commands)
+                    c.execute();
             }
         });
     }

@@ -170,7 +170,7 @@ public class HostServerTable {
                 if(selectedHost!=null)
                 {
                     if(!preventRefreshServerList)
-                        presenter.loadServer(selectedHost);
+                        presenter.loadServer(selectedHost.getName());
                 }
                 else if(selectedHost==null)
                 {
@@ -348,7 +348,7 @@ public class HostServerTable {
      * Display the currently active servers for selection
      * @param servers
      */
-    public void setServer(Host selectedHost, List<ServerInstance> servers) {
+    public void setServer(List<ServerInstance> servers) {
 
         serverProvider.setList(servers);
 
