@@ -50,7 +50,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.ListResourceBundle;
 import java.util.Map;
 
 import static org.jboss.dmr.client.ModelDescriptionConstants.*;
@@ -129,10 +128,15 @@ public class HostInfoStoreImpl implements HostInformationStore {
         ModelNode coreModel = new ModelNode();
         coreModel.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
         coreModel.get(INCLUDE_RUNTIME).set(true);
-        coreModel.get(ADDRESS).setEmptyList();
         coreModel.get(ADDRESS).add("host", host);
         coreModel.get(CHILD_TYPE).set("server-config");
         steps.add(coreModel);
+
+        ModelNode groupModel = new ModelNode();
+        groupModel.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
+        groupModel.get(ADDRESS).setEmptyList();
+        groupModel.get(CHILD_TYPE).set("server-group");
+        steps.add(groupModel);
 
         operation.get(STEPS).set(steps);
 
@@ -154,14 +158,26 @@ public class HostInfoStoreImpl implements HostInformationStore {
                 }
                 else
                 {
-                    List<ModelNode> payload = overalResult.get("step-1").get(RESULT).asList();
+
+                    List<Property> serverGroupsModel = overalResult.get("step-2").get(RESULT).asPropertyList();
+
+                    Map<String,String> group2profile = new HashMap<String,String>();
+
+                    for(Property group : serverGroupsModel)
+                    {
+                        group2profile.put(group.getName(), group.getValue().get("profile").asString());
+                    }
+
+
+                    List<ModelNode> serverConfigModel = overalResult.get("step-1").get(RESULT).asList();
 
                     List<Server> records = new LinkedList<Server>();
-                    for(ModelNode item : payload)
+                    for(ModelNode item : serverConfigModel)
                     {
                         ModelNode model = item.asProperty().getValue();
                         Server server = serverAdapter.fromDMR(model);
                         server.setStarted(model.get("status").asString().equals("STARTED"));
+                        server.setProfile(group2profile.get(server.getGroup()));
                         records.add(server);
                     }
 
@@ -304,10 +320,10 @@ public class HostInfoStoreImpl implements HostInformationStore {
                             socketBinding.get(CHILD_TYPE).set("socket-binding-group");
                             steps.add(socketBinding);
 
-                            final ModelNode groupProfile = new ModelNode();
+                           /* final ModelNode groupProfile = new ModelNode();
                             groupProfile.get(OP).set(READ_RESOURCE_OPERATION);
                             groupProfile.get(ADDRESS).add("server-group", handle.getGroup());
-                            steps.add(groupProfile);
+                            steps.add(groupProfile);*/
 
                             operation.get(STEPS).set(steps);
 
@@ -351,7 +367,7 @@ public class HostInfoStoreImpl implements HostInformationStore {
                                         ModelNode instanceModel = compositeResponse.get("step-1").get(RESULT);
                                         instance.setRunning(handle.isStarted());
 
-                                        instance.setProfile(instanceModel.get("profile-name").asString());
+                                        //instance.setProfile(instanceModel.get("profile-name").asString());
 
                                         if(instanceModel.hasDefined("server-state"))
                                         {
@@ -541,6 +557,7 @@ public class HostInfoStoreImpl implements HostInformationStore {
         instance.setName(handle.getName());
         instance.setServer(handle.getName());
         instance.setGroup(handle.getGroup());
+        instance.setProfile(handle.getProfile());
         return instance;
     }
 
