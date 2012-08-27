@@ -72,6 +72,8 @@ public class DomainOverview
     };
 
     private static TreeMap<String, String> group2Color = new TreeMap<String,String>();
+    private static TreeMap<String, String> group2profile = new TreeMap<String,String>();
+
     private ServerPanelReference prevSelection = null;
     private List<HTMLPanel> hostPanels = new ArrayList<HTMLPanel>();
 
@@ -98,8 +100,8 @@ public class DomainOverview
         SafeHtmlBuilder containerTable= new SafeHtmlBuilder();
 
         containerTable.appendHtmlConstant("<table cellpadding='5' width='100%' id='host-overview'>");
-        containerTable.appendHtmlConstant("<tr id='hosts-row' valign='top'>");
-        containerTable.appendHtmlConstant("</tr>");
+        containerTable.appendHtmlConstant("<tr id='groups-row' valign='top'/>");
+        containerTable.appendHtmlConstant("<tr id='hosts-row' valign='top'/>");
         containerTable.appendHtmlConstant("</table>");
 
         return containerTable;
@@ -110,6 +112,7 @@ public class DomainOverview
         // clear view
         container.clear();
         group2Color.clear();
+        group2profile.clear();
         prevSelection = null;
         hostPanels.clear();
 
@@ -166,7 +169,7 @@ public class DomainOverview
                 html.appendHtmlConstant("<br/>");
                 html.appendHtmlConstant("</div>");
 
-                html.appendHtmlConstant("<table width='100%'>");
+                html.appendHtmlConstant("<table width='100%' border=0>");
                 for(ServerInstance server : host.getServerInstances())
                 {
 
@@ -179,15 +182,22 @@ public class DomainOverview
                     String statusImgUrl = new Image(status).getUrl();
 
                     html.appendHtmlConstant("<tr>");
+                    html.appendHtmlConstant("<td style='background:"+color+"'>&nbsp;</td>");
+                    html.appendHtmlConstant("</tr>");
+                    html.appendHtmlConstant("<tr>");
 
                     String serverPanelId = "sp_"+host.getName()+"_"+server.getName();
-                    html.appendHtmlConstant("<td id='"+serverPanelId+"' class='domain-serverinfo domain-servercontainer' style='background:" + color + "'>");
+                    html.appendHtmlConstant("<td id='"+serverPanelId+"' class='domain-serverinfo domain-servercontainer'>");
 
+                    html.appendHtmlConstant("<b>");
                     html.appendEscaped("Server: "+server.getName()).appendHtmlConstant("&nbsp;");
                     html.appendHtmlConstant("<img src='" + statusImgUrl + "' width=16 height=16 align=right>");
-                    html.appendHtmlConstant("<br/>");
-                    html.appendEscaped("Group: "+server.getGroup()).appendHtmlConstant("<br/>");
-                    html.appendEscaped("Profile: "+server.getProfile()).appendHtmlConstant("<br/>");
+                    html.appendHtmlConstant("</b><br/>");
+
+                    if(server.getProfile()!=null) {
+                        if(!group2profile.containsKey(server.getGroup()))
+                            group2profile.put(server.getGroup(), server.getProfile());
+                    }
 
                     if(server.getSocketBindings().size()>0)
                     {
@@ -241,6 +251,30 @@ public class DomainOverview
 
             int columnWidth =Math.abs(100/itemsPerPage);
 
+
+            // -----------------------------------
+            // update the groups table
+            SafeHtmlBuilder groupsRow = new SafeHtmlBuilder();
+            int groupColumnWidth =Math.abs(100/group2Color.size());
+            groupsRow.appendHtmlConstant("<table width='100%'><tr>");
+            for(String groupName : group2Color.keySet())
+            {
+                groupsRow.appendHtmlConstant("<td width='"+groupColumnWidth+"%' style='padding:5px;background-color:"+group2Color.get(groupName)+"'>");
+                groupsRow.appendEscaped("Group: "+groupName).appendHtmlConstant("<br/>");
+                String profileName = group2profile.get(groupName);
+                if(profileName!=null)
+                    groupsRow.appendEscaped("Profile: "+ profileName);
+                groupsRow.appendHtmlConstant("</td>");
+            }
+            groupsRow.appendHtmlConstant("</tr></table>");
+
+            Element groupsTr = htmlPanel.getElementById("groups-row");
+            Element groupsTd = DOM.createTD();
+            groupsTd.setAttribute("colspan", String.valueOf(itemsPerPage));
+            groupsTd.setInnerHTML(groupsRow.toSafeHtml().asString());
+            groupsTr.appendChild(groupsTd);
+
+            // -----------------------------------
             // update the tr table
             Element tr = htmlPanel.getElementById("hosts-row");
             for(SafeHtmlBuilder builder : hostColumns)

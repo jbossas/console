@@ -333,27 +333,29 @@ public class HostInfoStoreImpl implements HostInformationStore {
 
                                     numResponses++;
 
-                                    ModelNode statusResponse = result.get();
-                                    ModelNode payload = statusResponse.get(RESULT);
+                                    ModelNode response = result.get();
+                                    ModelNode compositeResponse = response.get(RESULT);
 
                                     ServerInstance instance = createInstanceModel(handle);
-                                    instance.setInterfaces(new HashMap<String,String>());
+                                    instance.setInterfaces(new HashMap<String, String>());
                                     instance.setSocketBindings(new HashMap<String, String>());
                                     instanceList.add(instance);
 
-                                    if(statusResponse.isFailure())
+                                    if(response.isFailure())
                                     {
                                         instance.setRunning(false);
                                     }
                                     else
                                     {
 
-                                        ModelNode serverStatus = payload.get("step-1").get(RESULT);
+                                        ModelNode instanceModel = compositeResponse.get("step-1").get(RESULT);
                                         instance.setRunning(handle.isStarted());
 
-                                        if(serverStatus.hasDefined("server-state"))
+                                        instance.setProfile(instanceModel.get("profile-name").asString());
+
+                                        if(instanceModel.hasDefined("server-state"))
                                         {
-                                            String state = serverStatus.get("server-state").asString();
+                                            String state = instanceModel.get("server-state").asString();
                                             if(state.equals("reload-required"))
                                             {
                                                 instance.setFlag(ServerFlag.RELOAD_REQUIRED);
@@ -365,7 +367,7 @@ public class HostInfoStoreImpl implements HostInformationStore {
                                         }
 
                                         // ---- interfaces
-                                        List<Property> interfaces = payload.get("step-2").get(RESULT).asPropertyList();
+                                        List<Property> interfaces = compositeResponse.get("step-2").get(RESULT).asPropertyList();
 
                                         for(Property intf : interfaces)
                                         {
@@ -380,7 +382,7 @@ public class HostInfoStoreImpl implements HostInformationStore {
 
 
                                         // ---- socket binding
-                                        List<Property> sockets = payload.get("step-3").get(RESULT).asPropertyList();
+                                        List<Property> sockets = compositeResponse.get("step-3").get(RESULT).asPropertyList();
 
                                         for(Property socket : sockets)
                                         {
@@ -390,10 +392,6 @@ public class HostInfoStoreImpl implements HostInformationStore {
                                             );
 
                                         }
-
-                                        // ---- socket binding
-                                        ModelNode groupProfile = payload.get("step-4").get(RESULT);
-                                        instance.setProfile(groupProfile.get("profile").asString());
                                     }
 
                                     checkComplete(instanceList, cb);
