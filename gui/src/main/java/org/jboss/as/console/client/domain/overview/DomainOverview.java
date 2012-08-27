@@ -116,7 +116,7 @@ public class DomainOverview
         // the known server groups and their colors
         List<String> groups = deriveGroups(hosts);
 
-        int itemsPerPage = 5;
+        int itemsPerPage = 3;
         int lastPageSize = hosts.size()%itemsPerPage;
         int numberOfPages = ((hosts.size()-lastPageSize) / itemsPerPage)+1;
 
@@ -151,7 +151,7 @@ public class DomainOverview
                 String ctrlCss = host.isController ? "domain-controller" : "domain-member";
 
 
-                html.appendHtmlConstant("<td class='domain-hostcontainer' id='" + id + "'>")
+                html.appendHtmlConstant("<td>")
                         .appendHtmlConstant("<div class='domain-hostinfo " + ctrlCss + "'>")
                         .appendEscaped("Host: " + host.getName()).appendHtmlConstant("<br/>")
                         .appendEscaped("Domain: " + domainType).appendHtmlConstant("&nbsp;");
@@ -239,12 +239,15 @@ public class DomainOverview
             if(hostColumns.isEmpty())  // skip empty pages
                 break;
 
+            int columnWidth =Math.abs(100/itemsPerPage);
+
             // update the tr table
             Element tr = htmlPanel.getElementById("hosts-row");
             for(SafeHtmlBuilder builder : hostColumns)
             {
                 Element td = DOM.createTD();
                 td.setClassName("domain-hostcontainer");
+                td.setAttribute("width", columnWidth+"%");
                 td.setInnerHTML(builder.toSafeHtml().asString());
                 tr.appendChild(td);
             }
