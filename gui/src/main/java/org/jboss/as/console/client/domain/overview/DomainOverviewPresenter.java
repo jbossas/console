@@ -54,6 +54,8 @@ import org.jboss.as.console.client.shared.state.ServerSelectionEvent;
 import org.jboss.ballroom.client.widgets.window.Feedback;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 
@@ -151,6 +153,14 @@ public class DomainOverviewPresenter
                             if(hostInfos.size() == hosts.size())
                             {
                                 // done
+
+                                Collections.sort(hostInfos, new Comparator<HostInfo>() {
+                                    @Override
+                                    public int compare(HostInfo host, HostInfo host1) {
+                                        return host.getName().compareTo(host1.getName());
+                                    }
+                                });
+
                                 getView().updateHosts(hostInfos, preselectedServer);
 
                             }
