@@ -49,6 +49,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 /**
@@ -186,6 +187,14 @@ public class DomainOverview
                     html.appendHtmlConstant("<img src='" + statusImgUrl + "' width=16 height=16 align=right>");
                     html.appendHtmlConstant("<br/>");
                     html.appendEscaped("Group: "+server.getGroup()).appendHtmlConstant("<br/>");
+
+                    if(server.getSocketBindings().size()>0)
+                    {
+                        Set<String> sockets = server.getSocketBindings().keySet();
+                        String first = sockets.iterator().next();
+                        html.appendEscaped("Socket Binding: "+first).appendHtmlConstant("<br/>");
+                        html.appendEscaped("Ports: + "+server.getSocketBindings().get(first)).appendHtmlConstant("<br/>");
+                    }
 
                     html.appendHtmlConstant("<ul>");
                     for(String nicName : server.getInterfaces().keySet())

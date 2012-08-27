@@ -49,8 +49,15 @@ public interface ServerInstance {
     String getHost();
     void setHost(String hostName);
 
+    // -- runtime data
+
+
     @Binding(skip = true)
     Map<String,String> getInterfaces();
     void setInterfaces(Map<String,String> interfaces);
+
+    @Binding(skip = true)
+    Map<String,String> getSocketBindings();
+    void setSocketBindings(Map<String,String> sockets);
 
 }

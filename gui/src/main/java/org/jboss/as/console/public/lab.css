@@ -248,7 +248,6 @@ input[type="checkbox"] {
 .domain-serverinfo{
     font-size:10px;
     padding:4px;
-    opacity: 0.6;
     cursor: pointer;
 }
 

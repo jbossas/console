@@ -272,6 +272,15 @@ public class HostInfoStoreImpl implements HostInformationStore {
                             interfaces.get(CHILD_TYPE).set("interface");
                             steps.add(interfaces);
 
+
+                            final ModelNode socketBinding = new ModelNode();
+                            socketBinding.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
+                            socketBinding.get(INCLUDE_RUNTIME).set(true);
+                            socketBinding.get(ADDRESS).add("host", host);
+                            socketBinding.get(ADDRESS).add("server", handle.getName());
+                            socketBinding.get(CHILD_TYPE).set("socket-binding-group");
+                            steps.add(socketBinding);
+
                             operation.get(STEPS).set(steps);
 
                             numRequests++;
@@ -301,6 +310,7 @@ public class HostInfoStoreImpl implements HostInformationStore {
 
                                     ServerInstance instance = createInstanceModel(handle);
                                     instance.setInterfaces(new HashMap<String,String>());
+                                    instance.setSocketBindings(new HashMap<String,String>());
                                     instanceList.add(instance);
 
                                     if(statusResponse.isFailure())
@@ -338,6 +348,19 @@ public class HostInfoStoreImpl implements HostInformationStore {
                                                         intf.getValue().get("resolved-address").asString()
                                                 );
                                             }
+                                        }
+
+
+                                         // ---- socket binding
+                                        List<Property> sockets = payload.get("step-3").get(RESULT).asPropertyList();
+
+                                        for(Property socket : sockets)
+                                        {
+                                            instance.getSocketBindings().put(
+                                                    socket.getName(),
+                                                    socket.getValue().get("port-offset").asString()
+                                            );
+
                                         }
                                     }
 
