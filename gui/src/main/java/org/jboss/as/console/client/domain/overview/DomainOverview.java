@@ -187,6 +187,7 @@ public class DomainOverview
                     html.appendHtmlConstant("<img src='" + statusImgUrl + "' width=16 height=16 align=right>");
                     html.appendHtmlConstant("<br/>");
                     html.appendEscaped("Group: "+server.getGroup()).appendHtmlConstant("<br/>");
+                    html.appendEscaped("Profile: "+server.getProfile()).appendHtmlConstant("<br/>");
 
                     if(server.getSocketBindings().size()>0)
                     {

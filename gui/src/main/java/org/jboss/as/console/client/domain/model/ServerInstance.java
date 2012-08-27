@@ -60,4 +60,8 @@ public interface ServerInstance {
     Map<String,String> getSocketBindings();
     void setSocketBindings(Map<String,String> sockets);
 
+    @Binding(skip = true)
+    String getProfile();
+    void setProfile(String name);
+
 }

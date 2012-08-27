@@ -50,6 +50,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ListResourceBundle;
 import java.util.Map;
 
 import static org.jboss.dmr.client.ModelDescriptionConstants.*;
@@ -120,11 +121,20 @@ public class HostInfoStoreImpl implements HostInformationStore {
         if(host==null) throw new RuntimeException("Host parameter is null!");
 
         final ModelNode operation = new ModelNode();
-        operation.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
-        operation.get(CHILD_TYPE).set("server-config");
+        operation.get(OP).set(COMPOSITE);
         operation.get(ADDRESS).setEmptyList();
-        operation.get(ADDRESS).add("host", host);
-        operation.get(INCLUDE_RUNTIME).set(true);
+
+        List<ModelNode> steps = new ArrayList<ModelNode>();
+
+        ModelNode coreModel = new ModelNode();
+        coreModel.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
+        coreModel.get(INCLUDE_RUNTIME).set(true);
+        coreModel.get(ADDRESS).setEmptyList();
+        coreModel.get(ADDRESS).add("host", host);
+        coreModel.get(CHILD_TYPE).set("server-config");
+        steps.add(coreModel);
+
+        operation.get(STEPS).set(steps);
 
         dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
             @Override
@@ -136,19 +146,32 @@ public class HostInfoStoreImpl implements HostInformationStore {
             public void onSuccess(DMRResponse result) {
 
                 ModelNode response = result.get();
-                List<ModelNode> payload = response.get("result").asList();
+                ModelNode overalResult = response.get(RESULT);
 
-                List<Server> records = new LinkedList<Server>();
-                for(ModelNode item : payload)
+                if(overalResult.isFailure())
                 {
-                    ModelNode model = item.asProperty().getValue();
-                    Server server = serverAdapter.fromDMR(model);
-                    server.setStarted(model.get("status").asString().equals("STARTED"));
-                    records.add(server);
+                    callback.onFailure(new RuntimeException("Failed to load sever configurations: "+response.getFailureDescription()));
+                }
+                else
+                {
+                    List<ModelNode> payload = overalResult.get("step-1").get(RESULT).asList();
+
+                    List<Server> records = new LinkedList<Server>();
+                    for(ModelNode item : payload)
+                    {
+                        ModelNode model = item.asProperty().getValue();
+                        Server server = serverAdapter.fromDMR(model);
+                        server.setStarted(model.get("status").asString().equals("STARTED"));
+                        records.add(server);
+                    }
+
+                    // group profiles
+
+                    callback.onSuccess(records);
+
                 }
 
 
-                callback.onSuccess(records);
             }
 
         });
@@ -281,6 +304,11 @@ public class HostInfoStoreImpl implements HostInformationStore {
                             socketBinding.get(CHILD_TYPE).set("socket-binding-group");
                             steps.add(socketBinding);
 
+                            final ModelNode groupProfile = new ModelNode();
+                            groupProfile.get(OP).set(READ_RESOURCE_OPERATION);
+                            groupProfile.get(ADDRESS).add("server-group", handle.getGroup());
+                            steps.add(groupProfile);
+
                             operation.get(STEPS).set(steps);
 
                             numRequests++;
@@ -310,7 +338,7 @@ public class HostInfoStoreImpl implements HostInformationStore {
 
                                     ServerInstance instance = createInstanceModel(handle);
                                     instance.setInterfaces(new HashMap<String,String>());
-                                    instance.setSocketBindings(new HashMap<String,String>());
+                                    instance.setSocketBindings(new HashMap<String, String>());
                                     instanceList.add(instance);
 
                                     if(statusResponse.isFailure())
@@ -351,7 +379,7 @@ public class HostInfoStoreImpl implements HostInformationStore {
                                         }
 
 
-                                         // ---- socket binding
+                                        // ---- socket binding
                                         List<Property> sockets = payload.get("step-3").get(RESULT).asPropertyList();
 
                                         for(Property socket : sockets)
@@ -362,6 +390,10 @@ public class HostInfoStoreImpl implements HostInformationStore {
                                             );
 
                                         }
+
+                                        // ---- socket binding
+                                        ModelNode groupProfile = payload.get("step-4").get(RESULT);
+                                        instance.setProfile(groupProfile.get("profile").asString());
                                     }
 
                                     checkComplete(instanceList, cb);
