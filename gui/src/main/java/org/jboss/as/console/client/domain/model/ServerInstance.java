@@ -21,6 +21,8 @@ package org.jboss.as.console.client.domain.model;
 
 import org.jboss.as.console.client.widgets.forms.Binding;
 
+import java.util.Map;
+
 /**
  * @author Heiko Braun
  * @date 3/3/11
@@ -46,5 +48,9 @@ public interface ServerInstance {
     @Binding(skip = true)
     String getHost();
     void setHost(String hostName);
+
+    @Binding(skip = true)
+    Map<String,String> getInterfaces();
+    void setInterfaces(Map<String,String> interfaces);
 
 }

@@ -187,6 +187,16 @@ public class DomainOverview
                     html.appendHtmlConstant("<br/>");
                     html.appendEscaped("Group: "+server.getGroup()).appendHtmlConstant("<br/>");
 
+                    html.appendHtmlConstant("<ul>");
+                    for(String nicName : server.getInterfaces().keySet())
+                    {
+                        html.appendHtmlConstant("<li>");
+                        html.appendEscaped(nicName).appendEscaped(": ");
+                        html.appendEscaped(server.getInterfaces().get(nicName));
+                        html.appendHtmlConstant("</li>");
+                    }
+                    html.appendHtmlConstant("</ul>");
+
                     // toolbox layout
 
                     String toolboxId = "tb_"+host.getName()+"_"+server.getName();

@@ -47,6 +47,7 @@ import org.jboss.dmr.client.Property;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -77,41 +78,41 @@ public class HostInfoStoreImpl implements HostInformationStore {
     }
 
     @Override
-        public void getHosts(final AsyncCallback<List<Host>> callback) {
-            final ModelNode operation = new ModelNode();
-            operation.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
-            operation.get(CHILD_TYPE).set("host");
-            operation.get(ADDRESS).setEmptyList();
+    public void getHosts(final AsyncCallback<List<Host>> callback) {
+        final ModelNode operation = new ModelNode();
+        operation.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
+        operation.get(CHILD_TYPE).set("host");
+        operation.get(ADDRESS).setEmptyList();
 
-            dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
-                @Override
-                public void onFailure(Throwable caught) {
-                    callback.onFailure(caught);
+        dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
+            @Override
+            public void onFailure(Throwable caught) {
+                callback.onFailure(caught);
+            }
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = result.get();
+                List<Property> hostModels = response.get("result").asPropertyList();
+
+                List<Host> records = new LinkedList<Host>();
+                for(Property hostModel : hostModels)
+                {
+                    Host record = factory.host().as();
+                    record.setName(hostModel.getName());
+
+                    // controller
+                    ModelNode hostValues = hostModel.getValue();
+                    boolean isController = hostValues.get("domain-controller").hasDefined("local");
+                    record.setController(isController);
+                    records.add(record);
                 }
 
-                @Override
-                public void onSuccess(DMRResponse result) {
-                    ModelNode response = result.get();
-                    List<Property> hostModels = response.get("result").asPropertyList();
+                callback.onSuccess(records);
+            }
 
-                    List<Host> records = new LinkedList<Host>();
-                    for(Property hostModel : hostModels)
-                    {
-                        Host record = factory.host().as();
-                        record.setName(hostModel.getName());
-
-                        // controller
-                        ModelNode hostValues = hostModel.getValue();
-                        boolean isController = hostValues.get("domain-controller").hasDefined("local");
-                        record.setController(isController);
-                        records.add(record);
-                    }
-
-                    callback.onSuccess(records);
-                }
-
-            });
-        }
+        });
+    }
 
     @Override
     public void getServerConfigurations(String host, final AsyncCallback<List<Server>> callback) {
@@ -248,12 +249,30 @@ public class HostInfoStoreImpl implements HostInformationStore {
 
                         for(final Server handle : serverConfigs)
                         {
-                            final ModelNode operation = new ModelNode();
-                            operation.get(OP).set(READ_RESOURCE_OPERATION);
-                            operation.get(INCLUDE_RUNTIME).set(true);
+
+                            ModelNode operation = new ModelNode();
+                            operation.get(OP).set(COMPOSITE);
                             operation.get(ADDRESS).setEmptyList();
-                            operation.get(ADDRESS).add("host", host);
-                            operation.get(ADDRESS).add("server", handle.getName());
+
+                            List<ModelNode> steps = new ArrayList<ModelNode>();
+
+                            final ModelNode coreData = new ModelNode();
+                            coreData.get(OP).set(READ_RESOURCE_OPERATION);
+                            coreData.get(INCLUDE_RUNTIME).set(true);
+                            coreData.get(ADDRESS).setEmptyList();
+                            coreData.get(ADDRESS).add("host", host);
+                            coreData.get(ADDRESS).add("server", handle.getName());
+                            steps.add(coreData);
+
+                            final ModelNode interfaces = new ModelNode();
+                            interfaces.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
+                            interfaces.get(INCLUDE_RUNTIME).set(true);
+                            interfaces.get(ADDRESS).add("host", host);
+                            interfaces.get(ADDRESS).add("server", handle.getName());
+                            interfaces.get(CHILD_TYPE).set("interface");
+                            steps.add(interfaces);
+
+                            operation.get(STEPS).set(steps);
 
                             numRequests++;
 
@@ -281,6 +300,7 @@ public class HostInfoStoreImpl implements HostInformationStore {
                                     ModelNode payload = statusResponse.get(RESULT);
 
                                     ServerInstance instance = createInstanceModel(handle);
+                                    instance.setInterfaces(new HashMap<String,String>());
                                     instanceList.add(instance);
 
                                     if(statusResponse.isFailure())
@@ -289,11 +309,13 @@ public class HostInfoStoreImpl implements HostInformationStore {
                                     }
                                     else
                                     {
+
+                                        ModelNode serverStatus = payload.get("step-1").get(RESULT);
                                         instance.setRunning(handle.isStarted());
 
-                                        if(payload.hasDefined("server-state"))
+                                        if(serverStatus.hasDefined("server-state"))
                                         {
-                                            String state = payload.get("server-state").asString();
+                                            String state = serverStatus.get("server-state").asString();
                                             if(state.equals("reload-required"))
                                             {
                                                 instance.setFlag(ServerFlag.RELOAD_REQUIRED);
@@ -304,6 +326,19 @@ public class HostInfoStoreImpl implements HostInformationStore {
                                             }
                                         }
 
+                                        // ---- interfaces
+                                        List<Property> interfaces = payload.get("step-2").get(RESULT).asPropertyList();
+
+                                        for(Property intf : interfaces)
+                                        {
+                                            if(intf.getValue().hasDefined("resolved-address"))
+                                            {
+                                                instance.getInterfaces().put(
+                                                        intf.getName(),
+                                                        intf.getValue().get("resolved-address").asString()
+                                                );
+                                            }
+                                        }
                                     }
 
                                     checkComplete(instanceList, cb);
