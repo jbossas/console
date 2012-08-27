@@ -34,8 +34,6 @@ import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
-import org.jboss.as.console.client.domain.model.ProfileRecord;
-import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.domain.model.ServerInstance;
 import org.jboss.as.console.client.shared.model.DeploymentRecord;
 import org.jboss.as.console.client.shared.viewframework.builder.SimpleLayout;
@@ -178,7 +176,15 @@ public class DomainOverview
                     // ----------------------
 
                     String color = pickColor(groups, server);
+
                     ImageResource status = server.isRunning() ? Icons.INSTANCE.status_good() : Icons.INSTANCE.status_bad();
+
+                    // reload required?
+                    if(server.isRunning() &&server.getFlag()!=null)
+                    {
+                        status = Icons.INSTANCE.status_warn();
+                    }
+
                     String statusImgUrl = new Image(status).getUrl();
 
                     html.appendHtmlConstant("<tr>");

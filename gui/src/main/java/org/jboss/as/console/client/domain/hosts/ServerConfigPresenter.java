@@ -323,8 +323,6 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
         List<PropertyBinding> bindings = propertyMetaData.getBindingsForType(Server.class);
         ModelNode operation  = ModelAdapter.detypedFromChangeset(proto, changedValues, bindings);
 
-        //System.out.println(operation);
-
         // TODO: https://issues.jboss.org/browse/AS7-3643
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
