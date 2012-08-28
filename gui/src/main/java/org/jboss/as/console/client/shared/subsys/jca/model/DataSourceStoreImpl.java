@@ -96,6 +96,8 @@ public class DataSourceStoreImpl implements DataSourceStore {
         ModelNode operation = address.asSubresource(baseadress.getAdress());
         operation.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
 
+        System.out.println(operation);
+
         dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
             @Override
             public void onFailure(Throwable caught) {
@@ -197,19 +199,29 @@ public class DataSourceStoreImpl implements DataSourceStore {
             public void onSuccess(DMRResponse response) {
                 ModelNode result = response.get();
 
-                List<Property> properties = result.get(RESULT).asPropertyList();
-                List<PropertyRecord> records = new ArrayList<PropertyRecord>(properties.size());
-                for(Property prop : properties)
+                if(result.isFailure())
                 {
-                    String name = prop.getName();
-                    String value = prop.getValue().asObject().get("value").asString();
-                    PropertyRecord propertyRecord = factory.property().as();
-                    propertyRecord.setKey(name);
-                    propertyRecord.setValue(value);
-                    records.add(propertyRecord);
+                    callback.onFailure(
+                            new RuntimeException("Failed to load XA properties for DS "+dataSourceName+": "
+                            +result.getFailureDescription())
+                    );
                 }
+                else
+                {
+                    List<Property> properties = result.get(RESULT).asPropertyList();
+                    List<PropertyRecord> records = new ArrayList<PropertyRecord>(properties.size());
+                    for(Property prop : properties)
+                    {
+                        String name = prop.getName();
+                        String value = prop.getValue().asObject().get("value").asString();
+                        PropertyRecord propertyRecord = factory.property().as();
+                        propertyRecord.setKey(name);
+                        propertyRecord.setValue(value);
+                        records.add(propertyRecord);
+                    }
 
-                callback.onSuccess(records);
+                    callback.onSuccess(records);
+                }
             }
         });
 

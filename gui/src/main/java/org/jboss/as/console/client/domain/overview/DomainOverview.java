@@ -33,6 +33,7 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.domain.model.ServerInstance;
 import org.jboss.as.console.client.shared.model.DeploymentRecord;
@@ -269,7 +270,11 @@ public class DomainOverview
                 groupsRow.appendEscaped("Group: "+groupName).appendHtmlConstant("<br/>");
                 String profileName = group2profile.get(groupName);
                 if(profileName!=null)
+                {
+                    groupsRow.appendHtmlConstant("<a href='#"+ NameTokens.ProfileMgmtPresenter+";name="+profileName+"'/>");
                     groupsRow.appendEscaped("Profile: "+ profileName);
+                    groupsRow.appendHtmlConstant("</a>");
+                }
                 groupsRow.appendHtmlConstant("</td>");
             }
             groupsRow.appendHtmlConstant("</tr></table>");

@@ -130,11 +130,6 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
         revealStrategy.revealInParent(this);
     }
 
-    @Override
-    protected void onReveal() {
-        super.onReveal();
-    }
-
     private void loadDataSources() {
         dataSourceStore.loadDataSources(new SimpleCallback<List<DataSource>>() {
             @Override
@@ -256,14 +251,6 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
             }
         });
 
-    }
-
-    public void onEditDS(DataSource entity) {
-        getView().enableDSDetails(true);
-    }
-
-    public void onEditXA(DataSource entity) {
-        getView().enableXADetails(true);
     }
 
     public void onDelete(final DataSource entity) {

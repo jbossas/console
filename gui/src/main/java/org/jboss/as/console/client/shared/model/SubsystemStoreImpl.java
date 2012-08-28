@@ -51,7 +51,9 @@ public class SubsystemStoreImpl implements SubsystemStore {
     }
 
     @Override
-    public void loadSubsystems(String profileName, final AsyncCallback<List<SubsystemRecord>> callback) {
+    public void loadSubsystems(final String profileName, final AsyncCallback<List<SubsystemRecord>> callback) {
+
+        assert profileName!=null && !profileName.equals("") : "Illegal profile name: "+profileName;
 
         ModelNode operation = new ModelNode();
         operation.get(OP).set(READ_CHILDREN_NAMES_OPERATION);
@@ -72,17 +74,27 @@ public class SubsystemStoreImpl implements SubsystemStore {
             @Override
             public void onSuccess(DMRResponse result) {
                 ModelNode response = result.get();
-                List<ModelNode> payload = response.get("result").asList();
 
-                List<SubsystemRecord> records = new ArrayList<SubsystemRecord>(payload.size());
-                for(int i=0; i<payload.size(); i++)
+                if(response.isFailure())
                 {
-                    SubsystemRecord record = factory.subsystem().as();
-                    record.setKey(payload.get(i).asString());
-                    records.add(record);
+                    callback.onFailure(new RuntimeException(
+                            "Failed to load profile "+profileName+": " +response.getFailureDescription()
+                    ));
                 }
+                else
+                {
+                    List<ModelNode> payload = response.get("result").asList();
 
-                callback.onSuccess(records);
+                    List<SubsystemRecord> records = new ArrayList<SubsystemRecord>(payload.size());
+                    for(int i=0; i<payload.size(); i++)
+                    {
+                        SubsystemRecord record = factory.subsystem().as();
+                        record.setKey(payload.get(i).asString());
+                        records.add(record);
+                    }
+
+                    callback.onSuccess(records);
+                }
             }
         });
     }

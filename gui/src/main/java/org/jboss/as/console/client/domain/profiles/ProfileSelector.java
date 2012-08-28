@@ -19,6 +19,7 @@ import java.util.List;
 public class ProfileSelector {
 
     private ComboBox profiles;
+    private String preselection;
 
     public Widget asWidget() {
 
@@ -32,15 +33,18 @@ public class ProfileSelector {
             @Override
             public void onValueChange(final ValueChangeEvent<String> event) {
 
-                Scheduler.get().scheduleDeferred(
-                        new Scheduler.ScheduledCommand() {
-                            @Override
-                            public void execute() {
-                                Console.getEventBus().fireEvent(
-                                        new ProfileSelectionEvent(event.getValue())
-                                );
-                            }
-                        });
+                if(event.getValue()!=null && !event.getValue().equals(""))
+                {
+                    Scheduler.get().scheduleDeferred(
+                            new Scheduler.ScheduledCommand() {
+                                @Override
+                                public void execute() {
+                                    Console.getEventBus().fireEvent(
+                                            new ProfileSelectionEvent(event.getValue())
+                                    );
+                                }
+                            });
+                }
             }
         });
 
@@ -63,25 +67,42 @@ public class ProfileSelector {
         profiles.clearSelection();
         profiles.setValues(profileNames);
 
-        int preselected = -1;
+        int index = -1;
         int i=0;
+
+        String preference = "full";
+        if(preselection!=null)
+        {
+            preference = preselection;
+            preselection = null;
+        }
+
         for(String name : profileNames)
         {
-            if(name.equals("full"))
+
+            if(name.equals(preference))
             {
-                preselected = i;
+                index = i;
                 break;
             }
             i++;
         }
 
 
-        if(preselected>=0)
-            profiles.setItemSelected(preselected, true);
+        if(index>=0)
+        {
+            System.out.println("select "+profileNames.get(index));
+
+            profiles.setItemSelected(index, true);
+        }
         else
             profiles.setItemSelected(0, true);
 
 
+    }
+
+    public void setPreselection(String preselection) {
+        this.preselection = preselection;
     }
 }
 

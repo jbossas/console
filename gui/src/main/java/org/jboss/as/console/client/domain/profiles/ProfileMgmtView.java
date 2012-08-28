@@ -86,4 +86,9 @@ public class ProfileMgmtView extends SuspendableViewImpl
     {
         lhsNavigation.updateSubsystems(subsystemRecords);
     }
+
+    @Override
+    public void setPreselection(String preselection) {
+        lhsNavigation.setPreselection(preselection);
+    }
 }
