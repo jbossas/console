@@ -197,7 +197,11 @@ public class DomainOverview
                     html.appendHtmlConstant("<td id='"+serverPanelId+"' class='domain-serverinfo domain-servercontainer'>");
 
                     html.appendHtmlConstant("<b>");
-                    html.appendEscaped("Server: "+server.getName()).appendHtmlConstant("&nbsp;");
+                    html.appendEscaped("Server: ");
+                    html.appendHtmlConstant("<a style='color:#000000!important;' href='#"+ NameTokens.ServerPresenter+";config="+server.getName()+"'/>");
+                    html.appendEscaped(server.getName());
+                    html.appendHtmlConstant("</a>&nbsp;");
+
                     html.appendHtmlConstant("<img src='" + statusImgUrl + "' width=16 height=16 align=right>");
                     html.appendHtmlConstant("</b><br/>");
 

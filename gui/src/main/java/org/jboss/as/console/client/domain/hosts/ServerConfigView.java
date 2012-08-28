@@ -61,6 +61,7 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
     private PortsView portsView;
     private DefaultCellTable<Server> serverConfigTable;
     private ListDataProvider serverConfigProvider;
+    private String preselection;
 
     public ServerConfigView() {
         serverConfigTable = new DefaultCellTable<Server>(8);
@@ -223,7 +224,10 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
 
         if(!servers.isEmpty())
         {
-            if(selectedConfigName == null || selectedConfigName.equals("")) {
+            if(preselection!=null){
+                getSelectionModel().setSelected(findSelectedServer(servers, preselection), true);
+            }
+            else if(selectedConfigName == null || selectedConfigName.equals("")) {
                 getSelectionModel().setSelected(servers.get(0), true);
             }
             else {
@@ -247,4 +251,8 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
         return servers.get(0);
     }
 
+    @Override
+    public void setPreselection(String config) {
+        this.preselection = config;
+    }
 }
