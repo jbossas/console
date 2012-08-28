@@ -63,6 +63,7 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
     private DefaultCellTable<ServerGroupRecord> serverGroupTable;
     private ListDataProvider<ServerGroupRecord> serverGroupProvider;
     private ServerGroupDetails details;
+    private String preselection;
 
     @Override
     public void setPresenter(ServerGroupPresenter presenter) {
@@ -197,7 +198,19 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
 
         serverGroupProvider.setList(groups);
 
-        serverGroupTable.selectDefaultEntity();
+        boolean matchedPreselection = false;
+        for(ServerGroupRecord group : groups)
+        {
+            if(group.getGroupName().equals(preselection))
+            {
+                serverGroupTable.getSelectionModel().setSelected(group, true);
+                matchedPreselection = true;
+                break;
+            }
+        }
+
+        if(!matchedPreselection)
+            serverGroupTable.selectDefaultEntity();
     }
 
     @Override
@@ -217,5 +230,10 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
     @Override
     public void setProperties(ServerGroupRecord group, List<PropertyRecord> properties) {
         propertyEditor.setProperties(group.getGroupName(), properties);
+    }
+
+    @Override
+    public void setPreselection(String preselection) {
+        this.preselection = preselection;
     }
 }

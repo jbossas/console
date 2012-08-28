@@ -267,12 +267,16 @@ public class DomainOverview
             for(String groupName : group2Color.keySet())
             {
                 groupsRow.appendHtmlConstant("<td width='"+groupColumnWidth+"%' style='padding:5px;background-color:"+group2Color.get(groupName)+"'>");
-                groupsRow.appendEscaped("Group: "+groupName).appendHtmlConstant("<br/>");
+                groupsRow.appendEscaped("Group: ");
+                groupsRow.appendHtmlConstant("<a style='color:#000000!important;' href='#"+ NameTokens.ServerGroupPresenter+";group="+groupName+"'/>");
+                groupsRow.appendEscaped(groupName).appendHtmlConstant("<br/>");
+                groupsRow.appendHtmlConstant("</a>");
                 String profileName = group2profile.get(groupName);
                 if(profileName!=null)
                 {
-                    groupsRow.appendHtmlConstant("<a href='#"+ NameTokens.ProfileMgmtPresenter+";profile="+profileName+"'/>");
-                    groupsRow.appendEscaped("Profile: "+ profileName);
+                    groupsRow.appendEscaped("Profile: ");
+                    groupsRow.appendHtmlConstant("<a style='color:#000000!important;' href='#"+ NameTokens.ProfileMgmtPresenter+";profile="+profileName+"'/>");
+                    groupsRow.appendEscaped(profileName);
                     groupsRow.appendHtmlConstant("</a>");
                 }
                 groupsRow.appendHtmlConstant("</td>");
