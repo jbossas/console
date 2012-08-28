@@ -91,8 +91,6 @@ public class ProfileSelector {
 
         if(index>=0)
         {
-            System.out.println("select "+profileNames.get(index));
-
             profiles.setItemSelected(index, true);
         }
         else

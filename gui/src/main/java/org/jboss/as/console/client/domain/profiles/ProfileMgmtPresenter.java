@@ -171,10 +171,10 @@ public class ProfileMgmtPresenter
 
         if(preselection!=null)
         {
-            System.out.println("handle preselection "+preselection);
             getView().setPreselection(preselection);
             hasBeenRevealed = false;
             lastPlace = null;
+            profileSelection.setName(preselection);
         }
     }
 
