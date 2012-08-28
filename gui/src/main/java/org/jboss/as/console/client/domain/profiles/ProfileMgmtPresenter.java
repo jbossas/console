@@ -167,7 +167,7 @@ public class ProfileMgmtPresenter
 
         super.prepareFromRequest(request);
 
-        final String preselection = request.getParameter("name", null);
+        final String preselection = request.getParameter("profile", null);
 
         if(preselection!=null)
         {

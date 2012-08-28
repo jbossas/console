@@ -96,7 +96,7 @@ public class DataSourceStoreImpl implements DataSourceStore {
         ModelNode operation = address.asSubresource(baseadress.getAdress());
         operation.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
 
-        System.out.println(operation);
+        //System.out.println(operation);
 
         dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
             @Override

@@ -271,7 +271,7 @@ public class DomainOverview
                 String profileName = group2profile.get(groupName);
                 if(profileName!=null)
                 {
-                    groupsRow.appendHtmlConstant("<a href='#"+ NameTokens.ProfileMgmtPresenter+";name="+profileName+"'/>");
+                    groupsRow.appendHtmlConstant("<a href='#"+ NameTokens.ProfileMgmtPresenter+";profile="+profileName+"'/>");
                     groupsRow.appendEscaped("Profile: "+ profileName);
                     groupsRow.appendHtmlConstant("</a>");
                 }
