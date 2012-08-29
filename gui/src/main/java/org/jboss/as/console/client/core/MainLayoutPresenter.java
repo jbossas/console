@@ -30,6 +30,7 @@ import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.LockInteractionEvent;
 import com.gwtplatform.mvp.client.proxy.LockInteractionHandler;
+import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
 import com.gwtplatform.mvp.client.proxy.RevealRootLayoutContentEvent;
@@ -59,6 +60,7 @@ public class MainLayoutPresenter
     private CurrentHostSelection hostSelection;
     private ExpressionTool expressionTool;
     private InvocationMetrics metrics;
+    private PlaceManager placeManager;
 
     public interface MainLayoutView extends View {
     }
@@ -76,13 +78,14 @@ public class MainLayoutPresenter
             MainLayoutView view,
             MainLayoutProxy proxy, BootstrapContext bootstrap,
             CurrentServerSelection serverSelection, CurrentHostSelection hostSelection,
-            ExpressionResolver resolver, InvocationMetrics metrics) {
+            ExpressionResolver resolver, InvocationMetrics metrics, PlaceManager placeManager) {
         super(eventBus, view, proxy);
         this.bootstrap = bootstrap;
         this.hostSelection = hostSelection;
         this.serverSelection = serverSelection;
         this.expressionTool = new ExpressionTool(resolver);
         this.metrics = metrics;
+        this.placeManager = placeManager;
 
     }
 
@@ -139,7 +142,7 @@ public class MainLayoutPresenter
             Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
                 @Override
                 public void execute() {
-                    System.out.println("--- reset stats ---");
+                    System.out.println("--- reset stats: "+placeManager.getCurrentPlaceRequest().getNameToken()+" ---");
                     metrics.dump();
                     System.out.println("--- /reset stats ---");
                 }
