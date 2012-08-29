@@ -84,7 +84,7 @@ public class HostInfoStoreImpl implements HostInformationStore {
         operation.get(CHILD_TYPE).set("host");
         operation.get(ADDRESS).setEmptyList();
 
-        dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
+        dispatcher.execute(new DMRAction(operation, false), new AsyncCallback<DMRResponse>() {
             @Override
             public void onFailure(Throwable caught) {
                 callback.onFailure(caught);
@@ -140,7 +140,7 @@ public class HostInfoStoreImpl implements HostInformationStore {
 
         operation.get(STEPS).set(steps);
 
-        dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
+        dispatcher.execute(new DMRAction(operation, false), new AsyncCallback<DMRResponse>() {
             @Override
             public void onFailure(Throwable caught) {
                 callback.onFailure(caught);
@@ -205,7 +205,7 @@ public class HostInfoStoreImpl implements HostInformationStore {
         operation.get(ADDRESS).add("server-config", server);
         operation.get(INCLUDE_RUNTIME).set(true);
 
-        dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
+        dispatcher.execute(new DMRAction(operation, false), new AsyncCallback<DMRResponse>() {
             @Override
             public void onFailure(Throwable caught) {
                 callback.onFailure(caught);
