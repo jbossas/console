@@ -27,7 +27,8 @@ public class DebugEventBus extends SimpleEventBus {
         } finally {
 
             String clazz = event.getClass().getName();
-            if(clazz.startsWith("org.jboss.as.console.client")) {
+            if(metrics.hasMetrics() &&
+                    clazz.startsWith("org.jboss.as.console.client")) {
                 System.out.println("---- event stats:"+ clazz +" ----");
 
                 metrics.dump();
