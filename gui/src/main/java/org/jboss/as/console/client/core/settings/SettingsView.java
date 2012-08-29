@@ -58,6 +58,7 @@ public class SettingsView extends PopupViewImpl implements SettingsPresenterWidg
 
         window = new DefaultWindow(Console.CONSTANTS.common_label_settings());
         VerticalPanel layout = new VerticalPanel();
+        layout.setStyleName("fill-layout-width");
 
         form = new Form<CommonSettings>(CommonSettings.class);
 
