@@ -181,8 +181,6 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
                 getView().updateSocketBindings(result);
 
                 // step2
-
-                System.out.println("\t[loadSocketBindings]");
                 loadServerConfigurations(null);
             }
         });
@@ -200,7 +198,6 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
         hostInfoStore.getServerConfigurations(hostSelection.getName(), new SimpleCallback<List<Server>>() {
             @Override
             public void onSuccess(List<Server> result) {
-                System.out.println("did load server configs "+selectedConfigName);
                 getView().setConfigurations(hostSelection.getName(), result, selectedConfigName);
             }
         });
@@ -224,7 +221,6 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
     @Override
     public void onHostSelection(final String hostName) {
 
-        System.out.println("\t [onHostSelection]");
         if(isVisible()) {
             Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
                 @Override

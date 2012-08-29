@@ -20,6 +20,7 @@
 package org.jboss.as.console.client.shared.dispatch.impl;
 
 import com.allen_sauer.gwt.log.client.Log;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestCallback;
@@ -33,6 +34,9 @@ import org.jboss.as.console.client.shared.dispatch.ActionHandler;
 import org.jboss.as.console.client.shared.dispatch.DispatchRequest;
 import org.jboss.as.console.client.shared.dispatch.InvocationMetrics;
 import org.jboss.dmr.client.ModelNode;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author Heiko Braun
@@ -48,9 +52,11 @@ public class DMRHandler implements ActionHandler<DMRAction, DMRResponse> {
 
     private final RequestBuilder requestBuilder;
 
-    private boolean trackInvocations = false; //!GWT.isScript(); TODO
+    private boolean trackInvocations = !GWT.isScript();
     private InvocationMetrics metrics;
     private UIConstants constants;
+
+    Map<Integer, ModelNode> scheduled = new HashMap<Integer, ModelNode>();
 
     @Inject
     public DMRHandler(BootstrapContext bootstrap, InvocationMetrics metrics, UIConstants constants) {
@@ -65,9 +71,6 @@ public class DMRHandler implements ActionHandler<DMRAction, DMRResponse> {
 
         requestBuilder.setHeader(HEADER_ACCEPT, DMR_ENCODED);
         requestBuilder.setHeader(HEADER_CONTENT_TYPE, DMR_ENCODED);
-
-        // XMLHttpRequest isn't allowed to set this header
-        //requestBuilder.setHeader(HEADER_CONNECTION, KEEP_ALIVE);
     }
 
     @Override
@@ -76,6 +79,49 @@ public class DMRHandler implements ActionHandler<DMRAction, DMRResponse> {
         assert action.getOperation()!=null;
 
         final ModelNode operation = action.getOperation();
+
+        String token = InvocationMetrics.getToken(operation);
+        int hashCode = token.hashCode();
+
+        /*if(scheduled.containsKey(hashCode))
+        {
+            // discard
+            System.out.println("discard "+hashCode+" -> "+token);
+        }
+        else
+        {
+            final Integer key = new Integer(hashCode);
+            scheduled.put(key, operation);
+
+            //System.out.println("scheduled "+key +" -> "+token);
+
+            Scheduler.get().scheduleFixedPeriod(
+                    new Scheduler.RepeatingCommand() {
+                        @Override
+                        public boolean execute() {
+
+                            final ModelNode operation = scheduled.get(key);
+
+                            executeRequest(new SimpleCallback<DMRResponse>() {
+                                @Override
+                                public void onSuccess(DMRResponse dmrResponse) {
+
+                                    System.out.println("finished "+key);
+                                    scheduled.remove(key);
+                                    resultCallback.onSuccess(dmrResponse);
+                                }
+
+                                @Override
+                                public void onFailure(Throwable caught) {
+                                    scheduled.remove(key);
+                                    resultCallback.onFailure(caught);
+                                }
+                            }, operation);
+                            return false;
+                        }
+                    }, 100
+            );
+        }  */
 
         if(trackInvocations)
         {

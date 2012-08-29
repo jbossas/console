@@ -19,11 +19,12 @@
 
 package org.jboss.as.console.client.shared.dispatch;
 
-import org.jboss.dmr.client.ModelDescriptionConstants;
 import org.jboss.dmr.client.ModelNode;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 
 /**
  * @author Heiko Braun
@@ -35,30 +36,67 @@ public class InvocationMetrics {
 
     public void addInvocation(ModelNode operation)
     {
+        final String token = getToken(operation);
 
-        String key = deriveKey(operation);
-
-        Double value = numInvocations.get(key);
+        Double value = numInvocations.get(token);
         if(null==value)
-            numInvocations.put(key, 1.0);
+        {
+            numInvocations.put(token , 1.0);
+        }
         else
         {
-            numInvocations.put(key, ++value);
+            numInvocations.put(token, ++value);
         }
     }
 
-    private String deriveKey(ModelNode operation) {
-        String key = operation.get(ModelDescriptionConstants.OP_ADDR) + "::" +
-                operation.get(ModelDescriptionConstants.OP);
+    public static String getToken(ModelNode operation) {
 
-        String childType = operation.get(ModelDescriptionConstants.CHILD_TYPE) == null ?
-                "" : " (child-type="+operation.get(ModelDescriptionConstants.CHILD_TYPE).asString() +")";
-        key+=childType;
-
-        return key;
+        StringBuffer sb = new StringBuffer();
+        if(operation.get(OP).asString().equals(COMPOSITE))
+        {
+            for(ModelNode step : operation.get(STEPS).asList())
+            {
+                sb.append("_").append(getOpToken(step));
+            }
+        }
+        else
+        {
+            sb.append(getOpToken(operation));
+        }
+        return sb.toString();
     }
 
-    public Map<String, Double> getNumInvocations() {
+    private static String getOpToken(ModelNode operation) {
+        StringBuffer sb = new StringBuffer();
+        sb.append(operation.get(ADDRESS).asString())
+                .append(":")
+                .append(operation.get(OP))
+                .append(";")
+                .append(operation.get(CHILD_TYPE).asString())
+                .append(";")
+                .append(operation.get(NAME).asString());
+        return sb.toString();
+    }
+
+    public void reset() {
+        numInvocations.clear();
+    }
+
+    public Map<String, Double> getStats() {
         return numInvocations;
+    }
+
+    public boolean hasMetrics()
+    {
+        return !numInvocations.isEmpty();
+    }
+
+    public void dump() {
+
+        for(String key : numInvocations.keySet())
+        {
+            System.out.println(numInvocations.get(key) +":\t"+key.hashCode() + " \t "+key);
+        }
+
     }
 }

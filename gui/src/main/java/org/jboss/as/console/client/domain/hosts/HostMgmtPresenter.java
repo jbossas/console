@@ -120,9 +120,6 @@ public class HostMgmtPresenter
 
     private void loadViews() {
 
-
-        System.out.println("load host mgmt presenter:"+ placeManager.getCurrentPlaceRequest().getNameToken());
-
         if(bootstrap.getInitialPlace()!=null)
         {
             Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {

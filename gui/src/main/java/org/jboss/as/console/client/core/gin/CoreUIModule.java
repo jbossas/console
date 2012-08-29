@@ -21,7 +21,6 @@
 package org.jboss.as.console.client.core.gin;
 
 import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.event.shared.SimpleEventBus;
 import com.google.inject.Singleton;
 import com.gwtplatform.mvp.client.RootPresenter;
 import com.gwtplatform.mvp.client.gin.AbstractPresenterModule;
@@ -33,6 +32,7 @@ import org.jboss.as.console.client.auth.SignInPagePresenter;
 import org.jboss.as.console.client.auth.SignInPageView;
 import org.jboss.as.console.client.core.ApplicationProperties;
 import org.jboss.as.console.client.core.BootstrapContext;
+import org.jboss.as.console.client.core.DebugEventBus;
 import org.jboss.as.console.client.core.DefaultPlaceManager;
 import org.jboss.as.console.client.core.DomainGateKeeper;
 import org.jboss.as.console.client.core.DomainUse;
@@ -245,7 +245,7 @@ public class CoreUIModule extends AbstractPresenterModule {
 
         // ----------------------------------------------------------------------
 
-        bind(EventBus.class).to(SimpleEventBus.class).in(Singleton.class);
+        bind(EventBus.class).to(DebugEventBus.class).in(Singleton.class);
         bind(PlaceManager.class).to(DefaultPlaceManager.class).in(Singleton.class);
 
         // see http://code.google.com/p/gwt-platform/issues/detail?id=381
