@@ -13,7 +13,7 @@ import java.util.Map;
 public class DMRCache {
 
     private static Map<String, DMRResponse> values = new HashMap<String, DMRResponse>();
-    private static int expiryTimeMs = 1500;
+    private static int expiryTimeMs = 5*1000;
 
     public void put(final String key, DMRResponse response)
     {
