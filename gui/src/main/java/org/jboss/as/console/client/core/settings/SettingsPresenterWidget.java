@@ -19,14 +19,17 @@
 
 package org.jboss.as.console.client.core.settings;
 
+import com.google.gwt.autobean.shared.AutoBeanUtils;
 import com.google.gwt.event.shared.EventBus;
 import com.gwtplatform.mvp.client.PopupView;
 import com.gwtplatform.mvp.client.PresenterWidget;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.Preferences;
+import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 
 import javax.inject.Inject;
+import java.util.Map;
 
 /**
  * Maintains the settings dialogue
@@ -38,6 +41,7 @@ public class SettingsPresenterWidget
         extends PresenterWidget<SettingsPresenterWidget.MyView> {
 
     private BeanFactory factory;
+    private ApplicationMetaData metaData;
 
 
     public interface MyView extends PopupView {
@@ -61,8 +65,22 @@ public class SettingsPresenterWidget
     public void onSaveDialogue(CommonSettings settings) {
 
         // see also App.gwt.xml
-        if(settings.getLocale()!=null && !settings.getLocale().equals(""))
-            Preferences.set("as7_ui_locale", settings.getLocale());
+
+        Map<String, Object> properties = AutoBeanUtils.getAllProperties(
+                AutoBeanUtils.getAutoBean(settings)
+        );
+
+        System.out.println(properties);
+
+        for(String token : properties.keySet())
+        {
+            Preferences.Key key = Preferences.Key.match(token);
+            assert key !=null : "invalid token "+token;
+            Object value = properties.get(token);
+            if(null==value || value.equals(""))
+                value = key.getDefaultValue();
+            Preferences.set(key, String.valueOf(value));
+        }
 
         Console.info(Console.MESSAGES.savedSettings());
 
@@ -74,7 +92,12 @@ public class SettingsPresenterWidget
 
     public CommonSettings getCommonSettings() {
         CommonSettings settings = factory.settings().as();
-        settings.setLocale(Preferences.get("as7_ui_locale"));
+        settings.setLocale(Preferences.get(Preferences.Key.LOCALE));
+        settings.setUseCache(
+                Boolean.valueOf(
+                        Preferences.get(Preferences.Key.USE_CACHE, "false")
+                )
+        );
         return settings;
     }
 

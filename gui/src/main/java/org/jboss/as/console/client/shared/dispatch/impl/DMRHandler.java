@@ -31,6 +31,7 @@ import com.google.inject.Inject;
 import org.jboss.as.console.client.core.BootstrapContext;
 import org.jboss.as.console.client.core.UIConstants;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
+import org.jboss.as.console.client.shared.Preferences;
 import org.jboss.as.console.client.shared.dispatch.ActionHandler;
 import org.jboss.as.console.client.shared.dispatch.DMRCache;
 import org.jboss.as.console.client.shared.dispatch.DispatchRequest;
@@ -52,7 +53,7 @@ public class DMRHandler implements ActionHandler<DMRAction, DMRResponse> {
     private final RequestBuilder requestBuilder;
 
     private boolean trackInvocations = !GWT.isScript();
-    private boolean useCache = true;
+    private boolean useCache = false;
 
     private InvocationMetrics metrics;
     private UIConstants constants;
@@ -72,6 +73,12 @@ public class DMRHandler implements ActionHandler<DMRAction, DMRResponse> {
 
         requestBuilder.setHeader(HEADER_ACCEPT, DMR_ENCODED);
         requestBuilder.setHeader(HEADER_CONTENT_TYPE, DMR_ENCODED);
+
+        String cachePref = Preferences.get(Preferences.Key.USE_CACHE, "false");
+        useCache = Boolean.valueOf(cachePref);
+
+        if(useCache)
+            Log.warn("Using DMR cache. please note that this is an experimental feature!");
     }
 
     @Override

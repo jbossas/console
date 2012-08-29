@@ -49,6 +49,7 @@ import org.jboss.as.console.client.core.gin.Composite;
 import org.jboss.as.console.client.core.message.Message;
 import org.jboss.as.console.client.core.message.MessageCenter;
 import org.jboss.as.console.client.plugins.SubsystemRegistry;
+import org.jboss.as.console.client.shared.Preferences;
 import org.jboss.as.console.client.shared.help.HelpSystem;
 
 import java.util.EnumSet;
@@ -100,6 +101,14 @@ public class Console implements EntryPoint {
             public void onSuccess() {
                 DelayedBindRegistry.bind(MODULES);
 
+
+                // dump prefs
+                for(Preferences.Key key : Preferences.Key.values())
+                {
+                    String prefValue = Preferences.get(key) !=null ? Preferences.get(key) : "n/a";
+                    System.out.println(key.getTitle()+": "+ prefValue);
+                }
+
                 // ordered bootstrap
                 final BootstrapProcess bootstrap = new BootstrapProcess();
 
@@ -133,7 +142,6 @@ public class Console implements EntryPoint {
                             HTMLPanel explanation = new HTMLPanel("<center><div style='padding-top:150px;'><h2>The web console could not be loaded.</h2>"+cause+"</div></center>");
                             RootLayoutPanel.get().add(explanation);
                         }
-
                     }
                 });
             }

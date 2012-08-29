@@ -28,31 +28,77 @@ import java.util.Date;
  */
 public class Preferences
 {
-    public static boolean has(String key)
+
+    private static final String AS7_UI = "as7_ui_";
+
+    public enum Key {
+
+        LOCALE("locale", "Locale", "en"),
+        USE_CACHE("useCache", "Use Cache", "false");
+
+        private String token;
+        private String title;
+        private Object defaultValue;
+
+        private Key(String token, String title, Object defaultValue) {
+            this.token = token;
+            this.title = title;
+            this.defaultValue = defaultValue;
+        }
+
+        public String getToken() {
+            return token;
+        }
+
+        public String getTitle() {
+            return title;
+        }
+
+        public static Key match(String token) {
+
+            Key match = null;
+            for(Key key : values())
+            {
+                if(token.equals(key.getToken()))
+                {
+                    match = key;
+                    break;
+                }
+            }
+
+            return match;
+        }
+
+        public Object getDefaultValue() {
+            return defaultValue;
+        }
+    }
+
+    public static boolean has(Key key)
     {
         return get(key)!=null;
     }
 
-    public static String get(String key, String defaultValue)
+    public static String get(Key key, String defaultValue)
     {
         String cookie = get(key);
         if(null==cookie) cookie = defaultValue;
         return cookie;
     }
 
-    public static String get(String key)
+    public static String get(Key key)
     {
-        return Cookies.getCookie(key);
+        return Cookies.getCookie(AS7_UI +key.getToken());
     }
 
-    public static void set(String key, String value)
+    public static void set(Key key, String value)
     {
         Date twoWeeks = new Date(System.currentTimeMillis()+(2*604800*1000));
-        Cookies.setCookie(key, value, twoWeeks);
+        Cookies.setCookie(AS7_UI +key.getToken(), value, twoWeeks);
     }
 
-    public static void clear(String key)
+    public static void clear(Key key)
     {
-        Cookies.removeCookie(key);
+        Cookies.removeCookie(AS7_UI +key.getToken());
     }
 }

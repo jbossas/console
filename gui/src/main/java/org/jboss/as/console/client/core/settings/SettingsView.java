@@ -30,6 +30,8 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.PopupViewImpl;
 import org.jboss.as.console.client.Console;
+import org.jboss.as.console.client.shared.Preferences;
+import org.jboss.ballroom.client.widgets.forms.CheckBoxItem;
 import org.jboss.ballroom.client.widgets.forms.ComboBoxItem;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.window.DefaultWindow;
@@ -59,12 +61,13 @@ public class SettingsView extends PopupViewImpl implements SettingsPresenterWidg
 
         form = new Form<CommonSettings>(CommonSettings.class);
 
-        ComboBoxItem localeItem = new ComboBoxItem("locale", "Locale");
+        ComboBoxItem localeItem = new ComboBoxItem(Preferences.Key.LOCALE.getToken(), Preferences.Key.LOCALE.getTitle());
 
         localeItem.setDefaultToFirstOption(true);
         localeItem.setValueMap(new String[] {"en", "de", "zh_Hans", "pt_BR", "fr", "es", "ja"});
 
-        form.setFields(localeItem);
+        CheckBoxItem useCache = new CheckBoxItem(Preferences.Key.USE_CACHE.getToken(), Preferences.Key.USE_CACHE.getTitle());
+        form.setFields(localeItem, useCache);
 
         Widget formWidget = form.asWidget();
         formWidget.getElement().setAttribute("style", "margin:15px");
