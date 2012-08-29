@@ -142,9 +142,13 @@ public class MainLayoutPresenter
             Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
                 @Override
                 public void execute() {
-                    System.out.println("--- reset stats: "+placeManager.getCurrentPlaceRequest().getNameToken()+" ---");
-                    metrics.dump();
-                    System.out.println("--- /reset stats ---");
+
+                    if(metrics.hasMetrics())
+                    {
+                        System.out.println("--- reset stats: "+placeManager.getCurrentPlaceRequest().getNameToken()+" ---");
+                        metrics.dump();
+                        System.out.println("--- /reset stats ---");
+                    }
                 }
             });
 

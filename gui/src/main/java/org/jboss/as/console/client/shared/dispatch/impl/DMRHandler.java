@@ -49,7 +49,7 @@ public class DMRHandler implements ActionHandler<DMRAction, DMRResponse> {
 
     private final RequestBuilder requestBuilder;
 
-    private boolean trackInvocations = true; // TODO
+    private boolean trackInvocations = !GWT.isScript();
     private InvocationMetrics metrics;
     private UIConstants constants;
 
