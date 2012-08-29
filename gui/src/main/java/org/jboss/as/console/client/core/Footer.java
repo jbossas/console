@@ -23,9 +23,12 @@ import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.layout.client.Layout;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.LayoutPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
@@ -101,9 +104,12 @@ public class Footer {
             }
         });
 
-        layout.add(logout);
-        layout.add(settings);
-        layout.add(dmrBrowser);
+        HorizontalPanel tools = new HorizontalPanel();
+        tools.add(dmrBrowser);
+        tools.add(settings);
+        tools.add(logout);
+
+        layout.add(tools);
 
         HTML version = new HTML(org.jboss.as.console.client.Build.VERSION);
         version.getElement().setAttribute("style", "color:#ffffff;font-size:10px; align:left");
@@ -112,15 +118,10 @@ public class Footer {
         layout.setWidgetLeftWidth(version, 20, Style.Unit.PX, 200, Style.Unit.PX);
         layout.setWidgetTopHeight(version, 3, Style.Unit.PX, 16, Style.Unit.PX);
 
-        layout.setWidgetRightWidth(logout, 5, Style.Unit.PX, 60, Style.Unit.PX);
-        layout.setWidgetTopHeight(logout, 2, Style.Unit.PX, 28, Style.Unit.PX);
+        layout.setWidgetRightWidth(tools, 5, Style.Unit.PX, 500, Style.Unit.PX);
+        layout.setWidgetTopHeight(tools, 2, Style.Unit.PX, 28, Style.Unit.PX);
 
-        layout.setWidgetRightWidth(settings, 65, Style.Unit.PX, 120, Style.Unit.PX);
-        layout.setWidgetTopHeight(settings, 2, Style.Unit.PX, 28, Style.Unit.PX);
-
-        layout.setWidgetRightWidth(dmrBrowser, 125, Style.Unit.PX, 185, Style.Unit.PX);
-        layout.setWidgetTopHeight(dmrBrowser, 2, Style.Unit.PX, 28, Style.Unit.PX);
-
+        layout.setWidgetHorizontalPosition(tools, Layout.Alignment.END);
 
         layout.getElement().setAttribute("role", "complementary");
 
