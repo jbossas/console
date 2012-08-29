@@ -329,7 +329,7 @@ public class HostInfoStoreImpl implements HostInformationStore {
 
                             numRequests++;
 
-                            dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+                            dispatcher.execute(new DMRAction(operation, false), new SimpleCallback<DMRResponse>() {
 
 
                                 @Override
