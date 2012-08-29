@@ -30,7 +30,9 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
 import org.jboss.as.console.client.core.BootstrapContext;
 import org.jboss.as.console.client.core.UIConstants;
+import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.shared.dispatch.ActionHandler;
+import org.jboss.as.console.client.shared.dispatch.DMRCache;
 import org.jboss.as.console.client.shared.dispatch.DispatchRequest;
 import org.jboss.as.console.client.shared.dispatch.InvocationMetrics;
 import org.jboss.dmr.client.ModelNode;
@@ -50,8 +52,12 @@ public class DMRHandler implements ActionHandler<DMRAction, DMRResponse> {
     private final RequestBuilder requestBuilder;
 
     private boolean trackInvocations = !GWT.isScript();
+    private boolean useCache = true;
+
     private InvocationMetrics metrics;
     private UIConstants constants;
+
+    private static DMRCache cache = new DMRCache();
 
     @Inject
     public DMRHandler(BootstrapContext bootstrap, InvocationMetrics metrics, UIConstants constants) {
@@ -74,15 +80,52 @@ public class DMRHandler implements ActionHandler<DMRAction, DMRResponse> {
         assert action.getOperation()!=null;
 
         final ModelNode operation = action.getOperation();
+        final String token = InvocationMetrics.getToken(operation);
 
         if(trackInvocations)
         {
             metrics.addInvocation(operation);
+            requestBuilder.setHeader("x-correlationId", String.valueOf(token.hashCode()));
         }
 
-        Request requestHandle = executeRequest(resultCallback, operation);
+        DispatchRequest handle = null;
+        if(useCache)
+        {
+            handle = executeCached(token, operation, resultCallback);
+        }
+        else {
+            Request request = executeRequest(resultCallback, operation);
+            handle = new DispatchRequestHandle(request);
+        }
 
-        return new DispatchRequestHandle(requestHandle);
+        return handle;
+
+    }
+
+    private DispatchRequestHandle executeCached(final String token, ModelNode operation, final AsyncCallback<DMRResponse> resultCallback) {
+        DMRResponse cachedResponse = cache.get(token);
+        if(cachedResponse!=null)
+        {
+            resultCallback.onSuccess(cachedResponse);
+            return new DispatchRequestHandle(null);
+        }
+        else
+        {
+            Request requestHandle = executeRequest(new SimpleCallback<DMRResponse>() {
+                @Override
+                public void onSuccess(DMRResponse dmrResponse) {
+                    cache.put(token, dmrResponse);
+                    resultCallback.onSuccess(dmrResponse);
+                }
+
+                @Override
+                public void onFailure(Throwable caught) {
+                    resultCallback.onFailure(caught);
+                }
+            }, operation);
+
+            return new DispatchRequestHandle(requestHandle);
+        }
     }
 
     private Request executeRequest(final AsyncCallback<DMRResponse> resultCallback, final ModelNode operation) {
