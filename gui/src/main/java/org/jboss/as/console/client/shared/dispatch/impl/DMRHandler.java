@@ -89,7 +89,7 @@ public class DMRHandler implements ActionHandler<DMRAction, DMRResponse> {
         }
 
         DispatchRequest handle = null;
-        if(useCache)
+        if(useCache && action.isCachable())
         {
             handle = executeCached(token, operation, resultCallback);
         }

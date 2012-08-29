@@ -30,9 +30,15 @@ import org.jboss.dmr.client.ModelNode;
 public class DMRAction implements Action<DMRResponse> {
 
     private ModelNode operation;
+    private boolean cachable = true;
 
     public DMRAction(ModelNode operation) {
         this.operation = operation;
+    }
+
+    public DMRAction(ModelNode operation, boolean cachable) {
+        this.operation = operation;
+        this.cachable = cachable;
     }
 
     @Override
@@ -53,6 +59,14 @@ public class DMRAction implements Action<DMRResponse> {
     public ModelNode getOperation()
     {
         return this.operation;
+    }
+
+    public void setCachable(boolean cachable) {
+        this.cachable = cachable;
+    }
+
+    public boolean isCachable() {
+        return cachable;
     }
 }
 
