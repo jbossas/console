@@ -106,7 +106,7 @@ public class DMRHandler implements ActionHandler<DMRAction, DMRResponse> {
         DMRResponse cachedResponse = cache.get(token);
         if(cachedResponse!=null)
         {
-            System.out.println("Cache hit: "+token.hashCode());
+            //System.out.println("Cache hit: "+token.hashCode());
 
             resultCallback.onSuccess(cachedResponse);
             return new DispatchRequestHandle(null);
