@@ -104,6 +104,7 @@ public class Footer {
             }
         });
 
+
         HorizontalPanel tools = new HorizontalPanel();
         tools.add(dmrBrowser);
         tools.add(settings);

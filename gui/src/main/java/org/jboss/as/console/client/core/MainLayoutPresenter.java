@@ -123,6 +123,7 @@ public class MainLayoutPresenter
 
     }
 
+
     @Override
     protected void onHide() {
         super.onHide();
@@ -154,4 +155,5 @@ public class MainLayoutPresenter
 
         }
     }
+
 }

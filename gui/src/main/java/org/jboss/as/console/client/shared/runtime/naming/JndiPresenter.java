@@ -43,6 +43,8 @@ import org.jboss.as.console.client.shared.state.ServerSelectionEvent;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
 import org.jboss.dmr.client.ModelNode;
 
+import java.util.Collections;
+
 import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 
 /**
@@ -92,7 +94,6 @@ public class JndiPresenter extends Presenter<JndiPresenter.MyView, JndiPresenter
         if(isVisible())
         {
             System.out.println(hostName+">"+server.getName());
-
             loadJndiTree();
         }
     }
