@@ -30,7 +30,6 @@ public class TXRollbackView implements Sampler {
     }
 
     public TXRollbackView() {
-        this.presenter = presenter;
     }
 
     public Widget asWidget() {
