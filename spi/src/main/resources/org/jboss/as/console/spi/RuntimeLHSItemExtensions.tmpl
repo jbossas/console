@@ -1,0 +1,29 @@
+
+package org.jboss.as.console.client.plugins;
+
+import java.util.*;
+
+public class RuntimeLHSItemExtensionRegistryImpl implements RuntimeLHSItemExtensionRegistry {
+
+    private List<RuntimeLHSItemExtension> list;
+
+    public RuntimeLHSItemExtensionRegistryImpl() {
+
+        list = new ArrayList<RuntimeLHSItemExtension>();
+
+        <#list runtimeMenuItemExtensions as runtime>
+            list.add(new RuntimeLHSItemExtension(
+                "${runtime.getName()}",
+                "${runtime.getToken()}",
+                "${runtime.getGroup()}",
+                "${runtime.getKey()}")
+            );
+        </#list>
+
+    }
+
+    public List<RuntimeLHSItemExtension> getExtensions() {
+        return list;
+    }
+
+}
