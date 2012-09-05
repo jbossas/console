@@ -24,6 +24,7 @@ import org.jboss.as.console.client.shared.subsys.tx.model.TransactionManager;
 import org.jboss.as.console.client.widgets.forms.AddressBinding;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.as.console.client.widgets.forms.EntityAdapter;
+import org.jboss.as.console.spi.RuntimeLHSItemExtension;
 import org.jboss.dmr.client.ModelNode;
 
 import static org.jboss.dmr.client.ModelDescriptionConstants.*;
@@ -43,6 +44,7 @@ public class TXMetricPresenter extends Presenter<TXMetricPresenter.MyView, TXMet
 
     @ProxyCodeSplit
     @NameToken(NameTokens.TXMetrics)
+    @RuntimeLHSItemExtension(name="Transactions", group="Transactions", key="transactions")
     public interface MyProxy extends Proxy<TXMetricPresenter>, Place {
     }
 

@@ -25,6 +25,7 @@
                 <exclude>org/jboss/as/console/client/core/gin/CompositeBinding.java</exclude>
                 <exclude>org/jboss/as/console/client/shared/BeanFactory.java</exclude>
                 <exclude>org/jboss/as/console/client/plugins/SubsystemRegistryImpl.java</exclude>
+                <exclude>org/jboss/as/console/client/plugins/RuntimeLHSItemExtensionsRegistryImpl.java</exclude>
             </excludes>
         </fileSet>
         <fileSet>
@@ -38,6 +39,7 @@
                 <exclude>org/jboss/as/console/client/core/gin/CompositeBinding.class</exclude>
                 <exclude>org/jboss/as/console/client/shared/BeanFactory.class</exclude>
                 <exclude>org/jboss/as/console/client/plugins/SubsystemRegistryImpl.class</exclude>
+                <exclude>org/jboss/as/console/client/plugins/RuntimeLHSItemExtensionsRegistryImpl.class</exclude>
             </excludes>
         </fileSet>
     </fileSets>

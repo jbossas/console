@@ -213,6 +213,7 @@
                                 <processor>org.jboss.as.console.spi.ExtensionBindingProcessor</processor>
                                 <processor>org.jboss.as.console.spi.BeanFactoryProcessor</processor>
                                 <processor>org.jboss.as.console.spi.SubsystemProcessor</processor>
+                                <processor>org.jboss.as.console.spi.RuntimeLHSItemExtensionProcessor</processor>
                             </processors>
                         </configuration>
                     </execution>

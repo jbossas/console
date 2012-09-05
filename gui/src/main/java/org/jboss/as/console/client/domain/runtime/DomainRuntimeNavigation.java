@@ -8,6 +8,8 @@ import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.domain.hosts.ServerPicker;
 import org.jboss.as.console.client.domain.model.Host;
 import org.jboss.as.console.client.domain.model.ServerInstance;
+import org.jboss.as.console.client.plugins.RuntimeLHSItemExtension;
+import org.jboss.as.console.client.plugins.RuntimeLHSItemExtensionRegistry;
 import org.jboss.as.console.client.shared.model.SubsystemRecord;
 import org.jboss.as.console.client.shared.state.CurrentServerSelection;
 import org.jboss.as.console.client.shared.state.ServerSelectionEvent;
@@ -98,7 +100,6 @@ class DomainRuntimeNavigation implements ServerSelectionEvent.ServerSelectionLis
         LHSNavTreeItem datasources = new LHSNavTreeItem("Datasources", NameTokens.DataSourceMetricPresenter);
         LHSNavTreeItem jmsQueues = new LHSNavTreeItem("JMS Destinations", NameTokens.JmsMetricPresenter);
         LHSNavTreeItem web = new LHSNavTreeItem("Web", NameTokens.WebMetricPresenter);
-        LHSNavTreeItem tx = new LHSNavTreeItem("Transactions", NameTokens.TXMetrics);
         LHSNavTreeItem jpa = new LHSNavTreeItem("JPA", NameTokens.JPAMetricPresenter);
         LHSNavTreeItem naming = new LHSNavTreeItem("JNDI View", NameTokens.JndiPresenter);
 
@@ -106,7 +107,6 @@ class DomainRuntimeNavigation implements ServerSelectionEvent.ServerSelectionLis
         metricPredicates.add(new Predicate("datasources", datasources));
         metricPredicates.add(new Predicate("messaging", jmsQueues));
         metricPredicates.add(new Predicate("web", web));
-        metricPredicates.add(new Predicate("transactions", tx));
         metricPredicates.add(new Predicate("jpa", jpa));
         metricPredicates.add(new Predicate("naming", naming));
 
@@ -165,6 +165,18 @@ class DomainRuntimeNavigation implements ServerSelectionEvent.ServerSelectionLis
 
         final LHSNavTreeItem webservices = new LHSNavTreeItem("Webservices", NameTokens.WebServiceRuntimePresenter);
         metricLeaf.addItem(webservices);
+        
+        // Extension based additions
+        RuntimeLHSItemExtensionRegistry registry = Console.getRuntimeLHSItemExtensionRegistry();
+        List<RuntimeLHSItemExtension> menuExtensions = registry.getExtensions();
+        for (RuntimeLHSItemExtension ext:menuExtensions) {
+        	
+        	for(SubsystemRecord subsys : subsystems) {
+        		if (subsys.getKey().equals(ext.getKey())) {
+        			metricLeaf.addItem(new LHSNavTreeItem(ext.getName(), ext.getToken()));
+        		}
+        	}
+        }        
 
         navigation.expandTopLevel();
 

@@ -25,7 +25,6 @@ public class TXExecutionView implements Sampler {
     private Sampler sampler = null;
 
     public TXExecutionView() {
-        this.presenter = presenter;
     }
 
     public Widget asWidget() {

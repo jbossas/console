@@ -4,7 +4,12 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
+import org.jboss.as.console.client.plugins.RuntimeLHSItemExtension;
+import org.jboss.as.console.client.plugins.RuntimeLHSItemExtensionRegistry;
+import org.jboss.as.console.client.plugins.SubsystemRegistry;
 import org.jboss.as.console.client.shared.model.SubsystemRecord;
 import org.jboss.as.console.client.widgets.nav.Predicate;
 import org.jboss.ballroom.client.layout.LHSTreeSection;
@@ -66,7 +71,7 @@ public class StandaloneRuntimeNavigation {
         LHSNavTreeItem datasources = new LHSNavTreeItem("Datasources", "ds-metrics");
         LHSNavTreeItem jmsQueues = new LHSNavTreeItem("JMS Destinations", "jms-metrics");
         LHSNavTreeItem web = new LHSNavTreeItem("Web", "web-metrics");
-        LHSNavTreeItem tx = new LHSNavTreeItem("Transactions", "tx-metrics");
+        //LHSNavTreeItem tx = new LHSNavTreeItem("Transactions", "tx-metrics");
         LHSNavTreeItem jpa = new LHSNavTreeItem("JPA", NameTokens.JPAMetricPresenter);
         LHSNavTreeItem ws = new LHSNavTreeItem("Webservices", NameTokens.WebServiceRuntimePresenter);
         LHSNavTreeItem naming = new LHSNavTreeItem("JNDI View", NameTokens.JndiPresenter);
@@ -74,7 +79,7 @@ public class StandaloneRuntimeNavigation {
         metricPredicates.add(new Predicate("datasources", datasources));
         metricPredicates.add(new Predicate("messaging", jmsQueues));
         metricPredicates.add(new Predicate("web", web));
-        metricPredicates.add(new Predicate("transactions", tx));
+        //metricPredicates.add(new Predicate("transactions", tx));
         metricPredicates.add(new Predicate("jpa", jpa));
         metricPredicates.add(new Predicate("webservices", ws));
         metricPredicates.add(new Predicate("naming", naming));
@@ -131,9 +136,20 @@ public class StandaloneRuntimeNavigation {
                     runtimeLeaf.addItem(predicate.getNavItem());
             }
         }
+        
+        // Extension based additions
+        RuntimeLHSItemExtensionRegistry registry = Console.getRuntimeLHSItemExtensionRegistry();
+        List<RuntimeLHSItemExtension> menuExtensions = registry.getExtensions();
+        for (RuntimeLHSItemExtension ext:menuExtensions) {
+        	
+        	for(SubsystemRecord subsys : subsystems) {
+        		if (subsys.getKey().equals(ext.getKey())) {
+        			metricLeaf.addItem(new LHSNavTreeItem(ext.getName(), ext.getToken()));
+        		}
+        	}
+        }
 
         navigation.expandTopLevel();
-
     }
 
 
