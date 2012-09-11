@@ -1,5 +1,6 @@
 package org.jboss.as.console.client.domain.runtime;
 
+import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -10,6 +11,7 @@ import org.jboss.as.console.client.domain.model.Host;
 import org.jboss.as.console.client.domain.model.ServerInstance;
 import org.jboss.as.console.client.plugins.RuntimeExtensionMetaData;
 import org.jboss.as.console.client.plugins.RuntimeExtensionRegistry;
+import org.jboss.as.console.client.plugins.RuntimeGroup;
 import org.jboss.as.console.client.shared.model.SubsystemRecord;
 import org.jboss.as.console.client.shared.state.CurrentServerSelection;
 import org.jboss.as.console.client.shared.state.ServerSelectionEvent;
@@ -109,6 +111,34 @@ class DomainRuntimeNavigation implements ServerSelectionEvent.ServerSelectionLis
         metricPredicates.add(new Predicate("jpa", jpa));
         metricPredicates.add(new Predicate("naming", naming));
 
+
+         // Extension based additions
+        RuntimeExtensionRegistry registry = Console.getRuntimeLHSItemExtensionRegistry();
+        List<RuntimeExtensionMetaData> menuExtensions = registry.getExtensions();
+        for (RuntimeExtensionMetaData ext : menuExtensions) {
+
+            if(RuntimeGroup.METRICS.equals(ext.getGroup()))
+            {
+                metricPredicates.add(
+                        new Predicate(
+                                ext.getKey(), new LHSNavTreeItem(ext.getName(), ext.getToken())
+                        )
+                );
+            }
+            else if(RuntimeGroup.OPERATiONS.equals(ext.getGroup()))
+            {
+                runtimePredicates.add(
+                        new Predicate(
+                                ext.getKey(), new LHSNavTreeItem(ext.getName(), ext.getToken())
+                        )
+                );
+            }
+            else
+            {
+                Log.warn("Invalid runtime group for extension: " + ext.getGroup());
+            }
+        }
+
         // ---
 
         runtimeLeaf = new LHSTreeSection("Runtime Operations");
@@ -164,18 +194,6 @@ class DomainRuntimeNavigation implements ServerSelectionEvent.ServerSelectionLis
 
         final LHSNavTreeItem webservices = new LHSNavTreeItem("Webservices", NameTokens.WebServiceRuntimePresenter);
         metricLeaf.addItem(webservices);
-        
-        // Extension based additions
-        RuntimeExtensionRegistry registry = Console.getRuntimeLHSItemExtensionRegistry();
-        List<RuntimeExtensionMetaData> menuExtensions = registry.getExtensions();
-        for (RuntimeExtensionMetaData ext:menuExtensions) {
-        	
-        	for(SubsystemRecord subsys : subsystems) {
-        		if (subsys.getKey().equals(ext.getKey())) {
-        			metricLeaf.addItem(new LHSNavTreeItem(ext.getName(), ext.getToken()));
-        		}
-        	}
-        }        
 
         navigation.expandTopLevel();
 
