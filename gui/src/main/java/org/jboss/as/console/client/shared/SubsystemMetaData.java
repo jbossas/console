@@ -21,7 +21,7 @@ package org.jboss.as.console.client.shared;
 
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
-import org.jboss.as.console.client.plugins.SubsystemExtension;
+import org.jboss.as.console.client.plugins.SubsystemExtensionMetaData;
 import org.jboss.as.console.client.plugins.SubsystemRegistry;
 import org.jboss.as.console.client.shared.model.SubsystemRecord;
 
@@ -118,7 +118,7 @@ public class SubsystemMetaData {
 
     public static void bootstrap(SubsystemRegistry registry) {
 
-        List<SubsystemExtension> defaults = new ArrayList<SubsystemExtension>();
+        List<SubsystemExtensionMetaData> defaults = new ArrayList<SubsystemExtensionMetaData>();
 
         for(String groupName : groups.keySet())
         {
@@ -127,7 +127,7 @@ public class SubsystemMetaData {
             {
                 if(!item.isDisabled())
                 {
-                    defaults.add(new SubsystemExtension(
+                    defaults.add(new SubsystemExtensionMetaData(
                             item.getName(), item.getPresenter(),
                             group.getName(), item.getKey())
                     );
@@ -197,7 +197,7 @@ public class SubsystemMetaData {
         String[] token = new String[2];
 
         final SubsystemRegistry subsystemRegistry = Console.MODULES.getSubsystemRegistry();
-        for(SubsystemExtension ext : subsystemRegistry.getExtensions())
+        for(SubsystemExtensionMetaData ext : subsystemRegistry.getExtensions())
         {
             if(ext.getKey().equals(key))
             {

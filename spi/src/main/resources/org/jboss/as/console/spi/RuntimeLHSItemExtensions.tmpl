@@ -3,16 +3,16 @@ package org.jboss.as.console.client.plugins;
 
 import java.util.*;
 
-public class RuntimeLHSItemExtensionRegistryImpl implements RuntimeLHSItemExtensionRegistry {
+public class RuntimeLHSItemExtensionRegistryImpl implements RuntimeExtensionRegistry {
 
-    private List<RuntimeLHSItemExtension> list;
+    private List<RuntimeExtensionMetaData> list;
 
     public RuntimeLHSItemExtensionRegistryImpl() {
 
-        list = new ArrayList<RuntimeLHSItemExtension>();
+        list = new ArrayList<RuntimeExtensionMetaData>();
 
         <#list runtimeMenuItemExtensions as runtime>
-            list.add(new RuntimeLHSItemExtension(
+            list.add(new RuntimeExtensionMetaData(
                 "${runtime.getName()}",
                 "${runtime.getToken()}",
                 "${runtime.getGroup()}",
@@ -22,7 +22,7 @@ public class RuntimeLHSItemExtensionRegistryImpl implements RuntimeLHSItemExtens
 
     }
 
-    public List<RuntimeLHSItemExtension> getExtensions() {
+    public List<RuntimeExtensionMetaData> getExtensions() {
         return list;
     }
 

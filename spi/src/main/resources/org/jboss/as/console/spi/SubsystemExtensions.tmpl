@@ -5,14 +5,14 @@ import java.util.*;
 
 public class SubsystemRegistryImpl implements SubsystemRegistry{
 
-    private List<SubsystemExtension> list;
+    private List<SubsystemExtensionMetaData> list;
 
     public SubsystemRegistryImpl() {
 
-        list = new ArrayList<SubsystemExtension>();
+        list = new ArrayList<SubsystemExtensionMetaData>();
 
         <#list subsystemExtensions as subsystem>
-            list.add(new SubsystemExtension(
+            list.add(new SubsystemExtensionMetaData(
                 "${subsystem.getName()}",
                 "${subsystem.getToken()}",
                 "${subsystem.getGroup()}",
@@ -22,7 +22,7 @@ public class SubsystemRegistryImpl implements SubsystemRegistry{
 
     }
 
-    public List<SubsystemExtension> getExtensions() {
+    public List<SubsystemExtensionMetaData> getExtensions() {
         return list;
     }
 

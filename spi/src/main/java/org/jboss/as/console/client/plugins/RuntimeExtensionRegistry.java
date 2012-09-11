@@ -6,7 +6,7 @@ import java.util.List;
  * @author Heiko Braun
  * @date 3/27/12
  */
-public interface RuntimeLHSItemExtensionRegistry {
+public interface RuntimeExtensionRegistry {
 
-    public List<RuntimeLHSItemExtension> getExtensions();
+    public List<RuntimeExtensionMetaData> getExtensions();
 }

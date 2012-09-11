@@ -1,7 +1,7 @@
 package org.jboss.as.console.spi;
 
 import com.gwtplatform.mvp.client.annotations.NameToken;
-import org.jboss.as.console.client.plugins.SubsystemExtension;
+import org.jboss.as.console.client.plugins.RuntimeExtensionMetaData;
 
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.Filer;
@@ -32,7 +32,7 @@ import static javax.lang.model.SourceVersion.RELEASE_6;
  * @date 3/23/12
  */
 @SupportedSourceVersion(RELEASE_6)
-public class RuntimeLHSItemExtensionProcessor extends AbstractProcessor {
+public class RuntimeExtensionProcessor extends AbstractProcessor {
 
     private static final String FILENAME = "org.jboss.as.console.client.plugins.RuntimeLHSItemExtensionRegistryImpl";
     private static final String TEMPLATE = "RuntimeLHSItemExtensions.tmpl";
@@ -40,7 +40,7 @@ public class RuntimeLHSItemExtensionProcessor extends AbstractProcessor {
     private Filer filer;
     private Messager messager;
     private ProcessingEnvironment env;
-    private List<SubsystemExtension> declararions = new ArrayList<SubsystemExtension>();
+    private List<RuntimeExtensionMetaData > declararions = new ArrayList<RuntimeExtensionMetaData>();
 
     @Override
     public void init(ProcessingEnvironment env) {
@@ -52,7 +52,7 @@ public class RuntimeLHSItemExtensionProcessor extends AbstractProcessor {
     @Override
     public Set<String> getSupportedAnnotationTypes() {
         Set<String> types = new HashSet<String>();
-        types.add(RuntimeLHSItemExtension.class.getName());
+        types.add(RuntimeExtension.class.getName());
         types.add(NameToken.class.getName());
         return types;
     }
@@ -63,7 +63,7 @@ public class RuntimeLHSItemExtensionProcessor extends AbstractProcessor {
         if(!roundEnv.processingOver()) {
             System.out.println("Begin Runtime Menu item Extension discovery ...");
 
-            Set<? extends Element> elements = roundEnv.getElementsAnnotatedWith(RuntimeLHSItemExtension.class);
+            Set<? extends Element> elements = roundEnv.getElementsAnnotatedWith(RuntimeExtension.class);
 
             for (Element element: elements)
             {
@@ -95,15 +95,15 @@ public class RuntimeLHSItemExtensionProcessor extends AbstractProcessor {
         {
             final String annotationType = mirror.getAnnotationType().toString();
 
-            if ( annotationType.equals(RuntimeLHSItemExtension.class.getName()) )
+            if ( annotationType.equals(RuntimeExtension.class.getName()) )
             {
                 NameToken nameToken = element.getAnnotation(NameToken.class);
-                RuntimeLHSItemExtension extension = element.getAnnotation(RuntimeLHSItemExtension.class);
+                RuntimeExtension extension = element.getAnnotation(RuntimeExtension.class);
 
                 if(nameToken!=null)   {
                     System.out.println("Runtime menu item: " + extension.name() +" -> "+nameToken.value());
 
-                    SubsystemExtension declared = new SubsystemExtension(
+                    RuntimeExtensionMetaData declared = new RuntimeExtensionMetaData(
                             extension.name(), nameToken.value(),
                             extension.group(), extension.key()
                     );

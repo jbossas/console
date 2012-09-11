@@ -55,7 +55,7 @@ import org.jboss.as.console.client.domain.overview.DomainOverviewPresenter;
 import org.jboss.as.console.client.domain.profiles.CurrentProfileSelection;
 import org.jboss.as.console.client.domain.profiles.ProfileMgmtPresenter;
 import org.jboss.as.console.client.domain.runtime.DomainRuntimePresenter;
-import org.jboss.as.console.client.plugins.RuntimeLHSItemExtensionRegistry;
+import org.jboss.as.console.client.plugins.RuntimeExtensionRegistry;
 import org.jboss.as.console.client.plugins.SubsystemRegistry;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.HandlerMapping;
@@ -141,7 +141,7 @@ public interface CoreUI {
 
 
     SubsystemRegistry getSubsystemRegistry();
-    RuntimeLHSItemExtensionRegistry getRuntimeLHSItemExtensionRegistry();
+    RuntimeExtensionRegistry getRuntimeLHSItemExtensionRegistry();
 
     PlaceManager getPlaceManager();
     EventBus getEventBus();

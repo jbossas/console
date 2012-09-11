@@ -1,7 +1,7 @@
 package org.jboss.as.console.spi;
 
 import com.gwtplatform.mvp.client.annotations.NameToken;
-import org.jboss.as.console.client.plugins.SubsystemExtension;
+import org.jboss.as.console.client.plugins.SubsystemExtensionMetaData;
 
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.Filer;
@@ -40,7 +40,7 @@ public class SubsystemProcessor extends AbstractProcessor {
     private Filer filer;
     private Messager messager;
     private ProcessingEnvironment env;
-    private List<SubsystemExtension> declararions = new ArrayList<SubsystemExtension>();
+    private List<SubsystemExtensionMetaData> declararions = new ArrayList<SubsystemExtensionMetaData>();
 
     @Override
     public void init(ProcessingEnvironment env) {
@@ -52,7 +52,7 @@ public class SubsystemProcessor extends AbstractProcessor {
     @Override
     public Set<String> getSupportedAnnotationTypes() {
         Set<String> types = new HashSet<String>();
-        types.add(Subsystem.class.getName());
+        types.add(SubsystemExtension.class.getName());
         types.add(NameToken.class.getName());
         return types;
     }
@@ -63,7 +63,7 @@ public class SubsystemProcessor extends AbstractProcessor {
         if(!roundEnv.processingOver()) {
             System.out.println("Begin Subsystem discovery ...");
 
-            Set<? extends Element> elements = roundEnv.getElementsAnnotatedWith(Subsystem.class);
+            Set<? extends Element> elements = roundEnv.getElementsAnnotatedWith(SubsystemExtension.class);
 
             for (Element element: elements)
             {
@@ -95,15 +95,15 @@ public class SubsystemProcessor extends AbstractProcessor {
         {
             final String annotationType = mirror.getAnnotationType().toString();
 
-            if ( annotationType.equals(Subsystem.class.getName()) )
+            if ( annotationType.equals(SubsystemExtension.class.getName()) )
             {
                 NameToken nameToken = element.getAnnotation(NameToken.class);
-                Subsystem subsystem = element.getAnnotation(Subsystem.class);
+                SubsystemExtension subsystem = element.getAnnotation(SubsystemExtension.class);
 
                 if(nameToken!=null)   {
                     System.out.println("Subsystem: " + subsystem.name() +" -> "+nameToken.value());
 
-                    SubsystemExtension declared = new SubsystemExtension(
+                    SubsystemExtensionMetaData declared = new SubsystemExtensionMetaData(
                             subsystem.name(), nameToken.value(),
                             subsystem.group(), subsystem.key()
                     );

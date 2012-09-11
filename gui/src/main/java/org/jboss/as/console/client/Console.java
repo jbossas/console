@@ -48,9 +48,9 @@ import org.jboss.as.console.client.core.bootstrap.RemoveLoadingPanel;
 import org.jboss.as.console.client.core.gin.Composite;
 import org.jboss.as.console.client.core.message.Message;
 import org.jboss.as.console.client.core.message.MessageCenter;
+import org.jboss.as.console.client.plugins.RuntimeExtensionRegistry;
 import org.jboss.as.console.client.plugins.SubsystemRegistry;
 import org.jboss.as.console.client.shared.Preferences;
-import org.jboss.as.console.client.plugins.RuntimeLHSItemExtensionRegistry;
 import org.jboss.as.console.client.shared.help.HelpSystem;
 
 import java.util.EnumSet;
@@ -242,7 +242,7 @@ public class Console implements EntryPoint {
         return MODULES.getSubsystemRegistry();
     }
     
-    public static RuntimeLHSItemExtensionRegistry getRuntimeLHSItemExtensionRegistry() {
+    public static RuntimeExtensionRegistry getRuntimeLHSItemExtensionRegistry() {
         return MODULES.getRuntimeLHSItemExtensionRegistry();
     }    
 }

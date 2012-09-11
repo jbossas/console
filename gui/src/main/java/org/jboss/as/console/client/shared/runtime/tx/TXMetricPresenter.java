@@ -12,6 +12,7 @@ import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.domain.model.ServerInstance;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
+import org.jboss.as.console.client.plugins.RuntimeGroup;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
@@ -24,7 +25,7 @@ import org.jboss.as.console.client.shared.subsys.tx.model.TransactionManager;
 import org.jboss.as.console.client.widgets.forms.AddressBinding;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.as.console.client.widgets.forms.EntityAdapter;
-import org.jboss.as.console.spi.RuntimeLHSItemExtension;
+import org.jboss.as.console.spi.RuntimeExtension;
 import org.jboss.dmr.client.ModelNode;
 
 import static org.jboss.dmr.client.ModelDescriptionConstants.*;
@@ -44,7 +45,7 @@ public class TXMetricPresenter extends Presenter<TXMetricPresenter.MyView, TXMet
 
     @ProxyCodeSplit
     @NameToken(NameTokens.TXMetrics)
-    @RuntimeLHSItemExtension(name="Transactions", group="Transactions", key="transactions")
+    @RuntimeExtension(name="Transactions", group=RuntimeGroup.METRICS, key="transactions")
     public interface MyProxy extends Proxy<TXMetricPresenter>, Place {
     }
 

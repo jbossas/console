@@ -8,8 +8,8 @@ import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.domain.hosts.ServerPicker;
 import org.jboss.as.console.client.domain.model.Host;
 import org.jboss.as.console.client.domain.model.ServerInstance;
-import org.jboss.as.console.client.plugins.RuntimeLHSItemExtension;
-import org.jboss.as.console.client.plugins.RuntimeLHSItemExtensionRegistry;
+import org.jboss.as.console.client.plugins.RuntimeExtensionMetaData;
+import org.jboss.as.console.client.plugins.RuntimeExtensionRegistry;
 import org.jboss.as.console.client.shared.model.SubsystemRecord;
 import org.jboss.as.console.client.shared.state.CurrentServerSelection;
 import org.jboss.as.console.client.shared.state.ServerSelectionEvent;
@@ -18,7 +18,6 @@ import org.jboss.ballroom.client.layout.LHSNavTree;
 import org.jboss.ballroom.client.layout.LHSNavTreeItem;
 import org.jboss.ballroom.client.layout.LHSTreeSection;
 
-import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -167,9 +166,9 @@ class DomainRuntimeNavigation implements ServerSelectionEvent.ServerSelectionLis
         metricLeaf.addItem(webservices);
         
         // Extension based additions
-        RuntimeLHSItemExtensionRegistry registry = Console.getRuntimeLHSItemExtensionRegistry();
-        List<RuntimeLHSItemExtension> menuExtensions = registry.getExtensions();
-        for (RuntimeLHSItemExtension ext:menuExtensions) {
+        RuntimeExtensionRegistry registry = Console.getRuntimeLHSItemExtensionRegistry();
+        List<RuntimeExtensionMetaData> menuExtensions = registry.getExtensions();
+        for (RuntimeExtensionMetaData ext:menuExtensions) {
         	
         	for(SubsystemRecord subsys : subsystems) {
         		if (subsys.getKey().equals(ext.getKey())) {
