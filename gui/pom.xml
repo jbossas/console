@@ -209,11 +209,7 @@
                         <configuration>
                             <outputDiagnostics>false</outputDiagnostics>
                             <processors>
-                                <processor>org.jboss.as.console.spi.ExtensionProcessor</processor>
-                                <processor>org.jboss.as.console.spi.ExtensionBindingProcessor</processor>
-                                <processor>org.jboss.as.console.spi.BeanFactoryProcessor</processor>
-                                <processor>org.jboss.as.console.spi.SubsystemProcessor</processor>
-                                <processor>org.jboss.as.console.spi.RuntimeExtensionProcessor</processor>
+                                <processor>org.jboss.as.console.spi.SPIProcessor</processor>
                             </processors>
                         </configuration>
                     </execution>
