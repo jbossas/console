@@ -4,14 +4,14 @@ package org.jboss.as.console.client.plugins;
  * @author Heiko Braun
  * @date 3/26/12
  */
-public class RuntimeExtensionmetaData {
+public class RuntimeExtensionMetaData {
 
     private String token;
     private String name;
     private String group;
     private String key;
 
-    public RuntimeExtensionmetaData(String name, String token, String group, String key) {
+    public RuntimeExtensionMetaData(String name, String token, String group, String key) {
         this.name = name;
         this.token = token;
         this.group = group;
