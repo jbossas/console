@@ -56,7 +56,6 @@
         <dependency>
             <groupId>com.google.gwt</groupId>
             <artifactId>gwt-servlet</artifactId>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>
@@ -73,7 +72,6 @@
         <dependency>
             <groupId>com.google.gwt</groupId>
             <artifactId>gwt-user</artifactId>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>
@@ -97,7 +95,6 @@
         <dependency>
             <groupId>com.gwtplatform</groupId>
             <artifactId>gwtp-mvp-client</artifactId>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>
@@ -221,7 +218,7 @@
                 <version>2.2.1</version>
                 <configuration>
                     <descriptors>
-                        <descriptor>scripts/assembly.xml</descriptor>
+                        <!--descriptor>scripts/assembly.xml</descriptor-->
                         <descriptor>scripts/export.xml</descriptor>
                     </descriptors>
                 </configuration>

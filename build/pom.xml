@@ -50,6 +50,13 @@
         </dependency>
 
         <dependency>
+            <groupId>org.jboss.as</groupId>
+            <artifactId>jboss-as-console-core</artifactId>
+            <classifier>export</classifier>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
             <groupId>com.google.gwt</groupId>
             <artifactId>gwt-dev</artifactId>
             <scope>provided</scope>
@@ -65,6 +72,7 @@
 
     <!-- Plugins -->
     <build>
+
         <outputDirectory>war/WEB-INF/classes</outputDirectory>
 
         <plugins>
@@ -81,6 +89,32 @@
                     </filesets>
                 </configuration>
             </plugin-->
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>gwt-maven-plugin</artifactId>
+                <version>2.3.0</version>
+                <configuration>
+                    <inplace>true</inplace>
+                    <logLevel>TRACE</logLevel>
+                    <runTarget>App.html</runTarget>
+                    <warSourceDirectory>war</warSourceDirectory>
+                    <extraJvmArgs>-Xmx1024m -DDEBUG -XX:MaxPermSize=256M</extraJvmArgs>
+                    <servicePattern>**/*Service.java</servicePattern>
+                    <style>OBF</style>
+                    <hostedWebapp>war</hostedWebapp>
+                    <localWorkers>2</localWorkers>
+                    <compileReport>false</compileReport>
+                    <module>org.jboss.as.console.composite.App</module>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
 
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
@@ -208,13 +242,13 @@
                     <configuration>
                         <webappDirectory>war</webappDirectory>
                         <warSourceDirectory>war</warSourceDirectory>
-                        <overlays>
+                        <!--overlays>
                             <overlay>
                                 <groupId>org.jboss.as</groupId>
                                 <artifactId>jboss-as-console-resources</artifactId>
                                 <type>war</type>
                             </overlay>
-                        </overlays>
+                        </overlays-->
                         <packagingExcludes>**/*.*</packagingExcludes>
                     </configuration>
                 </plugin>
@@ -259,6 +293,7 @@
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>gwt-maven-plugin</artifactId>
+                        <version>2.3.0</version>
                         <configuration>
                             <disableCastChecking>true</disableCastChecking>
                             <disableClassMetadata>true</disableClassMetadata>
@@ -313,5 +348,14 @@
         </profile>
 
     </profiles>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>gwtplatform.plugin</id>
+            <name>Gwtplatform custom plugin repository</name>
+            <url>http://maven.gwt-platform.googlecode.com/hg/</url>
+            <layout>default</layout>
+        </pluginRepository>
+    </pluginRepositories>
 
 </project>
