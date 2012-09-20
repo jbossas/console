@@ -88,10 +88,11 @@
 
     <modules>
         <module>bom</module>
-        <module>build</module>
-        <module>resources</module>
         <module>spi</module>
+        <module>resources</module>
         <module>gui</module>
+        <module>build</module>
+        <module>build/app</module>
     </modules>
 
     <build>

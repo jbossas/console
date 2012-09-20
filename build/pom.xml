@@ -36,12 +36,12 @@
 
     <dependencies>
 
-        <!--dependency>
+        <dependency>
             <groupId>org.jboss.as</groupId>
             <artifactId>jboss-as-console-resources</artifactId>
             <type>war</type>
             <scope>runtime</scope>
-        </dependency-->
+        </dependency>
 
         <dependency>
             <groupId>org.jboss.as</groupId>
@@ -76,8 +76,7 @@
         <outputDirectory>war/WEB-INF/classes</outputDirectory>
 
         <plugins>
-            <!-- TODO: can be re-eanbled when resource are corectly processed -->
-            <!--plugin>
+            <plugin>
                 <artifactId>maven-clean-plugin</artifactId>
                 <configuration>
                     <filesets>
@@ -89,7 +88,7 @@
                         </fileset>
                     </filesets>
                 </configuration>
-            </plugin-->
+            </plugin>
 
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
@@ -160,31 +159,6 @@
             </plugin>
 
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>gwt-maven-plugin</artifactId>
-                <configuration>
-                    <inplace>true</inplace>
-                    <logLevel>TRACE</logLevel>
-                    <runTarget>App.html</runTarget>
-                    <warSourceDirectory>war</warSourceDirectory>
-                    <extraJvmArgs>-Xmx1024m -DDEBUG -XX:MaxPermSize=256M</extraJvmArgs>
-                    <servicePattern>**/*Service.java</servicePattern>
-                    <style>OBF</style>
-                    <hostedWebapp>war</hostedWebapp>
-                    <localWorkers>2</localWorkers>
-                    <compileReport>false</compileReport>
-                    <module>org.jboss.as.console.composite.App</module>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>compile</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <plugin>
                 <artifactId>maven-jar-plugin</artifactId>
                 <executions>
                     <execution>
@@ -207,7 +181,6 @@
         <pluginManagement>
             <plugins>
 
-
                 <plugin>
                     <artifactId>maven-war-plugin</artifactId>
                     <executions>
@@ -221,15 +194,13 @@
                     <configuration>
                         <webappDirectory>war</webappDirectory>
                         <warSourceDirectory>war</warSourceDirectory>
-
-                        <!-- TODO -->
-                        <!--overlays>
+                        <overlays>
                             <overlay>
                                 <groupId>org.jboss.as</groupId>
                                 <artifactId>jboss-as-console-resources</artifactId>
                                 <type>war</type>
                             </overlay>
-                        </overlays-->
+                        </overlays>
                         <packagingExcludes>**/*.*</packagingExcludes>
                     </configuration>
                 </plugin>

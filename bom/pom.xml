@@ -63,6 +63,13 @@
                 <version>${project.version}</version>
             </dependency>
 
+            <dependency>
+                <groupId>org.jboss.as</groupId>
+                <artifactId>jboss-as-console-resources</artifactId>
+                <type>war</type>
+                <scope>runtime</scope>
+                <version>${project.version}</version>
+            </dependency>
 
             <dependency>
                 <groupId>org.jboss.ballroom</groupId>
@@ -70,10 +77,10 @@
                 <version>${ballroom.version}</version>
             </dependency>
 
-             <dependency>
+            <dependency>
                 <groupId>org.jboss.ballroom</groupId>
                 <artifactId>widgets</artifactId>
-                 <classifier>sources</classifier>
+                <classifier>sources</classifier>
                 <version>${ballroom.version}</version>
             </dependency>
 
