@@ -51,6 +51,20 @@
             </dependency>
 
             <dependency>
+                <groupId>org.jboss.as</groupId>
+                <artifactId>jboss-as-console-core</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.jboss.as</groupId>
+                <artifactId>jboss-as-console-core</artifactId>
+                <classifier>export</classifier>
+                <version>${project.version}</version>
+            </dependency>
+
+
+            <dependency>
                 <groupId>org.jboss.ballroom</groupId>
                 <artifactId>widgets</artifactId>
                 <version>${ballroom.version}</version>

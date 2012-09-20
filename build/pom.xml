@@ -1,0 +1,317 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <name>JBoss 7 - Management Console :: Build</name>
+    <artifactId>jboss-as-console-build</artifactId>
+    <packaging>pom</packaging>
+
+    <!-- Parent -->
+    <parent>
+        <groupId>org.jboss.as</groupId>
+        <artifactId>jboss-as-console-parent</artifactId>
+        <version>1.5.0-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <!--
+    ~  USAGE:
+    ~  Inherit from this pom.
+    ~  Add maven-dependency-plugin to build.
+    ~  Add dependencies for extensions.  Use "provided" scope.
+    -->
+
+    <!--  Dependencies -->
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.jboss.as</groupId>
+                <artifactId>jboss-as-console-bom</artifactId>
+                <type>pom</type>
+                <version>${project.version}</version>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <dependencies>
+
+        <!--dependency>
+            <groupId>org.jboss.as</groupId>
+            <artifactId>jboss-as-console-resources</artifactId>
+            <type>war</type>
+            <scope>runtime</scope>
+        </dependency-->
+
+        <dependency>
+            <groupId>org.jboss.as</groupId>
+            <artifactId>jboss-as-console-core</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.gwt</groupId>
+            <artifactId>gwt-dev</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+    </dependencies>
+
+    <!-- Plugins -->
+    <build>
+        <outputDirectory>war/WEB-INF/classes</outputDirectory>
+
+        <plugins>
+            <!--plugin>
+                <artifactId>maven-clean-plugin</artifactId>
+                <configuration>
+                    <filesets>
+                        <fileset>
+                            <directory>war</directory>
+                            <includes>
+                                <include>**/*.*</include>
+                            </includes>
+                        </fileset>
+                    </filesets>
+                </configuration>
+            </plugin-->
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>add-source</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>add-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>${project.build.directory}/generated-sources/apt</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.bsc.maven</groupId>
+                <artifactId>maven-processor-plugin</artifactId>
+                <version>2.0.7.1-redhat</version>
+                <executions>
+                    <execution>
+                        <id>process</id>
+                        <goals>
+                            <goal>process</goal>
+                        </goals>
+                        <phase>generate-sources</phase>
+                        <configuration>
+                            <outputDiagnostics>false</outputDiagnostics>
+                            <processors>
+                                <processor>org.jboss.as.console.spi.SPIProcessor</processor>
+                            </processors>
+                            <appendSourceArtifacts>true</appendSourceArtifacts>
+                            <sourceClassifier>export</sourceClassifier>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>gwt-maven-plugin</artifactId>
+                <configuration>
+                    <inplace>true</inplace>
+                    <logLevel>TRACE</logLevel>
+                    <runTarget>App.html</runTarget>
+                    <warSourceDirectory>war</warSourceDirectory>
+                    <extraJvmArgs>-Xmx1024m -DDEBUG -XX:MaxPermSize=256M</extraJvmArgs>
+                    <servicePattern>**/*Service.java</servicePattern>
+                    <style>OBF</style>
+                    <hostedWebapp>war</hostedWebapp>
+                    <localWorkers>2</localWorkers>
+                    <compileReport>false</compileReport>
+                    <module>org.jboss.as.console.composite.App</module>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-jar-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <classesDirectory>war</classesDirectory>
+                    <excludes>
+                        <exclude>WEB-INF/**</exclude>
+                    </excludes>
+                    <classifier>resources</classifier>
+                </configuration>
+            </plugin>
+
+        </plugins>
+
+        <pluginManagement>
+            <plugins>
+
+                <!--plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-dependency-plugin</artifactId>
+                    <executions>
+                        <execution>
+                            <id>unpack-dependencies</id>
+                            <phase>generate-sources</phase>
+                            <goals>
+                                <goal>unpack-dependencies</goal>
+                            </goals>
+                            <configuration>
+                                <includeScope>compile</includeScope>
+                                <includeTypes>jar</includeTypes>
+                                <excludeTransitive>true</excludeTransitive>
+                                <excludeGroupIds>com.google.gwt</excludeGroupIds>
+                                <includes>**/*</includes>
+                                <excludes>**/*.class,org/jboss/as/console/composite/**</excludes>
+                                <outputDirectory>${project.build.directory}/dependency-sources</outputDirectory>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin-->
+
+                <plugin>
+                    <artifactId>maven-war-plugin</artifactId>
+                    <executions>
+                        <execution>
+                            <phase>generate-resources</phase>
+                            <goals>
+                                <goal>exploded</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <webappDirectory>war</webappDirectory>
+                        <warSourceDirectory>war</warSourceDirectory>
+                        <overlays>
+                            <overlay>
+                                <groupId>org.jboss.as</groupId>
+                                <artifactId>jboss-as-console-resources</artifactId>
+                                <type>war</type>
+                            </overlay>
+                        </overlays>
+                        <packagingExcludes>**/*.*</packagingExcludes>
+                    </configuration>
+                </plugin>
+
+            </plugins>
+        </pluginManagement>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>quick-hosted-mode</id>
+            <activation>
+                <property>
+                    <name>hosted</name>
+                </property>
+            </activation>
+            <properties>
+                <google.webtoolkit.compileSkip>true</google.webtoolkit.compileSkip>
+                <o>true</o> <!-- offline -->
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>gwt-maven-plugin</artifactId>
+                        <configuration>
+                            <draftCompile>true</draftCompile>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <id>dev</id>
+            <properties>
+                <skipTests>true</skipTests>
+            </properties>
+            <build>
+                <plugins>
+
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>gwt-maven-plugin</artifactId>
+                        <configuration>
+                            <disableCastChecking>true</disableCastChecking>
+                            <disableClassMetadata>true</disableClassMetadata>
+                            <optimizationLevel>9</optimizationLevel>
+                            <module>org.jboss.as.console.composite.App_dev</module>
+                        </configuration>
+                    </plugin>
+
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <skipTests>true</skipTests>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+
+        </profile>
+
+
+        <profile>
+            <id>compile-report</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>gwt-maven-plugin</artifactId>
+                        <configuration>
+                            <compileReport>true</compileReport>
+                        </configuration>
+                    </plugin>
+                </plugins>
+
+            </build>
+
+            <reporting>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>gwt-maven-plugin</artifactId>
+                        <reportSets>
+                            <reportSet>
+                                <reports>
+                                    <report>compile-report</report>
+                                </reports>
+                            </reportSet>
+                        </reportSets>
+                    </plugin>
+                </plugins>
+            </reporting>
+        </profile>
+
+    </profiles>
+
+</project>

@@ -3,8 +3,8 @@
     <modelVersion>4.0.0</modelVersion>
     <name>JBoss 7 - Management Console :: GUI</name>
     <groupId>org.jboss.as</groupId>
-    <artifactId>jboss-as-console</artifactId>
-    <packaging>war</packaging>
+    <artifactId>jboss-as-console-core</artifactId>
+    <packaging>jar</packaging>
 
     <!-- Parent -->
     <parent>
@@ -138,61 +138,60 @@
         <plugins>
 
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>gwt-maven-plugin</artifactId>
-                <version>${gwt.maven}</version>
-                <configuration>
-                    <inplace>true</inplace>
-                    <logLevel>ERROR</logLevel>
-                    <runTarget>App.html</runTarget>
-                    <warSourceDirectory>war</warSourceDirectory>
-                    <extraJvmArgs>-server -Xmx512m -XX:MaxPermSize=256M</extraJvmArgs>
-                    <servicePattern>**/*Service.java</servicePattern>
-                    <style>OBF</style>
-                    <hostedWebapp>war</hostedWebapp>
-                    <localWorkers>2</localWorkers>
-                    <compileReport>false</compileReport>
-                    <optimizationLevel>9</optimizationLevel>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>clean</goal>
-                            <goal>resources</goal>
-                            <goal>compile</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <plugin>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <version>2.2.1</version>
-                <configuration>
-                    <descriptors>
-                        <descriptor>scripts/assembly.xml</descriptor>
-                        <descriptor>scripts/export.xml</descriptor>
-                    </descriptors>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>make-assembly</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <debug>false</debug>
-                    <source>1.6</source>
-                    <target>1.6</target>
-                </configuration>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>generate-version-class</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <tasks>
+                                <!-- bump number first-->
+                                <buildnumber/>
+
+                                <ant antfile="../scripts/antrun-version.xml" inheritAll="false" inheritRefs="false">
+                                    <property file="build.number"/>
+                                    <property name="version" value="${project.version}"/>
+                                    <property name="build.user" value="${user.name}"/>
+                                    <property name="src.dir" value="${project.build.directory}/generated-sources/ant" />
+                                    <property name="console.profile" value="${console.profile}" />
+                                    <property name="product.version" value="${product.version}" />
+
+                                    <!-- only used in hosted mode, see BootstrapContext -->
+                                    <property name="dev.host" value="${gwt.bindAddress}" />
+                                </ant>
+                            </tasks>
+                            <sourceRoot>
+                                ${project.build.directory}/generated-sources/ant
+                            </sourceRoot>
+                        </configuration>
+                    </execution>
+
+                    <!--execution>
+                        <id>custom.styles</id>
+                        <phase>process-sources</phase>
+                        <configuration>
+                            <tasks>
+
+                                <copy file="src/main/templates/App.gwt.xml" tofile="src/main/java/org/jboss/as/console/App.gwt.xml" overwrite="true" verbose="true"/>
+                                <replace file="src/main/java/org/jboss/as/console/App.gwt.xml" token="@ballroom_theme@" value="org.jboss.ballroom.Framework" summary="yes"/>
+
+                                <copy file="src/main/templates/gwt-proxy.properties" tofile="src/main/java/gwt-proxy.properties" overwrite="true" verbose="true"/>
+                                <copy file="src/main/templates/upload-proxy.properties" tofile="src/main/java/upload-proxy.properties" overwrite="true" verbose="true"/>
+
+                                <replace file="src/main/java/gwt-proxy.properties" token="@bindAddress@" value="${gwt.bindAddress}" summary="yes"/>
+                                <replace file="src/main/java/upload-proxy.properties" token="@bindAddress@" value="${gwt.bindAddress}" summary="yes"/>
+
+                            </tasks>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution-->
+                </executions>
             </plugin>
 
             <plugin>
@@ -217,168 +216,30 @@
                     </execution>
                 </executions>
             </plugin>
-
             <plugin>
-                <artifactId>maven-war-plugin</artifactId>
-                <version>2.1-beta-1</version>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>2.2.1</version>
                 <configuration>
-                    <warSourceDirectory>war</warSourceDirectory>
-                    <webappDirectory>war</webappDirectory>
+                    <descriptors>
+                        <descriptor>scripts/assembly.xml</descriptor>
+                        <descriptor>scripts/export.xml</descriptor>
+                    </descriptors>
                 </configuration>
-            </plugin>
-
-            <plugin>
-                <artifactId>maven-clean-plugin</artifactId>
-                <version>2.2</version>
-                <configuration>
-                    <skip>true</skip>
-                </configuration>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <version>1.2</version>
                 <executions>
                     <execution>
-                        <id>clean.war</id>
-                        <phase>clean</phase>
-                        <configuration>
-                            <tasks>
-                                <!--
-                                    The gwt-maven-plugin use the war source folder
-                                    as it's build directory. We need to cleanup after we'd run
-                                    the plugin and remove all GWT related artifacts that are required
-                                    to run the hosted mode.
-                                -->
-                                <delete dir="war/WEB-INF/classes"/>
-                                <delete dir="war/WEB-INF/lib"/>
-                                <delete dir="war/WEB-INF/deploy"/>
-                                <!--delete file="war/WEB-INF/jboss-web.xml"/>
-                                <delete file="war/WEB-INF/web.xml"/-->
-                                <delete dir="war/app"/>
-                                <delete dir="war/dmr_gwt"/>
-                                <delete dir="war/org.jboss.as.console.App.JUnit"/>
-                                <delete dir="target"/>
-
-                            </tasks>
-                        </configuration>
+                        <id>make-assembly</id>
+                        <phase>package</phase>
                         <goals>
-                            <goal>run</goal>
-                        </goals>
-                    </execution>
-
-                    <execution>
-                        <id>generate-version-class</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                        <configuration>
-                            <tasks>
-                                <!-- bump number first-->
-                                <buildnumber/>
-
-                                <ant antfile="../scripts/antrun-version.xml" inheritAll="false" inheritRefs="false">
-                                    <property file="build.number"/>
-                                    <property name="version" value="${project.version}"/>
-                                    <property name="build.user" value="${user.name}"/>
-                                    <property name="src.dir" value="${project.build.directory}/generated-sources" />
-                                    <property name="console.profile" value="${console.profile}" />
-                                    <property name="product.version" value="${product.version}" />
-
-                                    <!-- only used in hosted mode, see BootstrapContext -->
-                                    <property name="dev.host" value="${gwt.bindAddress}" />
-                                </ant>
-                            </tasks>
-                            <sourceRoot>
-                                ${project.build.directory}/generated-sources
-                            </sourceRoot>
-                        </configuration>
-                    </execution>
-
-                    <execution>
-                        <id>fake.war</id>
-                        <phase>verify</phase>
-                        <configuration>
-                            <tasks>
-                                <echo>Replace the war file with a fake.war</echo>
-                                <copy file="build.number" todir="fake_war" overwrite="true"/>
-                                <zip destfile="./target/fake.war" basedir="fake_war"/>
-                                <copy file="./target/fake.war" tofile="./target/as7-console.war" overwrite="true" verbose="true"/>
-                            </tasks>
-                        </configuration>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                    </execution>
-
-
-                    <execution>
-                        <id>custom.styles</id>
-                        <phase>process-sources</phase>
-                        <configuration>
-                            <tasks>
-
-                                <!-- the App.gwt.xml -->
-                                <copy file="src/main/templates/App.gwt.xml" tofile="src/main/java/org/jboss/as/console/App.gwt.xml" overwrite="true" verbose="true"/>
-                                <replace file="src/main/java/org/jboss/as/console/App.gwt.xml" token="@ballroom_theme@" value="org.jboss.ballroom.Framework" summary="yes"/>
-
-
-                                <!-- development proxy settings -->
-                                <copy file="src/main/templates/gwt-proxy.properties" tofile="src/main/java/gwt-proxy.properties" overwrite="true" verbose="true"/>
-                                <copy file="src/main/templates/upload-proxy.properties" tofile="src/main/java/upload-proxy.properties" overwrite="true" verbose="true"/>
-
-                                <replace file="src/main/java/gwt-proxy.properties" token="@bindAddress@" value="${gwt.bindAddress}" summary="yes"/>
-                                <replace file="src/main/java/upload-proxy.properties" token="@bindAddress@" value="${gwt.bindAddress}" summary="yes"/>
-
-                            </tasks>
-                        </configuration>
-                        <goals>
-                            <goal>run</goal>
+                            <goal>single</goal>
                         </goals>
                     </execution>
                 </executions>
             </plugin>
 
-            <plugin>
-                <!-- Surefire setup in order to be able to run GWT unit tests, according to
-                     http://mojo.codehaus.org/gwt-maven-plugin/user-guide/testing.html -->
-                <!-- Note that running the unit tests produces a number of the following warnings:
-                     [WARN] Template with variable in CSS context: The template code generator cannot guarantee HTML-safety of the template - please inspect manually
-                     This is a known GWT bug which should be fixed in GWT 2.3 - see Issue 5962 http://code.google.com/p/google-web-toolkit/issues/detail?id=5962 -->
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <additionalClasspathElements>
-                        <additionalClasspathElement>${basedir}/war/WEB-INF/classes/</additionalClasspathElement>
-                        <additionalClasspathElement>${basedir}/target/generated-sources/</additionalClasspathElement>
-                        <additionalClasspathElement>${basedir}/target/generated-sources/apt</additionalClasspathElement>
-                        <additionalClasspathElement>${project.build.testSourceDirectory}</additionalClasspathElement>
-                    </additionalClasspathElements>
-                    <includes>
-                        <include>org/jboss/as/console/client/forms/**</include>
-                        <!-- Do not include all of the GWT tests individually, but use a test suite
-                   to run them instead. This speeds up test execution as the GWT runner only
-                   gets loaded once per suite. -->
-                        <include>**/*TestSuite.java</include>
-                    </includes>
-                    <useManifestOnlyJar>false</useManifestOnlyJar>
-                    <forkMode>always</forkMode>
-                    <skipTests>true</skipTests>
-                    <systemProperties>
-                        <property>
-                            <name>gwt.args</name>
-                            <value>-out ${basedir}/target/test-war</value>
-                        </property>
-                    </systemProperties>
-                </configuration>
-            </plugin>
-
         </plugins>
     </build>
 
-    <profiles>
+    <!--profiles>
         <profile>
             <id>quick-hosted-mode</id>
             <activation>
@@ -388,7 +249,7 @@
             </activation>
             <properties>
                 <google.webtoolkit.compileSkip>true</google.webtoolkit.compileSkip>
-                <o>true</o> <!-- offline -->
+                <o>true</o>
             </properties>
             <build>
                 <plugins>
@@ -420,8 +281,7 @@
                         <configuration>
                             <extraJvmArgs>-server -Xmx512m -XX:MaxPermSize=256M</extraJvmArgs>
                             <optimizationLevel>9</optimizationLevel>
-                            <!--disableCastChecking>true</disableCastChecking>
-                            <disableClassMetadata>true</disableClassMetadata-->
+
                         </configuration>
                     </plugin>
 
@@ -532,9 +392,7 @@
             <build>
                 <plugins>
                     <plugin>
-                        <!--
-                           see also ant executions
-                        -->
+
                         <groupId>org.zanata</groupId>
                         <artifactId>zanata-maven-plugin</artifactId>
                         <version>1.5.0</version>
@@ -595,14 +453,6 @@
                 </plugins>
             </build>
         </profile>
-    </profiles>
+    </profiles-->
 
-    <pluginRepositories>
-        <pluginRepository>
-            <id>gwtplatform.plugin</id>
-            <name>Gwtplatform custom plugin repository</name>
-            <url>http://maven.gwt-platform.googlecode.com/hg/</url>
-            <layout>default</layout>
-        </pluginRepository>
-    </pluginRepositories>
 </project>
