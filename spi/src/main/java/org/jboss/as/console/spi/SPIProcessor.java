@@ -14,11 +14,15 @@ import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
+import javax.tools.FileObject;
 import javax.tools.JavaFileObject;
+import javax.tools.StandardLocation;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -49,6 +53,12 @@ public class SPIProcessor extends AbstractProcessor {
     private static final String RUNTIME_FILENAME = "org.jboss.as.console.client.plugins.RuntimeLHSItemExtensionRegistryImpl";
     private static final String RUNTIME_TEMPLATE = "RuntimeExtensions.tmpl";
 
+    private static final String MODULE_FILENAME = "App.gwt.xml";
+    private static final String MODULE_DEV_FILENAME = "App_dev.gwt.xml";
+    private static final String MODULE_PACKAGENAME = "org.jboss.as.console.composite";
+    private static final String MODULE_TEMPLATE = "App.gwt.xml.tmpl";
+    private static final String MODULE_DEV_TEMPLATE = "App_dev.gwt.xml.tmpl";
+
     private Filer filer;
     private Messager messager;
     private ProcessingEnvironment processingEnv;
@@ -57,6 +67,7 @@ public class SPIProcessor extends AbstractProcessor {
     private List<String> discoveredBeanFactories;
     private List<SubsystemExtensionMetaData> subsystemDeclararions;
     private List<RuntimeExtensionMetaData> runtimeExtensions;
+    private Set<String> modules = new LinkedHashSet<String>();
     private Set<String> nameTokens;
 
     @Override
@@ -193,6 +204,12 @@ public class SPIProcessor extends AbstractProcessor {
             if ( annotationType.equals(GinExtension.class.getName()) )
             {
                 GinExtension comps  = element.getAnnotation(GinExtension.class);
+
+                final String module = comps.value();
+                if (module != null && module.length() > 0) {
+                    modules.add(module);
+                }
+
                 PackageElement packageElement = processingEnv.getElementUtils().getPackageOf(element);
                 String fqn = packageElement.getQualifiedName().toString()+"."+
                         element.getSimpleName().toString();
@@ -258,6 +275,8 @@ public class SPIProcessor extends AbstractProcessor {
         writeBeanFactoryFile();
         writeSubsystemFile();
         writeRuntimeFile();
+        writeModuleFile();
+        writeDevModuleFile();
     }
 
     private void writeRuntimeFile() throws Exception {
@@ -316,5 +335,45 @@ public class SPIProcessor extends AbstractProcessor {
         output.flush();
         output.close();
 
+    }
+
+    private void writeModuleFile() {
+
+        try
+        {
+            Map<String, Object> model = new HashMap<String, Object>();
+            model.put("modules", modules);
+
+            FileObject sourceFile = filer.createResource(StandardLocation.SOURCE_OUTPUT, MODULE_PACKAGENAME,
+                    MODULE_FILENAME);
+            OutputStream output = sourceFile.openOutputStream();
+            new TemplateProcessor().process(MODULE_TEMPLATE, model, output);
+            output.flush();
+            output.close();
+        }
+        catch (IOException e)
+        {
+            throw new RuntimeException("Failed to create file", e);
+        }
+    }
+
+    private void writeDevModuleFile() {
+
+        try
+        {
+            Map<String, Object> model = new HashMap<String, Object>();
+            model.put("modules", modules);
+
+            FileObject sourceFile = filer.createResource(StandardLocation.SOURCE_OUTPUT, MODULE_PACKAGENAME,
+                    MODULE_DEV_FILENAME);
+            OutputStream output = sourceFile.openOutputStream();
+            new TemplateProcessor().process(MODULE_DEV_TEMPLATE, model, output);
+            output.flush();
+            output.close();
+        }
+        catch (IOException e)
+        {
+            throw new RuntimeException("Failed to create file", e);
+        }
     }
 }

@@ -8,7 +8,7 @@ import org.jboss.as.console.spi.GinExtension;
  * @author Heiko Braun
  * @date 3/27/12
  */
-@GinExtension
+@GinExtension("org.jboss.as.console.App")
 public interface ExampleExtension {
 
     AsyncProvider<TransactionPresenter> getTransactionPresenter();

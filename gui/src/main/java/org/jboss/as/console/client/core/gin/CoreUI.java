@@ -138,7 +138,7 @@ import org.jboss.as.console.spi.GinExtension;
  * @author Heiko Braun
  * @date 1/31/11
  */
-@GinExtension
+@GinExtension("org.jboss.as.console.App")
 public interface CoreUI {
 
 

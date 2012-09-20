@@ -15,6 +15,13 @@
             </includes>
         </fileSet>
         <fileSet>
+            <directory>${basedir}/target/generated-sources/ant</directory>
+            <outputDirectory>/</outputDirectory>
+            <includes>
+                <include>**/*.*</include>
+            </includes>
+        </fileSet>
+        <fileSet>
             <directory>${basedir}/src/main/java</directory>
             <outputDirectory>/</outputDirectory>
             <includes>

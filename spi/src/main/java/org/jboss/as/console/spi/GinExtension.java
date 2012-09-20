@@ -8,4 +8,9 @@ package org.jboss.as.console.spi;
 @java.lang.annotation.Target({java.lang.annotation.ElementType.TYPE})
 public @interface GinExtension {
 
+    /**
+     * @return the GWT module name containing this extension,
+     * e.g. org.jboss.as.console.example.Extension.
+     */
+    String value();
 }
