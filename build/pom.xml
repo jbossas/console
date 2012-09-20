@@ -76,6 +76,7 @@
         <outputDirectory>war/WEB-INF/classes</outputDirectory>
 
         <plugins>
+            <!-- TODO: can be re-eanbled when resource are corectly processed -->
             <!--plugin>
                 <artifactId>maven-clean-plugin</artifactId>
                 <configuration>
@@ -206,28 +207,6 @@
         <pluginManagement>
             <plugins>
 
-                <!--plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-dependency-plugin</artifactId>
-                    <executions>
-                        <execution>
-                            <id>unpack-dependencies</id>
-                            <phase>generate-sources</phase>
-                            <goals>
-                                <goal>unpack-dependencies</goal>
-                            </goals>
-                            <configuration>
-                                <includeScope>compile</includeScope>
-                                <includeTypes>jar</includeTypes>
-                                <excludeTransitive>true</excludeTransitive>
-                                <excludeGroupIds>com.google.gwt</excludeGroupIds>
-                                <includes>**/*</includes>
-                                <excludes>**/*.class,org/jboss/as/console/composite/**</excludes>
-                                <outputDirectory>${project.build.directory}/dependency-sources</outputDirectory>
-                            </configuration>
-                        </execution>
-                    </executions>
-                </plugin-->
 
                 <plugin>
                     <artifactId>maven-war-plugin</artifactId>
@@ -242,6 +221,8 @@
                     <configuration>
                         <webappDirectory>war</webappDirectory>
                         <warSourceDirectory>war</warSourceDirectory>
+
+                        <!-- TODO -->
                         <!--overlays>
                             <overlay>
                                 <groupId>org.jboss.as</groupId>
