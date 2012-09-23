@@ -72,6 +72,7 @@ import org.jboss.as.console.client.shared.runtime.RuntimeBaseAddress;
 import org.jboss.as.console.client.shared.runtime.ds.DataSourceMetricPresenter;
 import org.jboss.as.console.client.shared.runtime.jms.JMSMetricPresenter;
 import org.jboss.as.console.client.shared.runtime.jpa.JPAMetricPresenter;
+import org.jboss.as.console.client.shared.runtime.naming.JndiPresenter;
 import org.jboss.as.console.client.shared.runtime.tx.TXMetricPresenter;
 import org.jboss.as.console.client.shared.runtime.web.WebMetricPresenter;
 import org.jboss.as.console.client.shared.runtime.ws.WebServiceRuntimePresenter;
@@ -88,6 +89,8 @@ import org.jboss.as.console.client.shared.subsys.infinispan.DistributedCachePres
 import org.jboss.as.console.client.shared.subsys.infinispan.InvalidationCachePresenter;
 import org.jboss.as.console.client.shared.subsys.infinispan.LocalCachePresenter;
 import org.jboss.as.console.client.shared.subsys.infinispan.ReplicatedCachePresenter;
+import org.jboss.as.console.client.shared.subsys.infinispan.model.CacheContainerStore;
+import org.jboss.as.console.client.shared.subsys.infinispan.model.LocalCacheStore;
 import org.jboss.as.console.client.shared.subsys.jacorb.JacOrbPresenter;
 import org.jboss.as.console.client.shared.subsys.jca.DataSourcePresenter;
 import org.jboss.as.console.client.shared.subsys.jca.JcaPresenter;
@@ -106,7 +109,6 @@ import org.jboss.as.console.client.shared.subsys.messaging.MsgDestinationsPresen
 import org.jboss.as.console.client.shared.subsys.messaging.cluster.MsgClusteringPresenter;
 import org.jboss.as.console.client.shared.subsys.messaging.connections.MsgConnectionsPresenter;
 import org.jboss.as.console.client.shared.subsys.modcluster.ModclusterPresenter;
-import org.jboss.as.console.client.shared.runtime.naming.JndiPresenter;
 import org.jboss.as.console.client.shared.subsys.osgi.config.OSGiConfigurationPresenter;
 import org.jboss.as.console.client.shared.subsys.osgi.runtime.OSGiRuntimePresenter;
 import org.jboss.as.console.client.shared.subsys.security.SecurityDomainsPresenter;
@@ -251,7 +253,9 @@ public interface CoreUI {
 
     // Infinispan
     AsyncProvider<CacheContainerPresenter> getCacheContainerPresenter();
+    CacheContainerStore getCacheContainerStore();
     AsyncProvider<LocalCachePresenter> getLocalCachePresenter();
+    LocalCacheStore getLocalCacheStore();
     AsyncProvider<InvalidationCachePresenter> getInvalidationCachePresenter();
     AsyncProvider<DistributedCachePresenter> getDistributedCachePresenter();
     AsyncProvider<ReplicatedCachePresenter> getReplicatedCachePresenter();

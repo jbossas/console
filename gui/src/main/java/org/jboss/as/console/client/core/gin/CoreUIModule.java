@@ -115,6 +115,8 @@ import org.jboss.as.console.client.shared.runtime.jms.JMSMetricPresenter;
 import org.jboss.as.console.client.shared.runtime.jms.JMSMetricView;
 import org.jboss.as.console.client.shared.runtime.jpa.JPAMetricPresenter;
 import org.jboss.as.console.client.shared.runtime.jpa.JPAMetricsView;
+import org.jboss.as.console.client.shared.runtime.naming.JndiPresenter;
+import org.jboss.as.console.client.shared.runtime.naming.JndiView;
 import org.jboss.as.console.client.shared.runtime.tx.TXMetricPresenter;
 import org.jboss.as.console.client.shared.runtime.tx.TXMetricViewImpl;
 import org.jboss.as.console.client.shared.runtime.web.WebMetricPresenter;
@@ -143,6 +145,10 @@ import org.jboss.as.console.client.shared.subsys.infinispan.LocalCachePresenter;
 import org.jboss.as.console.client.shared.subsys.infinispan.LocalCacheView;
 import org.jboss.as.console.client.shared.subsys.infinispan.ReplicatedCachePresenter;
 import org.jboss.as.console.client.shared.subsys.infinispan.ReplicatedCacheView;
+import org.jboss.as.console.client.shared.subsys.infinispan.model.CacheContainerStore;
+import org.jboss.as.console.client.shared.subsys.infinispan.model.CacheContainerStoreImpl;
+import org.jboss.as.console.client.shared.subsys.infinispan.model.LocalCacheStore;
+import org.jboss.as.console.client.shared.subsys.infinispan.model.LocalCacheStoreImpl;
 import org.jboss.as.console.client.shared.subsys.jacorb.JacOrbPresenter;
 import org.jboss.as.console.client.shared.subsys.jacorb.JacOrbView;
 import org.jboss.as.console.client.shared.subsys.jca.DataSourcePresenter;
@@ -174,8 +180,6 @@ import org.jboss.as.console.client.shared.subsys.messaging.connections.MsgConnec
 import org.jboss.as.console.client.shared.subsys.messaging.connections.MsgConnectionsView;
 import org.jboss.as.console.client.shared.subsys.modcluster.ModclusterPresenter;
 import org.jboss.as.console.client.shared.subsys.modcluster.ModclusterView;
-import org.jboss.as.console.client.shared.runtime.naming.JndiPresenter;
-import org.jboss.as.console.client.shared.runtime.naming.JndiView;
 import org.jboss.as.console.client.shared.subsys.osgi.config.OSGiConfigurationPresenter;
 import org.jboss.as.console.client.shared.subsys.osgi.config.OSGiSubsystemView;
 import org.jboss.as.console.client.shared.subsys.osgi.runtime.OSGiRuntimePresenter;
@@ -517,6 +521,8 @@ public class CoreUIModule extends AbstractPresenterModule {
                 WebServiceRuntimeView.class,
                 WebServiceRuntimePresenter.MyProxy.class);
 
+        bind(CacheContainerStore.class).to(CacheContainerStoreImpl.class).in(Singleton.class);
+        bind(LocalCacheStore.class).to(LocalCacheStoreImpl.class).in(Singleton.class);
         bind(EndpointRegistry.class).in(Singleton.class);
         bind(DomainEndpointStrategy.class).in(Singleton.class);
         bind(StandaloneEndpointStrategy.class).in(Singleton.class);
