@@ -210,34 +210,12 @@
     </build>
 
     <profiles>
-        <profile>
-            <id>quick-hosted-mode</id>
-            <activation>
-                <property>
-                    <name>hosted</name>
-                </property>
-            </activation>
-            <properties>
-                <google.webtoolkit.compileSkip>true</google.webtoolkit.compileSkip>
-                <o>true</o> <!-- offline -->
-            </properties>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>gwt-maven-plugin</artifactId>
-                        <configuration>
-                            <draftCompile>true</draftCompile>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
 
         <profile>
             <id>dev</id>
             <properties>
                 <skipTests>true</skipTests>
+                <o>true</o> <!-- offline -->
             </properties>
             <build>
                 <plugins>
@@ -249,7 +227,6 @@
                         <configuration>
                             <disableCastChecking>true</disableCastChecking>
                             <disableClassMetadata>true</disableClassMetadata>
-                            <optimizationLevel>9</optimizationLevel>
                             <module>org.jboss.as.console.composite.App_dev</module>
                         </configuration>
                     </plugin>
