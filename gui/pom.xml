@@ -167,27 +167,6 @@
                         </configuration>
                     </execution>
 
-                    <!--execution>
-                        <id>custom.styles</id>
-                        <phase>process-sources</phase>
-                        <configuration>
-                            <tasks>
-
-                                <copy file="src/main/templates/App.gwt.xml" tofile="src/main/java/org/jboss/as/console/App.gwt.xml" overwrite="true" verbose="true"/>
-                                <replace file="src/main/java/org/jboss/as/console/App.gwt.xml" token="@ballroom_theme@" value="org.jboss.ballroom.Framework" summary="yes"/>
-
-                                <copy file="src/main/templates/gwt-proxy.properties" tofile="src/main/java/gwt-proxy.properties" overwrite="true" verbose="true"/>
-                                <copy file="src/main/templates/upload-proxy.properties" tofile="src/main/java/upload-proxy.properties" overwrite="true" verbose="true"/>
-
-                                <replace file="src/main/java/gwt-proxy.properties" token="@bindAddress@" value="${gwt.bindAddress}" summary="yes"/>
-                                <replace file="src/main/java/upload-proxy.properties" token="@bindAddress@" value="${gwt.bindAddress}" summary="yes"/>
-
-                            </tasks>
-                        </configuration>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                    </execution-->
                 </executions>
             </plugin>
 
@@ -219,7 +198,6 @@
                 <version>2.2.1</version>
                 <configuration>
                     <descriptors>
-                        <!--descriptor>scripts/assembly.xml</descriptor-->
                         <descriptor>scripts/export.xml</descriptor>
                     </descriptors>
                 </configuration>
@@ -234,7 +212,7 @@
                 </executions>
             </plugin>
 
-            <plugin>
+            <!--plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
                 <executions>
@@ -251,7 +229,7 @@
                         </configuration>
                     </execution>
                 </executions>
-            </plugin>
+            </plugin-->
 
         </plugins>
     </build>
@@ -259,103 +237,13 @@
     <profiles>
 
         <profile>
-            <id>dev</id>
-            <properties>
-                <skipTests>true</skipTests>
-                <o>true</o> <!-- offline -->
-            </properties>
-            <build>
-                <plugins>
 
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>gwt-maven-plugin</artifactId>
-                        <version>2.3.0</version>
-                        <configuration>
-                            <disableCastChecking>true</disableCastChecking>
-                            <disableClassMetadata>true</disableClassMetadata>
-                            <module>org.jboss.as.console.composite.App_dev</module>
-                        </configuration>
-                    </plugin>
 
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
-                            <skipTests>true</skipTests>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
+            <!--
+                    Enable zanata integration. Used to push i18n resources
+                    to http://translate.jboss.org
+            -->
 
-        <profile>
-            <id>compile-report</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>gwt-maven-plugin</artifactId>
-                        <version>${gwt.maven}</version>
-                        <configuration>
-                            <compileReport>true</compileReport>
-                        </configuration>
-                    </plugin>
-                </plugins>
-
-            </build>
-
-            <reporting>
-                <plugins>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>gwt-maven-plugin</artifactId>
-                        <reportSets>
-                            <reportSet>
-                                <reports>
-                                    <report>compile-report</report>
-                                </reports>
-                            </reportSet>
-                        </reportSets>
-                    </plugin>
-                </plugins>
-            </reporting>
-        </profile>
-
-        <!--profile>
-            <id>eap</id>
-            <properties>
-                <console.profile>eap</console.profile>
-                <product.version>6</product.version>
-            </properties>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-antrun-plugin</artifactId>
-                        <version>1.2</version>
-                        <executions>
-
-                            <execution>
-                                <id>custom.styles</id>
-                                <phase>process-resources</phase>
-                                <configuration>
-                                    <tasks>
-                                        <copy file="src/main/templates/App.gwt.xml" tofile="src/main/java/org/jboss/as/console/App.gwt.xml" overwrite="true" verbose="true"/>
-                                        <replace file="src/main/java/org/jboss/as/console/App.gwt.xml" token="@ballroom_theme@" value="org.jboss.ballroom.Framework_RH" summary="yes"/>
-                                    </tasks>
-                                </configuration>
-                                <goals>
-                                    <goal>run</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile-->
-
-        <profile>
             <id>i18n</id>
             <build>
                 <plugins>
