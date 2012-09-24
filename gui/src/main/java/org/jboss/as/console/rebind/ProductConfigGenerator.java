@@ -158,6 +158,10 @@ public class ProductConfigGenerator extends Generator {
         if(null==consoleProfileProperty)
             throw new BadPropertyValueException("Missing configuration property 'console.profile'!");
 
+
+        // most of the config attributes are by default empty
+        // they need be overriden by custom gwt.xml descriptor on a project/product level
+
         sourceWriter.println("public String getProductTitle() { ");
         sourceWriter.indent();
         sourceWriter.println("return \"\";");
