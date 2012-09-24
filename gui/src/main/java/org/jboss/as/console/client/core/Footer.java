@@ -115,7 +115,7 @@ public class Footer {
 
         layout.add(tools);
 
-        HTML version = new HTML("n/a "+productConfig.getProfile());
+        HTML version = new HTML(productConfig.getCoreVersion());
         version.getElement().setAttribute("style", "color:#ffffff;font-size:10px; align:left");
         layout.add(version);
 

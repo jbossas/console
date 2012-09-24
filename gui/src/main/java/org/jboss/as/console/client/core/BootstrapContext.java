@@ -22,7 +22,7 @@ package org.jboss.as.console.client.core;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Window;
 import com.gwtplatform.mvp.client.proxy.PlaceRequest;
-import org.jboss.as.console.client.shared.Preferences;
+import org.jboss.as.console.client.ProductConfig;
 
 import javax.inject.Inject;
 import java.util.HashMap;
@@ -41,9 +41,9 @@ public class BootstrapContext implements ApplicationProperties {
     private Throwable lastError;
 
     @Inject
-    public BootstrapContext() {
+    public BootstrapContext(ProductConfig productConfig) {
 
-        String devHost = org.jboss.as.console.client.Build.DEV_HOST;
+        String devHost = productConfig.getDevHost();
 
         String domainApi = GWT.isScript() ? getBaseUrl()+"management" : "http://"+devHost+":8888/app/proxy";
         setProperty(DOMAIN_API, domainApi);

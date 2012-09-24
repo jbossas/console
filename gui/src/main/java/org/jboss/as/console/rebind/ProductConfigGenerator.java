@@ -174,6 +174,12 @@ public class ProductConfigGenerator extends Generator {
         sourceWriter.outdent();
         sourceWriter.println("}");
 
+        sourceWriter.println("public String getCoreVersion() { ");
+        sourceWriter.indent();
+        sourceWriter.println("return org.jboss.as.console.client.Build.VERSION;");
+        sourceWriter.outdent();
+        sourceWriter.println("}");
+
         sourceWriter.println("public String getDevHost() { ");
         sourceWriter.indent();
         sourceWriter.println("return \"127.0.0.1\";");

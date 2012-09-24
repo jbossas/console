@@ -11,6 +11,6 @@ public interface ProductConfig {
     Profile getProfile();
     String getProductTitle();
     String getProductVersion();
-
+    String getCoreVersion();
     String getDevHost();
 }

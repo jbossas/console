@@ -77,13 +77,17 @@ public class Header implements ValueChangeHandler<String> {
     private BootstrapContext bootstrap;
     private MessageCenter messageCenter;
     private PlaceManager placeManager;
+    private ProductConfig productConfig;
 
     @Inject
-    public Header(MessageCenter messageCenter, BootstrapContext bootstrap, PlaceManager placeManager) {
+    public Header(
+            MessageCenter messageCenter, BootstrapContext bootstrap,
+            PlaceManager placeManager, ProductConfig productConfig) {
         this.messageBar = new MessageBar(messageCenter);
         this.bootstrap = bootstrap;
         this.messageCenter = messageCenter;
         this.placeManager = placeManager;
+        this.productConfig = productConfig;
         History.addValueChangeHandler(this);
 
     }
@@ -137,7 +141,7 @@ public class Header implements ValueChangeHandler<String> {
 
         Image logo = null;
 
-        if(org.jboss.as.console.client.Build.PROFILE.equals("eap"))
+        if(ProductConfig.Profile.EAP.equals(productConfig.getProfile()))
         {
             logo = new Image("images/logo/eap_text.png");
             logo.setAltText("JBoss Enterprise Application Platform");
@@ -150,7 +154,7 @@ public class Header implements ValueChangeHandler<String> {
         logo.setStyleName("logo");
 
         panel.add(logo);
-        HTML prodVersion = new HTML(org.jboss.as.console.client.Build.PROD_VERSION);
+        HTML prodVersion = new HTML(productConfig.getProductVersion());
         prodVersion.setStyleName("header-prod-version");
         panel.add(prodVersion);
 
