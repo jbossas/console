@@ -1,6 +1,6 @@
 <!--
   ~ JBoss, Home of Professional Open Source
-  ~ Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
+  ~ Copyright 2012 Red Hat Inc. and/or its affiliates and other contributors
   ~ as indicated by the @author tags. All rights reserved.
   ~ See the copyright.txt in the distribution for a
   ~ full listing of individual contributors.
@@ -19,12 +19,14 @@
 
 <module rename-to="app">
 
-    <inherits name="org.jboss.as.console.App"/>
+    <inherits name="org.jboss.as.console.composite.App"/>
 
-    <!-- during development we reduce the number of permutations -->
-    <extend-property name="locale" values="en"/>
-    <set-property-fallback name="locale" value="en"/>
-    <set-property name="locale" value="en"/>
-    <set-property name="user.agent" value="safari,gecko1_8"/>
+    <!-- replace the look and feel -->
+    <inherits name="org.jboss.ballroom.Framework_RH"/>
+
+    <!-- This needs to be redeclared _after_ inheriting the ballroom module -->
+    <replace-with class="org.jboss.as.console.client.ConsoleFramework">
+        <when-type-is class="org.jboss.ballroom.client.spi.Framework"/>
+    </replace-with>
 
 </module>

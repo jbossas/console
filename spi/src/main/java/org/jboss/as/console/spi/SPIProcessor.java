@@ -55,9 +55,12 @@ public class SPIProcessor extends AbstractProcessor {
 
     private static final String MODULE_FILENAME = "App.gwt.xml";
     private static final String MODULE_DEV_FILENAME = "App_dev.gwt.xml";
+    private static final String MODULE_PRODUCT_FILENAME = "App_RH.gwt.xml";
     private static final String MODULE_PACKAGENAME = "org.jboss.as.console.composite";
     private static final String MODULE_TEMPLATE = "App.gwt.xml.tmpl";
     private static final String MODULE_DEV_TEMPLATE = "App_dev.gwt.xml.tmpl";
+    private static final String MODULE_PRODUCT_TEMPLATE = "App_RH.gwt.xml.tmpl";
+
 
     private Filer filer;
     private Messager messager;
@@ -277,6 +280,7 @@ public class SPIProcessor extends AbstractProcessor {
         writeRuntimeFile();
         writeModuleFile();
         writeDevModuleFile();
+        writeProductModuleFile();
     }
 
     private void writeRuntimeFile() throws Exception {
@@ -368,6 +372,26 @@ public class SPIProcessor extends AbstractProcessor {
                     MODULE_DEV_FILENAME);
             OutputStream output = sourceFile.openOutputStream();
             new TemplateProcessor().process(MODULE_DEV_TEMPLATE, model, output);
+            output.flush();
+            output.close();
+        }
+        catch (IOException e)
+        {
+            throw new RuntimeException("Failed to create file", e);
+        }
+    }
+
+    private void writeProductModuleFile() {
+
+        try
+        {
+            Map<String, Object> model = new HashMap<String, Object>();
+            model.put("modules", modules);
+
+            FileObject sourceFile = filer.createResource(StandardLocation.SOURCE_OUTPUT, MODULE_PACKAGENAME,
+                    MODULE_PRODUCT_FILENAME);
+            OutputStream output = sourceFile.openOutputStream();
+            new TemplateProcessor().process(MODULE_PRODUCT_TEMPLATE, model, output);
             output.flush();
             output.close();
         }
