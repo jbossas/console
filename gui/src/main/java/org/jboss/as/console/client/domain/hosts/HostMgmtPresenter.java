@@ -54,8 +54,7 @@ import java.util.List;
  * @date 3/2/11
  */
 public class HostMgmtPresenter
-        extends Presenter<HostMgmtPresenter.MyView, HostMgmtPresenter.MyProxy>
-    implements HostSelectionEvent.HostSelectionListener {
+        extends Presenter<HostMgmtPresenter.MyView, HostMgmtPresenter.MyProxy> {
 
     private final PlaceManager placeManager;
 
@@ -95,15 +94,9 @@ public class HostMgmtPresenter
     }
 
     @Override
-    public void onHostSelection(String hostName) {
-        hostSelection.setName(hostName);
-    }
-
-    @Override
     protected void onBind() {
         super.onBind();
         getView().setPresenter(this);
-        getEventBus().addHandler(HostSelectionEvent.TYPE, this);
     }
 
     @Override
@@ -114,11 +107,11 @@ public class HostMgmtPresenter
         hostInfoStore.getHosts(new SimpleCallback<List<Host>>() {
             @Override
             public void onSuccess(List<Host> hosts) {
+
                 if(!hostSelection.isSet())
                     selectDefaultHost(hosts);
+
                 getView().updateHosts(hosts);
-
-
                 loadViews();
             }
         });
@@ -126,6 +119,7 @@ public class HostMgmtPresenter
     }
 
     private void loadViews() {
+
         if(bootstrap.getInitialPlace()!=null)
         {
             Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
@@ -143,6 +137,7 @@ public class HostMgmtPresenter
         header.highlight(NameTokens.HostMgmtPresenter);
 
         String currentToken = placeManager.getCurrentPlaceRequest().getNameToken();
+
         if(!currentToken.equals(getProxy().getNameToken()))
         {
             lastSubPlace = currentToken;
@@ -153,7 +148,7 @@ public class HostMgmtPresenter
         }
 
         // first request, select default contents
-        if(!hasBeenRevealed && NameTokens.HostMgmtPresenter.equals(currentToken))
+        if(!hasBeenRevealed)
         {
 
             placeManager.revealPlace( new PlaceRequest(NameTokens.ServerPresenter));

@@ -117,6 +117,8 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
         void setConfigurations(String selectedHost, List<Server> servers, String selectedConfigName);
 
         void setGroups(List<ServerGroupRecord> result);
+
+        void setPreselection(String config);
     }
 
     @Inject
@@ -159,6 +161,8 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
         {
             launchNewConfigDialoge();
         }
+
+        getView().setPreselection(request.getParameter("config", null));
     }
 
     @Override
@@ -166,7 +170,8 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
         super.onReset();
 
         // step1
-        loadSocketBindings();
+        if(placeManager.getCurrentPlaceRequest().getNameToken().equals(getProxy().getNameToken()))
+            loadSocketBindings();
     }
 
     private void loadSocketBindings() {
@@ -182,6 +187,7 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
     }
 
     private void loadServerConfigurations(final String selectedConfigName) {
+
 
         if(!hostSelection.isSet())
         {
@@ -230,13 +236,6 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
         window = new DefaultWindow(Console.MESSAGES.createTitle("Server Configuration"));
         window.setWidth(480);
         window.setHeight(360);
-        window.addCloseHandler(new CloseHandler<PopupPanel>() {
-            @Override
-            public void onClose(CloseEvent<PopupPanel> event) {
-                /*if(selectedRecord==null)
-                    History.back();*/
-            }
-        });
 
 
         serverGroupStore.loadServerGroups(new SimpleCallback<List<ServerGroupRecord>>() {
@@ -322,8 +321,6 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
 
         List<PropertyBinding> bindings = propertyMetaData.getBindingsForType(Server.class);
         ModelNode operation  = ModelAdapter.detypedFromChangeset(proto, changedValues, bindings);
-
-        //System.out.println(operation);
 
         // TODO: https://issues.jboss.org/browse/AS7-3643
 

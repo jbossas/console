@@ -26,20 +26,25 @@ import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.Place;
 import com.gwtplatform.mvp.client.proxy.Proxy;
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
+import org.jboss.as.console.client.domain.model.SimpleCallback;
+import org.jboss.as.console.client.shared.model.ResponseWrapper;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
+import org.jboss.as.console.client.shared.subsys.infinispan.model.CacheContainerStore;
 import org.jboss.as.console.client.shared.viewframework.FrameworkView;
 
 
 
 /**
  * The Presenter for Cache Containers
- * 
+ *
  * @author Stan Silvert
  */
 public class CacheContainerPresenter extends Presenter<CacheContainerPresenter.MyView, CacheContainerPresenter.MyProxy> {
 
     private RevealStrategy revealStrategy;
+    private CacheContainerStore cacheContainerStore;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.CacheContainerPresenter)
@@ -47,20 +52,24 @@ public class CacheContainerPresenter extends Presenter<CacheContainerPresenter.M
     }
 
     public interface MyView extends FrameworkView, View {
+        void setPresenter(CacheContainerPresenter presenter);
     }
 
     @Inject
     public CacheContainerPresenter(
             EventBus eventBus, MyView view, MyProxy proxy,
+            CacheContainerStore cacheContainerStore,
             RevealStrategy revealStrategy) {
         super(eventBus, view, proxy);
 
         this.revealStrategy = revealStrategy;
+        this.cacheContainerStore = cacheContainerStore;
     }
 
     @Override
     protected void onBind() {
         super.onBind();
+        getView().setPresenter(this);
     }
 
     @Override
@@ -73,5 +82,17 @@ public class CacheContainerPresenter extends Presenter<CacheContainerPresenter.M
     protected void revealInParent() {
         revealStrategy.revealInParent(this);
     }
-    
+
+    public void clearCaches(final String cacheContainerName) {
+        cacheContainerStore.clearCaches(cacheContainerName, new SimpleCallback<ResponseWrapper<Boolean>>() {
+            @Override
+            public void onSuccess(ResponseWrapper<Boolean> response) {
+                if (response.getUnderlying())
+                    Console.info(Console.MESSAGES.successful("Clear caches successful for container: " + cacheContainerName));
+                else
+                    Console.error(Console.MESSAGES.failed("Failed to clear caches for container: " + cacheContainerName), response.getResponse().toString());
+            }
+        });
+    }
+
 }

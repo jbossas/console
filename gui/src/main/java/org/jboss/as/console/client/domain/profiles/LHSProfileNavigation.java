@@ -118,4 +118,8 @@ class LHSProfileNavigation {
         profileSelector.setProfiles(profileNames);
 
     }
+
+    public void setPreselection(String preselection) {
+        profileSelector.setPreselection(preselection);
+    }
 }

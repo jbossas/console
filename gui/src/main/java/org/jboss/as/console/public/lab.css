@@ -123,7 +123,7 @@ a:hover, a:active { outline: none; }
 /* doc browser */
 
 .doc-table {
-    width:90%;
+    width:96%;
     background-color: #FFFFFF;
     border: 1px solid #DCDCDC;
     border-radius: 4px 4px 4px 4px;
@@ -222,4 +222,73 @@ input[type="checkbox"] {
 
 .cellTreeTopItemImageValue {
     border:none!important;
+}
+
+/* domain overview */
+
+.domain-hostcontainer {
+    border-left:1px solid #DCDCDC;
+    border-top:1px solid #DCDCDC;
+    border-bottom:1px solid #DCDCDC;
+
+    font-size:12px;
+    min-width:100px;
+    margin-right:4px;
+    margin-bottom:4px;
+
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 4px;
+    border-radius: 4px;
+
+    color: #000000;
+}
+
+.domain-hostcontainer:last-child {
+    border-right:1px solid #DCDCDC;
+}
+
+.domain-servercontainer {
+     -moz-border-bottom-radius: 4px;
+     -webkit-border-bottom-radius: 4px;
+     border-bottom-radius: 4px;
+}
+
+.domain-serverinfo{
+    font-size:10px;
+    padding:4px;
+    cursor: pointer;
+    border-left:1px solid #DCDCDC;
+    border-right:1px solid #DCDCDC;
+    border-bottom:1px solid #DCDCDC;
+}
+
+.domain-serverinfo-active {
+    opacity: 1.0;
+    background-color: #F8F8F8;
+}
+
+.domain-serverinfo:hover {
+    opacity: 1.0;
+}
+
+.server-tools {
+    padding:8px;
+    visibility: collapse;
+}
+
+.domain-hostinfo {
+    border-bottom: 1px solid #BABABA;
+    color: #000000;
+    font-weight: normal !important;
+    padding: 5px;
+    text-align: left !important;
+    margin-bottom:10px;
+}
+
+.domain-controller {
+
+}
+
+.is-visible {
+    visibility: visible;
 }

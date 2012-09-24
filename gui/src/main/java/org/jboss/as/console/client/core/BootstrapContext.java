@@ -36,19 +36,12 @@ public class BootstrapContext implements ApplicationProperties {
 
     private Map<String,String> ctx = new HashMap<String,String>();
 
-    private static final String[] persistentProperties = new String[] {
-            //STANDALONE
-    };
+
     private String initialPlace = null;
     private Throwable lastError;
 
     @Inject
     public BootstrapContext() {
-        /*String token = History.getToken();
-        if(token!=null && !token.equals("") && !token.equals(NameTokens.signInPage))
-            setProperty(INITIAL_TOKEN, token);
-        */
-        loadPersistedProperties();
 
         String devHost = org.jboss.as.console.client.Build.DEV_HOST;
 
@@ -108,21 +101,9 @@ public class BootstrapContext implements ApplicationProperties {
         return protocol + host + ":" + port + "/";
     }
 
-    private void loadPersistedProperties() {
-        for(String key : persistentProperties)
-        {
-            String pref = Preferences.get(key);
-            if(pref!=null)
-                setProperty(key, pref);
-        }
-    }
-
     @Override
     public void setProperty(String key, String value)
     {
-        if(isPersistent(key))
-            Preferences.set(key, value);
-
         ctx.put(key, value);
     }
 
@@ -148,26 +129,7 @@ public class BootstrapContext implements ApplicationProperties {
     @Override
     public void removeProperty(String key) {
 
-        if(isPersistent(key))
-            Preferences.clear(key);
-
         ctx.remove(key);
-    }
-
-    boolean isPersistent(String key)
-    {
-        boolean b = false;
-        for(String s : persistentProperties)
-        {
-            if(s.equals(key))
-            {
-                b=true;
-                break;
-            }
-        }
-
-        return b;
-
     }
 
     @Override

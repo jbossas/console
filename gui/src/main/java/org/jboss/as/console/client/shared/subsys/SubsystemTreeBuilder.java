@@ -24,13 +24,11 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.TreeItem;
-import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
-import org.jboss.as.console.client.plugins.SubsystemExtension;
+import org.jboss.as.console.client.plugins.SubsystemExtensionMetaData;
 import org.jboss.as.console.client.plugins.SubsystemRegistry;
 import org.jboss.as.console.client.shared.model.SubsystemRecord;
 import org.jboss.as.console.client.widgets.tree.GroupItem;
-import org.jboss.ballroom.client.layout.DefaultTreeItem;
 import org.jboss.ballroom.client.layout.LHSNavTreeItem;
 import org.jboss.ballroom.client.layout.LHSTreeSection;
 
@@ -51,14 +49,14 @@ public class SubsystemTreeBuilder {
 
         SubsystemRegistry registry = Console.getSubsystemRegistry();
 
-        Map<String, List<SubsystemExtension>> grouped = new HashMap<String, List<SubsystemExtension>>();
+        Map<String, List<SubsystemExtensionMetaData>> grouped = new HashMap<String, List<SubsystemExtensionMetaData>>();
         List<String> groupNames = new ArrayList<String>();
-        for(SubsystemExtension ext : registry.getExtensions())
+        for(SubsystemExtensionMetaData ext : registry.getExtensions())
         {
             if(!grouped.containsKey(ext.getGroup()))
             {
                 groupNames.add(ext.getGroup());
-                grouped.put(ext.getGroup(), new ArrayList<SubsystemExtension>());
+                grouped.put(ext.getGroup(), new ArrayList<SubsystemExtensionMetaData>());
             }
 
             grouped.get(ext.getGroup()).add(ext);
@@ -72,11 +70,11 @@ public class SubsystemTreeBuilder {
         // build groups first
         for(String groupName : groupNames)
         {
-            List<SubsystemExtension> items = grouped.get(groupName);
+            List<SubsystemExtensionMetaData> items = grouped.get(groupName);
 
             final GroupItem groupTreeItem = new GroupItem(groupName);
 
-            for(SubsystemExtension candidate : items)
+            for(SubsystemExtensionMetaData candidate : items)
             {
                 for(SubsystemRecord actual: subsystems)
                 {

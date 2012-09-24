@@ -259,10 +259,10 @@ public class ServerInstancesView extends SuspendableViewImpl implements ServerIn
 
 
         TextItem nameItem = new TextItem("name", Console.CONSTANTS.common_label_serverInstance());
-        TextItem serverItem = new TextItem("server", Console.CONSTANTS.common_label_serverConfig());
+        //TextItem serverItem = new TextItem("server", Console.CONSTANTS.common_label_serverConfig());
         StatusItem enableItem = new StatusItem("running", "Running?");
 
-        form.setFields(nameItem, serverItem, enableItem);
+        form.setFields(nameItem, enableItem);
         form.bind(instanceTable);
         form.setEnabled(false);
 
@@ -270,6 +270,10 @@ public class ServerInstancesView extends SuspendableViewImpl implements ServerIn
         formWidget.getElement().setAttribute("style", "margin-top:15px;");
 
         formPanel.add(formWidget);
+
+        // TODO: Display NIC details (resolved address)
+
+
 
         properties = new EnvironmentProperties();
 

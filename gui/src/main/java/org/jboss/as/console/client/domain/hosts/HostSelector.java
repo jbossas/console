@@ -34,14 +34,15 @@ public class HostSelector {
             public void onValueChange(final ValueChangeEvent<String> event) {
 
                 if (!event.getValue().isEmpty()) {
-                    Scheduler.get().scheduleEntry(new Scheduler.ScheduledCommand() {
-                        @Override
-                        public void execute() {
-                            Console.getEventBus().fireEvent(
-                                    new HostSelectionEvent(event.getValue())
-                            );
-                        }
-                    });
+                    Scheduler.get().scheduleDeferred(
+                            new Scheduler.ScheduledCommand() {
+                                @Override
+                                public void execute() {
+                                    Console.getEventBus().fireEvent(
+                                            new HostSelectionEvent(event.getValue())
+                                    );
+                                }
+                            });
                 }
             }
         });

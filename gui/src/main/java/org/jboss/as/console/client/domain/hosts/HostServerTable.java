@@ -1,7 +1,9 @@
 package org.jboss.as.console.client.domain.hosts;
 
+import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
@@ -20,6 +22,7 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
+import com.google.gwt.view.client.ProvidesKey;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 import org.jboss.as.console.client.domain.model.Host;
@@ -63,6 +66,11 @@ public class HostServerTable {
     private DefaultPager serverPager;
 
     private int clipAt = 20;
+
+    private SingleSelectionModel<Host> hostSelectionModel;
+    private SingleSelectionModel<ServerInstance> serverSelectionModel;
+    private boolean preventRefreshServerList = false;
+
 
     public HostServerTable(HostServerManagement presenter) {
         this.presenter = presenter;
@@ -126,12 +134,24 @@ public class HostServerTable {
 
         hostList = new DefaultCellList<Host>(new HostCell());
         hostList.setPageSize(6);
-        hostList.setSelectionModel(new SingleSelectionModel<Host>());
+        hostSelectionModel = new SingleSelectionModel<Host>(new ProvidesKey<Host>() {
+            @Override
+            public Object getKey(Host host) {
+                return host.getName();
+            }
+        });
+        hostList.setSelectionModel(hostSelectionModel);
         hostList.addStyleName("fill-layout-width");
         hostList.addStyleName("clip-text") ;
 
         serverList = new DefaultCellList<ServerInstance>(new ServerCell());
-        serverList.setSelectionModel(new SingleSelectionModel<ServerInstance>());
+        serverSelectionModel = new SingleSelectionModel<ServerInstance>(new ProvidesKey<ServerInstance>() {
+            @Override
+            public Object getKey(ServerInstance serverInstance) {
+                return serverInstance.getName();
+            }
+        });
+        serverList.setSelectionModel(serverSelectionModel);
         serverList.setPageSize(6);
         serverList.addStyleName("fill-layout-width");
         serverList.addStyleName("clip-text") ;
@@ -146,7 +166,19 @@ public class HostServerTable {
             @Override
             public void onSelectionChange(SelectionChangeEvent event) {
                 Host selectedHost = getSelectedHost();
-                presenter.loadServer(selectedHost);
+
+                if(selectedHost!=null)
+                {
+                    if(!preventRefreshServerList)
+                        presenter.loadServer(selectedHost.getName());
+                }
+                else if(selectedHost==null)
+                {
+                    serverProvider.setList(Collections.EMPTY_LIST);
+                }
+
+
+
             }
         });
 
@@ -154,8 +186,13 @@ public class HostServerTable {
             @Override
             public void onSelectionChange(SelectionChangeEvent event) {
                 ServerInstance server = getSelectedServer();
-                presenter.onServerSelected(getSelectedHost(), server);
-                updateDisplay();
+                Host selectedHost = getSelectedHost();
+
+                if(selectedHost!=null &server!=null)
+                {
+                    presenter.onServerSelected(selectedHost, server);
+                    updateDisplay();
+                }
             }
         });
 
@@ -215,8 +252,6 @@ public class HostServerTable {
         });
         doneBtn.getElement().setAttribute("style","float:right");
         layout.add(doneBtn);
-
-
 
         // --------------
 
@@ -313,18 +348,15 @@ public class HostServerTable {
      * Display the currently active servers for selection
      * @param servers
      */
-    public void setServer(Host selectedHost, List<ServerInstance> servers) {
+    public void setServer(List<ServerInstance> servers) {
 
         serverProvider.setList(servers);
 
-        serverPager.setVisible(servers.size()>=5);
+        serverPager.setVisible(servers.size() >= 5);
 
-        if(!servers.isEmpty())
-            serverList.getSelectionModel().setSelected(servers.get(0), true);
-        else
+        if(servers.isEmpty())
         {
             currentDisplayedValue.setText("");
-            presenter.onServerSelected(selectedHost, null);
         }
     }
 
@@ -335,24 +367,63 @@ public class HostServerTable {
         hostPager.setVisible(hosts.size()>=5);
 
         hostProvider.setList(hosts);
-        serverProvider.setList(Collections.EMPTY_LIST);
+
+
+        // i think it's safe to skip this part:
+        // either the pre- or the default selection should kick in
+        //serverProvider.setList(Collections.EMPTY_LIST);
+
+
     }
 
     public void defaultHostSelection() {
-        if(hostList.getRowCount()>0)
+
+        if(hostProvider.getList().size()>0)
         {
-            selectHost(hostList.getVisibleItem(0));
+            Host defaultHost = hostList.getVisibleItem(0);
+            Log.debug("Select default host: "+defaultHost.getName());
+            selectHost(defaultHost);
         }
     }
 
-    public void selectHost(Host host) {
-        hostList.getSelectionModel().setSelected(host, true);
+    private void selectHost(String hostName) {
 
+        for(Host host : hostProvider.getList())
+        {
+            if(hostName.equals(host.getName()))
+            {
+                selectHost(host);
+                break;
+            }
+        }
+    }
+
+    /**
+     * will reload the server list
+     * @param host
+     */
+    private void selectHost(Host host) {
+        hostList.getSelectionModel().setSelected(host, true);
     }
 
     public void selectServer(ServerInstance server) {
 
+        assert !hostProvider.getList().isEmpty() : "Hosts have not been loaded";
+        assert !serverProvider.getList().isEmpty() : "Servers have not been loaded";
+
         serverList.getSelectionModel().setSelected(server, true);
+    }
+
+    public void pickHost(String host) {
+        preventRefreshServerList = true;
+        selectHost(host);
+
+        Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+            @Override
+            public void execute() {
+                preventRefreshServerList = false;
+            }
+        });
     }
 
     interface Template extends SafeHtmlTemplates {
@@ -364,6 +435,7 @@ public class HostServerTable {
         @Template("<div class='server-selection-server'>{0}</div>")
         SafeHtml message(String title);
     }
+
 
     // -----
 
@@ -391,7 +463,7 @@ public class HostServerTable {
                 ServerInstance server,
                 SafeHtmlBuilder safeHtmlBuilder)
         {
-           // String state = server.isRunning() ? " (active)":"";
+            // String state = server.isRunning() ? " (active)":"";
             String state = "";
             safeHtmlBuilder.append(SERVER_TEMPLATE.message(clip(server.getName(), clipAt)+state));
         }

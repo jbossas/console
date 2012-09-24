@@ -22,7 +22,7 @@ import org.jboss.as.console.client.shared.subsys.tx.model.TransactionManager;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.as.console.client.widgets.forms.BeanMetaData;
 import org.jboss.as.console.client.widgets.forms.EntityAdapter;
-import org.jboss.as.console.spi.Subsystem;
+import org.jboss.as.console.spi.SubsystemExtension;
 import org.jboss.dmr.client.ModelNode;
 
 import java.util.Map;
@@ -45,7 +45,7 @@ public class TransactionPresenter extends Presenter<TransactionPresenter.MyView,
 
     @ProxyCodeSplit
     @NameToken(NameTokens.TransactionPresenter)
-    @Subsystem(name="Transactions", group="Container", key="transactions")
+    @SubsystemExtension(name="Transactions", group="Container", key="transactions")
     public interface MyProxy extends Proxy<TransactionPresenter>, Place {
     }
 

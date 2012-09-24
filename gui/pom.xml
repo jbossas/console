@@ -10,14 +10,14 @@
     <parent>
         <groupId>org.jboss.as</groupId>
         <artifactId>jboss-as-console-parent</artifactId>
-        <version>1.4.0.Final</version>
+        <version>1.5.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <properties>
         <gwt.maven>2.3.0</gwt.maven>
         <console.profile>jboss</console.profile>
-        <product.version>7.1</product.version>
+        <product.version>7.2</product.version>
         <gwt.bindAddress>127.0.0.1</gwt.bindAddress>
     </properties>
 
@@ -209,10 +209,7 @@
                         <configuration>
                             <outputDiagnostics>false</outputDiagnostics>
                             <processors>
-                                <processor>org.jboss.as.console.spi.ExtensionProcessor</processor>
-                                <processor>org.jboss.as.console.spi.ExtensionBindingProcessor</processor>
-                                <processor>org.jboss.as.console.spi.BeanFactoryProcessor</processor>
-                                <processor>org.jboss.as.console.spi.SubsystemProcessor</processor>
+                                <processor>org.jboss.as.console.spi.SPIProcessor</processor>
                             </processors>
                         </configuration>
                     </execution>

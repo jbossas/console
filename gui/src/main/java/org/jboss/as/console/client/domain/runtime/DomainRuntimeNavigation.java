@@ -1,6 +1,6 @@
 package org.jboss.as.console.client.domain.runtime;
 
-import com.google.gwt.user.client.ui.ListBox;
+import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -9,22 +9,25 @@ import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.domain.hosts.ServerPicker;
 import org.jboss.as.console.client.domain.model.Host;
 import org.jboss.as.console.client.domain.model.ServerInstance;
+import org.jboss.as.console.client.plugins.RuntimeExtensionMetaData;
+import org.jboss.as.console.client.plugins.RuntimeExtensionRegistry;
+import org.jboss.as.console.client.plugins.RuntimeGroup;
 import org.jboss.as.console.client.shared.model.SubsystemRecord;
+import org.jboss.as.console.client.shared.state.CurrentServerSelection;
+import org.jboss.as.console.client.shared.state.ServerSelectionEvent;
 import org.jboss.as.console.client.widgets.nav.Predicate;
 import org.jboss.ballroom.client.layout.LHSNavTree;
 import org.jboss.ballroom.client.layout.LHSNavTreeItem;
 import org.jboss.ballroom.client.layout.LHSTreeSection;
-import org.jboss.ballroom.client.widgets.forms.ComboBox;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
  * @author Heiko Braun
  * @date 11/2/11
  */
-class DomainRuntimeNavigation {
+class DomainRuntimeNavigation implements ServerSelectionEvent.ServerSelectionListener {
 
     private VerticalPanel stack;
     private VerticalPanel layout;
@@ -38,6 +41,12 @@ class DomainRuntimeNavigation {
     private LHSNavTree navigation;
     private LHSTreeSection metricLeaf;
     private LHSTreeSection runtimeLeaf;
+
+    private CurrentServerSelection serverSelection;
+
+    public DomainRuntimeNavigation(CurrentServerSelection serverSelection) {
+        this.serverSelection = serverSelection;
+    }
 
     public Widget asWidget()
     {
@@ -60,14 +69,21 @@ class DomainRuntimeNavigation {
 
         //Tree statusTree = new LHSNavTree("domain-runtime");
 
-        LHSTreeSection domainLeaf = new LHSTreeSection("Domain");
+        LHSTreeSection domainLeaf = new LHSTreeSection("Host");
         navigation.addItem(domainLeaf);
 
 
         //domainLeaf.addItem(new LHSNavTreeItem("Overview", ""));
 
-        LHSNavTreeItem serverInstances= new LHSNavTreeItem(Console.CONSTANTS.common_label_serverInstances(), NameTokens.InstancesPresenter);
-        domainLeaf.addItem(serverInstances);
+        LHSNavTreeItem serverInstances= new LHSNavTreeItem(
+                Console.CONSTANTS.common_label_serverInstances(),
+                NameTokens.InstancesPresenter);
+
+        /*LHSNavTreeItem domainOverview= new LHSNavTreeItem(
+                        "Domain",
+                        NameTokens.DomainOverviewPresenter);
+
+        domainLeaf.addItem(domainOverview);*/
         domainLeaf.addItem(serverInstances);
 
         domainLeaf.addItem(new LHSNavTreeItem("Manage Deployments", NameTokens.DeploymentsPresenter));
@@ -85,7 +101,6 @@ class DomainRuntimeNavigation {
         LHSNavTreeItem datasources = new LHSNavTreeItem("Datasources", NameTokens.DataSourceMetricPresenter);
         LHSNavTreeItem jmsQueues = new LHSNavTreeItem("JMS Destinations", NameTokens.JmsMetricPresenter);
         LHSNavTreeItem web = new LHSNavTreeItem("Web", NameTokens.WebMetricPresenter);
-        LHSNavTreeItem tx = new LHSNavTreeItem("Transactions", NameTokens.TXMetrics);
         LHSNavTreeItem jpa = new LHSNavTreeItem("JPA", NameTokens.JPAMetricPresenter);
         LHSNavTreeItem naming = new LHSNavTreeItem("JNDI View", NameTokens.JndiPresenter);
 
@@ -93,9 +108,36 @@ class DomainRuntimeNavigation {
         metricPredicates.add(new Predicate("datasources", datasources));
         metricPredicates.add(new Predicate("messaging", jmsQueues));
         metricPredicates.add(new Predicate("web", web));
-        metricPredicates.add(new Predicate("transactions", tx));
         metricPredicates.add(new Predicate("jpa", jpa));
         metricPredicates.add(new Predicate("naming", naming));
+
+
+         // Extension based additions
+        RuntimeExtensionRegistry registry = Console.getRuntimeLHSItemExtensionRegistry();
+        List<RuntimeExtensionMetaData> menuExtensions = registry.getExtensions();
+        for (RuntimeExtensionMetaData ext : menuExtensions) {
+
+            if(RuntimeGroup.METRICS.equals(ext.getGroup()))
+            {
+                metricPredicates.add(
+                        new Predicate(
+                                ext.getKey(), new LHSNavTreeItem(ext.getName(), ext.getToken())
+                        )
+                );
+            }
+            else if(RuntimeGroup.OPERATiONS.equals(ext.getGroup()))
+            {
+                runtimePredicates.add(
+                        new Predicate(
+                                ext.getKey(), new LHSNavTreeItem(ext.getName(), ext.getToken())
+                        )
+                );
+            }
+            else
+            {
+                Log.warn("Invalid runtime group for extension: " + ext.getGroup());
+            }
+        }
 
         // ---
 
@@ -122,11 +164,6 @@ class DomainRuntimeNavigation {
 
         serverPicker.setHosts(hosts);
 
-    }
-
-    public void setServer(List<ServerInstance> server) {
-
-        serverPicker.setServers(server);
     }
 
     public void setSubsystems(List<SubsystemRecord> subsystems) {
@@ -162,4 +199,13 @@ class DomainRuntimeNavigation {
 
     }
 
+    @Override
+    public void onServerSelection(String hostName, ServerInstance server, ServerSelectionEvent.Source source) {
+
+        if(!source.equals(ServerSelectionEvent.Source.Picker))
+        {
+            // triggered external to this view
+            serverPicker.setPreselection(hostName, server);
+        }
+    }
 }

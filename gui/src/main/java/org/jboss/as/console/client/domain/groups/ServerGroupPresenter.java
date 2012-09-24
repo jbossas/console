@@ -87,6 +87,7 @@ public class ServerGroupPresenter
 
     private List<ProfileRecord> existingProfiles;
     private List<String> existingSockets;
+    private String preselection;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.ServerGroupPresenter)
@@ -100,6 +101,8 @@ public class ServerGroupPresenter
         void updateSocketBindings(List<String> result);
         void setJvm(ServerGroupRecord group, Jvm jvm);
         void setProperties(ServerGroupRecord group, List<PropertyRecord> properties);
+
+        void setPreselection(String preselection);
     }
 
     @Inject
@@ -133,6 +136,9 @@ public class ServerGroupPresenter
         {
             launchNewGroupDialoge();
         }
+
+        preselection = request.getParameter("group", null);
+        getView().setPreselection(preselection);
     }
 
     @Override

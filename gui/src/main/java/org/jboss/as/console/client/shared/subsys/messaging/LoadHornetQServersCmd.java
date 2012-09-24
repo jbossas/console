@@ -1,5 +1,6 @@
 package org.jboss.as.console.client.shared.subsys.messaging;
 
+import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.shared.dispatch.AsyncCommand;
@@ -10,6 +11,7 @@ import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.dmr.client.ModelNode;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static org.jboss.dmr.client.ModelDescriptionConstants.*;
@@ -42,14 +44,25 @@ public class LoadHornetQServersCmd implements AsyncCommand<List<String>> {
             @Override
             public void onSuccess(DMRResponse result) {
                 ModelNode response = result.get();
-                List<ModelNode> payload = response.get(RESULT).asList();
-                List<String> serverNames = new ArrayList<String>(payload.size());
-                for(ModelNode model : payload)
+
+                if(response.isFailure())
                 {
-                    serverNames.add(model.asString());
+                    Log.error("Failed to load hornetq server", response.getFailureDescription());
+                    callback.onSuccess(Collections.EMPTY_LIST);
+                }
+                else
+                {
+                    List<ModelNode> payload = response.get(RESULT).asList();
+                    List<String> serverNames = new ArrayList<String>(payload.size());
+                    for(ModelNode model : payload)
+                    {
+                        serverNames.add(model.asString());
+                    }
+                    callback.onSuccess(serverNames);
                 }
 
-                callback.onSuccess(serverNames);
+
+
             }
         });
     }

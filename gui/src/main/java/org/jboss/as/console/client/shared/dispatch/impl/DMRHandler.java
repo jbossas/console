@@ -20,6 +20,7 @@
 package org.jboss.as.console.client.shared.dispatch.impl;
 
 import com.allen_sauer.gwt.log.client.Log;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestCallback;
@@ -29,7 +30,10 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
 import org.jboss.as.console.client.core.BootstrapContext;
 import org.jboss.as.console.client.core.UIConstants;
+import org.jboss.as.console.client.domain.model.SimpleCallback;
+import org.jboss.as.console.client.shared.Preferences;
 import org.jboss.as.console.client.shared.dispatch.ActionHandler;
+import org.jboss.as.console.client.shared.dispatch.DMRCache;
 import org.jboss.as.console.client.shared.dispatch.DispatchRequest;
 import org.jboss.as.console.client.shared.dispatch.InvocationMetrics;
 import org.jboss.dmr.client.ModelNode;
@@ -48,9 +52,13 @@ public class DMRHandler implements ActionHandler<DMRAction, DMRResponse> {
 
     private final RequestBuilder requestBuilder;
 
-    private boolean trackInvocations = false; //!GWT.isScript(); TODO
+    private boolean trackInvocations = !GWT.isScript();
+    private boolean useCache = false;
+
     private InvocationMetrics metrics;
     private UIConstants constants;
+
+    private static DMRCache cache = new DMRCache();
 
     @Inject
     public DMRHandler(BootstrapContext bootstrap, InvocationMetrics metrics, UIConstants constants) {
@@ -66,8 +74,11 @@ public class DMRHandler implements ActionHandler<DMRAction, DMRResponse> {
         requestBuilder.setHeader(HEADER_ACCEPT, DMR_ENCODED);
         requestBuilder.setHeader(HEADER_CONTENT_TYPE, DMR_ENCODED);
 
-        // XMLHttpRequest isn't allowed to set this header
-        //requestBuilder.setHeader(HEADER_CONNECTION, KEEP_ALIVE);
+        String cachePref = Preferences.get(Preferences.Key.USE_CACHE, "false");
+        useCache = Boolean.valueOf(cachePref);
+
+        if(useCache)
+            Log.warn("Using DMR cache. please note that this is an experimental feature!");
     }
 
     @Override
@@ -76,15 +87,54 @@ public class DMRHandler implements ActionHandler<DMRAction, DMRResponse> {
         assert action.getOperation()!=null;
 
         final ModelNode operation = action.getOperation();
+        final String token = InvocationMetrics.getToken(operation);
 
         if(trackInvocations)
         {
             metrics.addInvocation(operation);
+            requestBuilder.setHeader("x-correlationId", String.valueOf(token.hashCode()));
         }
 
-        Request requestHandle = executeRequest(resultCallback, operation);
+        DispatchRequest handle = null;
+        if(useCache && action.isCachable())
+        {
+            handle = executeCached(token, operation, resultCallback);
+        }
+        else {
+            Request request = executeRequest(resultCallback, operation);
+            handle = new DispatchRequestHandle(request);
+        }
 
-        return new DispatchRequestHandle(requestHandle);
+        return handle;
+
+    }
+
+    private DispatchRequestHandle executeCached(final String token, ModelNode operation, final AsyncCallback<DMRResponse> resultCallback) {
+        DMRResponse cachedResponse = cache.get(token);
+        if(cachedResponse!=null)
+        {
+            //System.out.println("Cache hit: "+token.hashCode());
+
+            resultCallback.onSuccess(cachedResponse);
+            return new DispatchRequestHandle(null);
+        }
+        else
+        {
+            Request requestHandle = executeRequest(new SimpleCallback<DMRResponse>() {
+                @Override
+                public void onSuccess(DMRResponse dmrResponse) {
+                    cache.put(token, dmrResponse);
+                    resultCallback.onSuccess(dmrResponse);
+                }
+
+                @Override
+                public void onFailure(Throwable caught) {
+                    resultCallback.onFailure(caught);
+                }
+            }, operation);
+
+            return new DispatchRequestHandle(requestHandle);
+        }
     }
 
     private Request executeRequest(final AsyncCallback<DMRResponse> resultCallback, final ModelNode operation) {

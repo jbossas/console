@@ -1,15 +1,20 @@
 package org.jboss.as.console.client.standalone.runtime;
 
+import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
+import org.jboss.as.console.client.plugins.RuntimeExtensionMetaData;
+import org.jboss.as.console.client.plugins.RuntimeExtensionRegistry;
 import org.jboss.as.console.client.shared.model.SubsystemRecord;
 import org.jboss.as.console.client.widgets.nav.Predicate;
-import org.jboss.ballroom.client.layout.LHSTreeSection;
+import org.jboss.as.console.client.plugins.RuntimeGroup;
 import org.jboss.ballroom.client.layout.LHSNavTree;
 import org.jboss.ballroom.client.layout.LHSNavTreeItem;
+import org.jboss.ballroom.client.layout.LHSTreeSection;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,7 +71,6 @@ public class StandaloneRuntimeNavigation {
         LHSNavTreeItem datasources = new LHSNavTreeItem("Datasources", "ds-metrics");
         LHSNavTreeItem jmsQueues = new LHSNavTreeItem("JMS Destinations", "jms-metrics");
         LHSNavTreeItem web = new LHSNavTreeItem("Web", "web-metrics");
-        LHSNavTreeItem tx = new LHSNavTreeItem("Transactions", "tx-metrics");
         LHSNavTreeItem jpa = new LHSNavTreeItem("JPA", NameTokens.JPAMetricPresenter);
         LHSNavTreeItem ws = new LHSNavTreeItem("Webservices", NameTokens.WebServiceRuntimePresenter);
         LHSNavTreeItem naming = new LHSNavTreeItem("JNDI View", NameTokens.JndiPresenter);
@@ -74,13 +78,40 @@ public class StandaloneRuntimeNavigation {
         metricPredicates.add(new Predicate("datasources", datasources));
         metricPredicates.add(new Predicate("messaging", jmsQueues));
         metricPredicates.add(new Predicate("web", web));
-        metricPredicates.add(new Predicate("transactions", tx));
+
         metricPredicates.add(new Predicate("jpa", jpa));
         metricPredicates.add(new Predicate("webservices", ws));
         metricPredicates.add(new Predicate("naming", naming));
 
         navigation.addItem(metricLeaf);
 
+
+        // Extension based additions
+        RuntimeExtensionRegistry registry = Console.getRuntimeLHSItemExtensionRegistry();
+        List<RuntimeExtensionMetaData> menuExtensions = registry.getExtensions();
+        for (RuntimeExtensionMetaData ext : menuExtensions) {
+
+            if(RuntimeGroup.METRICS.equals(ext.getGroup()))
+            {
+                metricPredicates.add(
+                        new Predicate(
+                                ext.getKey(), new LHSNavTreeItem(ext.getName(), ext.getToken())
+                        )
+                );
+            }
+            else if(RuntimeGroup.OPERATiONS.equals(ext.getGroup()))
+            {
+                runtimePredicates.add(
+                        new Predicate(
+                                ext.getKey(), new LHSNavTreeItem(ext.getName(), ext.getToken())
+                        )
+                );
+            }
+            else
+            {
+                Log.warn("Invalid runtime group for extension: "+ext.getGroup());
+            }
+        }
 
         // ---
 
@@ -133,7 +164,6 @@ public class StandaloneRuntimeNavigation {
         }
 
         navigation.expandTopLevel();
-
     }
 
 

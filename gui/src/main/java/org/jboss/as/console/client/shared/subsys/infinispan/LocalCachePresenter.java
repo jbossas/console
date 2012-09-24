@@ -26,20 +26,25 @@ import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.Place;
 import com.gwtplatform.mvp.client.proxy.Proxy;
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
+import org.jboss.as.console.client.domain.model.SimpleCallback;
+import org.jboss.as.console.client.shared.model.ResponseWrapper;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
+import org.jboss.as.console.client.shared.subsys.infinispan.model.LocalCacheStore;
 import org.jboss.as.console.client.shared.viewframework.FrameworkView;
 
 
 
 /**
  * The Presenter for Local Caches
- * 
+ *
  * @author Stan Silvert ssilvert@redhat.com (C) 2011 Red Hat Inc.
  */
 public class LocalCachePresenter extends Presenter<LocalCachePresenter.MyView, LocalCachePresenter.MyProxy> {
 
     private RevealStrategy revealStrategy;
+    private LocalCacheStore localCacheStore;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.LocalCachePresenter)
@@ -47,20 +52,24 @@ public class LocalCachePresenter extends Presenter<LocalCachePresenter.MyView, L
     }
 
     public interface MyView extends FrameworkView, View {
+        void setPresenter(LocalCachePresenter presenter);
     }
 
     @Inject
     public LocalCachePresenter(
             EventBus eventBus, MyView view, MyProxy proxy,
+            LocalCacheStore localCacheStore,
             RevealStrategy revealStrategy) {
         super(eventBus, view, proxy);
 
         this.revealStrategy = revealStrategy;
+        this.localCacheStore = localCacheStore;
     }
 
     @Override
     protected void onBind() {
         super.onBind();
+        getView().setPresenter(this);
     }
 
     @Override
@@ -73,5 +82,21 @@ public class LocalCachePresenter extends Presenter<LocalCachePresenter.MyView, L
     protected void revealInParent() {
         revealStrategy.revealInParent(this);
     }
-    
+
+    public void clearCache(final String cacheContainerName, final String cacheName) {
+        localCacheStore.clearCache(cacheContainerName, cacheName,
+                new SimpleCallback<ResponseWrapper<Boolean>>() {
+            @Override
+            public void onSuccess(ResponseWrapper<Boolean> response) {
+                if (response.getUnderlying())
+                    Console.info(Console.MESSAGES.successful(
+                            "Clear cache: " + cacheName + " for container: " + cacheContainerName));
+                else
+                    Console.error(Console.MESSAGES.failed(
+                            "Clear cache: " + cacheName + " for container: " + cacheContainerName),
+                            response.getResponse().toString());
+            }
+        });
+    }
+
 }

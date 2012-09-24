@@ -8,5 +8,5 @@ import java.util.List;
  */
 public interface SubsystemRegistry {
 
-    public List<SubsystemExtension> getExtensions();
+    public List<SubsystemExtensionMetaData> getExtensions();
 }

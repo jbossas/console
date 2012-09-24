@@ -218,6 +218,8 @@ public interface UIConstants extends Constants {
     String subsys_infinispan_invalidation_cache_desc();
     String subsys_infinispan_replicated_cache_desc();
     String subsys_infinispan_distributed_cache_desc();
+    String subsys_infinispan_cache_container_clear_caches();
+    String subsys_infinispan_local_cache_clear_cache();
 
     String subsys_naming_jndiView();
     String subsys_naming_jndiBindings();

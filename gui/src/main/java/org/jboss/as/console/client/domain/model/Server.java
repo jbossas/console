@@ -60,4 +60,10 @@ public interface Server {
     @Binding(skip = true)
     boolean isStarted();
     void setStarted(boolean b);
+
+
+    @Binding(skip = true)
+    String getProfile();
+    void setProfile(String profileName);
+
 }

@@ -85,7 +85,7 @@ public class DataSourceMetricPresenter extends Presenter<DataSourceMetricPresent
     }
 
     @Override
-    public void onServerSelection(String hostName, final ServerInstance server) {
+    public void onServerSelection(String hostName, final ServerInstance server, ServerSelectionEvent.Source source) {
 
         getView().clearSamples();
 

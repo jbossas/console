@@ -59,7 +59,7 @@ public class WebServiceRuntimePresenter
     }
 
     @Override
-    public void onServerSelection(String hostName, final ServerInstance server) {
+    public void onServerSelection(String hostName, final ServerInstance server, ServerSelectionEvent.Source source) {
 
         if(isVisible())
         {

@@ -20,6 +20,7 @@
 package org.jboss.as.console.client.domain.profiles;
 
 import com.allen_sauer.gwt.log.client.Log;
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.inject.Inject;
@@ -76,6 +77,8 @@ public class ProfileMgmtPresenter
     public interface MyView extends SuspendableView {
         void setProfiles(List<ProfileRecord> profileRecords);
         void setSubsystems(List<SubsystemRecord> subsystemRecords);
+
+        void setPreselection(String preselection);
     }
 
     @ContentSlot
@@ -114,14 +117,22 @@ public class ProfileMgmtPresenter
         // default init when revealed the first time
         if(!hasBeenRevealed)
         {
-            hasBeenRevealed = true;
-            loadProfiles();
+            Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+                @Override
+                public void execute() {
+                    hasBeenRevealed = true;
+                    loadProfiles();
+
+                }
+            });
+
+            return;
         }
 
         // chose sub place to reveal
         String currentToken = placeManager.getCurrentPlaceRequest().getNameToken();
 
-        // already sub pace chosen (token in URL)
+        // already sub place chosen (token in URL)
         if(!getProxy().getNameToken().equals(currentToken))
         {
             lastPlace = currentToken;
@@ -137,6 +148,9 @@ public class ProfileMgmtPresenter
             else
             {
                 // no token and no last place given
+
+                assert profileSelection.isSet() : "no profile not selected!";
+
                 subsysStore.loadSubsystems(profileSelection.getName(), new SimpleCallback<List<SubsystemRecord>>() {
                     @Override
                     public void onSuccess(List<SubsystemRecord> existingSubsystems) {
@@ -148,36 +162,31 @@ public class ProfileMgmtPresenter
 
     }
 
+    @Override
+    public void prepareFromRequest(PlaceRequest request) {
+
+        super.prepareFromRequest(request);
+
+        final String preselection = request.getParameter("profile", null);
+
+        if(preselection!=null)
+        {
+            getView().setPreselection(preselection);
+            hasBeenRevealed = false;
+            lastPlace = null;
+            profileSelection.setName(preselection);
+        }
+    }
+
     private void loadProfiles() {
-         // load profiles
-            profileStore.loadProfiles(new SimpleCallback<List<ProfileRecord>>() {
-                @Override
-                public void onSuccess(final List<ProfileRecord> result) {
 
-                    getView().setProfiles(result);
+        profileStore.loadProfiles(new SimpleCallback<List<ProfileRecord>>() {
+            @Override
+            public void onSuccess(final List<ProfileRecord> result) {
 
-                    /*Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
-                        @Override
-                        public void execute() {
-                            // default profile
-                            if(!result.isEmpty())
-                            {
-                                selectDefaultProfile(result);
-                            }
-
-                            Timer t = new Timer() {
-                                @Override
-                                public void run() {
-                                    highlightLHSNav();
-                                }
-                            };
-
-                            t.schedule(150);
-                        }
-                    });*/
-
-                }
-            });
+                getView().setProfiles(result);
+            }
+        });
     }
 
     @Override
@@ -212,6 +221,8 @@ public class ProfileMgmtPresenter
 
     @Override
     public void onProfileSelection(String profileName) {
+
+        assert profileName!=null && !profileName.equals("") : "illegal profile name: "+profileName;
 
         if(!isVisible()) return;
 

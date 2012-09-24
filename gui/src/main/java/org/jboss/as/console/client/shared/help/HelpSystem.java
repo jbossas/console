@@ -113,8 +113,8 @@ public class HelpSystem {
     }
 
     private String getLocale() {
-        String locale = Preferences.get("as7_ui_locale") != null ?
-                Preferences.get("as7_ui_locale") : "en";
+        String locale = Preferences.get(Preferences.Key.LOCALE) != null ?
+                Preferences.get(Preferences.Key.LOCALE) : "en";
         return locale;
 
     }

@@ -19,6 +19,10 @@
 
 package org.jboss.as.console.client.domain.model;
 
+import org.jboss.as.console.client.widgets.forms.Binding;
+
+import java.util.Map;
+
 /**
  * @author Heiko Braun
  * @date 3/3/11
@@ -40,5 +44,24 @@ public interface ServerInstance {
 
     ServerFlag getFlag();
     void setFlag(ServerFlag state);
+
+    @Binding(skip = true)
+    String getHost();
+    void setHost(String hostName);
+
+    // -- runtime data
+
+
+    @Binding(skip = true)
+    Map<String,String> getInterfaces();
+    void setInterfaces(Map<String,String> interfaces);
+
+    @Binding(skip = true)
+    Map<String,String> getSocketBindings();
+    void setSocketBindings(Map<String,String> sockets);
+
+    @Binding(skip = true)
+    String getProfile();
+    void setProfile(String name);
 
 }

@@ -29,7 +29,7 @@ import org.jboss.as.console.client.shared.subsys.messaging.model.DiscoveryGroup;
 import org.jboss.as.console.client.shared.subsys.messaging.model.MessagingProvider;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.as.console.client.widgets.forms.EntityAdapter;
-import org.jboss.as.console.spi.Subsystem;
+import org.jboss.as.console.spi.SubsystemExtension;
 import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 import org.jboss.dmr.client.ModelNode;
 import org.jboss.dmr.client.Property;
@@ -67,7 +67,7 @@ public class MsgClusteringPresenter
 
     @ProxyCodeSplit
     @NameToken(NameTokens.MsgClusteringPresenter)
-    @Subsystem(name="Clustering", group = "Messaging", key="messaging")
+    @SubsystemExtension(name="Clustering", group = "Messaging", key="messaging")
     public interface MyProxy extends Proxy<MsgClusteringPresenter>, Place {
     }
 

@@ -38,7 +38,7 @@ import org.jboss.as.console.client.shared.subsys.messaging.model.MessagingProvid
 import org.jboss.as.console.client.shared.subsys.messaging.model.Queue;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.as.console.client.widgets.forms.EntityAdapter;
-import org.jboss.as.console.spi.Subsystem;
+import org.jboss.as.console.spi.SubsystemExtension;
 import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 import org.jboss.dmr.client.ModelNode;
 import org.jboss.dmr.client.Property;
@@ -80,7 +80,7 @@ public class MsgConnectionsPresenter extends Presenter<MsgConnectionsPresenter.M
 
     @ProxyCodeSplit
     @NameToken(NameTokens.MsgConnectionsPresenter)
-    @Subsystem(name="Connections", group = "Messaging", key="messaging")
+    @SubsystemExtension(name="Connections", group = "Messaging", key="messaging")
     public interface MyProxy extends Proxy<MsgConnectionsPresenter>, Place {
     }
 

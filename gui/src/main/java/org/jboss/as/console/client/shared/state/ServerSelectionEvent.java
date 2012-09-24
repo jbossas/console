@@ -38,10 +38,26 @@ public class ServerSelectionEvent extends GwtEvent<ServerSelectionEvent.ServerSe
     private String hostName;
     private ServerInstance server;
 
+    public static enum Source { Picker, Other }
+
+    private Source source;
+
     public ServerSelectionEvent(String hostName, ServerInstance server) {
         super();
         this.hostName = hostName;
         this.server = server;
+        this.source = Source.Other;
+    }
+
+    public ServerSelectionEvent(String hostName, ServerInstance server, Source src) {
+            super();
+            this.hostName = hostName;
+            this.server = server;
+            this.source = src;
+        }
+
+    public Source getSource() {
+        return source;
     }
 
     @Override
@@ -51,7 +67,7 @@ public class ServerSelectionEvent extends GwtEvent<ServerSelectionEvent.ServerSe
 
     @Override
     protected void dispatch(ServerSelectionListener listener) {
-        listener.onServerSelection(hostName, server);
+        listener.onServerSelection(hostName, server, source);
     }
 
     public String getHostName() {
@@ -63,7 +79,7 @@ public class ServerSelectionEvent extends GwtEvent<ServerSelectionEvent.ServerSe
     }
 
     public interface ServerSelectionListener extends EventHandler {
-        void onServerSelection(String hostName, ServerInstance server);
+        void onServerSelection(String hostName, ServerInstance server, Source source);
     }
 }
 

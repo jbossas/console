@@ -19,11 +19,18 @@
 
 package org.jboss.as.console.client.core.settings;
 
+import org.jboss.as.console.client.widgets.forms.Binding;
+
 /**
  * @author Heiko Braun
  * @date 5/3/11
  */
 public interface CommonSettings {
+
     String getLocale();
     void setLocale(String locale);
+
+    boolean isUseCache();
+    void setUseCache(boolean b);
+
 }

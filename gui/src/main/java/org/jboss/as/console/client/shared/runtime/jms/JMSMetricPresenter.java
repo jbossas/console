@@ -102,7 +102,7 @@ public class JMSMetricPresenter extends Presenter<JMSMetricPresenter.MyView, JMS
     }
 
     @Override
-    public void onServerSelection(String hostName, ServerInstance server) {
+    public void onServerSelection(String hostName, ServerInstance server, ServerSelectionEvent.Source source) {
 
         getView().clearSamples();
 

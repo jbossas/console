@@ -40,7 +40,6 @@ import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.as.console.client.shared.runtime.RuntimeBaseAddress;
 import org.jboss.as.console.client.shared.state.CurrentServerSelection;
 import org.jboss.as.console.client.shared.state.ServerSelectionEvent;
-import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
 import org.jboss.dmr.client.ModelNode;
 
@@ -91,11 +90,10 @@ public class JndiPresenter extends Presenter<JndiPresenter.MyView, JndiPresenter
     }
 
     @Override
-    public void onServerSelection(String hostName, ServerInstance server) {
+    public void onServerSelection(String hostName, ServerInstance server, ServerSelectionEvent.Source source) {
         if(isVisible())
         {
             System.out.println(hostName+">"+server.getName());
-
             loadJndiTree();
         }
     }

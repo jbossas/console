@@ -19,28 +19,37 @@
 
 package org.jboss.as.console.client.domain.overview;
 
-import com.google.gwt.user.cellview.client.CellList;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.LayoutPanel;
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.resources.client.ImageResource;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
+import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.Element;
+import com.google.gwt.user.client.Event;
+import com.google.gwt.user.client.EventListener;
+import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.view.client.ListDataProvider;
-import com.google.gwt.view.client.SelectionChangeEvent;
-import com.google.gwt.view.client.SingleSelectionModel;
-import com.gwtplatform.mvp.client.proxy.PlaceRequest;
-import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
-import org.jboss.as.console.client.domain.groups.ServerGroupCell;
-import org.jboss.as.console.client.domain.model.ProfileRecord;
-import org.jboss.as.console.client.domain.model.ServerGroupRecord;
-import org.jboss.as.console.client.domain.profiles.ProfileCell;
+import org.jboss.as.console.client.domain.model.ServerInstance;
 import org.jboss.as.console.client.shared.model.DeploymentRecord;
-import org.jboss.ballroom.client.layout.RHSContentPanel;
-import org.jboss.ballroom.client.widgets.ContentGroupLabel;
+import org.jboss.as.console.client.shared.viewframework.builder.SimpleLayout;
+import org.jboss.as.console.client.widgets.icons.ConsoleIcons;
+import org.jboss.ballroom.client.widgets.InlineLink;
+import org.jboss.ballroom.client.widgets.icons.Icons;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
 
 /**
  * @author Heiko Braun
@@ -50,13 +59,22 @@ public class DomainOverview
         extends SuspendableViewImpl implements DomainOverviewPresenter.MyView {
 
     private DomainOverviewPresenter presenter;
-    private CellList<ProfileRecord> profileList;
-    private CellList<ServerGroupRecord> groupList;
-
-    ListDataProvider<ProfileRecord> profileProvider;
-    ListDataProvider<ServerGroupRecord> groupProvider;
+    private TabPanel container;
 
     //private CellTable<DeploymentRecord> deploymentTable;
+
+    private static String[] colors = {
+            "#A0C55F", "#C2CBCE", "#81A8B8",
+            "#E8F3F8", "#AAB3AB", "#E8CAAF", "#91A398", "#ED834E",
+            "#EBCC6E", "#F06B50", "#E4D829",
+
+    };
+
+    private static TreeMap<String, String> group2Color = new TreeMap<String,String>();
+    private static TreeMap<String, String> group2profile = new TreeMap<String,String>();
+
+    private ServerPanelReference prevSelection = null;
+    private List<HTMLPanel> hostPanels = new ArrayList<HTMLPanel>();
 
     @Override
     public void setPresenter(DomainOverviewPresenter presenter) {
@@ -66,92 +84,417 @@ public class DomainOverview
     @Override
     public Widget createWidget() {
 
-        LayoutPanel layout = new RHSContentPanel("Domain Overview");
+        SimpleLayout layout = new SimpleLayout()
+                .setTitle("Domain Overview")
+                .setHeadline("Host & Servers")
+                .setDescription("");
 
-        HorizontalPanel hlayout = new HorizontalPanel();
-        hlayout.setStyleName("fill-layout-width");
-        hlayout.getElement().setAttribute("cellpadding", "10");
+        container = new TabPanel();
+        container.setStyleName("default-tabpanel");
+        layout.addContent("Hosts", container);
+        return layout.build();
+    }
 
-        VerticalPanel vlayoutLeft = new VerticalPanel();
-        vlayoutLeft.setStyleName("fill-layout-width");
+    private SafeHtmlBuilder createContainerTable() {
+        SafeHtmlBuilder containerTable= new SafeHtmlBuilder();
 
-        profileList = new CellList<ProfileRecord>(new ProfileCell());
-        profileList.setPageSize(25);
+        containerTable.appendHtmlConstant("<table cellpadding='5' width='100%' id='host-overview'>");
+        containerTable.appendHtmlConstant("<tr id='groups-row' valign='top'/>");
+        containerTable.appendHtmlConstant("<tr id='hosts-row' valign='top'/>");
+        containerTable.appendHtmlConstant("</table>");
 
-        ContentGroupLabel leftLabel = new ContentGroupLabel("Available Profiles");
-        leftLabel.setIcon("common/profile.png");
-        vlayoutLeft.add(leftLabel);
-        vlayoutLeft.add(profileList);
+        return containerTable;
+    }
 
-        // --------------------------------------
+    public void updateHosts(List<HostInfo> hosts, final ServerPanelReference preselectedServer) {
 
-        VerticalPanel vlayoutRight = new VerticalPanel();
-        vlayoutRight.setStyleName("fill-layout-width");
+        // clear view
+        container.clear();
+        group2Color.clear();
+        group2profile.clear();
+        prevSelection = null;
+        hostPanels.clear();
 
-        ContentGroupLabel rightLabel = new ContentGroupLabel("Server Groups");
-        rightLabel.setIcon("common/server_group.png");
+        // the known server groups and their colors
+        List<String> groups = deriveGroups(hosts);
 
-        vlayoutRight.add(rightLabel);
+        int itemsPerPage = 3;
+        int lastPageSize = hosts.size()%itemsPerPage;
+        int numberOfPages = ((hosts.size()-lastPageSize) / itemsPerPage)+1;
 
-        ServerGroupCell groupCell = new ServerGroupCell();
-        groupList = new CellList<ServerGroupRecord>(groupCell);
-        groupList.setPageSize(25);
+        for(int page=0; page<numberOfPages; page++)
+        {
+
+            Map<String, ServerPanelReference> pendingTools = new HashMap<String,ServerPanelReference>();
+
+            // generate wrapper table
+            SafeHtmlBuilder containerTable = createContainerTable();
+            final HTMLPanel htmlPanel = new HTMLPanel(containerTable.toSafeHtml());
+
+            // host data
+            List<SafeHtmlBuilder> hostColumns = new ArrayList<SafeHtmlBuilder>(hosts.size());
+
+            for(int item=0; item<itemsPerPage; item++)
+            {
+
+                int index = item+(itemsPerPage*page);
+                if(index>=hosts.size()) break;
+
+                HostInfo host = hosts.get(index);
+
+                SafeHtmlBuilder html = new SafeHtmlBuilder();
+                String id = "h_" + host.getName();
+
+                // ----------------------
+                // host
+                // ----------------------
+
+                String domainType = host.isController ? "Controller" : "Member";
+                String ctrlCss = host.isController ? "domain-controller" : "domain-member";
 
 
-        groupProvider = new ListDataProvider<ServerGroupRecord>();
-        profileProvider = new ListDataProvider<ProfileRecord>();
+                html.appendHtmlConstant("<td>")
+                        .appendHtmlConstant("<div class='domain-hostinfo " + ctrlCss + "'>")
+                        .appendEscaped("Host: " + host.getName()).appendHtmlConstant("<br/>")
+                        .appendEscaped("Domain: " + domainType).appendHtmlConstant("&nbsp;");
+
+                if(host.isController())
+                {
+                    ImageResource star = ConsoleIcons.INSTANCE.star();
+                    String imgUrl = new Image(star).getUrl();
+                    html.appendHtmlConstant("<img src='"+imgUrl+"' width=16 height=16 align=right>");
+                }
+
+                html.appendHtmlConstant("<br/>");
+                html.appendHtmlConstant("</div>");
+
+                html.appendHtmlConstant("<table width='100%' border=0>");
+                for(ServerInstance server : host.getServerInstances())
+                {
+
+                    // ----------------------
+                    // server
+                    // ----------------------
+
+                    String color = pickColor(groups, server);
+
+                    ImageResource status = server.isRunning() ? Icons.INSTANCE.status_good() : Icons.INSTANCE.status_bad();
+
+                    // reload required?
+                    if(server.isRunning() &&server.getFlag()!=null)
+                    {
+                        status = Icons.INSTANCE.status_warn();
+                    }
+
+                    String statusImgUrl = new Image(status).getUrl();
+
+                    html.appendHtmlConstant("<tr>");
+                    html.appendHtmlConstant("<td style='background:"+color+"'>&nbsp;</td>");
+                    html.appendHtmlConstant("</tr>");
+                    html.appendHtmlConstant("<tr>");
+
+                    String serverPanelId = "sp_"+host.getName()+"_"+server.getName();
+                    html.appendHtmlConstant("<td id='"+serverPanelId+"' class='domain-serverinfo domain-servercontainer'>");
+
+                    html.appendHtmlConstant("<b>");
+                    html.appendEscaped("Server: ");
+                    html.appendHtmlConstant("<a style='color:#000000!important;' href='#"+ NameTokens.ServerPresenter+";config="+server.getName()+"'/>");
+                    html.appendEscaped(server.getName());
+                    html.appendHtmlConstant("</a>&nbsp;");
+
+                    html.appendHtmlConstant("<img src='" + statusImgUrl + "' width=16 height=16 align=right>");
+                    html.appendHtmlConstant("</b><br/>");
+
+                    if(server.getProfile()!=null) {
+                        if(!group2profile.containsKey(server.getGroup()))
+                            group2profile.put(server.getGroup(), server.getProfile());
+                    }
+
+                    if(server.getSocketBindings().size()>0)
+                    {
+                        Set<String> sockets = server.getSocketBindings().keySet();
+                        String first = sockets.iterator().next();
+                        html.appendEscaped("Socket Binding: "+first).appendHtmlConstant("<br/>");
+                        html.appendEscaped("Ports: + "+server.getSocketBindings().get(first)).appendHtmlConstant("<br/>");
+                    }
+
+                    html.appendHtmlConstant("<ul>");
+                    for(String nicName : server.getInterfaces().keySet())
+                    {
+                        html.appendHtmlConstant("<li>");
+                        html.appendEscaped(nicName).appendEscaped(": ");
+                        html.appendEscaped(server.getInterfaces().get(nicName));
+                        html.appendHtmlConstant("</li>");
+                    }
+                    html.appendHtmlConstant("</ul>");
+
+                    // toolbox layout
+
+                    String toolboxId = "tb_"+host.getName()+"_"+server.getName();
+                    html.appendHtmlConstant("<div id='"+toolboxId+"' class='server-tools'/>");
+                    pendingTools.put(toolboxId, new ServerPanelReference(host.getName(), server, toolboxId, serverPanelId));
 
 
-        groupProvider.addDataDisplay(groupList);
-        profileProvider.addDataDisplay(profileList);
+                    // try to match the preselection
+                    if(preselectedServer!=null
+                            && preselectedServer.getHostName().equals(host.getName())
+                            && preselectedServer.getServer().getName().equals(server.getName()))
+                    {
+                        // matched, update dom element references
+                        preselectedServer.updateDomReferences(serverPanelId, toolboxId);
+                    }
 
-        final SingleSelectionModel<ServerGroupRecord> selectionModel = new SingleSelectionModel<ServerGroupRecord>();
-        groupList.setSelectionModel(selectionModel);
-        selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
-            public void onSelectionChange(SelectionChangeEvent event) {
-                ServerGroupRecord selectedRecord = selectionModel.getSelectedObject();
-                final String groupName = selectedRecord.getGroupName();
+                    html.appendHtmlConstant("</td>");
+                    html.appendHtmlConstant("</tr>");
 
-                Console.getPlaceManager().revealPlaceHierarchy(
-                        new ArrayList<PlaceRequest>() {{
-                            add(new PlaceRequest("domain"));
-                            add(new PlaceRequest(NameTokens.ServerGroupPresenter).with("name", groupName));
-                        }}
-                );
+                }
+                html.appendHtmlConstant("</table>");
+
+                html.appendHtmlConstant("</td>"); // end host
+
+                hostColumns.add(html);
+
             }
-        });
 
 
-        vlayoutRight.add(groupList);
-        // --------------------------------------
+            if(hostColumns.isEmpty())  // skip empty pages
+                break;
 
-        hlayout.add(vlayoutLeft);
-        hlayout.add(vlayoutRight);
+            int columnWidth =Math.abs(100/itemsPerPage);
 
-        layout.add(hlayout);
 
-        // --------------------------------------
+            // -----------------------------------
+            // update the groups table
+            SafeHtmlBuilder groupsRow = new SafeHtmlBuilder();
+            int groupColumnWidth =Math.abs(100/group2Color.size());
+            groupsRow.appendHtmlConstant("<table width='100%'><tr>");
+            for(String groupName : group2Color.keySet())
+            {
+                groupsRow.appendHtmlConstant("<td width='"+groupColumnWidth+"%' style='padding:5px;background-color:"+group2Color.get(groupName)+"'>");
+                groupsRow.appendEscaped("Group: ");
+                groupsRow.appendHtmlConstant("<a style='color:#000000!important;' href='#"+ NameTokens.ServerGroupPresenter+";group="+groupName+"'/>");
+                groupsRow.appendEscaped(groupName).appendHtmlConstant("<br/>");
+                groupsRow.appendHtmlConstant("</a>");
+                String profileName = group2profile.get(groupName);
+                if(profileName!=null)
+                {
+                    groupsRow.appendEscaped("Profile: ");
+                    groupsRow.appendHtmlConstant("<a style='color:#000000!important;' href='#"+ NameTokens.ProfileMgmtPresenter+";profile="+profileName+"'/>");
+                    groupsRow.appendEscaped(profileName);
+                    groupsRow.appendHtmlConstant("</a>");
+                }
+                groupsRow.appendHtmlConstant("</td>");
+            }
+            groupsRow.appendHtmlConstant("</tr></table>");
 
-        //layout.add(new ContentGroupLabel("Domain Level Deployments"));
+            Element groupsTr = htmlPanel.getElementById("groups-row");
+            Element groupsTd = DOM.createTD();
+            groupsTd.setAttribute("colspan", String.valueOf(itemsPerPage));
+            groupsTd.setInnerHTML(groupsRow.toSafeHtml().asString());
+            groupsTr.appendChild(groupsTd);
 
-        //deploymentTable = new DeploymentTable();
-        //layout.add(deploymentTable);
+            // -----------------------------------
+            // update the tr table
+            Element tr = htmlPanel.getElementById("hosts-row");
+            for(SafeHtmlBuilder builder : hostColumns)
+            {
+                Element td = DOM.createTD();
+                td.setClassName("domain-hostcontainer");
+                td.setAttribute("width", columnWidth+"%");
+                td.setInnerHTML(builder.toSafeHtml().asString());
+                tr.appendChild(td);
+            }
 
-        return layout;
+            // ----------------------
+            // bind tools
+            // ----------------------
+
+            for(String elementId : pendingTools.keySet())
+            {
+                final VerticalPanel tools = new VerticalPanel();
+                tools.setStyleName("fill-layout");
+
+                final ServerPanelReference serverPanelReference = pendingTools.get(elementId);
+
+
+                // -------------------------------------
+                // process click events on server panel
+                // -------------------------------------
+
+                Element serverPanelElement = htmlPanel.getElementById(serverPanelReference.serverPanelId);
+                DOM.setEventListener(serverPanelElement, new EventListener() {
+                    @Override
+                    public void onBrowserEvent(Event event) {
+                        if(event.getTypeInt()==Event.ONCLICK)
+                        {
+
+                            if(prevSelection!=null)
+                            {
+                                deactivate(htmlPanel, prevSelection);
+                            }
+
+                            activate(htmlPanel, serverPanelReference);
+
+                        }
+                    }
+                });
+
+                DOM.sinkEvents(serverPanelElement, Event.ONCLICK);
+
+                VerticalPanel toolContent = new VerticalPanel();
+                toolContent.addStyleName("fill-layout");
+
+                InlineLink startStop = new InlineLink("Start/Stop Server<br/>");
+                startStop.addClickHandler(new ClickHandler() {
+                    @Override
+                    public void onClick(ClickEvent clickEvent) {
+                        presenter.onStartStopServer(serverPanelReference.getHostName(), serverPanelReference.getServer());
+                    }
+                });
+
+
+                InlineLink startGroup = new InlineLink("Start Group<br/>");
+                startGroup.addClickHandler(new ClickHandler() {
+                    @Override
+                    public void onClick(ClickEvent clickEvent) {
+                        presenter.onStartStopGroup(
+                                serverPanelReference.getHostName(),
+                                serverPanelReference.getServer().getGroup(),
+                                true
+                        );
+                    }
+                });
+
+                InlineLink stopGroup = new InlineLink("Stop Group<br/>");
+                stopGroup.addClickHandler(new ClickHandler() {
+                    @Override
+                    public void onClick(ClickEvent clickEvent) {
+                        presenter.onStartStopGroup(
+                                serverPanelReference.getHostName(),
+                                serverPanelReference.getServer().getGroup(),
+                                false
+                        );
+                    }
+                });
+
+                toolContent.add(startStop);
+                toolContent.add(startGroup);
+                toolContent.add(stopGroup);
+
+                tools.add(toolContent);
+
+                htmlPanel.add(tools, elementId);
+            }
+
+            // created one page
+            String pageName = "Page " + (page + 1);
+            container.add(htmlPanel, pageName);
+
+            // for matching against preselection
+            hostPanels.add(htmlPanel);
+
+
+        }
+
+        container.selectTab(0);
+
+        // toggle preselection
+
+        if(preselectedServer!=null && preselectedServer.hasDomReferences())
+        {
+            Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+                @Override
+                public void execute() {
+                    activate(preselectedServer);
+                }
+            });
+        }
+
     }
 
-    public void updateProfiles(List<ProfileRecord> profiles)
-    {
-        profileProvider.setList(profiles);
+    private void activate(ServerPanelReference preselectedServer) {
+        for(HTMLPanel panel : hostPanels)
+        {
+            Element serverPanel = panel.getElementById(preselectedServer.getServerPanelId());
+            if(serverPanel!=null) // exists
+            {
+                activate(panel, preselectedServer);
+                break;
+            }
+        }
     }
 
-    public void updateGroups(List<ServerGroupRecord> groups)
-    {
-        groupProvider.setList(groups);
+    private void deactivate(HTMLPanel htmlPanel, ServerPanelReference prevSelection) {
+        Element serverPanel = htmlPanel.getElementById(prevSelection.serverPanelId);
+        assert serverPanel!=null : "server panel cannot be found "+prevSelection.serverPanelId;
+
+        serverPanel.removeClassName("domain-serverinfo-active");
+        htmlPanel.getElementById(prevSelection.getToolBoxId()).removeClassName("is-visible");
+    }
+
+    private void activate(HTMLPanel htmlPanel, ServerPanelReference currentSelection) {
+
+
+        htmlPanel.getElementById(currentSelection.serverPanelId).addClassName("domain-serverinfo-active");
+        htmlPanel.getElementById(currentSelection.getToolBoxId()).addClassName("is-visible");
+
+        prevSelection = currentSelection;
+
+        presenter.onSelectServer(currentSelection);
+    }
+
+
+    private List<String> deriveGroups(List<HostInfo> hosts) {
+
+        List<String> groups = new LinkedList<String>();
+
+        for(HostInfo host : hosts)
+        {
+            List<ServerInstance> serverInstances = host.getServerInstances();
+            for(ServerInstance server : serverInstances)
+            {
+                if(!groups.contains(server.getGroup()))
+                    groups.add(server.getGroup());
+            }
+        }
+
+        Collections.sort(groups);
+        return groups;
+    }
+
+    private static String pickColor(List<String> groups, ServerInstance server) {
+
+        String color = null;
+        if(group2Color.containsKey(server.getGroup()))
+        {
+            color = group2Color.get(server.getGroup());
+        }
+        else
+        {
+            int index = 0;
+            for(String group : groups)
+            {
+
+                if(group.equals(server.getGroup()))
+                {
+                    break;
+                }
+                index++;
+            }
+
+            if(index>colors.length-1)
+                color = "#ffffff"; // fallback if number of groups too large
+            else
+                color = colors[index];
+
+            group2Color.put(server.getGroup(), color);
+        }
+
+        return color;
     }
 
     public void updateDeployments(List<DeploymentRecord> deploymentRecords) {
 
-        //deploymentTable.setRowData(0, deploymentRecords);
+
     }
 }
