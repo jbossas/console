@@ -19,14 +19,20 @@
 
 package org.jboss.as.console.client.shared.subsys.infinispan;
 
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.view.client.SingleSelectionModel;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.subsys.infinispan.model.LocalCache;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
-
-import javax.inject.Inject;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.FormAdapter;
+import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
+import org.jboss.ballroom.client.widgets.tools.ToolButton;
+import org.jboss.ballroom.client.widgets.tools.ToolStrip;
+
+import javax.inject.Inject;
 
 /**
  * Main view class for Infinispan LocalCache Containers.
@@ -34,6 +40,9 @@ import org.jboss.ballroom.client.widgets.forms.FormAdapter;
  * @author Stan Silvert
  */
 public class LocalCacheView extends AbstractCacheView<LocalCache> implements LocalCachePresenter.MyView {
+
+    private LocalCachePresenter localCachePresenter;
+    private DefaultCellTable<LocalCache> table;
 
     @Inject
     public LocalCacheView(ApplicationMetaData propertyMetaData, DispatchAsync dispatcher) {
@@ -53,5 +62,35 @@ public class LocalCacheView extends AbstractCacheView<LocalCache> implements Loc
         form.setFields(getFormMetaData().findAttribute("name").getFormItemForAdd(),
                        getFormMetaData().findAttribute("cacheContainer").getFormItemForAdd(this));
         return form;
+    }
+
+    @Override
+    protected DefaultCellTable<LocalCache> makeEntityTable() {
+        table = super.makeEntityTable();
+        return table;
+    }
+
+    @Override
+    protected ToolStrip createToolStrip() {
+        ToolStrip toolStrip = super.createToolStrip();
+        ToolButton clearBtn = new ToolButton(Console.CONSTANTS.subsys_infinispan_local_cache_clear_cache(),
+                new ClickHandler() {
+                    @Override
+                    public void onClick(ClickEvent clickEvent) {
+                        final LocalCache localCache = (LocalCache) ((SingleSelectionModel)
+                                table.getSelectionModel()).getSelectedObject();
+                        localCachePresenter.clearCache(localCache.getCacheContainer(), localCache.getName());
+                    }
+                });
+
+        // standalone only
+        if (Console.getBootstrapContext().isStandalone())
+            toolStrip.addToolButtonRight(clearBtn);
+        return toolStrip;
+    }
+
+    @Override
+    public void setPresenter(LocalCachePresenter presenter) {
+        this.localCachePresenter = presenter;
     }
 }
