@@ -31,7 +31,6 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.ViewWithUiHandlers;
-import org.jboss.as.console.client.Build;
 
 public class SignInPageView extends ViewWithUiHandlers<SignInPageUIHandlers> implements
         SignInPagePresenter.MyView {
@@ -94,7 +93,7 @@ public class SignInPageView extends ViewWithUiHandlers<SignInPageUIHandlers> imp
         options.getElement().setAttribute("style", "margin-top:20px; vertical-align:bottom;");
         options.getElement().setAttribute("align", "center");
 
-        HTML version = new HTML(Build.VERSION);
+        HTML version = new HTML("Version TBD");
         version.getElement().setAttribute("style", "color:#cccccc;font-size:10px; align:center");
         options.add(version);
         panel.add(options);

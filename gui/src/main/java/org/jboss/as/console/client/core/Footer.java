@@ -34,6 +34,7 @@ import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import org.jboss.as.console.client.Console;
+import org.jboss.as.console.client.ProductConfig;
 import org.jboss.as.console.client.auth.CurrentUser;
 import org.jboss.ballroom.client.widgets.window.Feedback;
 
@@ -45,12 +46,14 @@ public class Footer {
 
     private Label userName;
     private PlaceManager placeManager;
+    private ProductConfig productConfig;
 
     @Inject
-    public Footer(EventBus bus, CurrentUser user, PlaceManager placeManager) {
+    public Footer(EventBus bus, CurrentUser user, PlaceManager placeManager, ProductConfig prodConfig) {
         this.userName = new Label();
         this.userName.setText(user.getUserName());
         this.placeManager = placeManager;
+        this.productConfig = prodConfig;
     }
 
     public Widget asWidget() {
@@ -112,7 +115,7 @@ public class Footer {
 
         layout.add(tools);
 
-        HTML version = new HTML(org.jboss.as.console.client.Build.VERSION);
+        HTML version = new HTML("n/a "+productConfig.getProfile());
         version.getElement().setAttribute("style", "color:#ffffff;font-size:10px; align:left");
         layout.add(version);
 
