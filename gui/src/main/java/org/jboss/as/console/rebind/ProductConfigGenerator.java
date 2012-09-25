@@ -22,6 +22,7 @@ package org.jboss.as.console.rebind;
 import com.google.gwt.core.ext.BadPropertyValueException;
 import com.google.gwt.core.ext.Generator;
 import com.google.gwt.core.ext.GeneratorContext;
+import com.google.gwt.core.ext.PropertyOracle;
 import com.google.gwt.core.ext.TreeLogger;
 import com.google.gwt.core.ext.UnableToCompleteException;
 import com.google.gwt.core.ext.typeinfo.JClassType;
@@ -152,12 +153,25 @@ public class ProductConfigGenerator extends Generator {
     private void generateMethods(SourceWriter sourceWriter, GeneratorContext context) throws Throwable
     {
 
+        PropertyOracle propertyOracle = context.getPropertyOracle();
         String consoleProfileProperty =
-                context.getPropertyOracle().getConfigurationProperty("console.profile").getValues().get(0);
+                propertyOracle.getConfigurationProperty("console.profile").getValues().get(0);
 
         if(null==consoleProfileProperty)
             throw new BadPropertyValueException("Missing configuration property 'console.profile'!");
 
+
+        String prodVersionProperty =
+                propertyOracle.getConfigurationProperty("console.product.version").getValues().get(0);
+
+        String consoleProductVersion = (prodVersionProperty != null) ?
+                prodVersionProperty : "";
+
+        String devHostProperty =
+                       propertyOracle.getConfigurationProperty("console.dev.host").getValues().get(0);
+
+        String consoleDevHost = (devHostProperty!= null) ?
+                       devHostProperty : "127.0.0.1";
 
         // most of the config attributes are by default empty
         // they need be overriden by custom gwt.xml descriptor on a project/product level
@@ -170,7 +184,7 @@ public class ProductConfigGenerator extends Generator {
 
         sourceWriter.println("public String getProductVersion() { ");
         sourceWriter.indent();
-        sourceWriter.println("return \"\";");
+        sourceWriter.println("return \""+consoleProductVersion+"\";");
         sourceWriter.outdent();
         sourceWriter.println("}");
 
@@ -182,7 +196,7 @@ public class ProductConfigGenerator extends Generator {
 
         sourceWriter.println("public String getDevHost() { ");
         sourceWriter.indent();
-        sourceWriter.println("return \"127.0.0.1\";");
+        sourceWriter.println("return \""+devHostProperty+"\";");
         sourceWriter.outdent();
         sourceWriter.println("}");
 

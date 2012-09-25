@@ -72,6 +72,7 @@ public class SPIProcessor extends AbstractProcessor {
     private List<RuntimeExtensionMetaData> runtimeExtensions;
     private Set<String> modules = new LinkedHashSet<String>();
     private Set<String> nameTokens;
+    private HashMap<String, String> gwtConfigProps;
 
     @Override
     public void init(ProcessingEnvironment env) {
@@ -84,6 +85,22 @@ public class SPIProcessor extends AbstractProcessor {
         this.subsystemDeclararions = new ArrayList<SubsystemExtensionMetaData>();
         this.runtimeExtensions = new ArrayList<RuntimeExtensionMetaData>();
         this.nameTokens = new HashSet<String>();
+
+
+        parseGwtProperties();
+    }
+
+    private void parseGwtProperties() {
+        // GWT config properties
+        Map<String, String> options = processingEnv.getOptions();
+        gwtConfigProps = new HashMap<String, String>();
+        for(String key : options.keySet())
+        {
+            if(key.startsWith("gwt."))
+            {
+                gwtConfigProps.put(key.substring(4, key.length()), options.get(key));
+            }
+        }
     }
 
     @Override
@@ -347,6 +364,7 @@ public class SPIProcessor extends AbstractProcessor {
         {
             Map<String, Object> model = new HashMap<String, Object>();
             model.put("modules", modules);
+            model.put("properties", gwtConfigProps);
 
             FileObject sourceFile = filer.createResource(StandardLocation.SOURCE_OUTPUT, MODULE_PACKAGENAME,
                     MODULE_FILENAME);
@@ -367,6 +385,7 @@ public class SPIProcessor extends AbstractProcessor {
         {
             Map<String, Object> model = new HashMap<String, Object>();
             model.put("modules", modules);
+            model.put("properties", gwtConfigProps);
 
             FileObject sourceFile = filer.createResource(StandardLocation.SOURCE_OUTPUT, MODULE_PACKAGENAME,
                     MODULE_DEV_FILENAME);
@@ -387,6 +406,7 @@ public class SPIProcessor extends AbstractProcessor {
         {
             Map<String, Object> model = new HashMap<String, Object>();
             model.put("modules", modules);
+            model.put("properties", gwtConfigProps);
 
             FileObject sourceFile = filer.createResource(StandardLocation.SOURCE_OUTPUT, MODULE_PACKAGENAME,
                     MODULE_PRODUCT_FILENAME);

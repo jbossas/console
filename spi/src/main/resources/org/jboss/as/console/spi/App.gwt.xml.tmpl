@@ -19,9 +19,14 @@
 
 <module rename-to="app">
 
-<#list modules as module>
-    <inherits name="${module}"/>
-</#list>
+    <#list modules as module>
+        <inherits name="${module}"/>
+    </#list>
+
+    <#assign keys = properties?keys>
+    <#list keys as key>
+        <set-configuration-property name="${key}" value="${properties[key]}"/>
+    </#list>
 
     <source path='client'/>
 

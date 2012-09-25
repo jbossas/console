@@ -153,7 +153,13 @@
                             </processors>
                             <appendSourceArtifacts>true</appendSourceArtifacts>
                             <sourceClassifier>export</sourceClassifier>
+
+                            <options>
+                                <gwt.console.product.version>${gwt.console.product.version}</gwt.console.product.version>
+                                <gwt.console.dev.host>${gwt.console.dev.host}</gwt.console.dev.host>
+                            </options>
                         </configuration>
+
                     </execution>
                 </executions>
             </plugin>
@@ -210,6 +216,18 @@
     </build>
 
     <profiles>
+
+        <profile>
+            <id>default-properties</id>
+            <properties>
+                <env>default</env>
+                <gwt.console.dev.host>127.0.0.1</gwt.console.dev.host>
+                <gwt.console.product.version></gwt.console.product.version>
+            </properties>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+        </profile>
 
         <profile>
 
