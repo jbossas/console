@@ -42,7 +42,7 @@ EAP Build Profile
 To run a customized EAP build (L&F) follow these steps:
 
 - Create a dedicated version number (i.e. 1.0.0.EAP.CR2)
-- Rebuild with the EAP profile turned on: mvn -Peap clean install
+- Rebuild with the EAP profile enabled: mvn -Peap clean install
 
 
 Development Profile
@@ -50,7 +50,7 @@ Development Profile
 
 Due to the increased number of permutations (additional languages) the full compile times
 have increased quiet drastically. To work around this problem during development, we've added
-a development build profile that restricts the languages to english and the browser permutations to safari and firefox:
+a development build profile that restricts the languages to english and the browser permutations to firefox:
 
 mvn -Pdev clean install
 
