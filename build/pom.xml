@@ -154,6 +154,11 @@
                             <appendSourceArtifacts>true</appendSourceArtifacts>
                             <sourceClassifier>export</sourceClassifier>
 
+                            <!--
+                                These are passed into the SPI processor
+                                and will end up in App.gwt.xml if prefixed with 'gwt.'
+                             -->
+
                             <options>
                                 <gwt.console.product.version>${gwt.console.product.version}</gwt.console.product.version>
                                 <gwt.console.dev.host>${gwt.console.dev.host}</gwt.console.dev.host>
