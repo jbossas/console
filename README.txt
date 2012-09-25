@@ -1,13 +1,12 @@
 Prerequisites:
 -------------
 
-In order to work on the console. You a need running JBoss 7
+In order to work on the console you a need running JBoss 7
 instance on your local host. You can download it here:
 
-    http://www.jboss.org:80/jbossas/downloads.html
+    http://www.jboss.org/jbossas/downloads
 
-You can run JBoss in either the 'domain' or 'standalone' scenario.
-
+You can run JBoss in either the 'domain' or 'standalone' mode.
 
 
 Running in hosted mode:
