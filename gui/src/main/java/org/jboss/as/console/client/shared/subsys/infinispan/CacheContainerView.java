@@ -22,6 +22,7 @@ package org.jboss.as.console.client.shared.subsys.infinispan;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.cellview.client.TextColumn;
+import com.google.gwt.view.client.SingleSelectionModel;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.subsys.infinispan.model.CacheContainer;
@@ -53,8 +54,10 @@ public class CacheContainerView extends AbstractEntityView<CacheContainer> imple
 
     private EntityToDmrBridge bridge;
     private DefaultCacheContainerWindow defaultCacheContainerWindow;
+    private CacheContainerPresenter cacheContainerPresenter;
 
     private EmbeddedAliasesView aliasesView;
+    private DefaultCellTable<CacheContainer> table;
 
     @Inject
     public CacheContainerView(ApplicationMetaData propertyMetaData, DispatchAsync dispatcher) {
@@ -87,6 +90,21 @@ public class CacheContainerView extends AbstractEntityView<CacheContainer> imple
                            defaultCacheContainerWindow.show();
                         }
                     }));
+
+        ToolButton clearBtn = new ToolButton(Console.CONSTANTS.subsys_infinispan_cache_container_clear_caches(),
+                    new ClickHandler() {
+                        @Override
+                        public void onClick(ClickEvent clickEvent) {
+                            final CacheContainer cacheContainer = (CacheContainer) ((SingleSelectionModel)
+                                    table.getSelectionModel()).getSelectedObject();
+                            cacheContainerPresenter.clearCaches(cacheContainer.getName());
+                        }
+                    });
+
+        // standalone only
+        if (Console.getBootstrapContext().isStandalone())
+            toolStrip.addToolButtonRight(clearBtn);
+
         return toolStrip;
     }
 
@@ -101,7 +119,7 @@ public class CacheContainerView extends AbstractEntityView<CacheContainer> imple
 
     @Override
     protected DefaultCellTable<CacheContainer> makeEntityTable() {
-        DefaultCellTable<CacheContainer> table = new DefaultCellTable<CacheContainer>(4);
+        table = new DefaultCellTable<CacheContainer>(4);
 
         table.addColumn(new NameColumn(), NameColumn.LABEL);
 
@@ -145,6 +163,11 @@ public class CacheContainerView extends AbstractEntityView<CacheContainer> imple
         additionalTabs.add(aliasesView);
 
         return additionalTabs;
+    }
+
+    @Override
+    public void setPresenter(CacheContainerPresenter presenter) {
+        this.cacheContainerPresenter = presenter;
     }
 
 }
