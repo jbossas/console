@@ -143,11 +143,11 @@ public class Header implements ValueChangeHandler<String> {
 
         if(ProductConfig.Profile.EAP.equals(productConfig.getProfile()))
         {
-            logo = new Image("images/logo/eap_text.png");
+            logo = new Image("images/logo/product_title.png");
             logo.setAltText("JBoss Enterprise Application Platform");
         }
         else {
-            logo = new Image("images/logo/jbossas7_text.png");
+            logo = new Image("images/logo/community_title.png");
             logo.setAltText("JBoss Application Server");
         }
 
@@ -174,8 +174,7 @@ public class Header implements ValueChangeHandler<String> {
         linksPane.getElement().setAttribute("role", "menubar");
         linksPane.getElement().setAttribute("aria-controls", "main-content-area");
 
-        String[][] sections = bootstrap.getProperty(BootstrapContext.STANDALONE).equals("true") ?
-                SECTIONS_STANADLONE : SECTIONS;
+        String[][] sections = bootstrap.isStandalone() ? SECTIONS_STANADLONE : SECTIONS;
 
         for (String[] section : sections) {
             final String name = section[0];
