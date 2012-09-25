@@ -15,9 +15,9 @@ Running in hosted mode:
 
 1.) Make sure JBoss 7 is started
 
-2.) Make sure you build the top level module first.
+2.) Make sure you build the top level module first (mvn -Pdev clean install).
 
-3.) cd 'gui'
+3.) cd 'build/app'
 
 Start the GWT shell with 
 
@@ -27,36 +27,15 @@ When the hosted browser is started, it's enough to hit the 'refresh' button to r
 and verify changes. You can get the OOPHM Plugin, required for attaching your browser to the 
 hosted mode execution here: http://gwt.google.com/samples/MissingPlugin/MissingPlugin.html
 
-NOTE: Really quick turnaround through 
-
-	mvn -Dhosted gwt:<run|debug>
-
-
 
 Running in web mode:
 -------------------
 
+cd build/app
 mvn package 
 
-Produces a war file in target/*-console.war,
-which can be deployed to a running jboss instance.
+Produces a war file in target/*-resources.jar, which needs to be deployed as a JBoss Module.
 
-
-
-Executing the Integration tests:
--------------------------------
-
-1.) Start AS7 in domain mode
-2.) Build the 'gui' module:
-    cd 'gui'
-    mvn compile
-3.) Run the smoke tests:
-    cd testsuite/smoke
-    mvn clean -Dsmoke test
-
-or simply run 
-  mvn clean -Dsmoke test 
-from the root directory to combine the last two steps.
 
 EAP Build Profile
 -----------------
