@@ -58,9 +58,9 @@ Bind Address
 ------------
 
 In some cases you may want to bind both the AS and the hosted mode to a specific address.
-A typical scenario is running a differnt OS (i.e windows) in a virtual machine.
-In order to make such a setup work you need to bind the hosted mode environment and the application server
-to a specific inet address that can access from thin the vertical machine:
+A typical scenario is running a different OS (i.e windows) in a virtual machine.
+To make such a setup work you need to bind the hosted mode environment and the application server
+to a specific inet address that can be access from the virtual machine:
 
 1) start the AS on a specific address:
 

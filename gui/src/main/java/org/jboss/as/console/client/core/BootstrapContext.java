@@ -56,7 +56,7 @@ public class BootstrapContext implements ApplicationProperties {
         setProperty(LOGOUT_API, logoutApi);
 
 
-        //Log.info("Domain API Endpoint: " + domainApi);
+        System.out.println("Domain API Endpoint: "+domainApi);
     }
 
     private String getBaseUrl() {

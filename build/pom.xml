@@ -161,7 +161,7 @@
 
                             <options>
                                 <gwt.console.product.version>${gwt.console.product.version}</gwt.console.product.version>
-                                <gwt.console.dev.host>${gwt.console.dev.host}</gwt.console.dev.host>
+                                <gwt.console.dev.host>${gwt.bindAddress}</gwt.console.dev.host>
                             </options>
                         </configuration>
 
@@ -226,7 +226,7 @@
             <id>default-properties</id>
             <properties>
                 <env>default</env>
-                <gwt.console.dev.host>127.0.0.1</gwt.console.dev.host>
+                <gwt.bindAddress>127.0.0.1</gwt.bindAddress>
                 <gwt.console.product.version></gwt.console.product.version>
             </properties>
             <activation>

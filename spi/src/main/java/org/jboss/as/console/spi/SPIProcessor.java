@@ -298,6 +298,7 @@ public class SPIProcessor extends AbstractProcessor {
         writeModuleFile();
         writeDevModuleFile();
         writeProductModuleFile();
+        writeProxyConfigurations();
     }
 
     private void writeRuntimeFile() throws Exception {
@@ -414,6 +415,43 @@ public class SPIProcessor extends AbstractProcessor {
             new TemplateProcessor().process(MODULE_PRODUCT_TEMPLATE, model, output);
             output.flush();
             output.close();
+        }
+        catch (IOException e)
+        {
+            throw new RuntimeException("Failed to create file", e);
+        }
+    }
+
+
+    private void writeProxyConfigurations() {
+
+        try
+        {
+            String devHostUrl = gwtConfigProps.get("console.dev.host") != null ?
+                    gwtConfigProps.get("console.dev.host") : "127.0.0.1";
+
+            Map<String, Object> model = new HashMap<String, Object>();
+            model.put("devHost", devHostUrl);
+
+            FileObject sourceFile = filer.createResource(
+                    StandardLocation.SOURCE_OUTPUT, "", "gwt-proxy.properties");
+            OutputStream output1 = sourceFile.openOutputStream();
+
+            FileObject sourceFile2 = filer.createResource(
+                    StandardLocation.SOURCE_OUTPUT, "", "upload-proxy.properties");
+            OutputStream output2 = sourceFile2.openOutputStream();
+
+            FileObject sourceFile3 = filer.createResource(
+                    StandardLocation.SOURCE_OUTPUT, "", "logout.properties");
+            OutputStream output3 = sourceFile3.openOutputStream();
+
+            new TemplateProcessor().process("gwt.proxy.tmpl", model, output1);
+            new TemplateProcessor().process("gwt.proxy.upload.tmpl", model, output2);
+            new TemplateProcessor().process("gwt.proxy.logout.tmpl", model, output3);
+
+            output1.close();
+            output2.close();
+            output3.close();
         }
         catch (IOException e)
         {
