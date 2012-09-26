@@ -6,7 +6,7 @@
 In order to work on the console you a need running JBoss 7
 instance on your local host. You can download it here:
 
-    http://www.jboss.org/jbossas/downloads
+http://www.jboss.org/jbossas/downloads
 
 You can run JBoss in either the 'domain' or 'standalone' mode.
 
