@@ -32,7 +32,6 @@
         <gin.version>1.5_past22</gin.version>
         <guice.version>3.0</guice.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <annotation.processor.version>2.0.7.2-redhat</annotation.processor.version>
     </properties>
 
     <dependencyManagement>
