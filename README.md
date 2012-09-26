@@ -20,7 +20,7 @@ You can run JBoss in either the 'domain' or 'standalone' mode.
 
 Start the GWT shell with 
 
-	`mvn gwt:<run|debug>`
+`mvn gwt:<run|debug>`
 
 When the hosted browser is started, it's enough to hit the 'refresh' button to recompile
 and verify changes. You can get the OOPHM Plugin, required for attaching your browser to the 
@@ -62,11 +62,11 @@ to a specific inet address that can be access from the virtual machine:
 
 1) start the AS on a specific address:
 
-    `./bin/standalone.sh -Djboss.bind.address=192.168.2.126 -Djboss.bind.address.management=192.168.2.126`
+`./bin/standalone.sh -Djboss.bind.address=192.168.2.126 -Djboss.bind.address.management=192.168.2.126`
 
 2) launch hosted mode on a specific address:
 
-    `mvn clean -Dgwt.bindAddress=192.168.2.126 gwt:run`
+`mvn clean -Dgwt.bindAddress=192.168.2.126 gwt:run`
 
 ## Problems?
 
