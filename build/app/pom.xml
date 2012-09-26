@@ -5,6 +5,7 @@
     <name>JBoss 7 - Management Console :: Webapp</name>
     <artifactId>jboss-as-console</artifactId>
     <packaging>war</packaging>
+    <description>The main 'build' module for the core console</description>
 
     <!-- Parent -->
     <parent>

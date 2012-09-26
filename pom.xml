@@ -55,6 +55,10 @@
             <timezone>+1</timezone>
         </developer>
         <developer>
+            <name>Harald Pehl</name>
+            <id>hpehl</id>
+        </developer>
+        <developer>
             <name>Stan Silvert</name>
             <id>ssilvert</id>
         </developer>
@@ -93,6 +97,7 @@
         <module>gui</module>
         <module>build</module>
         <module>build/app</module>
+        <module>extension</module>
     </modules>
 
     <build>

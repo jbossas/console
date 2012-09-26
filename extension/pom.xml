@@ -5,6 +5,7 @@
     <name>JBoss 7 - Management Console :: Extension Module Parent</name>
     <artifactId>jboss-as-console-extension</artifactId>
     <packaging>pom</packaging>
+    <description>Extension modules should inherit from this pom</description>
 
     <!-- Parent -->
     <parent>

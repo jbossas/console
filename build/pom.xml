@@ -5,6 +5,7 @@
     <name>JBoss 7 - Management Console :: Build</name>
     <artifactId>jboss-as-console-build</artifactId>
     <packaging>pom</packaging>
+    <description>Final extension applications should inherit from this pom</description>
 
     <!-- Parent -->
     <parent>
