@@ -68,7 +68,11 @@ public class ConnectionStep1 {
                     public void onClick(ClickEvent event) {
                         FormValidation validation = form.validate();
                         if(!validation.hasErrors())
-                           parent.onCompleteStep1(form.getUpdatedEntity());
+                        {
+                            ConnectionDefinition connectionDef = form.getUpdatedEntity();
+                            connectionDef.setApplication(true); // JBPAPP-9977: reasonable default
+                            parent.onCompleteStep1(connectionDef);
+                        }
                     }
                 },
 
