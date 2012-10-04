@@ -228,7 +228,7 @@
             <properties>
                 <env>default</env>
                 <gwt.bindAddress>127.0.0.1</gwt.bindAddress>
-                <gwt.console.product.version></gwt.console.product.version>
+                <gwt.console.product.version>${project.version}</gwt.console.product.version>
             </properties>
             <activation>
                 <activeByDefault>true</activeByDefault>
@@ -243,6 +243,10 @@
             <properties>
                 <skipTests>true</skipTests>
                 <o>true</o> <!-- offline -->
+
+                <env>default</env>
+                <gwt.bindAddress>127.0.0.1</gwt.bindAddress>
+                <gwt.console.product.version>${project.version}</gwt.console.product.version>
             </properties>
             <build>
                 <plugins>
@@ -265,6 +269,7 @@
                             <skipTests>true</skipTests>
                         </configuration>
                     </plugin>
+
                 </plugins>
             </build>
         </profile>

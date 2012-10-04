@@ -23,10 +23,15 @@
         <inherits name="${module}"/>
     </#list>
 
+    <!-- these are generated -->
     <#assign keys = properties?keys>
     <#list keys as key>
         <set-configuration-property name="${key}" value="${properties[key]}"/>
     </#list>
+
+    <!-- these are static -->
+
+    <set-configuration-property name="console.profile" value="jboss"/>
 
     <source path='client'/>
 
