@@ -11,7 +11,6 @@ build/war
 gui/war/WEB-INF
 gui/war/app
 gui/war/dmr_gwt
-gui/src/main/java/org/jboss/as/console/App.gwt.xml
 gui/src/main/java/upload-proxy.properties
 gui/src/main/java/gwt-proxy.properties
 
