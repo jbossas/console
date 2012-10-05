@@ -19,7 +19,6 @@
 
 package org.jboss.as.console.client.core;
 
-import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.inject.Inject;
@@ -28,8 +27,6 @@ import com.gwtplatform.mvp.client.View;
 import com.gwtplatform.mvp.client.annotations.ContentSlot;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
-import com.gwtplatform.mvp.client.proxy.LockInteractionEvent;
-import com.gwtplatform.mvp.client.proxy.LockInteractionHandler;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
@@ -52,7 +49,7 @@ public class MainLayoutPresenter
         extends Presenter<MainLayoutPresenter.MainLayoutView,
         MainLayoutPresenter.MainLayoutProxy>
         implements ServerSelectionEvent.ServerSelectionListener, HostSelectionEvent.HostSelectionListener,
-        ResolveExpressionEvent.ExpressionResolveListener, LockInteractionHandler{
+        ResolveExpressionEvent.ExpressionResolveListener {
 
     boolean revealDefault = true;
     private BootstrapContext bootstrap;
@@ -96,7 +93,7 @@ public class MainLayoutPresenter
         getEventBus().addHandler(ServerSelectionEvent.TYPE, this);
         getEventBus().addHandler(ResolveExpressionEvent.TYPE, this);
 
-        getEventBus().addHandler(LockInteractionEvent.getType(), this);
+        //getEventBus().addHandler(LockInteractionEvent.getType(), this);
 
     }
 
@@ -131,7 +128,7 @@ public class MainLayoutPresenter
 
     // -- debug tools
 
-    @Override
+   /* @Override
     public void onLockInteraction(final  LockInteractionEvent lockInteractionEvent) {
 
         if(lockInteractionEvent.shouldLock())
@@ -154,6 +151,6 @@ public class MainLayoutPresenter
             });
 
         }
-    }
+    }  */
 
 }

@@ -74,8 +74,9 @@ public class DMRHandler implements ActionHandler<DMRAction, DMRResponse> {
         requestBuilder.setHeader(HEADER_ACCEPT, DMR_ENCODED);
         requestBuilder.setHeader(HEADER_CONTENT_TYPE, DMR_ENCODED);
 
-        String cachePref = Preferences.get(Preferences.Key.USE_CACHE, "false");
-        useCache = Boolean.valueOf(cachePref);
+        // TODO: Cache is not usable ATM
+        //String cachePref = Preferences.get(Preferences.Key.USE_CACHE, "false");
+        //useCache = Boolean.valueOf(cachePref);
 
         if(useCache)
             Log.warn("Using DMR cache. please note that this is an experimental feature!");
