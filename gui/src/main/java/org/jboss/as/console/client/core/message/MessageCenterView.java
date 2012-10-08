@@ -85,7 +85,8 @@ public class MessageCenterView implements MessageListener, ReloadEvent.ReloadLis
             this.sinkEvents(Event.MOUSEEVENTS);
 
             setStyleName("default-popup");
-
+            addStyleName("triangle-border");
+            addStyleName("top");
             SafeHtmlBuilder emptyMessage = new SafeHtmlBuilder();
             emptyMessage.appendHtmlConstant("<div style='padding:10px'>");
             emptyMessage.appendHtmlConstant(Console.CONSTANTS.common_label_noRecentMessages());
@@ -273,7 +274,7 @@ public class MessageCenterView implements MessageListener, ReloadEvent.ReloadLis
 
                 messagePopup.setPopupPosition(
                         messageButton.getAbsoluteLeft() - (width+10- messageButton.getOffsetWidth()) ,
-                        messageButton.getAbsoluteTop() + 18
+                        messageButton.getAbsoluteTop() + 25
                 );
 
                 messagePopup.show();

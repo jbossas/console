@@ -42,8 +42,9 @@ a:hover, a:active { outline: none; }
 
 
 
-.inline-link:hover {
+.inline-link a:hover {
     text-decoration: underline;
+    outline:none!important;
 }
 
 .help-panel {
@@ -248,9 +249,9 @@ input[type="checkbox"] {
 }
 
 .domain-servercontainer {
-     -moz-border-bottom-radius: 4px;
-     -webkit-border-bottom-radius: 4px;
-     border-bottom-radius: 4px;
+    -moz-border-bottom-radius: 4px;
+    -webkit-border-bottom-radius: 4px;
+    border-bottom-radius: 4px;
 }
 
 .domain-serverinfo{
@@ -291,4 +292,144 @@ input[type="checkbox"] {
 
 .is-visible {
     visibility: visible;
+}
+
+
+.paged-view-navigation {
+
+
+    /* fallback */
+    background-color: #F3F3F3;
+
+    /* Safari 4-5, Chrome 1-9 */
+    background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#ffffff), to(#F3F3F3));
+
+    /* Safari 5.1, Chrome 10+ */
+    background: -webkit-linear-gradient(top, #ffffff, #F3F3F3);
+
+    /* Firefox 3.6+ */
+    background: -moz-linear-gradient(top, #ffffff, #F3F3F3);
+
+    /* IE 10 */
+    background: -ms-linear-gradient(top, #ffffff, #F3F3F3);
+
+    /* Opera 11.10+ */
+    background: -o-linear-gradient(top, #ffffff, #F3F3F3);
+
+    border-bottom: 1px solid #D6D6D6;
+    padding-left: 10px;
+}
+
+
+/* speech bubbles */
+
+.triangle-border:before {
+    content:"";
+    position:absolute;
+    bottom:-10px; /* value = - border-top-width - border-bottom-width */
+    left:40px; /* controls horizontal position */
+    border-width:10px 10px 0;
+    border-style:solid;
+    border-color:#A7ABB4 transparent;
+    /* reduce the damage in FF3.0 */
+    display:block;
+    width:0;
+}
+
+/* creates the smaller  triangle */
+.triangle-border:after {
+    content:"";
+    position:absolute;
+    bottom:-8px; /* value = - border-top-width - border-bottom-width */
+    left:47px; /* value = (:before left) + (:before border-left) - (:after border-left) */
+    border-width:8px 8px 0;
+    border-style:solid;
+    border-color:#fff transparent;
+    /* reduce the damage in FF3.0 */
+    display:block;
+    width:0;
+}
+
+/* Variant : top
+------------------------------------------ */
+
+/* creates the larger triangle */
+.triangle-border.top:before {
+    top:-10px; /* value = - border-top-width - border-bottom-width */
+    bottom:auto;
+    left:auto;
+    right:40px; /* controls horizontal position */
+    border-width:0 10px 10px;
+}
+
+/* creates the smaller  triangle */
+.triangle-border.top:after {
+    top:-8px; /* value = - border-top-width - border-bottom-width */
+    bottom:auto;
+    left:auto;
+    right:42px; /* value = (:before right) + (:before border-right) - (:after border-right) */
+    border-width:0 8px 8px;
+}
+
+/* creates the larger triangle */
+.triangle-border.top-left:before {
+    top:-10px; /* value = - border-top-width - border-bottom-width */
+    bottom:auto;
+    left:40;
+    right:auto; /* controls horizontal position */
+    border-width:0 10px 10px;
+}
+
+/* creates the smaller  triangle */
+.triangle-border.top-left:after {
+    top:-8px; /* value = - border-top-width - border-bottom-width */
+    bottom:auto;
+    left:42px;
+    right:auto; /* value = (:before right) + (:before border-right) - (:after border-right) */
+    border-width:0 8px 8px;
+}
+
+/* Variant : left
+------------------------------------------ */
+
+/* creates the larger triangle */
+.triangle-border.left:before {
+    top:10px; /* controls vertical position */
+    bottom:auto;
+    left:-30px; /* value = - border-left-width - border-right-width */
+    border-width:15px 30px 15px 0;
+    border-color:transparent #A7ABB4;
+}
+
+/* creates the smaller  triangle */
+.triangle-border.left:after {
+    top:16px; /* value = (:before top) + (:before border-top) - (:after border-top) */
+    bottom:auto;
+    left:-21px; /* value = - border-left-width - border-right-width */
+    border-width:9px 21px 9px 0;
+    border-color:transparent #fff;
+}
+
+/* Variant : right
+------------------------------------------ */
+
+/* creates the larger triangle */
+.triangle-border.right:before {
+    top:10px; /* controls vertical position */
+    bottom:auto;
+    left:auto;
+    right:-30px; /* value = - border-left-width - border-right-width */
+    border-width:15px 0 15px 30px;
+    border-color:transparent #A7ABB4;
+    border-color:transparent #A7ABB4;
+}
+
+/* creates the smaller  triangle */
+.triangle-border.right:after {
+    top:16px; /* value = (:before top) + (:before border-top) - (:after border-top) */
+    bottom:auto;
+    left:auto;
+    right:-21px; /* value = - border-left-width - border-right-width */
+    border-width:9px 0 9px 21px;
+    border-color:transparent #fff;
 }
