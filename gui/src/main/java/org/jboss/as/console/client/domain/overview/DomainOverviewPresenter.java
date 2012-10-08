@@ -32,22 +32,13 @@ import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import org.jboss.as.console.client.Console;
-import org.jboss.as.console.client.core.DomainGateKeeper;
-import org.jboss.as.console.client.core.Header;
-import org.jboss.as.console.client.core.MainLayoutPresenter;
-import org.jboss.as.console.client.core.NameTokens;
-import org.jboss.as.console.client.core.SuspendableView;
-import org.jboss.as.console.client.domain.model.Host;
+import org.jboss.as.console.client.core.*;
 import org.jboss.as.console.client.domain.model.HostInformationStore;
-import org.jboss.as.console.client.domain.model.ProfileRecord;
 import org.jboss.as.console.client.domain.model.ProfileStore;
-import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.domain.model.ServerGroupStore;
 import org.jboss.as.console.client.domain.model.ServerInstance;
-import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
-import org.jboss.as.console.client.shared.model.DeploymentRecord;
 import org.jboss.as.console.client.shared.model.DeploymentStore;
 import org.jboss.as.console.client.shared.state.CurrentServerSelection;
 import org.jboss.as.console.client.shared.state.ServerSelectionEvent;
@@ -55,7 +46,6 @@ import org.jboss.ballroom.client.widgets.window.Feedback;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 
@@ -130,48 +120,49 @@ public class DomainOverviewPresenter
         loadHostsData();
     }
 
-    private void loadHostsData() {
+    private void loadHostsData()
+    {
 
-        hostInfo.getHosts(new SimpleCallback<List<Host>>() {
-            @Override
-            public void onSuccess(final List<Host> hosts) {
+        //        hostInfo.getHosts(new SimpleCallback<List<Host>>() {
+        //            @Override
+        //            public void onSuccess(final List<Host> hosts) {
+        //
+        //                final List<HostInfo> hostInfos = new ArrayList<HostInfo>();
+        //
+        //                for(final Host host : hosts)
+        //                {
+        //                    hostInfo.getServerInstances(host.getName(), new SimpleCallback<List<ServerInstance>>() {
+        //                        @Override
+        //                        public void onSuccess(List<ServerInstance> serverInstances) {
+        //
+        //                            HostInfo info = new HostInfo(host.getName(), host.isController());
+        //                            info.setServerInstances(serverInstances);
+        //
+        //                            hostInfos.add(info);
+        //
+        //
+        //                            if(hostInfos.size() == hosts.size())
+        //                            {
+        //                                // done
+        //
+        //                                Collections.sort(hostInfos, new Comparator<HostInfo>() {
+        //                                    @Override
+        //                                    public int compare(HostInfo host, HostInfo host1) {
+        //                                        return host.getName().compareTo(host1.getName());
+        //                                    }
+        //                                });
+        //
+        //                                getView().updateHosts(hostInfos, preselectedServer);
+        //
+        //                            }
+        //                        }
+        //                    });
+        //                }
+        //            }
+        //        });
 
-                final List<HostInfo> hostInfos = new ArrayList<HostInfo>();
 
-                for(final Host host : hosts)
-                {
-                    hostInfo.getServerInstances(host.getName(), new SimpleCallback<List<ServerInstance>>() {
-                        @Override
-                        public void onSuccess(List<ServerInstance> serverInstances) {
-
-                            HostInfo info = new HostInfo(host.getName(), host.isController());
-                            info.setServerInstances(serverInstances);
-
-                            hostInfos.add(info);
-
-
-                            if(hostInfos.size() == hosts.size())
-                            {
-                                // done
-
-                                Collections.sort(hostInfos, new Comparator<HostInfo>() {
-                                    @Override
-                                    public int compare(HostInfo host, HostInfo host1) {
-                                        return host.getName().compareTo(host1.getName());
-                                    }
-                                });
-
-                                getView().updateHosts(hostInfos, preselectedServer);
-
-                            }
-                        }
-                    });
-                }
-            }
-        });
-
-
-        //getView().updateHosts(generateFakeDomain());
+        getView().updateHosts(generateFakeDomain(), preselectedServer);
 
 
     }
@@ -200,8 +191,10 @@ public class DomainOverviewPresenter
                 int groupIndex = Random.nextInt(groupNames.length-1);
                 ServerInstance serverInstance = factory.serverInstance().as();
                 serverInstance.setGroup(groupNames[groupIndex]);
-                serverInstance.setRunning((groupIndex%2==0));
-                serverInstance.setName(groupNames[groupIndex]+"-"+x);
+                serverInstance.setRunning((groupIndex % 2 == 0));
+                serverInstance.setName(groupNames[groupIndex] + "-" + x);
+                serverInstance.setSocketBindings(Collections.<String,String> emptyMap());
+                serverInstance.setInterfaces(Collections.<String,String> emptyMap());
 
                 host.getServerInstances().add(serverInstance);
             }
