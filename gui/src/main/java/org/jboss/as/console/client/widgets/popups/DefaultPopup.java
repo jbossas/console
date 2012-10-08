@@ -1,7 +1,10 @@
 package org.jboss.as.console.client.widgets.popups;
 
 import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.event.logical.shared.ResizeEvent;
+import com.google.gwt.event.logical.shared.ResizeHandler;
 import com.google.gwt.user.client.Event;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.PopupPanel;
 
 /**
@@ -42,6 +45,13 @@ public class DefaultPopup extends PopupPanel {
         {
             addStyleName("triangle-border");
         }
+
+        Window.addResizeHandler(new ResizeHandler() {
+            @Override
+            public void onResize(ResizeEvent resizeEvent) {
+                hide();
+            }
+        });
     }
 
     @Override
