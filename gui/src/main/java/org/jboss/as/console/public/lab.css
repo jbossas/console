@@ -341,7 +341,7 @@ input[type="checkbox"] {
     content:"";
     position:absolute;
     bottom:-8px; /* value = - border-top-width - border-bottom-width */
-    left:47px; /* value = (:before left) + (:before border-left) - (:after border-left) */
+    left:42px; /* value = (:before left) + (:before border-left) - (:after border-left) */
     border-width:8px 8px 0;
     border-style:solid;
     border-color:#fff transparent;
