@@ -44,6 +44,7 @@ import com.google.inject.Inject;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.state.ReloadEvent;
 import org.jboss.as.console.client.widgets.lists.DefaultCellList;
+import org.jboss.as.console.client.widgets.popups.DefaultPopup;
 import org.jboss.ballroom.client.widgets.InlineLink;
 import org.jboss.ballroom.client.widgets.icons.Icons;
 import org.jboss.ballroom.client.widgets.window.DefaultWindow;
@@ -70,23 +71,16 @@ public class MessageCenterView implements MessageListener, ReloadEvent.ReloadLis
         this.messageCenter = messageCenter;
     }
 
-    private class MessageListPopup extends PopupPanel
+    private class MessageListPopup extends DefaultPopup
     {
         private CellList<Message> messageList;
 
         public MessageListPopup()
         {
-            super(true);
+            super(Arrow.TOP);
 
-            getElement().setAttribute("role", "alert");
-            getElement().setAttribute("aria-live", "assertive");
-
-            this.sinkEvents(Event.ONKEYDOWN);
             this.sinkEvents(Event.MOUSEEVENTS);
 
-            setStyleName("default-popup");
-            addStyleName("triangle-border");
-            addStyleName("top");
             SafeHtmlBuilder emptyMessage = new SafeHtmlBuilder();
             emptyMessage.appendHtmlConstant("<div style='padding:10px'>");
             emptyMessage.appendHtmlConstant(Console.CONSTANTS.common_label_noRecentMessages());

@@ -39,6 +39,7 @@ import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.ProductConfig;
 import org.jboss.as.console.client.auth.CurrentUser;
+import org.jboss.as.console.client.widgets.popups.DefaultPopup;
 import org.jboss.ballroom.client.widgets.InlineLink;
 import org.jboss.ballroom.client.widgets.window.Feedback;
 
@@ -65,25 +66,7 @@ public class Footer {
         final LayoutPanel layout = new LayoutPanel();
         layout.setStyleName("footer-panel");
 
-        final PopupPanel toolsPopup = new PopupPanel(true)
-        {
-            {
-                this.sinkEvents(Event.ONKEYDOWN);
-            }
-
-            @Override
-            protected void onPreviewNativeEvent(Event.NativePreviewEvent event) {
-                if (Event.ONKEYDOWN == event.getTypeInt()) {
-                    if (event.getNativeEvent().getKeyCode() == KeyCodes.KEY_ESCAPE) {
-                        // Dismiss when escape is pressed
-                        hide();
-                    }
-                }
-            }
-        };
-
-        toolsPopup.addStyleName("default-popup");
-        toolsPopup.addStyleName("triangle-border");
+        final PopupPanel toolsPopup = new DefaultPopup(DefaultPopup.Arrow.BOTTOM);
 
         final VerticalPanel toolsList = new VerticalPanel();
         toolsList.getElement().setAttribute("width", "180px");
