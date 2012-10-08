@@ -111,6 +111,9 @@ public class HostServerTable {
         popup.getElement().setId(panelId);
         popup.setStyleName("default-popup");
 
+        popup.addStyleName("triangle-border");
+        popup.addStyleName("top-left");
+
 
         VerticalPanel layout = new VerticalPanel();
         layout.setStyleName("fill-layout-width");
@@ -289,7 +292,7 @@ public class HostServerTable {
             int popupLeft = header.getAbsoluteLeft() - (winWidth - header.getOffsetWidth());
             popup.setPopupPosition(
                     popupLeft-15,
-                    header.getAbsoluteTop()+21
+                    header.getAbsoluteTop()+32
             );
         }
         else
@@ -297,7 +300,7 @@ public class HostServerTable {
             int popupLeft = header.getAbsoluteLeft();
             popup.setPopupPosition(
                     popupLeft,
-                    header.getAbsoluteTop()+21
+                    header.getAbsoluteTop()+35
             );
         }
 
