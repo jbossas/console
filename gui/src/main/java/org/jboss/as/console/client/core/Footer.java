@@ -22,12 +22,15 @@ package org.jboss.as.console.client.core;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.layout.client.Layout;
+import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.LayoutPanel;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
@@ -36,6 +39,7 @@ import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.ProductConfig;
 import org.jboss.as.console.client.auth.CurrentUser;
+import org.jboss.ballroom.client.widgets.InlineLink;
 import org.jboss.ballroom.client.widgets.window.Feedback;
 
 /**
@@ -58,20 +62,64 @@ public class Footer {
 
     public Widget asWidget() {
 
-        LayoutPanel layout = new LayoutPanel();
+        final LayoutPanel layout = new LayoutPanel();
         layout.setStyleName("footer-panel");
 
-        HTML dmrBrowser = new HTML("Browser");
-        dmrBrowser.addStyleName("footer-link");
-        dmrBrowser.addClickHandler(new ClickHandler() {
+        final PopupPanel toolsPopup = new PopupPanel(true)
+        {
+            {
+                this.sinkEvents(Event.ONKEYDOWN);
+            }
+
             @Override
-            public void onClick(ClickEvent event) {
+            protected void onPreviewNativeEvent(Event.NativePreviewEvent event) {
+                if (Event.ONKEYDOWN == event.getTypeInt()) {
+                    if (event.getNativeEvent().getKeyCode() == KeyCodes.KEY_ESCAPE) {
+                        // Dismiss when escape is pressed
+                        hide();
+                    }
+                }
+            }
+        };
+
+        toolsPopup.addStyleName("default-popup");
+        toolsPopup.addStyleName("triangle-border");
+
+        final VerticalPanel toolsList = new VerticalPanel();
+        toolsList.getElement().setAttribute("width", "180px");
+        InlineLink browser = new InlineLink("Browser");
+        browser.getElement().setAttribute("style", "margin:4px");
+        browser.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent clickEvent) {
+                toolsPopup.hide();
                 placeManager.revealPlace(
                         new PlaceRequest(NameTokens.ToolsPresenter).with("name","browser")
                 );
             }
         });
 
+        toolsList.add(browser);
+        toolsPopup.setWidget(toolsList);
+
+        final HTML toolsLink = new HTML("Tools");
+        toolsLink.addStyleName("footer-link");
+        toolsLink.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent clickEvent) {
+
+                toolsPopup.setPopupPosition(
+                        toolsLink.getAbsoluteLeft()-45,
+                        toolsLink.getAbsoluteTop()-50
+
+                );
+
+                toolsPopup.setWidth("320");
+                toolsPopup.setHeight(toolsList.getWidgetCount()*25+"");
+
+                toolsPopup.show();
+            }
+        });
 
         HTML settings = new HTML(Console.CONSTANTS.common_label_settings());
         settings.addStyleName("footer-link");
@@ -109,7 +157,7 @@ public class Footer {
 
 
         HorizontalPanel tools = new HorizontalPanel();
-        tools.add(dmrBrowser);
+        tools.add(toolsLink);
         tools.add(settings);
         tools.add(logout);
 
