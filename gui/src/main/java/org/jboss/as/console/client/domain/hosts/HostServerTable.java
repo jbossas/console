@@ -26,6 +26,7 @@ import org.jboss.as.console.client.domain.model.Host;
 import org.jboss.as.console.client.domain.model.ServerInstance;
 import org.jboss.as.console.client.widgets.icons.ConsoleIcons;
 import org.jboss.as.console.client.widgets.lists.DefaultCellList;
+import org.jboss.as.console.client.widgets.popups.DefaultPopup;
 import org.jboss.ballroom.client.widgets.common.DefaultButton;
 import org.jboss.ballroom.client.widgets.tables.DefaultPager;
 
@@ -91,29 +92,9 @@ public class HostServerTable {
     public Widget asWidget() {
 
         final String panelId = "popup_"+ HTMLPanel.createUniqueId();
-        popup = new PopupPanel(true, true) {
-
-            @Override
-            protected void onPreviewNativeEvent(Event.NativePreviewEvent event) {
-                if (Event.ONKEYUP == event.getTypeInt()) {
-                    if (event.getNativeEvent().getKeyCode() == ESCAPE) {
-                        // Dismiss when escape is pressed
-                        popup.hide();
-                    }
-                }
-            }
-
-            public void onBrowserEvent(Event event) {
-                super.onBrowserEvent(event);
-            }
-        };
+        popup = new DefaultPopup(DefaultPopup.Arrow.TOPLEFT);
 
         popup.getElement().setId(panelId);
-        popup.setStyleName("default-popup");
-
-        popup.addStyleName("triangle-border");
-        popup.addStyleName("top-left");
-
 
         VerticalPanel layout = new VerticalPanel();
         layout.setStyleName("fill-layout-width");
