@@ -228,7 +228,7 @@
             <properties>
                 <env>default</env>
                 <gwt.bindAddress>127.0.0.1</gwt.bindAddress>
-                <gwt.console.product.version>${project.version}</gwt.console.product.version>
+                <gwt.console.product.version>7.2</gwt.console.product.version>
             </properties>
             <activation>
                 <activeByDefault>true</activeByDefault>
@@ -246,7 +246,7 @@
 
                 <env>default</env>
                 <gwt.bindAddress>127.0.0.1</gwt.bindAddress>
-                <gwt.console.product.version>${project.version}</gwt.console.product.version>
+                <gwt.console.product.version>7.2</gwt.console.product.version>
             </properties>
             <build>
                 <plugins>
@@ -279,6 +279,11 @@
             <!-- Red Hat look & feel -->
 
             <id>eap</id>
+            <properties>
+                <env>default</env>
+                <gwt.bindAddress>127.0.0.1</gwt.bindAddress>
+                <gwt.console.product.version>6.1</gwt.console.product.version>
+            </properties>
             <build>
                 <plugins>
 
