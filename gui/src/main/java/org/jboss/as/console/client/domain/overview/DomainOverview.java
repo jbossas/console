@@ -67,7 +67,6 @@ public class DomainOverview
             "#A0C55F", "#C2CBCE", "#81A8B8",
             "#E8F3F8", "#AAB3AB", "#E8CAAF", "#91A398", "#ED834E",
             "#EBCC6E", "#F06B50", "#E4D829",
-
     };
 
     private static TreeMap<String, String> group2Color = new TreeMap<String,String>();

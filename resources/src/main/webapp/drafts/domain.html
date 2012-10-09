@@ -15,27 +15,70 @@
         div#main th {
             text-align: left;
         }
-        div#main th,td {
+
+        div#main td {
+            -moz-transition: background-color 1s ease-out;
+        }
+
+        div#main th, div#main td {
             padding: 5px;
         }
-        .group0 {
-            background-color: rgb(232,202,175);
+
+        #group0, #group1, #group2, #group3 {
+            cursor: pointer;
         }
-        .group1 {
-            background-color: rgb(160,197,95);
+
+        .group0_member { }
+
+        .group0_on {
+            background-color: rgb(232, 202, 175);
         }
-        .group2 {
-            background-color: rgb(194,203,206);
+
+        .group0_off {
+            background-color: rgba(232, 202, 175, .2)
         }
-        .group3 {
-            background-color: rgb(232,243,248);
+
+        .group1_member { }
+
+        .group1_on {
+            background-color: rgb(160, 197, 95);
+        }
+
+        .group1_off {
+            background-color: rgba(160, 197, 95, .2);
+        }
+
+        .group2_member { }
+
+        .group2_on {
+            background-color: rgb(194, 203, 206);
+        }
+
+        .group2_off {
+            background-color: rgba(194, 203, 206, .2);
+        }
+
+        .group3_member { }
+
+        .group3_on {
+            background-color: rgb(192, 213, 248);
+        }
+
+        .group3_off {
+            background-color: rgba(192, 213, 248, .2);
+        }
+
+        .selected {
         }
     </style>
 </head>
 <body>
 
-<div id="main" style="background-color: white;">
+<div id="main" style="margin: 20px; background-color: white;">
     <table style="width: 100%;">
+        <colgroup>
+            <col width="12%">
+        </colgroup>
         <thead>
         <tr>
             <th>
@@ -49,7 +92,7 @@
                 </span>
                 <span>
                     <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABSklEQVR42qVTO66CUBBlO6Ah/LFEO9cAYSHY29pZWGApDdGKhMLSgh62wA74hIJ5OZNAgqgvxptMGOacmTu/K9CPR3gHNE1Dt9uNrtcr618HwPF9n+XrDKqqosfjQYZhsECH7WOAuq451a7r+D8IAloul7RYLFjHAda27SQYB8iyjNI0pTiO6Xw+0+FwIMdx+HbTNFmHDRg44MJnDHA8HklVVZJlmW+VJIkdbdtmQSDYgIGjaRr7TEq4XC5MVhSFLMsanQeBDdhqtaIoiuY9QP33+5222y3puj5xHLIABg768HIKfd9znUgVjoMzvrCFYcict2NEd/f7/dgDpDyUJIoiY8/jnO2B53ljs1zXZYGOcQL7uEh5nvPN6/WaTqfTaIe+2WwYA+dlAKSWJAntdjsqimLSKOiwYaHAmS3ScMqy/Pf1PXOEX5/zH3IgP/0BiiyCAAAAAElFTkSuQmCC"
-                        align="right" height="16" width="16">
+                         align="right" height="16" width="16">
                 </span>
             </th>
             <th>
@@ -73,1854 +116,182 @@
         </tr>
         </thead>
         <tbody>
-            <tr>
-                <td class="group0">
-                    <span>backoffice</span>
-                </td>
-                <td>
-
-                </td>
-                <td></td>
-                <td></td>
-            </tr>
-            <tr>
-                <td class="group1">
-                    <span>messaging</span>
-                </td>
-                <td></td>
-                <td></td>
-                <td></td>
-            </tr>
-            <tr>
-                <td class="group2">
-                    <span>web</span>
-                </td>
-                <td></td>
-                <td></td>
-                <td></td>
-            </tr>
-            <tr>
-                <td class="group3">
-                    <span>serive</span>
-                </td>
-                <td></td>
-                <td></td>
-                <td></td>
-            </tr>
+        <tr>
+            <td id="group0" class="group0_on">
+                <span>Group: backoffice</span><br/>
+                <span>Profile: full</span>
+            </td>
+            <td class="group1_member group1_off">
+                <span>Server: rsx-5</span>
+                    <span>
+                        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAAeklEQVR42mNgGAWDEogCcT8QG1FqUDkQfwbiOUDMTYpGYSR2JRD/R8J2xBigwMDIDFJ8EYg9gDgXiP8hGdIBxJyEjYEY8huq6SeaIa2keKkaiHeieQWEO8kJWB4g3kiuS9CBABAvBeIGLHJCpBqWBMQuWMTFRrMV6QAAJHsfWPdPzcAAAAAASUVORK5CYII="
+                             align="right" height="16" width="16">
+                    </span><br/>
+                <span>JVM: default</span>
+            </td>
+            <td class="group3_member group3_off">
+                <span>Server: tazde10</span>
+                    <span>
+                        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAABIElEQVR42q2UPQrCQBCFF8QiKfQOwSLgHfQUgleIVbqIvQdQxNbgTawsbIW0YqNX8AfjC7zAOM6KoAMfIbOzb3dmZ9c520LQBwnISEJf6L60IdiA0sOGMV6rVlqAh5h0AgU5Cf+DsebuliLwAFLQBW0SM8WLiFtqkYEY3IGOZ9dzcFepDurBFtjSeQSRIRCAXAlc+d1Sw/XAjc7UEGmAlRKZMc2ScysNN6LjzDroA1grkZxjEeeU1HBj/hT1FmlNI51cnFSbcyr/RArtRVDoEWmKhaTQVKdWF1qLrI2eiUVqiS52xkJKkRULri3VxZbHfzXSCQyRiK3ycvy6IUs23dzTlB027VtDWlfkwjRjcUW6TOfw6Yr89dL+7Rn56WF7AsSolXRXdPSIAAAAAElFTkSuQmCC"
+                             align="right" height="16" width="16">
+                    </span><br/>
+                <span>JVM: default</span>
+            </td>
+            <td class="group1_member group1_off">
+                <span>Server: isu-0815</span>
+                    <span>
+                        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAABIElEQVR42q2UPQrCQBCFF8QiKfQOwSLgHfQUgleIVbqIvQdQxNbgTawsbIW0YqNX8AfjC7zAOM6KoAMfIbOzb3dmZ9c520LQBwnISEJf6L60IdiA0sOGMV6rVlqAh5h0AgU5Cf+DsebuliLwAFLQBW0SM8WLiFtqkYEY3IGOZ9dzcFepDurBFtjSeQSRIRCAXAlc+d1Sw/XAjc7UEGmAlRKZMc2ScysNN6LjzDroA1grkZxjEeeU1HBj/hT1FmlNI51cnFSbcyr/RArtRVDoEWmKhaTQVKdWF1qLrI2eiUVqiS52xkJKkRULri3VxZbHfzXSCQyRiK3ycvy6IUs23dzTlB027VtDWlfkwjRjcUW6TOfw6Yr89dL+7Rn56WF7AsSolXRXdPSIAAAAAElFTkSuQmCC"
+                             align="right" height="16" width="16">
+                    </span><br/>
+                <span>JVM: default</span>
+            </td>
+            <td class="group0_member group0_off">
+                <span>Server: rsx-2</span>
+                    <span>
+                        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAAeklEQVR42mNgGAWDEogCcT8QG1FqUDkQfwbiOUDMTYpGYSR2JRD/R8J2xBigwMDIDFJ8EYg9gDgXiP8hGdIBxJyEjYEY8huq6SeaIa2keKkaiHeieQWEO8kJWB4g3kiuS9CBABAvBeIGLHJCpBqWBMQuWMTFRrMV6QAAJHsfWPdPzcAAAAAASUVORK5CYII="
+                             align="right" height="16" width="16">
+                    </span><br/>
+                <span>JVM: default</span>
+            </td>
+        </tr>
+        <tr>
+            <td id="group1" class="group1_on">
+                <span>Group: messaging</span><br/>
+                <span>Profile: full-ha</span>
+            </td>
+            <td class="group3_member group3_off">
+                <span>Server: rsx-12</span>
+                    <span>
+                        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAABIElEQVR42q2UPQrCQBCFF8QiKfQOwSLgHfQUgleIVbqIvQdQxNbgTawsbIW0YqNX8AfjC7zAOM6KoAMfIbOzb3dmZ9c520LQBwnISEJf6L60IdiA0sOGMV6rVlqAh5h0AgU5Cf+DsebuliLwAFLQBW0SM8WLiFtqkYEY3IGOZ9dzcFepDurBFtjSeQSRIRCAXAlc+d1Sw/XAjc7UEGmAlRKZMc2ScysNN6LjzDroA1grkZxjEeeU1HBj/hT1FmlNI51cnFSbcyr/RArtRVDoEWmKhaTQVKdWF1qLrI2eiUVqiS52xkJKkRULri3VxZbHfzXSCQyRiK3ycvy6IUs23dzTlB027VtDWlfkwjRjcUW6TOfw6Yr89dL+7Rn56WF7AsSolXRXdPSIAAAAAElFTkSuQmCC"
+                             align="right" height="16" width="16">
+                    </span><br/>
+                <span>JVM: default</span>
+            </td>
+            <td class="group2_member group2_off">
+                <span>Server: tazde10</span>
+                    <span>
+                        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAABIElEQVR42q2UPQrCQBCFF8QiKfQOwSLgHfQUgleIVbqIvQdQxNbgTawsbIW0YqNX8AfjC7zAOM6KoAMfIbOzb3dmZ9c520LQBwnISEJf6L60IdiA0sOGMV6rVlqAh5h0AgU5Cf+DsebuliLwAFLQBW0SM8WLiFtqkYEY3IGOZ9dzcFepDurBFtjSeQSRIRCAXAlc+d1Sw/XAjc7UEGmAlRKZMc2ScysNN6LjzDroA1grkZxjEeeU1HBj/hT1FmlNI51cnFSbcyr/RArtRVDoEWmKhaTQVKdWF1qLrI2eiUVqiS52xkJKkRULri3VxZbHfzXSCQyRiK3ycvy6IUs23dzTlB027VtDWlfkwjRjcUW6TOfw6Yr89dL+7Rn56WF7AsSolXRXdPSIAAAAAElFTkSuQmCC"
+                             align="right" height="16" width="16">
+                    </span><br/>
+                <span>JVM: default</span>
+            </td>
+            <td class="group2_member group2_off">
+                <span>Server: rsx200</span>
+                    <span>
+                        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAABIElEQVR42q2UPQrCQBCFF8QiKfQOwSLgHfQUgleIVbqIvQdQxNbgTawsbIW0YqNX8AfjC7zAOM6KoAMfIbOzb3dmZ9c520LQBwnISEJf6L60IdiA0sOGMV6rVlqAh5h0AgU5Cf+DsebuliLwAFLQBW0SM8WLiFtqkYEY3IGOZ9dzcFepDurBFtjSeQSRIRCAXAlc+d1Sw/XAjc7UEGmAlRKZMc2ScysNN6LjzDroA1grkZxjEeeU1HBj/hT1FmlNI51cnFSbcyr/RArtRVDoEWmKhaTQVKdWF1qLrI2eiUVqiS52xkJKkRULri3VxZbHfzXSCQyRiK3ycvy6IUs23dzTlB027VtDWlfkwjRjcUW6TOfw6Yr89dL+7Rn56WF7AsSolXRXdPSIAAAAAElFTkSuQmCC"
+                             align="right" height="16" width="16">
+                    </span><br/>
+                <span>JVM: default</span>
+            </td>
+            <td class="group0_member group0_off">
+                <span>Server: ibu-44</span>
+                    <span>
+                        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAABIElEQVR42q2UPQrCQBCFF8QiKfQOwSLgHfQUgleIVbqIvQdQxNbgTawsbIW0YqNX8AfjC7zAOM6KoAMfIbOzb3dmZ9c520LQBwnISEJf6L60IdiA0sOGMV6rVlqAh5h0AgU5Cf+DsebuliLwAFLQBW0SM8WLiFtqkYEY3IGOZ9dzcFepDurBFtjSeQSRIRCAXAlc+d1Sw/XAjc7UEGmAlRKZMc2ScysNN6LjzDroA1grkZxjEeeU1HBj/hT1FmlNI51cnFSbcyr/RArtRVDoEWmKhaTQVKdWF1qLrI2eiUVqiS52xkJKkRULri3VxZbHfzXSCQyRiK3ycvy6IUs23dzTlB027VtDWlfkwjRjcUW6TOfw6Yr89dL+7Rn56WF7AsSolXRXdPSIAAAAAElFTkSuQmCC"
+                             align="right" height="16" width="16">
+                    </span><br/>
+                <span>JVM: default</span>
+            </td>
+        </tr>
+        <tr>
+            <td id="group2" class="group2_on">
+                <span>Group: web</span><br/>
+                <span>Profile: web</span>
+            </td>
+            <td class="group0_member group0_off">
+                <span>Server: isu-123</span>
+                    <span>
+                        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAAeklEQVR42mNgGAWDEogCcT8QG1FqUDkQfwbiOUDMTYpGYSR2JRD/R8J2xBigwMDIDFJ8EYg9gDgXiP8hGdIBxJyEjYEY8huq6SeaIa2keKkaiHeieQWEO8kJWB4g3kiuS9CBABAvBeIGLHJCpBqWBMQuWMTFRrMV6QAAJHsfWPdPzcAAAAAASUVORK5CYII="
+                             align="right" height="16" width="16">
+                    </span><br/>
+                <span>JVM: default</span>
+            </td>
+            <td class="group2_member group2_off">
+                <span>Server: isu-456</span>
+                    <span>
+                        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAABIElEQVR42q2UPQrCQBCFF8QiKfQOwSLgHfQUgleIVbqIvQdQxNbgTawsbIW0YqNX8AfjC7zAOM6KoAMfIbOzb3dmZ9c520LQBwnISEJf6L60IdiA0sOGMV6rVlqAh5h0AgU5Cf+DsebuliLwAFLQBW0SM8WLiFtqkYEY3IGOZ9dzcFepDurBFtjSeQSRIRCAXAlc+d1Sw/XAjc7UEGmAlRKZMc2ScysNN6LjzDroA1grkZxjEeeU1HBj/hT1FmlNI51cnFSbcyr/RArtRVDoEWmKhaTQVKdWF1qLrI2eiUVqiS52xkJKkRULri3VxZbHfzXSCQyRiK3ycvy6IUs23dzTlB027VtDWlfkwjRjcUW6TOfw6Yr89dL+7Rn56WF7AsSolXRXdPSIAAAAAElFTkSuQmCC"
+                             align="right" height="16" width="16">
+                    </span><br/>
+                <span>JVM: default</span>
+            </td>
+            <td class="group1_member group1_off">
+                <span>Server: stux-23</span>
+                    <span>
+                        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAABIElEQVR42q2UPQrCQBCFF8QiKfQOwSLgHfQUgleIVbqIvQdQxNbgTawsbIW0YqNX8AfjC7zAOM6KoAMfIbOzb3dmZ9c520LQBwnISEJf6L60IdiA0sOGMV6rVlqAh5h0AgU5Cf+DsebuliLwAFLQBW0SM8WLiFtqkYEY3IGOZ9dzcFepDurBFtjSeQSRIRCAXAlc+d1Sw/XAjc7UEGmAlRKZMc2ScysNN6LjzDroA1grkZxjEeeU1HBj/hT1FmlNI51cnFSbcyr/RArtRVDoEWmKhaTQVKdWF1qLrI2eiUVqiS52xkJKkRULri3VxZbHfzXSCQyRiK3ycvy6IUs23dzTlB027VtDWlfkwjRjcUW6TOfw6Yr89dL+7Rn56WF7AsSolXRXdPSIAAAAAElFTkSuQmCC"
+                             align="right" height="16" width="16">
+                    </span><br/>
+                <span>JVM: default</span>
+            </td>
+            <td class="group3_member group3_off">
+                <span>Server: stux-99</span>
+                    <span>
+                        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAAeklEQVR42mNgGAWDEogCcT8QG1FqUDkQfwbiOUDMTYpGYSR2JRD/R8J2xBigwMDIDFJ8EYg9gDgXiP8hGdIBxJyEjYEY8huq6SeaIa2keKkaiHeieQWEO8kJWB4g3kiuS9CBABAvBeIGLHJCpBqWBMQuWMTFRrMV6QAAJHsfWPdPzcAAAAAASUVORK5CYII="
+                             align="right" height="16" width="16">
+                    </span><br/>
+                <span>JVM: default</span>
+            </td>
+        </tr>
+        <tr>
+            <td id="group3" class="group3_on">
+                <span>Group: serive</span><br/>
+                <span>Profile: default</span>
+            </td>
+            <td class="group0_member group0_off">
+                <span>Server: rsx-1</span>
+                    <span>
+                        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAAeklEQVR42mNgGAWDEogCcT8QG1FqUDkQfwbiOUDMTYpGYSR2JRD/R8J2xBigwMDIDFJ8EYg9gDgXiP8hGdIBxJyEjYEY8huq6SeaIa2keKkaiHeieQWEO8kJWB4g3kiuS9CBABAvBeIGLHJCpBqWBMQuWMTFRrMV6QAAJHsfWPdPzcAAAAAASUVORK5CYII="
+                             align="right" height="16" width="16">
+                    </span><br/>
+                <span>JVM: default</span>
+            </td>
+            <td class="group0_member group0_off">
+                <span>Server: rsx-3</span>
+                    <span>
+                        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAAeklEQVR42mNgGAWDEogCcT8QG1FqUDkQfwbiOUDMTYpGYSR2JRD/R8J2xBigwMDIDFJ8EYg9gDgXiP8hGdIBxJyEjYEY8huq6SeaIa2keKkaiHeieQWEO8kJWB4g3kiuS9CBABAvBeIGLHJCpBqWBMQuWMTFRrMV6QAAJHsfWPdPzcAAAAAASUVORK5CYII="
+                             align="right" height="16" width="16">
+                    </span><br/>
+                <span>JVM: default</span>
+            </td>
+            <td class="group1_member group1_off">
+                <span>Server: stux-78</span>
+                    <span>
+                        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAABIElEQVR42q2UPQrCQBCFF8QiKfQOwSLgHfQUgleIVbqIvQdQxNbgTawsbIW0YqNX8AfjC7zAOM6KoAMfIbOzb3dmZ9c520LQBwnISEJf6L60IdiA0sOGMV6rVlqAh5h0AgU5Cf+DsebuliLwAFLQBW0SM8WLiFtqkYEY3IGOZ9dzcFepDurBFtjSeQSRIRCAXAlc+d1Sw/XAjc7UEGmAlRKZMc2ScysNN6LjzDroA1grkZxjEeeU1HBj/hT1FmlNI51cnFSbcyr/RArtRVDoEWmKhaTQVKdWF1qLrI2eiUVqiS52xkJKkRULri3VxZbHfzXSCQyRiK3ycvy6IUs23dzTlB027VtDWlfkwjRjcUW6TOfw6Yr89dL+7Rn56WF7AsSolXRXdPSIAAAAAElFTkSuQmCC"
+                             align="right" height="16" width="16">
+                    </span><br/>
+                <span>JVM: default</span>
+            </td>
+            <td class="group1_member group1_off">
+                <span>Server: stux-42</span>
+                    <span>
+                        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAABIElEQVR42q2UPQrCQBCFF8QiKfQOwSLgHfQUgleIVbqIvQdQxNbgTawsbIW0YqNX8AfjC7zAOM6KoAMfIbOzb3dmZ9c520LQBwnISEJf6L60IdiA0sOGMV6rVlqAh5h0AgU5Cf+DsebuliLwAFLQBW0SM8WLiFtqkYEY3IGOZ9dzcFepDurBFtjSeQSRIRCAXAlc+d1Sw/XAjc7UEGmAlRKZMc2ScysNN6LjzDroA1grkZxjEeeU1HBj/hT1FmlNI51cnFSbcyr/RArtRVDoEWmKhaTQVKdWF1qLrI2eiUVqiS52xkJKkRULri3VxZbHfzXSCQyRiK3ycvy6IUs23dzTlB027VtDWlfkwjRjcUW6TOfw6Yr89dL+7Rn56WF7AsSolXRXdPSIAAAAAElFTkSuQmCC"
+                             align="right" height="16" width="16">
+                    </span><br/>
+                <span>JVM: default</span>
+            </td>
+        </tr>
         </tbody>
     </table>
 </div>
 
 
-<div style="width: 100%; height: 100%; padding: 0px; margin: 0px;">
-<div style="width: 100%; height: 100%;">
-<table id="host-overview" cellpadding="5" width="100%" style="margin-top: 50px; ">
-<tbody>
-<tr id="groups-row" valign="top">
-    <td colspan="3">
-        <table width="100%">
-            <tbody>
-            <tr>
-                <td style="padding:5px;background-color:#A0C55F" width="20%">Group: <a
-                        style="color:#000000!important;"
-                        href="#server-groups;group=backoffice">backoffice<br></a></td>
-                <td style="padding:5px;background-color:#C2CBCE" width="20%">Group: <a
-                        style="color:#000000!important;" href="#server-groups;group=messaging">messaging<br></a>
-                </td>
-                <td style="padding:5px;background-color:#81A8B8" width="20%">Group: <a
-                        style="color:#000000!important;"
-                        href="#server-groups;group=messaging-back-server-test">messaging-back-server-test<br></a>
-                </td>
-                <td style="padding:5px;background-color:#E8F3F8" width="20%">Group: <a
-                        style="color:#000000!important;"
-                        href="#server-groups;group=production">production<br></a></td>
-                <td style="padding:5px;background-color:#E8CAAF" width="20%">Group: <a
-                        style="color:#000000!important;" href="#server-groups;group=uat">uat<br></a></td>
-            </tr>
-            </tbody>
-        </table>
-    </td>
-</tr>
-<tr id="hosts-row" valign="top">
-<td class="domain-hostcontainer" width="33%">
-<div class="domain-hostinfo domain-controller">Host: lightning-0<br>Domain: Controller&nbsp;<img
-        src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABSklEQVR42qVTO66CUBBlO6Ah/LFEO9cAYSHY29pZWGApDdGKhMLSgh62wA74hIJ5OZNAgqgvxptMGOacmTu/K9CPR3gHNE1Dt9uNrtcr618HwPF9n+XrDKqqosfjQYZhsECH7WOAuq451a7r+D8IAloul7RYLFjHAda27SQYB8iyjNI0pTiO6Xw+0+FwIMdx+HbTNFmHDRg44MJnDHA8HklVVZJlmW+VJIkdbdtmQSDYgIGjaRr7TEq4XC5MVhSFLMsanQeBDdhqtaIoiuY9QP33+5222y3puj5xHLIABg768HIKfd9znUgVjoMzvrCFYcict2NEd/f7/dgDpDyUJIoiY8/jnO2B53ljs1zXZYGOcQL7uEh5nvPN6/WaTqfTaIe+2WwYA+dlAKSWJAntdjsqimLSKOiwYaHAmS3ScMqy/Pf1PXOEX5/zH3IgP/0BiiyCAAAAAElFTkSuQmCC"
-        align="right" height="16" width="16"><br></div>
-<table border="0" width="100%">
-<tbody>
-<tr>
-    <td style="background:#A0C55F">&nbsp;</td>
-</tr>
-<tr>
-    <td id="sp_lightning-0_backoffice-0" class="domain-serverinfo domain-servercontainer"><b>Server:
-        <a style="color:#000000!important;" href="#server-config;config=backoffice-0">backoffice-0</a>&nbsp;<img
-                src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAABIElEQVR42q2UPQrCQBCFF8QiKfQOwSLgHfQUgleIVbqIvQdQxNbgTawsbIW0YqNX8AfjC7zAOM6KoAMfIbOzb3dmZ9c520LQBwnISEJf6L60IdiA0sOGMV6rVlqAh5h0AgU5Cf+DsebuliLwAFLQBW0SM8WLiFtqkYEY3IGOZ9dzcFepDurBFtjSeQSRIRCAXAlc+d1Sw/XAjc7UEGmAlRKZMc2ScysNN6LjzDroA1grkZxjEeeU1HBj/hT1FmlNI51cnFSbcyr/RArtRVDoEWmKhaTQVKdWF1qLrI2eiUVqiS52xkJKkRULri3VxZbHfzXSCQyRiK3ycvy6IUs23dzTlB027VtDWlfkwjRjcUW6TOfw6Yr89dL+7Rn56WF7AsSolXRXdPSIAAAAAElFTkSuQmCC"
-                align="right" height="16" width="16"></b><br>
-        <ul></ul>
-        <div id="tb_lightning-0_backoffice-0" class="server-tools">
-            <table class="fill-layout" cellpadding="0" cellspacing="0">
-                <tbody>
-                <tr>
-                    <td style="vertical-align: top;" align="left">
-                        <table class="fill-layout" cellpadding="0" cellspacing="0">
-                            <tbody>
-                            <tr>
-                                <td style="vertical-align: top;" align="left">
-                                    <div tabindex="0" class="gwt-HTML inline-link"><a
-                                            href="javascript:void(0)"
-                                            aria-label="Start/Stop Server<br/>"
-                                            style="vertical-align:bottom;">Start/Stop Server<br></a>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td style="vertical-align: top;" align="left">
-                                    <div tabindex="0" class="gwt-HTML inline-link"><a
-                                            href="javascript:void(0)"
-                                            aria-label="Start Group<br/>"
-                                            style="vertical-align:bottom;">Start Group<br></a>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td style="vertical-align: top;" align="left">
-                                    <div tabindex="0" class="gwt-HTML inline-link"><a
-                                            href="javascript:void(0)"
-                                            aria-label="Stop Group<br/>"
-                                            style="vertical-align:bottom;">Stop Group<br></a>
-                                    </div>
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
-    </td>
-</tr>
-<tr>
-    <td style="background:#E8F3F8">&nbsp;</td>
-</tr>
-<tr>
-    <td id="sp_lightning-0_production-1" class="domain-serverinfo domain-servercontainer"><b>Server:
-        <a style="color:#000000!important;" href="#server-config;config=production-1">production-1</a>&nbsp;<img
-                src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAABIElEQVR42q2UPQrCQBCFF8QiKfQOwSLgHfQUgleIVbqIvQdQxNbgTawsbIW0YqNX8AfjC7zAOM6KoAMfIbOzb3dmZ9c520LQBwnISEJf6L60IdiA0sOGMV6rVlqAh5h0AgU5Cf+DsebuliLwAFLQBW0SM8WLiFtqkYEY3IGOZ9dzcFepDurBFtjSeQSRIRCAXAlc+d1Sw/XAjc7UEGmAlRKZMc2ScysNN6LjzDroA1grkZxjEeeU1HBj/hT1FmlNI51cnFSbcyr/RArtRVDoEWmKhaTQVKdWF1qLrI2eiUVqiS52xkJKkRULri3VxZbHfzXSCQyRiK3ycvy6IUs23dzTlB027VtDWlfkwjRjcUW6TOfw6Yr89dL+7Rn56WF7AsSolXRXdPSIAAAAAElFTkSuQmCC"
-                align="right" height="16" width="16"></b><br>
-        <ul></ul>
-        <div id="tb_lightning-0_production-1" class="server-tools">
-            <table class="fill-layout" cellpadding="0" cellspacing="0">
-                <tbody>
-                <tr>
-                    <td style="vertical-align: top;" align="left">
-                        <table class="fill-layout" cellpadding="0" cellspacing="0">
-                            <tbody>
-                            <tr>
-                                <td style="vertical-align: top;" align="left">
-                                    <div tabindex="0" class="gwt-HTML inline-link"><a
-                                            href="javascript:void(0)"
-                                            aria-label="Start/Stop Server<br/>"
-                                            style="vertical-align:bottom;">Start/Stop Server<br></a>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td style="vertical-align: top;" align="left">
-                                    <div tabindex="0" class="gwt-HTML inline-link"><a
-                                            href="javascript:void(0)"
-                                            aria-label="Start Group<br/>"
-                                            style="vertical-align:bottom;">Start Group<br></a>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td style="vertical-align: top;" align="left">
-                                    <div tabindex="0" class="gwt-HTML inline-link"><a
-                                            href="javascript:void(0)"
-                                            aria-label="Stop Group<br/>"
-                                            style="vertical-align:bottom;">Stop Group<br></a>
-                                    </div>
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
-    </td>
-</tr>
-<tr>
-    <td style="background:#E8F3F8">&nbsp;</td>
-</tr>
-<tr>
-    <td id="sp_lightning-0_production-2" class="domain-serverinfo domain-servercontainer"><b>Server:
-        <a style="color:#000000!important;" href="#server-config;config=production-2">production-2</a>&nbsp;<img
-                src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAABIElEQVR42q2UPQrCQBCFF8QiKfQOwSLgHfQUgleIVbqIvQdQxNbgTawsbIW0YqNX8AfjC7zAOM6KoAMfIbOzb3dmZ9c520LQBwnISEJf6L60IdiA0sOGMV6rVlqAh5h0AgU5Cf+DsebuliLwAFLQBW0SM8WLiFtqkYEY3IGOZ9dzcFepDurBFtjSeQSRIRCAXAlc+d1Sw/XAjc7UEGmAlRKZMc2ScysNN6LjzDroA1grkZxjEeeU1HBj/hT1FmlNI51cnFSbcyr/RArtRVDoEWmKhaTQVKdWF1qLrI2eiUVqiS52xkJKkRULri3VxZbHfzXSCQyRiK3ycvy6IUs23dzTlB027VtDWlfkwjRjcUW6TOfw6Yr89dL+7Rn56WF7AsSolXRXdPSIAAAAAElFTkSuQmCC"
-                align="right" height="16" width="16"></b><br>
-        <ul></ul>
-        <div id="tb_lightning-0_production-2" class="server-tools">
-            <table class="fill-layout" cellpadding="0" cellspacing="0">
-                <tbody>
-                <tr>
-                    <td style="vertical-align: top;" align="left">
-                        <table class="fill-layout" cellpadding="0" cellspacing="0">
-                            <tbody>
-                            <tr>
-                                <td style="vertical-align: top;" align="left">
-                                    <div tabindex="0" class="gwt-HTML inline-link"><a
-                                            href="javascript:void(0)"
-                                            aria-label="Start/Stop Server<br/>"
-                                            style="vertical-align:bottom;">Start/Stop Server<br></a>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td style="vertical-align: top;" align="left">
-                                    <div tabindex="0" class="gwt-HTML inline-link"><a
-                                            href="javascript:void(0)"
-                                            aria-label="Start Group<br/>"
-                                            style="vertical-align:bottom;">Start Group<br></a>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td style="vertical-align: top;" align="left">
-                                    <div tabindex="0" class="gwt-HTML inline-link"><a
-                                            href="javascript:void(0)"
-                                            aria-label="Stop Group<br/>"
-                                            style="vertical-align:bottom;">Stop Group<br></a>
-                                    </div>
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
-    </td>
-</tr>
-<tr>
-    <td style="background:#E8CAAF">&nbsp;</td>
-</tr>
-<tr>
-    <td id="sp_lightning-0_uat-3" class="domain-serverinfo domain-servercontainer"><b>Server: <a
-            style="color:#000000!important;"
-            href="#server-config;config=uat-3">uat-3</a>&nbsp;<img
-            src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAABIElEQVR42q2UPQrCQBCFF8QiKfQOwSLgHfQUgleIVbqIvQdQxNbgTawsbIW0YqNX8AfjC7zAOM6KoAMfIbOzb3dmZ9c520LQBwnISEJf6L60IdiA0sOGMV6rVlqAh5h0AgU5Cf+DsebuliLwAFLQBW0SM8WLiFtqkYEY3IGOZ9dzcFepDurBFtjSeQSRIRCAXAlc+d1Sw/XAjc7UEGmAlRKZMc2ScysNN6LjzDroA1grkZxjEeeU1HBj/hT1FmlNI51cnFSbcyr/RArtRVDoEWmKhaTQVKdWF1qLrI2eiUVqiS52xkJKkRULri3VxZbHfzXSCQyRiK3ycvy6IUs23dzTlB027VtDWlfkwjRjcUW6TOfw6Yr89dL+7Rn56WF7AsSolXRXdPSIAAAAAElFTkSuQmCC"
-            align="right" height="16" width="16"></b><br>
-        <ul></ul>
-        <div id="tb_lightning-0_uat-3" class="server-tools">
-            <table class="fill-layout" cellpadding="0" cellspacing="0">
-                <tbody>
-                <tr>
-                    <td style="vertical-align: top;" align="left">
-                        <table class="fill-layout" cellpadding="0" cellspacing="0">
-                            <tbody>
-                            <tr>
-                                <td style="vertical-align: top;" align="left">
-                                    <div tabindex="0" class="gwt-HTML inline-link"><a
-                                            href="javascript:void(0)"
-                                            aria-label="Start/Stop Server<br/>"
-                                            style="vertical-align:bottom;">Start/Stop Server<br></a>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td style="vertical-align: top;" align="left">
-                                    <div tabindex="0" class="gwt-HTML inline-link"><a
-                                            href="javascript:void(0)"
-                                            aria-label="Start Group<br/>"
-                                            style="vertical-align:bottom;">Start Group<br></a>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td style="vertical-align: top;" align="left">
-                                    <div tabindex="0" class="gwt-HTML inline-link"><a
-                                            href="javascript:void(0)"
-                                            aria-label="Stop Group<br/>"
-                                            style="vertical-align:bottom;">Stop Group<br></a>
-                                    </div>
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
-    </td>
-</tr>
-</tbody>
-</table>
-</td>
-<td class="domain-hostcontainer" width="33%">
-<div class="domain-hostinfo domain-member">Host: eeak-a-mouse-1<br>Domain: Member&nbsp;<br></div>
-<table border="0" width="100%">
-<tbody>
-<tr>
-    <td style="background:#A0C55F">&nbsp;</td>
-</tr>
-<tr>
-    <td id="sp_eeak-a-mouse-1_backoffice-0" class="domain-serverinfo domain-servercontainer"><b>Server:
-        <a style="color:#000000!important;" href="#server-config;config=backoffice-0">backoffice-0</a>&nbsp;<img
-                src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAABIElEQVR42q2UPQrCQBCFF8QiKfQOwSLgHfQUgleIVbqIvQdQxNbgTawsbIW0YqNX8AfjC7zAOM6KoAMfIbOzb3dmZ9c520LQBwnISEJf6L60IdiA0sOGMV6rVlqAh5h0AgU5Cf+DsebuliLwAFLQBW0SM8WLiFtqkYEY3IGOZ9dzcFepDurBFtjSeQSRIRCAXAlc+d1Sw/XAjc7UEGmAlRKZMc2ScysNN6LjzDroA1grkZxjEeeU1HBj/hT1FmlNI51cnFSbcyr/RArtRVDoEWmKhaTQVKdWF1qLrI2eiUVqiS52xkJKkRULri3VxZbHfzXSCQyRiK3ycvy6IUs23dzTlB027VtDWlfkwjRjcUW6TOfw6Yr89dL+7Rn56WF7AsSolXRXdPSIAAAAAElFTkSuQmCC"
-                align="right" height="16" width="16"></b><br>
-        <ul></ul>
-        <div id="tb_eeak-a-mouse-1_backoffice-0" class="server-tools">
-            <table class="fill-layout" cellpadding="0" cellspacing="0">
-                <tbody>
-                <tr>
-                    <td style="vertical-align: top;" align="left">
-                        <table class="fill-layout" cellpadding="0" cellspacing="0">
-                            <tbody>
-                            <tr>
-                                <td style="vertical-align: top;" align="left">
-                                    <div tabindex="0" class="gwt-HTML inline-link"><a
-                                            href="javascript:void(0)"
-                                            aria-label="Start/Stop Server<br/>"
-                                            style="vertical-align:bottom;">Start/Stop Server<br></a>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td style="vertical-align: top;" align="left">
-                                    <div tabindex="0" class="gwt-HTML inline-link"><a
-                                            href="javascript:void(0)"
-                                            aria-label="Start Group<br/>"
-                                            style="vertical-align:bottom;">Start Group<br></a>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td style="vertical-align: top;" align="left">
-                                    <div tabindex="0" class="gwt-HTML inline-link"><a
-                                            href="javascript:void(0)"
-                                            aria-label="Stop Group<br/>"
-                                            style="vertical-align:bottom;">Stop Group<br></a>
-                                    </div>
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
-    </td>
-</tr>
-<tr>
-    <td style="background:#E8CAAF">&nbsp;</td>
-</tr>
-<tr>
-    <td id="sp_eeak-a-mouse-1_uat-1" class="domain-serverinfo domain-servercontainer"><b>Server:
-        <a style="color:#000000!important;"
-           href="#server-config;config=uat-1">uat-1</a>&nbsp;<img
-                src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAABIElEQVR42q2UPQrCQBCFF8QiKfQOwSLgHfQUgleIVbqIvQdQxNbgTawsbIW0YqNX8AfjC7zAOM6KoAMfIbOzb3dmZ9c520LQBwnISEJf6L60IdiA0sOGMV6rVlqAh5h0AgU5Cf+DsebuliLwAFLQBW0SM8WLiFtqkYEY3IGOZ9dzcFepDurBFtjSeQSRIRCAXAlc+d1Sw/XAjc7UEGmAlRKZMc2ScysNN6LjzDroA1grkZxjEeeU1HBj/hT1FmlNI51cnFSbcyr/RArtRVDoEWmKhaTQVKdWF1qLrI2eiUVqiS52xkJKkRULri3VxZbHfzXSCQyRiK3ycvy6IUs23dzTlB027VtDWlfkwjRjcUW6TOfw6Yr89dL+7Rn56WF7AsSolXRXdPSIAAAAAElFTkSuQmCC"
-                align="right" height="16" width="16"></b><br>
-        <ul></ul>
-        <div id="tb_eeak-a-mouse-1_uat-1" class="server-tools">
-            <table class="fill-layout" cellpadding="0" cellspacing="0">
-                <tbody>
-                <tr>
-                    <td style="vertical-align: top;" align="left">
-                        <table class="fill-layout" cellpadding="0" cellspacing="0">
-                            <tbody>
-                            <tr>
-                                <td style="vertical-align: top;" align="left">
-                                    <div tabindex="0" class="gwt-HTML inline-link"><a
-                                            href="javascript:void(0)"
-                                            aria-label="Start/Stop Server<br/>"
-                                            style="vertical-align:bottom;">Start/Stop Server<br></a>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td style="vertical-align: top;" align="left">
-                                    <div tabindex="0" class="gwt-HTML inline-link"><a
-                                            href="javascript:void(0)"
-                                            aria-label="Start Group<br/>"
-                                            style="vertical-align:bottom;">Start Group<br></a>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td style="vertical-align: top;" align="left">
-                                    <div tabindex="0" class="gwt-HTML inline-link"><a
-                                            href="javascript:void(0)"
-                                            aria-label="Stop Group<br/>"
-                                            style="vertical-align:bottom;">Stop Group<br></a>
-                                    </div>
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
-    </td>
-</tr>
-<tr>
-    <td style="background:#A0C55F">&nbsp;</td>
-</tr>
-<tr>
-    <td id="sp_eeak-a-mouse-1_backoffice-2" class="domain-serverinfo domain-servercontainer"><b>Server:
-        <a style="color:#000000!important;" href="#server-config;config=backoffice-2">backoffice-2</a>&nbsp;<img
-                src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAABIElEQVR42q2UPQrCQBCFF8QiKfQOwSLgHfQUgleIVbqIvQdQxNbgTawsbIW0YqNX8AfjC7zAOM6KoAMfIbOzb3dmZ9c520LQBwnISEJf6L60IdiA0sOGMV6rVlqAh5h0AgU5Cf+DsebuliLwAFLQBW0SM8WLiFtqkYEY3IGOZ9dzcFepDurBFtjSeQSRIRCAXAlc+d1Sw/XAjc7UEGmAlRKZMc2ScysNN6LjzDroA1grkZxjEeeU1HBj/hT1FmlNI51cnFSbcyr/RArtRVDoEWmKhaTQVKdWF1qLrI2eiUVqiS52xkJKkRULri3VxZbHfzXSCQyRiK3ycvy6IUs23dzTlB027VtDWlfkwjRjcUW6TOfw6Yr89dL+7Rn56WF7AsSolXRXdPSIAAAAAElFTkSuQmCC"
-                align="right" height="16" width="16"></b><br>
-        <ul></ul>
-        <div id="tb_eeak-a-mouse-1_backoffice-2" class="server-tools">
-            <table class="fill-layout" cellpadding="0" cellspacing="0">
-                <tbody>
-                <tr>
-                    <td style="vertical-align: top;" align="left">
-                        <table class="fill-layout" cellpadding="0" cellspacing="0">
-                            <tbody>
-                            <tr>
-                                <td style="vertical-align: top;" align="left">
-                                    <div tabindex="0" class="gwt-HTML inline-link"><a
-                                            href="javascript:void(0)"
-                                            aria-label="Start/Stop Server<br/>"
-                                            style="vertical-align:bottom;">Start/Stop Server<br></a>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td style="vertical-align: top;" align="left">
-                                    <div tabindex="0" class="gwt-HTML inline-link"><a
-                                            href="javascript:void(0)"
-                                            aria-label="Start Group<br/>"
-                                            style="vertical-align:bottom;">Start Group<br></a>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td style="vertical-align: top;" align="left">
-                                    <div tabindex="0" class="gwt-HTML inline-link"><a
-                                            href="javascript:void(0)"
-                                            aria-label="Stop Group<br/>"
-                                            style="vertical-align:bottom;">Stop Group<br></a>
-                                    </div>
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
-    </td>
-</tr>
-<tr>
-    <td style="background:#A0C55F">&nbsp;</td>
-</tr>
-<tr>
-    <td id="sp_eeak-a-mouse-1_backoffice-3" class="domain-serverinfo domain-servercontainer"><b>Server:
-        <a style="color:#000000!important;" href="#server-config;config=backoffice-3">backoffice-3</a>&nbsp;<img
-                src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAABIElEQVR42q2UPQrCQBCFF8QiKfQOwSLgHfQUgleIVbqIvQdQxNbgTawsbIW0YqNX8AfjC7zAOM6KoAMfIbOzb3dmZ9c520LQBwnISEJf6L60IdiA0sOGMV6rVlqAh5h0AgU5Cf+DsebuliLwAFLQBW0SM8WLiFtqkYEY3IGOZ9dzcFepDurBFtjSeQSRIRCAXAlc+d1Sw/XAjc7UEGmAlRKZMc2ScysNN6LjzDroA1grkZxjEeeU1HBj/hT1FmlNI51cnFSbcyr/RArtRVDoEWmKhaTQVKdWF1qLrI2eiUVqiS52xkJKkRULri3VxZbHfzXSCQyRiK3ycvy6IUs23dzTlB027VtDWlfkwjRjcUW6TOfw6Yr89dL+7Rn56WF7AsSolXRXdPSIAAAAAElFTkSuQmCC"
-                align="right" height="16" width="16"></b><br>
-        <ul></ul>
-        <div id="tb_eeak-a-mouse-1_backoffice-3" class="server-tools">
-            <table class="fill-layout" cellpadding="0" cellspacing="0">
-                <tbody>
-                <tr>
-                    <td style="vertical-align: top;" align="left">
-                        <table class="fill-layout" cellpadding="0" cellspacing="0">
-                            <tbody>
-                            <tr>
-                                <td style="vertical-align: top;" align="left">
-                                    <div tabindex="0" class="gwt-HTML inline-link"><a
-                                            href="javascript:void(0)"
-                                            aria-label="Start/Stop Server<br/>"
-                                            style="vertical-align:bottom;">Start/Stop Server<br></a>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td style="vertical-align: top;" align="left">
-                                    <div tabindex="0" class="gwt-HTML inline-link"><a
-                                            href="javascript:void(0)"
-                                            aria-label="Start Group<br/>"
-                                            style="vertical-align:bottom;">Start Group<br></a>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td style="vertical-align: top;" align="left">
-                                    <div tabindex="0" class="gwt-HTML inline-link"><a
-                                            href="javascript:void(0)"
-                                            aria-label="Stop Group<br/>"
-                                            style="vertical-align:bottom;">Stop Group<br></a>
-                                    </div>
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
-    </td>
-</tr>
-</tbody>
-</table>
-</td>
-<td class="domain-hostcontainer" width="33%">
-<div class="domain-hostinfo domain-member">Host: eeak-a-mouse-2<br>Domain: Member&nbsp;<br></div>
-<table border="0" width="100%">
-<tbody>
-<tr>
-    <td style="background:#A0C55F">&nbsp;</td>
-</tr>
-<tr>
-    <td id="sp_eeak-a-mouse-2_backoffice-0" class="domain-serverinfo domain-servercontainer"><b>Server:
-        <a style="color:#000000!important;" href="#server-config;config=backoffice-0">backoffice-0</a>&nbsp;<img
-                src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAABIElEQVR42q2UPQrCQBCFF8QiKfQOwSLgHfQUgleIVbqIvQdQxNbgTawsbIW0YqNX8AfjC7zAOM6KoAMfIbOzb3dmZ9c520LQBwnISEJf6L60IdiA0sOGMV6rVlqAh5h0AgU5Cf+DsebuliLwAFLQBW0SM8WLiFtqkYEY3IGOZ9dzcFepDurBFtjSeQSRIRCAXAlc+d1Sw/XAjc7UEGmAlRKZMc2ScysNN6LjzDroA1grkZxjEeeU1HBj/hT1FmlNI51cnFSbcyr/RArtRVDoEWmKhaTQVKdWF1qLrI2eiUVqiS52xkJKkRULri3VxZbHfzXSCQyRiK3ycvy6IUs23dzTlB027VtDWlfkwjRjcUW6TOfw6Yr89dL+7Rn56WF7AsSolXRXdPSIAAAAAElFTkSuQmCC"
-                align="right" height="16" width="16"></b><br>
-        <ul></ul>
-        <div id="tb_eeak-a-mouse-2_backoffice-0" class="server-tools">
-            <table class="fill-layout" cellpadding="0" cellspacing="0">
-                <tbody>
-                <tr>
-                    <td style="vertical-align: top;" align="left">
-                        <table class="fill-layout" cellpadding="0" cellspacing="0">
-                            <tbody>
-                            <tr>
-                                <td style="vertical-align: top;" align="left">
-                                    <div tabindex="0" class="gwt-HTML inline-link"><a
-                                            href="javascript:void(0)"
-                                            aria-label="Start/Stop Server<br/>"
-                                            style="vertical-align:bottom;">Start/Stop Server<br></a>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td style="vertical-align: top;" align="left">
-                                    <div tabindex="0" class="gwt-HTML inline-link"><a
-                                            href="javascript:void(0)"
-                                            aria-label="Start Group<br/>"
-                                            style="vertical-align:bottom;">Start Group<br></a>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td style="vertical-align: top;" align="left">
-                                    <div tabindex="0" class="gwt-HTML inline-link"><a
-                                            href="javascript:void(0)"
-                                            aria-label="Stop Group<br/>"
-                                            style="vertical-align:bottom;">Stop Group<br></a>
-                                    </div>
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
-    </td>
-</tr>
-<tr>
-    <td style="background:#C2CBCE">&nbsp;</td>
-</tr>
-<tr>
-    <td id="sp_eeak-a-mouse-2_messaging-1" class="domain-serverinfo domain-servercontainer"><b>Server:
-        <a style="color:#000000!important;"
-           href="#server-config;config=messaging-1">messaging-1</a>&nbsp;<img
-                src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAAeklEQVR42mNgGAWDEogCcT8QG1FqUDkQfwbiOUDMTYpGYSR2JRD/R8J2xBigwMDIDFJ8EYg9gDgXiP8hGdIBxJyEjYEY8huq6SeaIa2keKkaiHeieQWEO8kJWB4g3kiuS9CBABAvBeIGLHJCpBqWBMQuWMTFRrMV6QAAJHsfWPdPzcAAAAAASUVORK5CYII="
-                align="right" height="16" width="16"></b><br>
-        <ul></ul>
-        <div id="tb_eeak-a-mouse-2_messaging-1" class="server-tools">
-            <table class="fill-layout" cellpadding="0" cellspacing="0">
-                <tbody>
-                <tr>
-                    <td style="vertical-align: top;" align="left">
-                        <table class="fill-layout" cellpadding="0" cellspacing="0">
-                            <tbody>
-                            <tr>
-                                <td style="vertical-align: top;" align="left">
-                                    <div tabindex="0" class="gwt-HTML inline-link"><a
-                                            href="javascript:void(0)"
-                                            aria-label="Start/Stop Server<br/>"
-                                            style="vertical-align:bottom;">Start/Stop Server<br></a>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td style="vertical-align: top;" align="left">
-                                    <div tabindex="0" class="gwt-HTML inline-link"><a
-                                            href="javascript:void(0)"
-                                            aria-label="Start Group<br/>"
-                                            style="vertical-align:bottom;">Start Group<br></a>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td style="vertical-align: top;" align="left">
-                                    <div tabindex="0" class="gwt-HTML inline-link"><a
-                                            href="javascript:void(0)"
-                                            aria-label="Stop Group<br/>"
-                                            style="vertical-align:bottom;">Stop Group<br></a>
-                                    </div>
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
-    </td>
-</tr>
-<tr>
-    <td style="background:#81A8B8">&nbsp;</td>
-</tr>
-<tr>
-    <td id="sp_eeak-a-mouse-2_messaging-back-server-test-2"
-        class="domain-serverinfo domain-servercontainer"><b>Server: <a
-            style="color:#000000!important;"
-            href="#server-config;config=messaging-back-server-test-2">messaging-back-server-test-2</a>&nbsp;<img
-            src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAAeklEQVR42mNgGAWDEogCcT8QG1FqUDkQfwbiOUDMTYpGYSR2JRD/R8J2xBigwMDIDFJ8EYg9gDgXiP8hGdIBxJyEjYEY8huq6SeaIa2keKkaiHeieQWEO8kJWB4g3kiuS9CBABAvBeIGLHJCpBqWBMQuWMTFRrMV6QAAJHsfWPdPzcAAAAAASUVORK5CYII="
-            align="right" height="16" width="16"></b><br>
-        <ul></ul>
-        <div id="tb_eeak-a-mouse-2_messaging-back-server-test-2" class="server-tools">
-            <table class="fill-layout" cellpadding="0" cellspacing="0">
-                <tbody>
-                <tr>
-                    <td style="vertical-align: top;" align="left">
-                        <table class="fill-layout" cellpadding="0" cellspacing="0">
-                            <tbody>
-                            <tr>
-                                <td style="vertical-align: top;" align="left">
-                                    <div tabindex="0" class="gwt-HTML inline-link"><a
-                                            href="javascript:void(0)"
-                                            aria-label="Start/Stop Server<br/>"
-                                            style="vertical-align:bottom;">Start/Stop Server<br></a>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td style="vertical-align: top;" align="left">
-                                    <div tabindex="0" class="gwt-HTML inline-link"><a
-                                            href="javascript:void(0)"
-                                            aria-label="Start Group<br/>"
-                                            style="vertical-align:bottom;">Start Group<br></a>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td style="vertical-align: top;" align="left">
-                                    <div tabindex="0" class="gwt-HTML inline-link"><a
-                                            href="javascript:void(0)"
-                                            aria-label="Stop Group<br/>"
-                                            style="vertical-align:bottom;">Stop Group<br></a>
-                                    </div>
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
-    </td>
-</tr>
-<tr>
-    <td style="background:#E8CAAF">&nbsp;</td>
-</tr>
-<tr>
-    <td id="sp_eeak-a-mouse-2_uat-3" class="domain-serverinfo domain-servercontainer"><b>Server:
-        <a style="color:#000000!important;"
-           href="#server-config;config=uat-3">uat-3</a>&nbsp;<img
-                src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAABIElEQVR42q2UPQrCQBCFF8QiKfQOwSLgHfQUgleIVbqIvQdQxNbgTawsbIW0YqNX8AfjC7zAOM6KoAMfIbOzb3dmZ9c520LQBwnISEJf6L60IdiA0sOGMV6rVlqAh5h0AgU5Cf+DsebuliLwAFLQBW0SM8WLiFtqkYEY3IGOZ9dzcFepDurBFtjSeQSRIRCAXAlc+d1Sw/XAjc7UEGmAlRKZMc2ScysNN6LjzDroA1grkZxjEeeU1HBj/hT1FmlNI51cnFSbcyr/RArtRVDoEWmKhaTQVKdWF1qLrI2eiUVqiS52xkJKkRULri3VxZbHfzXSCQyRiK3ycvy6IUs23dzTlB027VtDWlfkwjRjcUW6TOfw6Yr89dL+7Rn56WF7AsSolXRXdPSIAAAAAElFTkSuQmCC"
-                align="right" height="16" width="16"></b><br>
-        <ul></ul>
-        <div id="tb_eeak-a-mouse-2_uat-3" class="server-tools">
-            <table class="fill-layout" cellpadding="0" cellspacing="0">
-                <tbody>
-                <tr>
-                    <td style="vertical-align: top;" align="left">
-                        <table class="fill-layout" cellpadding="0" cellspacing="0">
-                            <tbody>
-                            <tr>
-                                <td style="vertical-align: top;" align="left">
-                                    <div tabindex="0" class="gwt-HTML inline-link"><a
-                                            href="javascript:void(0)"
-                                            aria-label="Start/Stop Server<br/>"
-                                            style="vertical-align:bottom;">Start/Stop Server<br></a>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td style="vertical-align: top;" align="left">
-                                    <div tabindex="0" class="gwt-HTML inline-link"><a
-                                            href="javascript:void(0)"
-                                            aria-label="Start Group<br/>"
-                                            style="vertical-align:bottom;">Start Group<br></a>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td style="vertical-align: top;" align="left">
-                                    <div tabindex="0" class="gwt-HTML inline-link"><a
-                                            href="javascript:void(0)"
-                                            aria-label="Stop Group<br/>"
-                                            style="vertical-align:bottom;">Stop Group<br></a>
-                                    </div>
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
-    </td>
-</tr>
-</tbody>
-</table>
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<div style="width: 100%; height: 100%; padding: 0px; margin: 0px; display: none;">
-<div style="width: 100%; height: 100%; display: none;">
-<table id="host-overview" cellpadding="5" width="100%">
-<tbody>
-<tr id="groups-row" valign="top">
-    <td colspan="3">
-        <table width="100%">
-            <tbody>
-            <tr>
-                <td style="padding:5px;background-color:#A0C55F" width="20%">Group: <a
-                        style="color:#000000!important;"
-                        href="#server-groups;group=backoffice">backoffice<br></a></td>
-                <td style="padding:5px;background-color:#C2CBCE" width="20%">Group: <a
-                        style="color:#000000!important;" href="#server-groups;group=messaging">messaging<br></a>
-                </td>
-                <td style="padding:5px;background-color:#81A8B8" width="20%">Group: <a
-                        style="color:#000000!important;"
-                        href="#server-groups;group=messaging-back-server-test">messaging-back-server-test<br></a>
-                </td>
-                <td style="padding:5px;background-color:#E8F3F8" width="20%">Group: <a
-                        style="color:#000000!important;"
-                        href="#server-groups;group=production">production<br></a></td>
-                <td style="padding:5px;background-color:#E8CAAF" width="20%">Group: <a
-                        style="color:#000000!important;" href="#server-groups;group=uat">uat<br></a></td>
-            </tr>
-            </tbody>
-        </table>
-    </td>
-</tr>
-<tr id="hosts-row" valign="top">
-<td class="domain-hostcontainer" width="33%">
-    <div class="domain-hostinfo domain-member">Host: lightning-3<br>Domain: Member&nbsp;<br></div>
-    <table border="0" width="100%">
-        <tbody>
-        <tr>
-            <td style="background:#81A8B8">&nbsp;</td>
-        </tr>
-        <tr>
-            <td id="sp_lightning-3_messaging-back-server-test-0"
-                class="domain-serverinfo domain-servercontainer"><b>Server: <a
-                    style="color:#000000!important;"
-                    href="#server-config;config=messaging-back-server-test-0">messaging-back-server-test-0</a>&nbsp;<img
-                    src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAAeklEQVR42mNgGAWDEogCcT8QG1FqUDkQfwbiOUDMTYpGYSR2JRD/R8J2xBigwMDIDFJ8EYg9gDgXiP8hGdIBxJyEjYEY8huq6SeaIa2keKkaiHeieQWEO8kJWB4g3kiuS9CBABAvBeIGLHJCpBqWBMQuWMTFRrMV6QAAJHsfWPdPzcAAAAAASUVORK5CYII="
-                    align="right" height="16" width="16"></b><br>
-                <ul></ul>
-                <div id="tb_lightning-3_messaging-back-server-test-0" class="server-tools">
-                    <table class="fill-layout" cellpadding="0" cellspacing="0">
-                        <tbody>
-                        <tr>
-                            <td style="vertical-align: top;" align="left">
-                                <table class="fill-layout" cellpadding="0" cellspacing="0">
-                                    <tbody>
-                                    <tr>
-                                        <td style="vertical-align: top;" align="left">
-                                            <div tabindex="0" class="gwt-HTML inline-link"><a
-                                                    href="javascript:void(0)"
-                                                    aria-label="Start/Stop Server<br/>"
-                                                    style="vertical-align:bottom;">Start/Stop Server<br></a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td style="vertical-align: top;" align="left">
-                                            <div tabindex="0" class="gwt-HTML inline-link"><a
-                                                    href="javascript:void(0)"
-                                                    aria-label="Start Group<br/>"
-                                                    style="vertical-align:bottom;">Start Group<br></a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td style="vertical-align: top;" align="left">
-                                            <div tabindex="0" class="gwt-HTML inline-link"><a
-                                                    href="javascript:void(0)"
-                                                    aria-label="Stop Group<br/>"
-                                                    style="vertical-align:bottom;">Stop Group<br></a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </td>
-        </tr>
-        </tbody>
-    </table>
-</td>
-<td class="domain-hostcontainer" width="33%">
-    <div class="domain-hostinfo domain-member">Host: lightning-4<br>Domain: Member&nbsp;<br></div>
-    <table border="0" width="100%">
-        <tbody>
-        <tr>
-            <td style="background:#E8F3F8">&nbsp;</td>
-        </tr>
-        <tr>
-            <td id="sp_lightning-4_production-0" class="domain-serverinfo domain-servercontainer"><b>Server:
-                <a style="color:#000000!important;" href="#server-config;config=production-0">production-0</a>&nbsp;<img
-                        src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAABIElEQVR42q2UPQrCQBCFF8QiKfQOwSLgHfQUgleIVbqIvQdQxNbgTawsbIW0YqNX8AfjC7zAOM6KoAMfIbOzb3dmZ9c520LQBwnISEJf6L60IdiA0sOGMV6rVlqAh5h0AgU5Cf+DsebuliLwAFLQBW0SM8WLiFtqkYEY3IGOZ9dzcFepDurBFtjSeQSRIRCAXAlc+d1Sw/XAjc7UEGmAlRKZMc2ScysNN6LjzDroA1grkZxjEeeU1HBj/hT1FmlNI51cnFSbcyr/RArtRVDoEWmKhaTQVKdWF1qLrI2eiUVqiS52xkJKkRULri3VxZbHfzXSCQyRiK3ycvy6IUs23dzTlB027VtDWlfkwjRjcUW6TOfw6Yr89dL+7Rn56WF7AsSolXRXdPSIAAAAAElFTkSuQmCC"
-                        align="right" height="16" width="16"></b><br>
-                <ul></ul>
-                <div id="tb_lightning-4_production-0" class="server-tools">
-                    <table class="fill-layout" cellpadding="0" cellspacing="0">
-                        <tbody>
-                        <tr>
-                            <td style="vertical-align: top;" align="left">
-                                <table class="fill-layout" cellpadding="0" cellspacing="0">
-                                    <tbody>
-                                    <tr>
-                                        <td style="vertical-align: top;" align="left">
-                                            <div tabindex="0" class="gwt-HTML inline-link"><a
-                                                    href="javascript:void(0)"
-                                                    aria-label="Start/Stop Server<br/>"
-                                                    style="vertical-align:bottom;">Start/Stop Server<br></a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td style="vertical-align: top;" align="left">
-                                            <div tabindex="0" class="gwt-HTML inline-link"><a
-                                                    href="javascript:void(0)"
-                                                    aria-label="Start Group<br/>"
-                                                    style="vertical-align:bottom;">Start Group<br></a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td style="vertical-align: top;" align="left">
-                                            <div tabindex="0" class="gwt-HTML inline-link"><a
-                                                    href="javascript:void(0)"
-                                                    aria-label="Stop Group<br/>"
-                                                    style="vertical-align:bottom;">Stop Group<br></a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </td>
-        </tr>
-        <tr>
-            <td style="background:#E8F3F8">&nbsp;</td>
-        </tr>
-        <tr>
-            <td id="sp_lightning-4_production-1" class="domain-serverinfo domain-servercontainer"><b>Server:
-                <a style="color:#000000!important;" href="#server-config;config=production-1">production-1</a>&nbsp;<img
-                        src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAABIElEQVR42q2UPQrCQBCFF8QiKfQOwSLgHfQUgleIVbqIvQdQxNbgTawsbIW0YqNX8AfjC7zAOM6KoAMfIbOzb3dmZ9c520LQBwnISEJf6L60IdiA0sOGMV6rVlqAh5h0AgU5Cf+DsebuliLwAFLQBW0SM8WLiFtqkYEY3IGOZ9dzcFepDurBFtjSeQSRIRCAXAlc+d1Sw/XAjc7UEGmAlRKZMc2ScysNN6LjzDroA1grkZxjEeeU1HBj/hT1FmlNI51cnFSbcyr/RArtRVDoEWmKhaTQVKdWF1qLrI2eiUVqiS52xkJKkRULri3VxZbHfzXSCQyRiK3ycvy6IUs23dzTlB027VtDWlfkwjRjcUW6TOfw6Yr89dL+7Rn56WF7AsSolXRXdPSIAAAAAElFTkSuQmCC"
-                        align="right" height="16" width="16"></b><br>
-                <ul></ul>
-                <div id="tb_lightning-4_production-1" class="server-tools">
-                    <table class="fill-layout" cellpadding="0" cellspacing="0">
-                        <tbody>
-                        <tr>
-                            <td style="vertical-align: top;" align="left">
-                                <table class="fill-layout" cellpadding="0" cellspacing="0">
-                                    <tbody>
-                                    <tr>
-                                        <td style="vertical-align: top;" align="left">
-                                            <div tabindex="0" class="gwt-HTML inline-link"><a
-                                                    href="javascript:void(0)"
-                                                    aria-label="Start/Stop Server<br/>"
-                                                    style="vertical-align:bottom;">Start/Stop Server<br></a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td style="vertical-align: top;" align="left">
-                                            <div tabindex="0" class="gwt-HTML inline-link"><a
-                                                    href="javascript:void(0)"
-                                                    aria-label="Start Group<br/>"
-                                                    style="vertical-align:bottom;">Start Group<br></a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td style="vertical-align: top;" align="left">
-                                            <div tabindex="0" class="gwt-HTML inline-link"><a
-                                                    href="javascript:void(0)"
-                                                    aria-label="Stop Group<br/>"
-                                                    style="vertical-align:bottom;">Stop Group<br></a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </td>
-        </tr>
-        </tbody>
-    </table>
-</td>
-<td class="domain-hostcontainer" width="33%">
-    <div class="domain-hostinfo domain-member">Host: lightning-5<br>Domain: Member&nbsp;<br></div>
-    <table border="0" width="100%">
-        <tbody>
-        <tr>
-            <td style="background:#C2CBCE">&nbsp;</td>
-        </tr>
-        <tr>
-            <td id="sp_lightning-5_messaging-0" class="domain-serverinfo domain-servercontainer"><b>Server:
-                <a style="color:#000000!important;"
-                   href="#server-config;config=messaging-0">messaging-0</a>&nbsp;<img
-                        src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAAeklEQVR42mNgGAWDEogCcT8QG1FqUDkQfwbiOUDMTYpGYSR2JRD/R8J2xBigwMDIDFJ8EYg9gDgXiP8hGdIBxJyEjYEY8huq6SeaIa2keKkaiHeieQWEO8kJWB4g3kiuS9CBABAvBeIGLHJCpBqWBMQuWMTFRrMV6QAAJHsfWPdPzcAAAAAASUVORK5CYII="
-                        align="right" height="16" width="16"></b><br>
-                <ul></ul>
-                <div id="tb_lightning-5_messaging-0" class="server-tools">
-                    <table class="fill-layout" cellpadding="0" cellspacing="0">
-                        <tbody>
-                        <tr>
-                            <td style="vertical-align: top;" align="left">
-                                <table class="fill-layout" cellpadding="0" cellspacing="0">
-                                    <tbody>
-                                    <tr>
-                                        <td style="vertical-align: top;" align="left">
-                                            <div tabindex="0" class="gwt-HTML inline-link"><a
-                                                    href="javascript:void(0)"
-                                                    aria-label="Start/Stop Server<br/>"
-                                                    style="vertical-align:bottom;">Start/Stop Server<br></a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td style="vertical-align: top;" align="left">
-                                            <div tabindex="0" class="gwt-HTML inline-link"><a
-                                                    href="javascript:void(0)"
-                                                    aria-label="Start Group<br/>"
-                                                    style="vertical-align:bottom;">Start Group<br></a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td style="vertical-align: top;" align="left">
-                                            <div tabindex="0" class="gwt-HTML inline-link"><a
-                                                    href="javascript:void(0)"
-                                                    aria-label="Stop Group<br/>"
-                                                    style="vertical-align:bottom;">Stop Group<br></a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </td>
-        </tr>
-        <tr>
-            <td style="background:#A0C55F">&nbsp;</td>
-        </tr>
-        <tr>
-            <td id="sp_lightning-5_backoffice-1" class="domain-serverinfo domain-servercontainer"><b>Server:
-                <a style="color:#000000!important;" href="#server-config;config=backoffice-1">backoffice-1</a>&nbsp;<img
-                        src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAABIElEQVR42q2UPQrCQBCFF8QiKfQOwSLgHfQUgleIVbqIvQdQxNbgTawsbIW0YqNX8AfjC7zAOM6KoAMfIbOzb3dmZ9c520LQBwnISEJf6L60IdiA0sOGMV6rVlqAh5h0AgU5Cf+DsebuliLwAFLQBW0SM8WLiFtqkYEY3IGOZ9dzcFepDurBFtjSeQSRIRCAXAlc+d1Sw/XAjc7UEGmAlRKZMc2ScysNN6LjzDroA1grkZxjEeeU1HBj/hT1FmlNI51cnFSbcyr/RArtRVDoEWmKhaTQVKdWF1qLrI2eiUVqiS52xkJKkRULri3VxZbHfzXSCQyRiK3ycvy6IUs23dzTlB027VtDWlfkwjRjcUW6TOfw6Yr89dL+7Rn56WF7AsSolXRXdPSIAAAAAElFTkSuQmCC"
-                        align="right" height="16" width="16"></b><br>
-                <ul></ul>
-                <div id="tb_lightning-5_backoffice-1" class="server-tools">
-                    <table class="fill-layout" cellpadding="0" cellspacing="0">
-                        <tbody>
-                        <tr>
-                            <td style="vertical-align: top;" align="left">
-                                <table class="fill-layout" cellpadding="0" cellspacing="0">
-                                    <tbody>
-                                    <tr>
-                                        <td style="vertical-align: top;" align="left">
-                                            <div tabindex="0" class="gwt-HTML inline-link"><a
-                                                    href="javascript:void(0)"
-                                                    aria-label="Start/Stop Server<br/>"
-                                                    style="vertical-align:bottom;">Start/Stop Server<br></a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td style="vertical-align: top;" align="left">
-                                            <div tabindex="0" class="gwt-HTML inline-link"><a
-                                                    href="javascript:void(0)"
-                                                    aria-label="Start Group<br/>"
-                                                    style="vertical-align:bottom;">Start Group<br></a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td style="vertical-align: top;" align="left">
-                                            <div tabindex="0" class="gwt-HTML inline-link"><a
-                                                    href="javascript:void(0)"
-                                                    aria-label="Stop Group<br/>"
-                                                    style="vertical-align:bottom;">Stop Group<br></a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </td>
-        </tr>
-        </tbody>
-    </table>
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<div style="width: 100%; height: 100%; padding: 0px; margin: 0px; display: none;">
-<div style="width: 100%; height: 100%; display: none;">
-<table id="host-overview" cellpadding="5" width="100%">
-<tbody>
-<tr id="groups-row" valign="top">
-    <td colspan="3">
-        <table width="100%">
-            <tbody>
-            <tr>
-                <td style="padding:5px;background-color:#A0C55F" width="16%">Group: <a
-                        style="color:#000000!important;"
-                        href="#server-groups;group=backoffice">backoffice<br></a></td>
-                <td style="padding:5px;background-color:#C2CBCE" width="16%">Group: <a
-                        style="color:#000000!important;" href="#server-groups;group=messaging">messaging<br></a>
-                </td>
-                <td style="padding:5px;background-color:#81A8B8" width="16%">Group: <a
-                        style="color:#000000!important;"
-                        href="#server-groups;group=messaging-back-server-test">messaging-back-server-test<br></a>
-                </td>
-                <td style="padding:5px;background-color:#E8F3F8" width="16%">Group: <a
-                        style="color:#000000!important;"
-                        href="#server-groups;group=production">production<br></a></td>
-                <td style="padding:5px;background-color:#AAB3AB" width="16%">Group: <a
-                        style="color:#000000!important;" href="#server-groups;group=staging">staging<br></a>
-                </td>
-                <td style="padding:5px;background-color:#E8CAAF" width="16%">Group: <a
-                        style="color:#000000!important;" href="#server-groups;group=uat">uat<br></a></td>
-            </tr>
-            </tbody>
-        </table>
-    </td>
-</tr>
-<tr id="hosts-row" valign="top">
-<td class="domain-hostcontainer" width="33%">
-    <div class="domain-hostinfo domain-member">Host: eeak-a-mouse-6<br>Domain: Member&nbsp;<br></div>
-    <table border="0" width="100%">
-        <tbody>
-        <tr>
-            <td style="background:#C2CBCE">&nbsp;</td>
-        </tr>
-        <tr>
-            <td id="sp_eeak-a-mouse-6_messaging-0" class="domain-serverinfo domain-servercontainer"><b>Server:
-                <a style="color:#000000!important;"
-                   href="#server-config;config=messaging-0">messaging-0</a>&nbsp;<img
-                        src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAAeklEQVR42mNgGAWDEogCcT8QG1FqUDkQfwbiOUDMTYpGYSR2JRD/R8J2xBigwMDIDFJ8EYg9gDgXiP8hGdIBxJyEjYEY8huq6SeaIa2keKkaiHeieQWEO8kJWB4g3kiuS9CBABAvBeIGLHJCpBqWBMQuWMTFRrMV6QAAJHsfWPdPzcAAAAAASUVORK5CYII="
-                        align="right" height="16" width="16"></b><br>
-                <ul></ul>
-                <div id="tb_eeak-a-mouse-6_messaging-0" class="server-tools">
-                    <table class="fill-layout" cellpadding="0" cellspacing="0">
-                        <tbody>
-                        <tr>
-                            <td style="vertical-align: top;" align="left">
-                                <table class="fill-layout" cellpadding="0" cellspacing="0">
-                                    <tbody>
-                                    <tr>
-                                        <td style="vertical-align: top;" align="left">
-                                            <div tabindex="0" class="gwt-HTML inline-link"><a
-                                                    href="javascript:void(0)"
-                                                    aria-label="Start/Stop Server<br/>"
-                                                    style="vertical-align:bottom;">Start/Stop Server<br></a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td style="vertical-align: top;" align="left">
-                                            <div tabindex="0" class="gwt-HTML inline-link"><a
-                                                    href="javascript:void(0)"
-                                                    aria-label="Start Group<br/>"
-                                                    style="vertical-align:bottom;">Start Group<br></a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td style="vertical-align: top;" align="left">
-                                            <div tabindex="0" class="gwt-HTML inline-link"><a
-                                                    href="javascript:void(0)"
-                                                    aria-label="Stop Group<br/>"
-                                                    style="vertical-align:bottom;">Stop Group<br></a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </td>
-        </tr>
-        <tr>
-            <td style="background:#81A8B8">&nbsp;</td>
-        </tr>
-        <tr>
-            <td id="sp_eeak-a-mouse-6_messaging-back-server-test-1"
-                class="domain-serverinfo domain-servercontainer"><b>Server: <a
-                    style="color:#000000!important;"
-                    href="#server-config;config=messaging-back-server-test-1">messaging-back-server-test-1</a>&nbsp;<img
-                    src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAAeklEQVR42mNgGAWDEogCcT8QG1FqUDkQfwbiOUDMTYpGYSR2JRD/R8J2xBigwMDIDFJ8EYg9gDgXiP8hGdIBxJyEjYEY8huq6SeaIa2keKkaiHeieQWEO8kJWB4g3kiuS9CBABAvBeIGLHJCpBqWBMQuWMTFRrMV6QAAJHsfWPdPzcAAAAAASUVORK5CYII="
-                    align="right" height="16" width="16"></b><br>
-                <ul></ul>
-                <div id="tb_eeak-a-mouse-6_messaging-back-server-test-1" class="server-tools">
-                    <table class="fill-layout" cellpadding="0" cellspacing="0">
-                        <tbody>
-                        <tr>
-                            <td style="vertical-align: top;" align="left">
-                                <table class="fill-layout" cellpadding="0" cellspacing="0">
-                                    <tbody>
-                                    <tr>
-                                        <td style="vertical-align: top;" align="left">
-                                            <div tabindex="0" class="gwt-HTML inline-link"><a
-                                                    href="javascript:void(0)"
-                                                    aria-label="Start/Stop Server<br/>"
-                                                    style="vertical-align:bottom;">Start/Stop Server<br></a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td style="vertical-align: top;" align="left">
-                                            <div tabindex="0" class="gwt-HTML inline-link"><a
-                                                    href="javascript:void(0)"
-                                                    aria-label="Start Group<br/>"
-                                                    style="vertical-align:bottom;">Start Group<br></a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td style="vertical-align: top;" align="left">
-                                            <div tabindex="0" class="gwt-HTML inline-link"><a
-                                                    href="javascript:void(0)"
-                                                    aria-label="Stop Group<br/>"
-                                                    style="vertical-align:bottom;">Stop Group<br></a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </td>
-        </tr>
-        </tbody>
-    </table>
-</td>
-<td class="domain-hostcontainer" width="33%">
-    <div class="domain-hostinfo domain-member">Host: lightning-7<br>Domain: Member&nbsp;<br></div>
-    <table border="0" width="100%">
-        <tbody>
-        <tr>
-            <td style="background:#AAB3AB">&nbsp;</td>
-        </tr>
-        <tr>
-            <td id="sp_lightning-7_staging-0" class="domain-serverinfo domain-servercontainer"><b>Server:
-                <a style="color:#000000!important;" href="#server-config;config=staging-0">staging-0</a>&nbsp;<img
-                        src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAAeklEQVR42mNgGAWDEogCcT8QG1FqUDkQfwbiOUDMTYpGYSR2JRD/R8J2xBigwMDIDFJ8EYg9gDgXiP8hGdIBxJyEjYEY8huq6SeaIa2keKkaiHeieQWEO8kJWB4g3kiuS9CBABAvBeIGLHJCpBqWBMQuWMTFRrMV6QAAJHsfWPdPzcAAAAAASUVORK5CYII="
-                        align="right" height="16" width="16"></b><br>
-                <ul></ul>
-                <div id="tb_lightning-7_staging-0" class="server-tools">
-                    <table class="fill-layout" cellpadding="0" cellspacing="0">
-                        <tbody>
-                        <tr>
-                            <td style="vertical-align: top;" align="left">
-                                <table class="fill-layout" cellpadding="0" cellspacing="0">
-                                    <tbody>
-                                    <tr>
-                                        <td style="vertical-align: top;" align="left">
-                                            <div tabindex="0" class="gwt-HTML inline-link"><a
-                                                    href="javascript:void(0)"
-                                                    aria-label="Start/Stop Server<br/>"
-                                                    style="vertical-align:bottom;">Start/Stop Server<br></a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td style="vertical-align: top;" align="left">
-                                            <div tabindex="0" class="gwt-HTML inline-link"><a
-                                                    href="javascript:void(0)"
-                                                    aria-label="Start Group<br/>"
-                                                    style="vertical-align:bottom;">Start Group<br></a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td style="vertical-align: top;" align="left">
-                                            <div tabindex="0" class="gwt-HTML inline-link"><a
-                                                    href="javascript:void(0)"
-                                                    aria-label="Stop Group<br/>"
-                                                    style="vertical-align:bottom;">Stop Group<br></a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </td>
-        </tr>
-        <tr>
-            <td style="background:#AAB3AB">&nbsp;</td>
-        </tr>
-        <tr>
-            <td id="sp_lightning-7_staging-1" class="domain-serverinfo domain-servercontainer"><b>Server:
-                <a style="color:#000000!important;" href="#server-config;config=staging-1">staging-1</a>&nbsp;<img
-                        src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAAeklEQVR42mNgGAWDEogCcT8QG1FqUDkQfwbiOUDMTYpGYSR2JRD/R8J2xBigwMDIDFJ8EYg9gDgXiP8hGdIBxJyEjYEY8huq6SeaIa2keKkaiHeieQWEO8kJWB4g3kiuS9CBABAvBeIGLHJCpBqWBMQuWMTFRrMV6QAAJHsfWPdPzcAAAAAASUVORK5CYII="
-                        align="right" height="16" width="16"></b><br>
-                <ul></ul>
-                <div id="tb_lightning-7_staging-1" class="server-tools">
-                    <table class="fill-layout" cellpadding="0" cellspacing="0">
-                        <tbody>
-                        <tr>
-                            <td style="vertical-align: top;" align="left">
-                                <table class="fill-layout" cellpadding="0" cellspacing="0">
-                                    <tbody>
-                                    <tr>
-                                        <td style="vertical-align: top;" align="left">
-                                            <div tabindex="0" class="gwt-HTML inline-link"><a
-                                                    href="javascript:void(0)"
-                                                    aria-label="Start/Stop Server<br/>"
-                                                    style="vertical-align:bottom;">Start/Stop Server<br></a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td style="vertical-align: top;" align="left">
-                                            <div tabindex="0" class="gwt-HTML inline-link"><a
-                                                    href="javascript:void(0)"
-                                                    aria-label="Start Group<br/>"
-                                                    style="vertical-align:bottom;">Start Group<br></a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td style="vertical-align: top;" align="left">
-                                            <div tabindex="0" class="gwt-HTML inline-link"><a
-                                                    href="javascript:void(0)"
-                                                    aria-label="Stop Group<br/>"
-                                                    style="vertical-align:bottom;">Stop Group<br></a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </td>
-        </tr>
-        </tbody>
-    </table>
-</td>
-<td class="domain-hostcontainer" width="33%">
-    <div class="domain-hostinfo domain-member">Host: eeak-a-mouse-8<br>Domain: Member&nbsp;<br></div>
-    <table border="0" width="100%">
-        <tbody>
-        <tr>
-            <td style="background:#A0C55F">&nbsp;</td>
-        </tr>
-        <tr>
-            <td id="sp_eeak-a-mouse-8_backoffice-0" class="domain-serverinfo domain-servercontainer"><b>Server:
-                <a style="color:#000000!important;" href="#server-config;config=backoffice-0">backoffice-0</a>&nbsp;<img
-                        src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAABIElEQVR42q2UPQrCQBCFF8QiKfQOwSLgHfQUgleIVbqIvQdQxNbgTawsbIW0YqNX8AfjC7zAOM6KoAMfIbOzb3dmZ9c520LQBwnISEJf6L60IdiA0sOGMV6rVlqAh5h0AgU5Cf+DsebuliLwAFLQBW0SM8WLiFtqkYEY3IGOZ9dzcFepDurBFtjSeQSRIRCAXAlc+d1Sw/XAjc7UEGmAlRKZMc2ScysNN6LjzDroA1grkZxjEeeU1HBj/hT1FmlNI51cnFSbcyr/RArtRVDoEWmKhaTQVKdWF1qLrI2eiUVqiS52xkJKkRULri3VxZbHfzXSCQyRiK3ycvy6IUs23dzTlB027VtDWlfkwjRjcUW6TOfw6Yr89dL+7Rn56WF7AsSolXRXdPSIAAAAAElFTkSuQmCC"
-                        align="right" height="16" width="16"></b><br>
-                <ul></ul>
-                <div id="tb_eeak-a-mouse-8_backoffice-0" class="server-tools">
-                    <table class="fill-layout" cellpadding="0" cellspacing="0">
-                        <tbody>
-                        <tr>
-                            <td style="vertical-align: top;" align="left">
-                                <table class="fill-layout" cellpadding="0" cellspacing="0">
-                                    <tbody>
-                                    <tr>
-                                        <td style="vertical-align: top;" align="left">
-                                            <div tabindex="0" class="gwt-HTML inline-link"><a
-                                                    href="javascript:void(0)"
-                                                    aria-label="Start/Stop Server<br/>"
-                                                    style="vertical-align:bottom;">Start/Stop Server<br></a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td style="vertical-align: top;" align="left">
-                                            <div tabindex="0" class="gwt-HTML inline-link"><a
-                                                    href="javascript:void(0)"
-                                                    aria-label="Start Group<br/>"
-                                                    style="vertical-align:bottom;">Start Group<br></a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td style="vertical-align: top;" align="left">
-                                            <div tabindex="0" class="gwt-HTML inline-link"><a
-                                                    href="javascript:void(0)"
-                                                    aria-label="Stop Group<br/>"
-                                                    style="vertical-align:bottom;">Stop Group<br></a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </td>
-        </tr>
-        </tbody>
-    </table>
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<div style="width: 100%; height: 100%; padding: 0px; margin: 0px; display: none;">
-<div style="width: 100%; height: 100%; display: none;">
-<table id="host-overview" cellpadding="5" width="100%">
-<tbody>
-<tr id="groups-row" valign="top">
-    <td colspan="3">
-        <table width="100%">
-            <tbody>
-            <tr>
-                <td style="padding:5px;background-color:#A0C55F" width="16%">Group: <a
-                        style="color:#000000!important;"
-                        href="#server-groups;group=backoffice">backoffice<br></a></td>
-                <td style="padding:5px;background-color:#C2CBCE" width="16%">Group: <a
-                        style="color:#000000!important;" href="#server-groups;group=messaging">messaging<br></a>
-                </td>
-                <td style="padding:5px;background-color:#81A8B8" width="16%">Group: <a
-                        style="color:#000000!important;"
-                        href="#server-groups;group=messaging-back-server-test">messaging-back-server-test<br></a>
-                </td>
-                <td style="padding:5px;background-color:#E8F3F8" width="16%">Group: <a
-                        style="color:#000000!important;"
-                        href="#server-groups;group=production">production<br></a></td>
-                <td style="padding:5px;background-color:#AAB3AB" width="16%">Group: <a
-                        style="color:#000000!important;" href="#server-groups;group=staging">staging<br></a>
-                </td>
-                <td style="padding:5px;background-color:#E8CAAF" width="16%">Group: <a
-                        style="color:#000000!important;" href="#server-groups;group=uat">uat<br></a></td>
-            </tr>
-            </tbody>
-        </table>
-    </td>
-</tr>
-<tr id="hosts-row" valign="top">
-<td class="domain-hostcontainer" width="33%">
-    <div class="domain-hostinfo domain-member">Host: lightning-9<br>Domain: Member&nbsp;<br></div>
-    <table border="0" width="100%">
-        <tbody>
-        <tr>
-            <td style="background:#AAB3AB">&nbsp;</td>
-        </tr>
-        <tr>
-            <td id="sp_lightning-9_staging-0" class="domain-serverinfo domain-servercontainer"><b>Server:
-                <a style="color:#000000!important;" href="#server-config;config=staging-0">staging-0</a>&nbsp;<img
-                        src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAAeklEQVR42mNgGAWDEogCcT8QG1FqUDkQfwbiOUDMTYpGYSR2JRD/R8J2xBigwMDIDFJ8EYg9gDgXiP8hGdIBxJyEjYEY8huq6SeaIa2keKkaiHeieQWEO8kJWB4g3kiuS9CBABAvBeIGLHJCpBqWBMQuWMTFRrMV6QAAJHsfWPdPzcAAAAAASUVORK5CYII="
-                        align="right" height="16" width="16"></b><br>
-                <ul></ul>
-                <div id="tb_lightning-9_staging-0" class="server-tools">
-                    <table class="fill-layout" cellpadding="0" cellspacing="0">
-                        <tbody>
-                        <tr>
-                            <td style="vertical-align: top;" align="left">
-                                <table class="fill-layout" cellpadding="0" cellspacing="0">
-                                    <tbody>
-                                    <tr>
-                                        <td style="vertical-align: top;" align="left">
-                                            <div tabindex="0" class="gwt-HTML inline-link"><a
-                                                    href="javascript:void(0)"
-                                                    aria-label="Start/Stop Server<br/>"
-                                                    style="vertical-align:bottom;">Start/Stop Server<br></a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td style="vertical-align: top;" align="left">
-                                            <div tabindex="0" class="gwt-HTML inline-link"><a
-                                                    href="javascript:void(0)"
-                                                    aria-label="Start Group<br/>"
-                                                    style="vertical-align:bottom;">Start Group<br></a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td style="vertical-align: top;" align="left">
-                                            <div tabindex="0" class="gwt-HTML inline-link"><a
-                                                    href="javascript:void(0)"
-                                                    aria-label="Stop Group<br/>"
-                                                    style="vertical-align:bottom;">Stop Group<br></a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </td>
-        </tr>
-        <tr>
-            <td style="background:#AAB3AB">&nbsp;</td>
-        </tr>
-        <tr>
-            <td id="sp_lightning-9_staging-1" class="domain-serverinfo domain-servercontainer"><b>Server:
-                <a style="color:#000000!important;" href="#server-config;config=staging-1">staging-1</a>&nbsp;<img
-                        src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAAeklEQVR42mNgGAWDEogCcT8QG1FqUDkQfwbiOUDMTYpGYSR2JRD/R8J2xBigwMDIDFJ8EYg9gDgXiP8hGdIBxJyEjYEY8huq6SeaIa2keKkaiHeieQWEO8kJWB4g3kiuS9CBABAvBeIGLHJCpBqWBMQuWMTFRrMV6QAAJHsfWPdPzcAAAAAASUVORK5CYII="
-                        align="right" height="16" width="16"></b><br>
-                <ul></ul>
-                <div id="tb_lightning-9_staging-1" class="server-tools">
-                    <table class="fill-layout" cellpadding="0" cellspacing="0">
-                        <tbody>
-                        <tr>
-                            <td style="vertical-align: top;" align="left">
-                                <table class="fill-layout" cellpadding="0" cellspacing="0">
-                                    <tbody>
-                                    <tr>
-                                        <td style="vertical-align: top;" align="left">
-                                            <div tabindex="0" class="gwt-HTML inline-link"><a
-                                                    href="javascript:void(0)"
-                                                    aria-label="Start/Stop Server<br/>"
-                                                    style="vertical-align:bottom;">Start/Stop Server<br></a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td style="vertical-align: top;" align="left">
-                                            <div tabindex="0" class="gwt-HTML inline-link"><a
-                                                    href="javascript:void(0)"
-                                                    aria-label="Start Group<br/>"
-                                                    style="vertical-align:bottom;">Start Group<br></a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td style="vertical-align: top;" align="left">
-                                            <div tabindex="0" class="gwt-HTML inline-link"><a
-                                                    href="javascript:void(0)"
-                                                    aria-label="Stop Group<br/>"
-                                                    style="vertical-align:bottom;">Stop Group<br></a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </td>
-        </tr>
-        <tr>
-            <td style="background:#E8F3F8">&nbsp;</td>
-        </tr>
-        <tr>
-            <td id="sp_lightning-9_production-2" class="domain-serverinfo domain-servercontainer"><b>Server:
-                <a style="color:#000000!important;" href="#server-config;config=production-2">production-2</a>&nbsp;<img
-                        src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAABIElEQVR42q2UPQrCQBCFF8QiKfQOwSLgHfQUgleIVbqIvQdQxNbgTawsbIW0YqNX8AfjC7zAOM6KoAMfIbOzb3dmZ9c520LQBwnISEJf6L60IdiA0sOGMV6rVlqAh5h0AgU5Cf+DsebuliLwAFLQBW0SM8WLiFtqkYEY3IGOZ9dzcFepDurBFtjSeQSRIRCAXAlc+d1Sw/XAjc7UEGmAlRKZMc2ScysNN6LjzDroA1grkZxjEeeU1HBj/hT1FmlNI51cnFSbcyr/RArtRVDoEWmKhaTQVKdWF1qLrI2eiUVqiS52xkJKkRULri3VxZbHfzXSCQyRiK3ycvy6IUs23dzTlB027VtDWlfkwjRjcUW6TOfw6Yr89dL+7Rn56WF7AsSolXRXdPSIAAAAAElFTkSuQmCC"
-                        align="right" height="16" width="16"></b><br>
-                <ul></ul>
-                <div id="tb_lightning-9_production-2" class="server-tools">
-                    <table class="fill-layout" cellpadding="0" cellspacing="0">
-                        <tbody>
-                        <tr>
-                            <td style="vertical-align: top;" align="left">
-                                <table class="fill-layout" cellpadding="0" cellspacing="0">
-                                    <tbody>
-                                    <tr>
-                                        <td style="vertical-align: top;" align="left">
-                                            <div tabindex="0" class="gwt-HTML inline-link"><a
-                                                    href="javascript:void(0)"
-                                                    aria-label="Start/Stop Server<br/>"
-                                                    style="vertical-align:bottom;">Start/Stop Server<br></a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td style="vertical-align: top;" align="left">
-                                            <div tabindex="0" class="gwt-HTML inline-link"><a
-                                                    href="javascript:void(0)"
-                                                    aria-label="Start Group<br/>"
-                                                    style="vertical-align:bottom;">Start Group<br></a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td style="vertical-align: top;" align="left">
-                                            <div tabindex="0" class="gwt-HTML inline-link"><a
-                                                    href="javascript:void(0)"
-                                                    aria-label="Stop Group<br/>"
-                                                    style="vertical-align:bottom;">Stop Group<br></a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </td>
-        </tr>
-        </tbody>
-    </table>
-</td>
-<td class="domain-hostcontainer" width="33%">
-    <div class="domain-hostinfo domain-member">Host: lightning-10<br>Domain: Member&nbsp;<br></div>
-    <table border="0" width="100%">
-        <tbody>
-        <tr>
-            <td style="background:#E8CAAF">&nbsp;</td>
-        </tr>
-        <tr>
-            <td id="sp_lightning-10_uat-0" class="domain-serverinfo domain-servercontainer"><b>Server:
-                <a style="color:#000000!important;"
-                   href="#server-config;config=uat-0">uat-0</a>&nbsp;<img
-                        src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAABIElEQVR42q2UPQrCQBCFF8QiKfQOwSLgHfQUgleIVbqIvQdQxNbgTawsbIW0YqNX8AfjC7zAOM6KoAMfIbOzb3dmZ9c520LQBwnISEJf6L60IdiA0sOGMV6rVlqAh5h0AgU5Cf+DsebuliLwAFLQBW0SM8WLiFtqkYEY3IGOZ9dzcFepDurBFtjSeQSRIRCAXAlc+d1Sw/XAjc7UEGmAlRKZMc2ScysNN6LjzDroA1grkZxjEeeU1HBj/hT1FmlNI51cnFSbcyr/RArtRVDoEWmKhaTQVKdWF1qLrI2eiUVqiS52xkJKkRULri3VxZbHfzXSCQyRiK3ycvy6IUs23dzTlB027VtDWlfkwjRjcUW6TOfw6Yr89dL+7Rn56WF7AsSolXRXdPSIAAAAAElFTkSuQmCC"
-                        align="right" height="16" width="16"></b><br>
-                <ul></ul>
-                <div id="tb_lightning-10_uat-0" class="server-tools">
-                    <table class="fill-layout" cellpadding="0" cellspacing="0">
-                        <tbody>
-                        <tr>
-                            <td style="vertical-align: top;" align="left">
-                                <table class="fill-layout" cellpadding="0" cellspacing="0">
-                                    <tbody>
-                                    <tr>
-                                        <td style="vertical-align: top;" align="left">
-                                            <div tabindex="0" class="gwt-HTML inline-link"><a
-                                                    href="javascript:void(0)"
-                                                    aria-label="Start/Stop Server<br/>"
-                                                    style="vertical-align:bottom;">Start/Stop Server<br></a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td style="vertical-align: top;" align="left">
-                                            <div tabindex="0" class="gwt-HTML inline-link"><a
-                                                    href="javascript:void(0)"
-                                                    aria-label="Start Group<br/>"
-                                                    style="vertical-align:bottom;">Start Group<br></a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td style="vertical-align: top;" align="left">
-                                            <div tabindex="0" class="gwt-HTML inline-link"><a
-                                                    href="javascript:void(0)"
-                                                    aria-label="Stop Group<br/>"
-                                                    style="vertical-align:bottom;">Stop Group<br></a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </td>
-        </tr>
-        <tr>
-            <td style="background:#C2CBCE">&nbsp;</td>
-        </tr>
-        <tr>
-            <td id="sp_lightning-10_messaging-1" class="domain-serverinfo domain-servercontainer"><b>Server:
-                <a style="color:#000000!important;"
-                   href="#server-config;config=messaging-1">messaging-1</a>&nbsp;<img
-                        src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAAeklEQVR42mNgGAWDEogCcT8QG1FqUDkQfwbiOUDMTYpGYSR2JRD/R8J2xBigwMDIDFJ8EYg9gDgXiP8hGdIBxJyEjYEY8huq6SeaIa2keKkaiHeieQWEO8kJWB4g3kiuS9CBABAvBeIGLHJCpBqWBMQuWMTFRrMV6QAAJHsfWPdPzcAAAAAASUVORK5CYII="
-                        align="right" height="16" width="16"></b><br>
-                <ul></ul>
-                <div id="tb_lightning-10_messaging-1" class="server-tools">
-                    <table class="fill-layout" cellpadding="0" cellspacing="0">
-                        <tbody>
-                        <tr>
-                            <td style="vertical-align: top;" align="left">
-                                <table class="fill-layout" cellpadding="0" cellspacing="0">
-                                    <tbody>
-                                    <tr>
-                                        <td style="vertical-align: top;" align="left">
-                                            <div tabindex="0" class="gwt-HTML inline-link"><a
-                                                    href="javascript:void(0)"
-                                                    aria-label="Start/Stop Server<br/>"
-                                                    style="vertical-align:bottom;">Start/Stop Server<br></a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td style="vertical-align: top;" align="left">
-                                            <div tabindex="0" class="gwt-HTML inline-link"><a
-                                                    href="javascript:void(0)"
-                                                    aria-label="Start Group<br/>"
-                                                    style="vertical-align:bottom;">Start Group<br></a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td style="vertical-align: top;" align="left">
-                                            <div tabindex="0" class="gwt-HTML inline-link"><a
-                                                    href="javascript:void(0)"
-                                                    aria-label="Stop Group<br/>"
-                                                    style="vertical-align:bottom;">Stop Group<br></a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </td>
-        </tr>
-        </tbody>
-    </table>
-</td>
-<td class="domain-hostcontainer" width="33%">
-    <div class="domain-hostinfo domain-member">Host: lightning-11<br>Domain: Member&nbsp;<br></div>
-    <table border="0" width="100%">
-        <tbody>
-        <tr>
-            <td style="background:#C2CBCE">&nbsp;</td>
-        </tr>
-        <tr>
-            <td id="sp_lightning-11_messaging-0" class="domain-serverinfo domain-servercontainer"><b>Server:
-                <a style="color:#000000!important;"
-                   href="#server-config;config=messaging-0">messaging-0</a>&nbsp;<img
-                        src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAAeklEQVR42mNgGAWDEogCcT8QG1FqUDkQfwbiOUDMTYpGYSR2JRD/R8J2xBigwMDIDFJ8EYg9gDgXiP8hGdIBxJyEjYEY8huq6SeaIa2keKkaiHeieQWEO8kJWB4g3kiuS9CBABAvBeIGLHJCpBqWBMQuWMTFRrMV6QAAJHsfWPdPzcAAAAAASUVORK5CYII="
-                        align="right" height="16" width="16"></b><br>
-                <ul></ul>
-                <div id="tb_lightning-11_messaging-0" class="server-tools">
-                    <table class="fill-layout" cellpadding="0" cellspacing="0">
-                        <tbody>
-                        <tr>
-                            <td style="vertical-align: top;" align="left">
-                                <table class="fill-layout" cellpadding="0" cellspacing="0">
-                                    <tbody>
-                                    <tr>
-                                        <td style="vertical-align: top;" align="left">
-                                            <div tabindex="0" class="gwt-HTML inline-link"><a
-                                                    href="javascript:void(0)"
-                                                    aria-label="Start/Stop Server<br/>"
-                                                    style="vertical-align:bottom;">Start/Stop Server<br></a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td style="vertical-align: top;" align="left">
-                                            <div tabindex="0" class="gwt-HTML inline-link"><a
-                                                    href="javascript:void(0)"
-                                                    aria-label="Start Group<br/>"
-                                                    style="vertical-align:bottom;">Start Group<br></a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td style="vertical-align: top;" align="left">
-                                            <div tabindex="0" class="gwt-HTML inline-link"><a
-                                                    href="javascript:void(0)"
-                                                    aria-label="Stop Group<br/>"
-                                                    style="vertical-align:bottom;">Stop Group<br></a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </td>
-        </tr>
-        <tr>
-            <td style="background:#E8F3F8">&nbsp;</td>
-        </tr>
-        <tr>
-            <td id="sp_lightning-11_production-1" class="domain-serverinfo domain-servercontainer"><b>Server:
-                <a style="color:#000000!important;" href="#server-config;config=production-1">production-1</a>&nbsp;<img
-                        src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAABIElEQVR42q2UPQrCQBCFF8QiKfQOwSLgHfQUgleIVbqIvQdQxNbgTawsbIW0YqNX8AfjC7zAOM6KoAMfIbOzb3dmZ9c520LQBwnISEJf6L60IdiA0sOGMV6rVlqAh5h0AgU5Cf+DsebuliLwAFLQBW0SM8WLiFtqkYEY3IGOZ9dzcFepDurBFtjSeQSRIRCAXAlc+d1Sw/XAjc7UEGmAlRKZMc2ScysNN6LjzDroA1grkZxjEeeU1HBj/hT1FmlNI51cnFSbcyr/RArtRVDoEWmKhaTQVKdWF1qLrI2eiUVqiS52xkJKkRULri3VxZbHfzXSCQyRiK3ycvy6IUs23dzTlB027VtDWlfkwjRjcUW6TOfw6Yr89dL+7Rn56WF7AsSolXRXdPSIAAAAAElFTkSuQmCC"
-                        align="right" height="16" width="16"></b><br>
-                <ul></ul>
-                <div id="tb_lightning-11_production-1" class="server-tools">
-                    <table class="fill-layout" cellpadding="0" cellspacing="0">
-                        <tbody>
-                        <tr>
-                            <td style="vertical-align: top;" align="left">
-                                <table class="fill-layout" cellpadding="0" cellspacing="0">
-                                    <tbody>
-                                    <tr>
-                                        <td style="vertical-align: top;" align="left">
-                                            <div tabindex="0" class="gwt-HTML inline-link"><a
-                                                    href="javascript:void(0)"
-                                                    aria-label="Start/Stop Server<br/>"
-                                                    style="vertical-align:bottom;">Start/Stop Server<br></a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td style="vertical-align: top;" align="left">
-                                            <div tabindex="0" class="gwt-HTML inline-link"><a
-                                                    href="javascript:void(0)"
-                                                    aria-label="Start Group<br/>"
-                                                    style="vertical-align:bottom;">Start Group<br></a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td style="vertical-align: top;" align="left">
-                                            <div tabindex="0" class="gwt-HTML inline-link"><a
-                                                    href="javascript:void(0)"
-                                                    aria-label="Stop Group<br/>"
-                                                    style="vertical-align:bottom;">Stop Group<br></a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </td>
-        </tr>
-        <tr>
-            <td style="background:#81A8B8">&nbsp;</td>
-        </tr>
-        <tr>
-            <td id="sp_lightning-11_messaging-back-server-test-2"
-                class="domain-serverinfo domain-servercontainer"><b>Server: <a
-                    style="color:#000000!important;"
-                    href="#server-config;config=messaging-back-server-test-2">messaging-back-server-test-2</a>&nbsp;<img
-                    src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAAeklEQVR42mNgGAWDEogCcT8QG1FqUDkQfwbiOUDMTYpGYSR2JRD/R8J2xBigwMDIDFJ8EYg9gDgXiP8hGdIBxJyEjYEY8huq6SeaIa2keKkaiHeieQWEO8kJWB4g3kiuS9CBABAvBeIGLHJCpBqWBMQuWMTFRrMV6QAAJHsfWPdPzcAAAAAASUVORK5CYII="
-                    align="right" height="16" width="16"></b><br>
-                <ul></ul>
-                <div id="tb_lightning-11_messaging-back-server-test-2" class="server-tools">
-                    <table class="fill-layout" cellpadding="0" cellspacing="0">
-                        <tbody>
-                        <tr>
-                            <td style="vertical-align: top;" align="left">
-                                <table class="fill-layout" cellpadding="0" cellspacing="0">
-                                    <tbody>
-                                    <tr>
-                                        <td style="vertical-align: top;" align="left">
-                                            <div tabindex="0" class="gwt-HTML inline-link"><a
-                                                    href="javascript:void(0)"
-                                                    aria-label="Start/Stop Server<br/>"
-                                                    style="vertical-align:bottom;">Start/Stop Server<br></a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td style="vertical-align: top;" align="left">
-                                            <div tabindex="0" class="gwt-HTML inline-link"><a
-                                                    href="javascript:void(0)"
-                                                    aria-label="Start Group<br/>"
-                                                    style="vertical-align:bottom;">Start Group<br></a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td style="vertical-align: top;" align="left">
-                                            <div tabindex="0" class="gwt-HTML inline-link"><a
-                                                    href="javascript:void(0)"
-                                                    aria-label="Stop Group<br/>"
-                                                    style="vertical-align:bottom;">Stop Group<br></a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </td>
-        </tr>
-        </tbody>
-    </table>
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $("#group0, #group1, #group2, #group3").hover(
+            function () {
+                var group = $(this).attr("id");
+                $(this).addClass("selected");
+                $("td." + group + "_member").addClass(group + "_on");
+                $("td." + group + "_member").removeClass(group + "_off");
+            },
+            function () {
+                var group = $(this).attr("id");
+                $(this).removeClass("selected");
+                $("td." + group + "_member").addClass(group + "_off");
+                $("td." + group + "_member").removeClass(group + "_on");
+            }
+        );
+    });
+</script>
 
 </body>
 </html>
