@@ -97,7 +97,7 @@ public class Footer {
 
                 );
 
-                toolsPopup.setWidth("320");
+                toolsPopup.setWidth("240");
                 toolsPopup.setHeight(toolsList.getWidgetCount()*25+"");
 
                 toolsPopup.show();
