@@ -8,7 +8,7 @@ import java.util.List;
  * @author Heiko Braun
  * @date 8/21/12
  */
-public class HostInfo {
+public class HostInfo implements Comparable<HostInfo> {
     String name;
     String pid;
     boolean isController;
@@ -18,6 +18,12 @@ public class HostInfo {
     public HostInfo(String name, boolean controller) {
         this.name = name;
         isController = controller;
+    }
+
+    @Override
+    public int compareTo(final HostInfo hostInfo)
+    {
+        return name.compareTo(hostInfo.name);
     }
 
     public String getName() {
