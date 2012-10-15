@@ -9,7 +9,25 @@ import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.Place;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.Proxy;
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
+import org.jboss.as.console.client.domain.model.SimpleCallback;
+import org.jboss.as.console.client.shared.BeanFactory;
+import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
+import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
+import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
+import org.jboss.as.console.client.shared.general.model.Path;
+import org.jboss.as.console.client.shared.subsys.RevealStrategy;
+import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
+import org.jboss.as.console.client.widgets.forms.EntityAdapter;
+import org.jboss.ballroom.client.widgets.window.DefaultWindow;
+import org.jboss.dmr.client.ModelNode;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 
 /**
  * @author Heiko Braun
@@ -18,6 +36,12 @@ import org.jboss.as.console.client.core.NameTokens;
 public class PathManagementPresenter extends Presenter<PathManagementPresenter.MyView, PathManagementPresenter.MyProxy> {
 
     private final PlaceManager placeManager;
+    private DispatchAsync dispatcher;
+    private BeanFactory factory;
+    private RevealStrategy revealStrategy;
+    private DefaultWindow window;
+    private ApplicationMetaData metaData;
+    private EntityAdapter<Path> entityAdapter;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.PathManagementPresenter)
@@ -26,14 +50,26 @@ public class PathManagementPresenter extends Presenter<PathManagementPresenter.M
 
     public interface MyView extends View {
         void setPresenter(PathManagementPresenter presenter);
+
+        void setPaths(List<Path> paths);
     }
 
     @Inject
-    public PathManagementPresenter(EventBus eventBus, MyView view, MyProxy proxy,
-                                   PlaceManager placeManager) {
+    public PathManagementPresenter(
+            EventBus eventBus, MyView view, MyProxy proxy,
+            PlaceManager placeManager, DispatchAsync dispatcher,
+            BeanFactory factory, RevealStrategy revealStrategy,
+            ApplicationMetaData propertyMetaData) {
         super(eventBus, view, proxy);
 
         this.placeManager = placeManager;
+        this.dispatcher = dispatcher;
+        this.factory = factory;
+        this.revealStrategy = revealStrategy;
+        this.metaData = propertyMetaData;
+
+        this.entityAdapter = new EntityAdapter<Path>(Path.class, metaData);
+
     }
 
     @Override
@@ -46,10 +82,55 @@ public class PathManagementPresenter extends Presenter<PathManagementPresenter.M
     @Override
     protected void onReset() {
         super.onReset();
+
+        loadPathInformation();
+    }
+
+    private void loadPathInformation() {
+        ModelNode operation = new ModelNode();
+        operation.get(ADDRESS).setEmptyList();
+        operation.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
+        operation.get(CHILD_TYPE).set("path");
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = result.get();
+
+                if(response.isFailure())
+                {
+                    Console.error(Console.MESSAGES.failed("Paths"), response.getFailureDescription());
+                }
+                else
+                {
+                    List<ModelNode> payload = response.get("result").asList();
+
+                    List<Path> paths = new ArrayList<Path>();
+                    for (ModelNode item : payload) {
+                        paths.add(entityAdapter.fromDMR(item));
+                    }
+
+                    getView().setPaths(paths);
+                }
+            }
+        });
     }
 
     @Override
     protected void revealInParent() {
-        // TODO: Implement
+        revealStrategy.revealInParent(this);
+    }
+
+    public void launchNewPathDialogue() {
+
+    }
+
+    public void onDeletePath(Path editedEntity) {
+
+    }
+
+    public void onSavePath(String name, Map<String, Object> changedValues) {
+
     }
 }
