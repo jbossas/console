@@ -238,8 +238,6 @@ public class DeploymentListPresenter extends Presenter<DeploymentListPresenter.M
         content.add(path);
         operation.get("content").set(content);
 
-        System.out.println(operation);
-
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
             public void onSuccess(DMRResponse dmrResponse) {

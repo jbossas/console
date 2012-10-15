@@ -4,6 +4,7 @@ import com.google.gwt.dom.client.Style;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.cellview.client.CellTable;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TabPanel;
@@ -41,6 +42,7 @@ public class MultipleToOneLayout {
     private boolean isPlain;
 
     private Widget headlineWidget = null;
+    private Widget masterFooter = null;
 
     public MultipleToOneLayout setHeadlineWidget(Widget widget)
     {
@@ -158,7 +160,7 @@ public class MultipleToOneLayout {
         else
             panel.add(new ContentDescription(description.asString()));
 
-        if(master !=null)
+        if(master!=null)
         {
             if(master.title!=null && !master.title.isEmpty())
                 panel.add(new ContentGroupLabel(master.title));
@@ -172,6 +174,12 @@ public class MultipleToOneLayout {
             DefaultPager pager = new DefaultPager();
             pager.setDisplay(master.widget);
             panel.add(pager);
+
+            if(masterFooter!=null)
+            {
+                masterFooter.addStyleName("table-footer");
+                panel.add(masterFooter);
+            }
         }
 
         // -----
@@ -214,6 +222,11 @@ public class MultipleToOneLayout {
 
     public MultipleToOneLayout setPlain(boolean b) {
         this.isPlain = b;
+        return this;
+    }
+
+    public MultipleToOneLayout setMasterFooter(Widget widget) {
+        this.masterFooter = widget;
         return this;
     }
 

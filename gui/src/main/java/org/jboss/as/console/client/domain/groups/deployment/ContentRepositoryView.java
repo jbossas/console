@@ -23,8 +23,10 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.BeforeSelectionEvent;
 import com.google.gwt.event.logical.shared.BeforeSelectionHandler;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.TextColumn;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.ProvidesKey;
@@ -40,6 +42,7 @@ import org.jboss.as.console.client.shared.deployment.TitleColumn;
 import org.jboss.as.console.client.shared.model.DeploymentRecord;
 import org.jboss.as.console.client.shared.viewframework.builder.MultipleToOneLayout;
 import org.jboss.as.console.client.widgets.tabs.DefaultTabLayoutPanel;
+import org.jboss.ballroom.client.widgets.forms.DisclosureGroupRenderer;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.ListItem;
 import org.jboss.ballroom.client.widgets.forms.TextAreaItem;
@@ -127,9 +130,10 @@ public class ContentRepositoryView extends SuspendableViewImpl implements Deploy
         form.setNumColumns(2);
         form.setEnabled(true);
         TextAreaItem name = new TextAreaItem("name", "Name");
-        //TextAreaItem runtimeName = new TextAreaItem("runtimeName", "Runtime Name");
+        TextAreaItem runtimeName = new TextAreaItem("runtimeName", "Runtime Name");
         final ListItem groups = new ListItem("assignments", "Assigned Groups");
-        form.setFields(name, groups);
+
+        form.setFields(name, runtimeName, groups);
 
         selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
             @Override
@@ -212,13 +216,28 @@ public class ContentRepositoryView extends SuspendableViewImpl implements Deploy
             }
         }));
 
+        SafeHtmlBuilder tableFooter = new SafeHtmlBuilder();
+        tableFooter.appendHtmlConstant("<span style='font-size:10px;color:#A7ABB4;'>[1] File System Deployment</span>");
+
+
+        Form<DeploymentRecord> form2 = new Form<DeploymentRecord>(DeploymentRecord.class);
+        form2.setNumColumns(2);
+        form2.setEnabled(true);
+        TextAreaItem path = new TextAreaItem("path", "Path");
+        TextAreaItem relative = new TextAreaItem("relativeTo", "Relative To");
+        form2.setFields(path, relative);
+
+        form2.bind(contentTable);
+
         MultipleToOneLayout layout = new MultipleToOneLayout()
                 .setPlain(true)
                 .setHeadline(Console.CONSTANTS.common_label_contentRepository())
                 .setMaster(Console.MESSAGES.available("Deployment Content"), contentTable)
                 .setMasterTools(toolStrip)
+                .setMasterFooter(new HTML(tableFooter.toSafeHtml()))
                 .setDescription("The content repository contains all deployed content. Contents need to be assigned to sever groups in order to become effective.")
-                .setDetail(Console.CONSTANTS.common_label_selection(), form.asWidget());
+                .addDetail(Console.CONSTANTS.common_label_attributes(), form.asWidget())
+                .addDetail("Path", form2.asWidget());
 
 
         return layout.build();

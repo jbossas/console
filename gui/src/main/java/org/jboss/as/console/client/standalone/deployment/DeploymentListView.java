@@ -23,8 +23,10 @@ import com.google.gwt.cell.client.ImageResourceCell;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.resources.client.ImageResource;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.TextColumn;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.ProvidesKey;
@@ -166,12 +168,20 @@ public class DeploymentListView extends SuspendableViewImpl implements Deploymen
         form.setEnabled(true);
         TextAreaItem name = new TextAreaItem("name", "Name");
         TextAreaItem runtimeName = new TextAreaItem("runtimeName", "Runtime Name");
+        form.setFields(name, runtimeName);
+
+        Form<DeploymentRecord> form2 = new Form<DeploymentRecord>(DeploymentRecord.class);
+        form2.setNumColumns(2);
+        form2.setEnabled(true);
         TextAreaItem path = new TextAreaItem("path", "Path");
         TextAreaItem relative = new TextAreaItem("relativeTo", "Relative To");
-        form.setFields(name,runtimeName);
-        form.setFieldsInGroup("Unmanaged", new DisclosureGroupRenderer(), path, relative);
+        form2.setFields(path, relative);
 
         form.bind(deploymentTable);
+        form2.bind(deploymentTable);
+
+        SafeHtmlBuilder tableFooter = new SafeHtmlBuilder();
+        tableFooter.appendHtmlConstant("<span>[1] File System Deployment</span>");
 
         MultipleToOneLayout layout = new MultipleToOneLayout()
                 .setTitle(Console.CONSTANTS.common_label_deployments())
@@ -179,7 +189,10 @@ public class DeploymentListView extends SuspendableViewImpl implements Deploymen
                 .setDescription("Currently deployed application components.")
                 .setMaster(Console.MESSAGES.available("Deployments"), deploymentTable)
                 .setMasterTools(toolStrip)
-                .setDetail(Console.CONSTANTS.common_label_selection(), form.asWidget());
+                .setMasterFooter(new HTML(tableFooter.toSafeHtml()))
+                .addDetail(Console.CONSTANTS.common_label_attributes(), form.asWidget())
+                .addDetail("Path", form2.asWidget());
+
 
         return layout.build();
     }

@@ -26,7 +26,7 @@ public class TitleColumn extends Column<DeploymentRecord, SafeHtml> {
         //html.appendHtmlConstant("</a>");
 
         if(record.getPath()!=null)
-            html.appendHtmlConstant("<br/><span style='font-size:10px;color:#A7ABB4'>File System Deployment</span>");
+            html.appendHtmlConstant("&nbsp;<span class='footnote'><sup>[1]</sup></span>");
 
         return html.toSafeHtml();
     }

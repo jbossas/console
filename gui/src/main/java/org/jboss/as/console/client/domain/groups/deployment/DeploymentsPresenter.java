@@ -316,15 +316,9 @@ public class DeploymentsPresenter extends Presenter<DeploymentsPresenter.MyView,
 
 
     public void launchNewDeploymentDialoge(DeploymentRecord record, boolean isUpdate) {
-        window = new DefaultWindow(Console.CONSTANTS.common_label_upload());
+        window = new DefaultWindow(Console.MESSAGES.createTitle("Deployment"));
         window.setWidth(480);
-        window.setHeight(360);
-        window.addCloseHandler(new CloseHandler<PopupPanel>() {
-
-            @Override
-            public void onClose(CloseEvent<PopupPanel> event) {
-            }
-        });
+        window.setHeight(450);
 
         window.trapWidget(
                 new NewDeploymentWizard(this, window, domainDeploymentInfo, isUpdate, record).asWidget());
@@ -398,6 +392,38 @@ public class DeploymentsPresenter extends Presenter<DeploymentsPresenter.MyView,
     }
 
     public void onCreateUnmanaged(final DeploymentRecord entity) {
+        window.hide();
 
+        ModelNode operation = new ModelNode();
+        operation.get(OP).set(ADD);
+        operation.get(ADDRESS).add("deployment", entity.getName());
+        operation.get("name").set(entity.getName());
+        operation.get("runtime-name").set(entity.getName());
+        List<ModelNode> content = new ArrayList<ModelNode>(1);
+        ModelNode path = new ModelNode();
+        path.get("path").set(entity.getPath());
+        path.get("archive").set(entity.isArchive());
+        if(entity.getRelativeTo()!=null && !entity.getRelativeTo().equals(""))
+            path.get("relative-to").set(entity.getRelativeTo());
+
+        content.add(path);
+        operation.get("content").set(content);
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+            @Override
+            public void onSuccess(DMRResponse dmrResponse) {
+                ModelNode response = dmrResponse.get();
+                if(response.isFailure())
+                {
+                    Console.error("Failed to create unmanaged content", response.getFailureDescription());
+                }
+                else
+                {
+                    Console.info(Console.MESSAGES.added("Deployment "+entity.getName()));
+                }
+
+                domainDeploymentInfo.refreshView();
+            }
+        });
     }
 }
