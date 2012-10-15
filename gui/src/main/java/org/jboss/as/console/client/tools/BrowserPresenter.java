@@ -139,7 +139,7 @@ public class BrowserPresenter extends PresenterWidget<BrowserPresenter.MyView>
         steps.add(descriptionOp);
 
         // the actual values
-        ModelNode resourceOp  = new ModelNode();
+        final ModelNode resourceOp  = new ModelNode();
         resourceOp.get(ADDRESS).set(address);
         resourceOp.get(OP).set(READ_RESOURCE_OPERATION);
         resourceOp.get(INCLUDE_RUNTIME).set(true);
@@ -180,7 +180,10 @@ public class BrowserPresenter extends PresenterWidget<BrowserPresenter.MyView>
                     }
                     else if(step.getName().equals("step-2"))
                     {
-                        getView().updateResource(address, stepResult.get(RESULT).asObject());
+                        if(!stepResult.isFailure())
+                            getView().updateResource(address, stepResult.get(RESULT).asObject());
+                        else
+                            Console.warning("Failed to read "+ resourceOp.get(ADDRESS));
                     }
                 }
             }}
