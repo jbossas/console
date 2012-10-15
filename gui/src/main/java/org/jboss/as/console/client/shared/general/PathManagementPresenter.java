@@ -17,6 +17,8 @@ import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.as.console.client.shared.general.model.Path;
+import org.jboss.as.console.client.shared.general.wizard.NewPathWizard;
+import org.jboss.as.console.client.shared.model.ModelAdapter;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.as.console.client.widgets.forms.EntityAdapter;
@@ -123,14 +125,67 @@ public class PathManagementPresenter extends Presenter<PathManagementPresenter.M
     }
 
     public void launchNewPathDialogue() {
+        window = new DefaultWindow(Console.MESSAGES.createTitle("Path"));
+        window.setWidth(480);
+        window.setHeight(360);
 
+        window.trapWidget(
+                new NewPathWizard(this).asWidget()
+        );
+
+        window.setGlassEnabled(true);
+        window.center();
     }
 
-    public void onDeletePath(Path editedEntity) {
+    public void onDeletePath(final Path path) {
+        ModelNode operation = new ModelNode();
+        operation.get(OP).set(REMOVE);
+        operation.get(ADDRESS).add("path", path.getName());
 
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = result.get();
+                if(ModelAdapter.wasSuccess(response))
+                    Console.info(Console.MESSAGES.deleted("Path " + path.getName()));
+                else
+                    Console.error(Console.MESSAGES.deletionFailed("Path " + path.getName()), response.getFailureDescription());
+
+                loadPathInformation();
+            }
+        });
     }
 
     public void onSavePath(String name, Map<String, Object> changedValues) {
 
+    }
+
+    public void onCloseDialoge() {
+        window.hide();
+    }
+
+    public void onCreatePath(final Path path) {
+        onCloseDialoge();
+
+        ModelNode operation = entityAdapter.fromEntity(path);
+        operation.get(OP).set(ADD);
+        operation.get(ADDRESS).add("path", path.getName());
+
+        // TODO: workaround ....
+        if(null==path.getRelativeTo() || path.getRelativeTo().equals(""))
+            operation.remove("relative-to");
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = result.get();
+                if(ModelAdapter.wasSuccess(response))
+                    Console.info(Console.MESSAGES.added("Path "+path.getName()));
+                else
+                    Console.error(Console.MESSAGES.addingFailed("Path " + path.getName()), response.getFailureDescription());
+
+                loadPathInformation();
+            }
+        });
     }
 }

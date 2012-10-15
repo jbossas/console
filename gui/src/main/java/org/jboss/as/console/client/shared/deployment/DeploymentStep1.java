@@ -215,7 +215,7 @@ public class DeploymentStep1 {
 
         unmanagedForm = new Form<DeploymentRecord>(DeploymentRecord.class);
         TextAreaItem path = new TextAreaItem("path", "Path");
-        TextAreaItem relativeTo= new TextAreaItem("relativeTo", "Relative To", false);
+        TextBoxItem relativeTo= new TextBoxItem("relativeTo", "Relative To", false);
 
         TextBoxItem name = new TextBoxItem("name", "Name");
         TextBoxItem runtimeName = new TextBoxItem("runtimeName", "Runtime Name");

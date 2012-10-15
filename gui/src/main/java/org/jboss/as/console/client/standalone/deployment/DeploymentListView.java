@@ -42,6 +42,7 @@ import org.jboss.as.console.client.shared.viewframework.builder.MultipleToOneLay
 import org.jboss.ballroom.client.widgets.forms.DisclosureGroupRenderer;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.TextAreaItem;
+import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
 import org.jboss.ballroom.client.widgets.icons.Icons;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
@@ -174,7 +175,7 @@ public class DeploymentListView extends SuspendableViewImpl implements Deploymen
         form2.setNumColumns(2);
         form2.setEnabled(true);
         TextAreaItem path = new TextAreaItem("path", "Path");
-        TextAreaItem relative = new TextAreaItem("relativeTo", "Relative To");
+        TextBoxItem relative = new TextBoxItem("relativeTo", "Relative To");
         form2.setFields(path, relative);
 
         form.bind(deploymentTable);

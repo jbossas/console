@@ -7,6 +7,7 @@ import org.jboss.as.console.client.widgets.forms.Binding;
  * @date 10/15/12
  */
 public interface Path {
+
     String getName();
     void setName(String name);
 

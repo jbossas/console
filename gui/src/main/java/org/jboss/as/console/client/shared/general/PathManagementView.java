@@ -58,8 +58,8 @@ public class PathManagementView extends SuspendableViewImpl implements PathManag
             public void onClick(ClickEvent event) {
                 final Path editedEntity = form.getEditedEntity();
                 Feedback.confirm(
-                        Console.MESSAGES.deleteTitle("Socket Binding"),
-                        Console.MESSAGES.deleteConfirm("Socket Binding " + editedEntity.getName()),
+                        Console.MESSAGES.deleteTitle("Path"),
+                        Console.MESSAGES.deleteConfirm("Path " + editedEntity.getName()),
                         new Feedback.ConfirmationHandler() {
                             @Override
                             public void onConfirmation(boolean isConfirmed) {
@@ -126,10 +126,11 @@ public class PathManagementView extends SuspendableViewImpl implements PathManag
 
         TextItem nameItem = new TextItem("name", "Name");
         TextAreaItem path = new TextAreaItem("path", "Path");
-        TextBoxItem relativeTo = new TextBoxItem("relativeTo", "Relative To");
+        TextBoxItem relativeTo = new TextBoxItem("relativeTo", "Relative To", false);
 
         form.setFields(nameItem, path, relativeTo);
         form.bind(table);
+        form.setEnabled(false);
 
         final FormHelpPanel helpPanel = new FormHelpPanel(
                 new FormHelpPanel.AddressCallback() {
