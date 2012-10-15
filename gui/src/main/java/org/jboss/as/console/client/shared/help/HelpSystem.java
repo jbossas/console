@@ -204,7 +204,12 @@ public class HelpSystem {
                         html.appendEscaped(childName).appendEscaped(": ");
                         html.appendHtmlConstant("</td>");
                         html.appendHtmlConstant("<td class='help-field-desc'>");
-                        html.appendEscaped(value.get("description").asString());
+                        try {
+                            html.appendHtmlConstant(value.get("description").asString());
+                        } catch (Throwable e) {
+                            // ignore parse errors
+                            html.appendHtmlConstant("<i>Failed to parse description</i>");
+                        }
                         html.appendHtmlConstant("</td>");
                         html.appendHtmlConstant("</tr>");
 

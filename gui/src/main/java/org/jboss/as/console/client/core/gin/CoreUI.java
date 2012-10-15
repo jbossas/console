@@ -63,6 +63,7 @@ import org.jboss.as.console.client.shared.dispatch.InvocationMetrics;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRHandler;
 import org.jboss.as.console.client.shared.expr.ExpressionResolver;
 import org.jboss.as.console.client.shared.general.InterfacePresenter;
+import org.jboss.as.console.client.shared.general.PathManagementPresenter;
 import org.jboss.as.console.client.shared.general.PropertiesPresenter;
 import org.jboss.as.console.client.shared.general.SocketBindingPresenter;
 import org.jboss.as.console.client.shared.help.HelpSystem;
@@ -312,5 +313,7 @@ public interface CoreUI {
     AsyncProvider<JPAMetricPresenter> JPAMetricPresenter();
 
     AsyncProvider<JGroupsPresenter> JGroupsPresenter();
+
+    AsyncProvider<PathManagementPresenter> PathManagementPresenter();
 
 }

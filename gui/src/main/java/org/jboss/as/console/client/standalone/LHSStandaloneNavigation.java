@@ -76,6 +76,7 @@ public class LHSStandaloneNavigation {
                 /*new LHSNavTreeItem("Server", NameTokens.StandaloneServerPresenter),*/
                 new LHSNavTreeItem(Console.CONSTANTS.common_label_interfaces(), NameTokens.InterfacePresenter),
                 new LHSNavTreeItem(Console.CONSTANTS.common_label_socketBinding(), NameTokens.SocketBindingPresenter),
+                new LHSNavTreeItem(Console.CONSTANTS.common_label_paths(), NameTokens.PathManagementPresenter),
                 new LHSNavTreeItem(Console.CONSTANTS.common_label_systemProperties(), NameTokens.PropertiesPresenter)
         };
 

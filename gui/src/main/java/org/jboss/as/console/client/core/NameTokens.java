@@ -85,6 +85,7 @@ public class NameTokens {
     public static final String MsgClusteringPresenter  =  "messaging-cluster";
     public static final String DMRBrowser = "browser";
     public static final String ToolsPresenter = "tools";
+    public static final String PathManagementPresenter = "path" ;
 
     public static String getMainLayout() {
         return mainLayout;

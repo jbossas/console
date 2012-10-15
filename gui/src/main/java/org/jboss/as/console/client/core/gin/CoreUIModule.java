@@ -100,6 +100,8 @@ import org.jboss.as.console.client.shared.expr.DefaultExpressionResolver;
 import org.jboss.as.console.client.shared.expr.ExpressionResolver;
 import org.jboss.as.console.client.shared.general.InterfacePresenter;
 import org.jboss.as.console.client.shared.general.InterfaceView;
+import org.jboss.as.console.client.shared.general.PathManagementPresenter;
+import org.jboss.as.console.client.shared.general.PathManagementView;
 import org.jboss.as.console.client.shared.general.PropertiesPresenter;
 import org.jboss.as.console.client.shared.general.PropertiesView;
 import org.jboss.as.console.client.shared.general.SocketBindingPresenter;
@@ -640,6 +642,10 @@ public class CoreUIModule extends AbstractPresenterModule {
                 JGroupsSubsystemView.class,
                 JGroupsPresenter.MyProxy.class);
 
+        bindPresenter(PathManagementPresenter.class,
+                PathManagementPresenter.MyView.class,
+                PathManagementView.class,
+                PathManagementPresenter.MyProxy.class);
 
 
     }

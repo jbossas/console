@@ -30,6 +30,7 @@ import org.jboss.as.console.client.domain.model.ServerInstance;
 import org.jboss.as.console.client.shared.deployment.DeploymentReference;
 import org.jboss.as.console.client.shared.general.model.Interface;
 import org.jboss.as.console.client.shared.general.model.LocalSocketBinding;
+import org.jboss.as.console.client.shared.general.model.Path;
 import org.jboss.as.console.client.shared.general.model.RemoteSocketBinding;
 import org.jboss.as.console.client.shared.general.model.SocketBinding;
 import org.jboss.as.console.client.shared.general.model.SocketGroup;
@@ -267,4 +268,5 @@ public interface CoreBeanFactory {
     AutoBean<JGroupsProtocol> jGroupsProtocol();
     AutoBean<JGroupsTransport> jGroupsTransport();
 
+    AutoBean<Path> path();
 }
