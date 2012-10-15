@@ -42,6 +42,7 @@ import org.jboss.as.console.client.shared.deployment.DeployCommandExecutor;
 import org.jboss.as.console.client.shared.deployment.DeploymentCommand;
 import org.jboss.as.console.client.shared.deployment.NewDeploymentWizard;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
+import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.as.console.client.shared.model.DeploymentRecord;
 import org.jboss.as.console.client.shared.model.DeploymentStore;
@@ -50,9 +51,12 @@ import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 import org.jboss.ballroom.client.widgets.window.Feedback;
 import org.jboss.dmr.client.ModelNode;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+
+import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 
 /**
  * @author Heiko Braun
@@ -68,6 +72,7 @@ public class DeploymentListPresenter extends Presenter<DeploymentListPresenter.M
 
     private DefaultWindow window;
     private DispatchAsync dispatcher;
+
 
     @ProxyCodeSplit
     @NameToken(NameTokens.DeploymentListPresenter)
@@ -197,9 +202,9 @@ public class DeploymentListPresenter extends Presenter<DeploymentListPresenter.M
     }
 
     public void launchNewDeploymentDialoge(DeploymentRecord record, boolean isUpdate) {
-        window = new DefaultWindow(Console.CONSTANTS.common_label_upload());
+        window = new DefaultWindow(Console.MESSAGES.createTitle("Deployment"));
         window.setWidth(480);
-        window.setHeight(360);
+        window.setHeight(450);
         window.addCloseHandler(new CloseHandler<PopupPanel>() {
             @Override
             public void onClose(CloseEvent<PopupPanel> event) {
@@ -208,10 +213,47 @@ public class DeploymentListPresenter extends Presenter<DeploymentListPresenter.M
         });
 
         window.trapWidget(
-                new NewDeploymentWizard(window, dispatcher, deploymentInfo, isUpdate, record).asWidget()
+                new NewDeploymentWizard(this, window, deploymentInfo, isUpdate, record).asWidget()
         );
 
         window.setGlassEnabled(true);
         window.center();
     }
+
+    public void onCreateUnmanaged(final DeploymentRecord entity) {
+        window.hide();
+
+        ModelNode operation = new ModelNode();
+        operation.get(OP).set(ADD);
+        operation.get(ADDRESS).add("deployment", entity.getName());
+        operation.get("name").set(entity.getName());
+        operation.get("runtime-name").set(entity.getName());
+        List<ModelNode> content = new ArrayList<ModelNode>(1);
+        ModelNode path = new ModelNode();
+        path.get("path").set(entity.getPath());
+        path.get("archive").set(entity.isArchive());
+
+        content.add(path);
+        operation.get("content").set(content);
+
+        System.out.println(operation);
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+            @Override
+            public void onSuccess(DMRResponse dmrResponse) {
+                ModelNode response = dmrResponse.get();
+                if(response.isFailure())
+                {
+                    Console.error("Failed to create unmanaged content", response.getFailureDescription());
+                }
+                else
+                {
+                    Console.info(Console.MESSAGES.added("Deployment "+entity.getName()));
+                }
+
+                deploymentInfo.refreshView();
+            }
+        });
+    }
+
 }

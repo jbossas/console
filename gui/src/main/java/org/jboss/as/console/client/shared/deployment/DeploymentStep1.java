@@ -23,16 +23,27 @@ import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.SelectionEvent;
+import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.ui.FileUpload;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.PopupPanel;
+import com.google.gwt.user.client.ui.TabLayoutPanel;
+import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import org.apache.commons.digester.rss.TextInput;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.BootstrapContext;
+import org.jboss.as.console.client.shared.model.DeploymentRecord;
+import org.jboss.ballroom.client.widgets.forms.CheckBoxItem;
+import org.jboss.ballroom.client.widgets.forms.Form;
+import org.jboss.ballroom.client.widgets.forms.TextAreaItem;
+import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
+import org.jboss.ballroom.client.widgets.forms.TextItem;
 import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 import org.jboss.ballroom.client.widgets.window.DialogueOptions;
 import org.jboss.ballroom.client.widgets.window.Feedback;
@@ -47,6 +58,7 @@ public class DeploymentStep1 {
     private NewDeploymentWizard wizard;
     private DefaultWindow window;
     private PopupPanel loading;
+    private Form<DeploymentRecord> unmanagedForm;
 
     public DeploymentStep1(NewDeploymentWizard wizard, DefaultWindow window) {
         this.wizard = wizard;
@@ -55,8 +67,15 @@ public class DeploymentStep1 {
 
     public Widget asWidget()
     {
+
+        final TabPanel tabs = new TabPanel();
+        tabs.setStyleName("default-tabpanel");
+
+        // -------
+
         VerticalPanel layout = new VerticalPanel();
         layout.setStyleName("window-content");
+
 
         // Create a FormPanel and point it at a service.
         final FormPanel form = new FormPanel();
@@ -100,7 +119,19 @@ public class DeploymentStep1 {
 
                 // verify form
                 String filename = upload.getFilename();
-                if(filename!=null && !filename.equals(""))
+                if(tabs.getTabBar().isTabEnabled(1))
+                {
+                    // unmanaged content
+                    if(unmanagedForm.validate().hasErrors())
+                    {
+                        return;
+                    }
+                    else
+                    {
+                        wizard.onCreateUnmanaged(unmanagedForm.getUpdatedEntity());
+                    }
+                }
+                else if(filename!=null && !filename.equals(""))
                 {
                     loading = Feedback.loading(
                             Console.CONSTANTS.common_label_plaseWait(),
@@ -158,6 +189,9 @@ public class DeploymentStep1 {
                     Log.error(Console.CONSTANTS.common_error_failedToDecode() + ": " + html, e);
                 }
 
+
+                // Option 2: Unmanaged content
+
             }
         });
 
@@ -169,7 +203,32 @@ public class DeploymentStep1 {
         description.getElement().setAttribute("style", "padding-bottom:15px;");
         layout.add(description);
         layout.add(form);
-        return new WindowContentBuilder(layout, options).build();
+
+
+        // Unmanaged form
+        VerticalPanel unmanagedPanel = new VerticalPanel();
+        unmanagedPanel.setStyleName("window-content");
+
+        String unmanagedText = "<h3>" + Console.CONSTANTS.common_label_step() + "1/1: Specify Deployment</h3>";
+        unmanagedPanel.add(new HTML(unmanagedText));
+
+        unmanagedForm = new Form<DeploymentRecord>(DeploymentRecord.class);
+        TextAreaItem path = new TextAreaItem("path", "Path");
+        TextBoxItem name = new TextBoxItem("name", "Name");
+        TextBoxItem runtimeName = new TextBoxItem("runtimeName", "Runtime Name");
+        CheckBoxItem archive = new CheckBoxItem("archive", "Is Archive?");
+        archive.setValue(true);
+        unmanagedForm.setFields(path, archive, name, runtimeName);
+        unmanagedPanel.add(unmanagedForm.asWidget());
+
+
+        // Composite view
+
+        tabs.add(layout, "Managed");
+        tabs.add(unmanagedPanel, "Unmanaged");
+        tabs.selectTab(0);
+
+        return new WindowContentBuilder(tabs, options).build();
     }
 
     private PopupPanel getLoading() {

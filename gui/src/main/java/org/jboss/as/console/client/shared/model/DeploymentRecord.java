@@ -31,6 +31,9 @@ public interface DeploymentRecord  {
     public String getStatus();
     public void setStatus(String status);
 
+    public String getPath();
+    public void setPath(String path);
+
     public String getRuntimeName();
     public void setRuntimeName(String runtimeName);
 
@@ -45,4 +48,7 @@ public interface DeploymentRecord  {
 
     public boolean isPersistent();
     public void setPersistent(boolean isPersistent);
+
+    public boolean isArchive();
+    public void setArchive(boolean isArchive);
 }

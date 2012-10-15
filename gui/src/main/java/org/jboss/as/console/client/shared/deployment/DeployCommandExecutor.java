@@ -33,59 +33,62 @@ import java.util.Set;
  * @author Stan Silvert <ssilvert@redhat.com> (C) 2011 Red Hat Inc.
  */
 public interface DeployCommandExecutor {
-  /**
-   * Toggle the enabled/disabled flag on the deployment.
-   *
-   * @param record The deployment.
-   */
-  public void enableDisableDeployment(DeploymentRecord record);
+    /**
+     * Toggle the enabled/disabled flag on the deployment.
+     *
+     * @param record The deployment.
+     */
+    public void enableDisableDeployment(DeploymentRecord record);
 
-  /**
-   * Update the deployment.
-   *
-   * @param record The deployment.
-   */
-  public void updateDeployment(DeploymentRecord record);
+    /**
+     * Update the deployment.
+     *
+     * @param record The deployment.
+     */
+    public void updateDeployment(DeploymentRecord record);
 
-  /**
-   * Remove a deployment form its server group.  The record must contain
-   * the server group it is to be removed from.
-   *
-   * @param record The deployment.
-   * @throws UnsupportedOperationException if in standalone mode.
-   */
-  public void removeDeploymentFromGroup(DeploymentRecord record);
+    /**
+     * Remove a deployment form its server group.  The record must contain
+     * the server group it is to be removed from.
+     *
+     * @param record The deployment.
+     * @throws UnsupportedOperationException if in standalone mode.
+     */
+    public void removeDeploymentFromGroup(DeploymentRecord record);
 
-  /**
-   * Add the deployment to a server group.
-   *
-   * @param record The deployment.
-   * @param enable Enable after adding to group.
-   * @param selectedGroups The selected server groups.
-   * @throws UnsupportedOperationException if in standalone mode.
-   */
-  public void addToServerGroup(DeploymentRecord record, boolean enable, Set<ServerGroupSelection> selectedGroups);
+    /**
+     * Add the deployment to a server group.
+     *
+     * @param record The deployment.
+     * @param enable Enable after adding to group.
+     * @param selectedGroups The selected server groups.
+     * @throws UnsupportedOperationException if in standalone mode.
+     */
+    public void addToServerGroup(DeploymentRecord record, boolean enable, Set<ServerGroupSelection> selectedGroups);
 
-  /**
-   * Remove a deployment from the server.
-   *
-   * @param record The deployment.
-   */
-  public void removeContent(DeploymentRecord record);
+    /**
+     * Remove a deployment from the server.
+     *
+     * @param record The deployment.
+     */
+    public void removeContent(DeploymentRecord record);
 
-  /**
-   * Get the server groups that a deployment might be assigned to.  This returns all
-   * known server groups except those that the deployment is already assigned to.
-   * @param record The deployment.
-   * @return The server groups that the deployment could be assigned to.
-   */
-  public List<ServerGroupRecord> getPossibleGroupAssignments(DeploymentRecord record);
+    /**
+     * Get the server groups that a deployment might be assigned to.  This returns all
+     * known server groups except those that the deployment is already assigned to.
+     * @param record The deployment.
+     * @return The server groups that the deployment could be assigned to.
+     */
+    public List<ServerGroupRecord> getPossibleGroupAssignments(DeploymentRecord record);
 
-  /**
-   * Display a dialog for selecting server groups that the deployment could be assigned to.  The
-   * prompt will also submit the selections for execution.
-   *
-   * @param record The deployment record.
-   */
-  public void promptForGroupSelections(DeploymentRecord record);
+    /**
+     * Display a dialog for selecting server groups that the deployment could be assigned to.  The
+     * prompt will also submit the selections for execution.
+     *
+     * @param record The deployment record.
+     */
+    public void promptForGroupSelections(DeploymentRecord record);
+
+
+    public void onCreateUnmanaged(final DeploymentRecord entity);
 }

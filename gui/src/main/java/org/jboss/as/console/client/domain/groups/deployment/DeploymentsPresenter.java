@@ -327,7 +327,7 @@ public class DeploymentsPresenter extends Presenter<DeploymentsPresenter.MyView,
         });
 
         window.trapWidget(
-                new NewDeploymentWizard(window, dispatcher, domainDeploymentInfo, isUpdate, record).asWidget());
+                new NewDeploymentWizard(this, window, domainDeploymentInfo, isUpdate, record).asWidget());
 
         window.setGlassEnabled(true);
         window.center();
@@ -397,4 +397,7 @@ public class DeploymentsPresenter extends Presenter<DeploymentsPresenter.MyView,
 
     }
 
+    public void onCreateUnmanaged(final DeploymentRecord entity) {
+
+    }
 }

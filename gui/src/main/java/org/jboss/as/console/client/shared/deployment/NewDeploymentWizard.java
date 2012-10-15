@@ -36,8 +36,10 @@ import org.jboss.as.console.client.core.message.Message;
 import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.model.DeploymentRecord;
+import org.jboss.as.console.client.standalone.deployment.DeploymentListPresenter;
 import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 import org.jboss.ballroom.client.widgets.window.Feedback;
+import org.jboss.dmr.client.ModelNode;
 
 /**
  * @author Heiko Braun
@@ -54,25 +56,25 @@ public class NewDeploymentWizard  {
     private DeploymentStep2 step2;
 
     private DefaultWindow window;
-    private DispatchAsync dispatcher;
     private DeploymentViewRefresher refresher;
     private boolean isUpdate;
     private DeploymentRecord oldDeployment;
 
     private static final String HEADER_CONTENT_TYPE = "Content-Type";
     private static final String APPLICATION_JSON = "application/json";
+    private DeployCommandExecutor presenter;
 
     /**
      *
+     * @param presenter
      * @param window
-     * @param dispatcher
      * @param refresher
      * @param isUpdate Are we updating content that is already in the repository?
      * @param oldDeployment The original deployment.  If isUpdate == false, this should be null.
      */
-    public NewDeploymentWizard(DefaultWindow window, DispatchAsync dispatcher, DeploymentViewRefresher refresher, boolean isUpdate, DeploymentRecord oldDeployment) {
+    public NewDeploymentWizard(DeployCommandExecutor presenter, DefaultWindow window, DeploymentViewRefresher refresher, boolean isUpdate, DeploymentRecord oldDeployment) {
+        this.presenter = presenter;
         this.window = window;
-        this.dispatcher = dispatcher;
         this.refresher = refresher;
         this.isUpdate = isUpdate;
         this.oldDeployment = oldDeployment;
@@ -215,5 +217,11 @@ public class NewDeploymentWizard  {
         Console.error(Console.CONSTANTS.common_error_deploymentFailed() +
                 ": " + deployment.getName() +
                 ": " + response.getText());
+    }
+
+    public void onCreateUnmanaged(DeploymentRecord entity) {
+
+        presenter.onCreateUnmanaged(entity);
+
     }
 }

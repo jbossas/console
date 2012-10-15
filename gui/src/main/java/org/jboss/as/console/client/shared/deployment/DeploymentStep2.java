@@ -138,7 +138,7 @@ public class DeploymentStep2 {
         }
     }
 
-    private static class DeploymentNameTextBoxItem extends Step2TextBoxItem {
+    public static class DeploymentNameTextBoxItem extends Step2TextBoxItem {
         private List<String> currentDeploymentNames;
 
         public DeploymentNameTextBoxItem(String name, String title, List<String> currentDeploymentNames, boolean isUpdate) {
