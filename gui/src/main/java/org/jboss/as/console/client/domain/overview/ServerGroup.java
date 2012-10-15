@@ -31,7 +31,7 @@ class ServerGroup implements Comparable<ServerGroup>
     final String id;
     final String name;
     final String profile;
-    String index;
+    String cssClassname;
     int maxServersPerHost;
     SortedMap<HostInfo, List<ServerInstance>> serversPerHost;
 
@@ -41,7 +41,7 @@ class ServerGroup implements Comparable<ServerGroup>
         this.id = "sg" + String.valueOf(name.hashCode()); // to have a websafe id (without spaces and other crap)
         this.name = name;
         this.profile = profile;
-        this.index = "255,255,255";
+        this.cssClassname = "255,255,255";
         this.maxServersPerHost = 0;
         this.serversPerHost = new TreeMap<HostInfo, List<ServerInstance>>();
     }

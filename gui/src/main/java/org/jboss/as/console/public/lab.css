@@ -377,6 +377,12 @@ input[type="checkbox"] {
     font-weight: bold;
     cursor: pointer;
 }
+.visible {
+    visibility: visible;
+}
+.hidden {
+    visibility: hidden;
+}
 .serverGroup0 {
     background-color: rgb(160,197,95);
 }
