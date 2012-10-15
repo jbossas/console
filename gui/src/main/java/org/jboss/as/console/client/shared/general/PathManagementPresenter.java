@@ -156,8 +156,29 @@ public class PathManagementPresenter extends Presenter<PathManagementPresenter.M
         });
     }
 
-    public void onSavePath(String name, Map<String, Object> changedValues) {
+    public void onSavePath(final String name, Map<String, Object> changedValues) {
+        ModelNode address = new ModelNode();
+        address.add("path", name);
 
+        ModelNode addressNode = new ModelNode();
+        addressNode.get(ADDRESS).set(address);
+
+        ModelNode operation = entityAdapter.fromChangeset(changedValues, addressNode);
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = result.get();
+
+                if(response.isFailure())
+                    Console.error(Console.MESSAGES.modificationFailed("Path " + name), response.getFailureDescription());
+                else
+                    Console.info(Console.MESSAGES.modified("Path " + name));
+
+                loadPathInformation();
+            }
+        });
     }
 
     public void onCloseDialoge() {

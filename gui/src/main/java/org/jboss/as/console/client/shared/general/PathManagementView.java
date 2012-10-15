@@ -74,7 +74,7 @@ public class PathManagementView extends SuspendableViewImpl implements PathManag
 
         // -----------
 
-        table = new DefaultCellTable<Path>(8, new ProvidesKey<Path>() {
+        table = new DefaultCellTable<Path>(6, new ProvidesKey<Path>() {
             @Override
             public Object getKey(Path path) {
                 return path.getName();
