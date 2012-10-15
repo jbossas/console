@@ -54,7 +54,7 @@ import org.jboss.as.console.client.domain.model.ServerGroupStore;
 import org.jboss.as.console.client.domain.model.impl.HostInfoStoreImpl;
 import org.jboss.as.console.client.domain.model.impl.ProfileStoreImpl;
 import org.jboss.as.console.client.domain.model.impl.ServerGroupStoreImpl;
-import org.jboss.as.console.client.domain.overview.DomainOverview2;
+import org.jboss.as.console.client.domain.overview.DomainOverview;
 import org.jboss.as.console.client.domain.overview.DomainOverviewPresenter;
 import org.jboss.as.console.client.domain.profiles.CurrentProfileSelection;
 import org.jboss.as.console.client.domain.profiles.ProfileMgmtPresenter;
@@ -318,7 +318,7 @@ public class CoreUIModule extends AbstractPresenterModule {
         // domain/profiles
         bindPresenter(DomainOverviewPresenter.class,
                 DomainOverviewPresenter.MyView.class,
-                DomainOverview2.class,
+                DomainOverview.class,
                 DomainOverviewPresenter.MyProxy.class);
 
         bind(CurrentProfileSelection.class).in(Singleton.class);

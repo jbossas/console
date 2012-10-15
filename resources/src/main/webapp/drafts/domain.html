@@ -1,9 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-
     <title>JBoss Management</title>
-    <!-- proper charset -->
     <meta http-equiv="content-type" content="text/html;charset=utf-8"/>
 
     <link rel="shortcut icon" href="../images/favicon.ico"/>
@@ -12,16 +10,27 @@
     <link rel="stylesheet"
           href="../../../../..//gui/src/main/java/org/jboss/as/console/public/lab.css"/>
     <style>
-        div#main th {
+        #main {
+            width: 100%;
+            background-color: white;
+        }
+        #hostdata {
+            /*display: none;*/
+            width: 100%;
+            background-color: #ffffff;
+        }
+
+        th {
             text-align: left;
         }
-
-        div#main td {
-            -moz-transition: background-color 1s ease-out;
+        td {
+            -moz-transition: background-color .66s ease-out;
         }
-
-        div#main th, div#main td {
+        th, td {
             padding: 5px;
+        }
+        tfoot td {
+            font-weight: bolder;
         }
 
         #group0, #group1, #group2, #group3 {
@@ -29,267 +38,366 @@
         }
 
         .group0_member { }
-
+        .group0_member:hover {
+            background-color: rgb(232, 202, 175);
+        }
         .group0_on {
             background-color: rgb(232, 202, 175);
         }
-
         .group0_off {
             background-color: rgba(232, 202, 175, .2)
         }
 
         .group1_member { }
-
+        .group1_member:hover {
+            background-color: rgb(160, 197, 95);
+        }
         .group1_on {
             background-color: rgb(160, 197, 95);
         }
-
         .group1_off {
             background-color: rgba(160, 197, 95, .2);
         }
 
         .group2_member { }
-
+        .group2_member:hover {
+            background-color: rgb(194, 203, 206);
+        }
         .group2_on {
             background-color: rgb(194, 203, 206);
         }
-
         .group2_off {
             background-color: rgba(194, 203, 206, .2);
         }
 
         .group3_member { }
-
+        .group3_member:hover {
+            background-color: rgb(192, 213, 248);
+        }
         .group3_on {
             background-color: rgb(192, 213, 248);
         }
-
         .group3_off {
             background-color: rgba(192, 213, 248, .2);
         }
 
-        .selected {
+        #prevhost, #nexthost {
+            cursor: pointer;
         }
     </style>
 </head>
-<body>
 
-<div id="main" style="margin: 20px; background-color: white;">
-    <table style="width: 100%;">
-        <colgroup>
-            <col width="12%">
-        </colgroup>
-        <thead>
-        <tr>
-            <th>
-                <span>Hosts&nbsp;&rarr;<br/></span>
-                <span>Groups&nbsp;&darr;</span>
-            </th>
-            <th>
-                <span>
-                    Host: homer<br/>
-                    Domain: Controller
-                </span>
-                <span>
-                    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABSklEQVR42qVTO66CUBBlO6Ah/LFEO9cAYSHY29pZWGApDdGKhMLSgh62wA74hIJ5OZNAgqgvxptMGOacmTu/K9CPR3gHNE1Dt9uNrtcr618HwPF9n+XrDKqqosfjQYZhsECH7WOAuq451a7r+D8IAloul7RYLFjHAda27SQYB8iyjNI0pTiO6Xw+0+FwIMdx+HbTNFmHDRg44MJnDHA8HklVVZJlmW+VJIkdbdtmQSDYgIGjaRr7TEq4XC5MVhSFLMsanQeBDdhqtaIoiuY9QP33+5222y3puj5xHLIABg768HIKfd9znUgVjoMzvrCFYcict2NEd/f7/dgDpDyUJIoiY8/jnO2B53ljs1zXZYGOcQL7uEh5nvPN6/WaTqfTaIe+2WwYA+dlAKSWJAntdjsqimLSKOiwYaHAmS3ScMqy/Pf1PXOEX5/zH3IgP/0BiiyCAAAAAElFTkSuQmCC"
-                         align="right" height="16" width="16">
-                </span>
-            </th>
-            <th>
-                <span>
-                    Host: bart<br/>
-                    Domain: Member
-                </span>
-            </th>
-            <th>
-                <span>
-                    Host: lisa<br/>
-                    Domain: Member
-                </span>
-            </th>
-            <th>
-                <span>
-                    Host: apu<br/>
-                    Domain: Member
-                </span>
-            </th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-            <td id="group0" class="group0_on">
-                <span>Group: backoffice</span><br/>
-                <span>Profile: full</span>
-            </td>
-            <td class="group1_member group1_off">
-                <span>Server: rsx-5</span>
-                    <span>
-                        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAAeklEQVR42mNgGAWDEogCcT8QG1FqUDkQfwbiOUDMTYpGYSR2JRD/R8J2xBigwMDIDFJ8EYg9gDgXiP8hGdIBxJyEjYEY8huq6SeaIa2keKkaiHeieQWEO8kJWB4g3kiuS9CBABAvBeIGLHJCpBqWBMQuWMTFRrMV6QAAJHsfWPdPzcAAAAAASUVORK5CYII="
-                             align="right" height="16" width="16">
-                    </span><br/>
-                <span>JVM: default</span>
-            </td>
-            <td class="group3_member group3_off">
-                <span>Server: tazde10</span>
-                    <span>
-                        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAABIElEQVR42q2UPQrCQBCFF8QiKfQOwSLgHfQUgleIVbqIvQdQxNbgTawsbIW0YqNX8AfjC7zAOM6KoAMfIbOzb3dmZ9c520LQBwnISEJf6L60IdiA0sOGMV6rVlqAh5h0AgU5Cf+DsebuliLwAFLQBW0SM8WLiFtqkYEY3IGOZ9dzcFepDurBFtjSeQSRIRCAXAlc+d1Sw/XAjc7UEGmAlRKZMc2ScysNN6LjzDroA1grkZxjEeeU1HBj/hT1FmlNI51cnFSbcyr/RArtRVDoEWmKhaTQVKdWF1qLrI2eiUVqiS52xkJKkRULri3VxZbHfzXSCQyRiK3ycvy6IUs23dzTlB027VtDWlfkwjRjcUW6TOfw6Yr89dL+7Rn56WF7AsSolXRXdPSIAAAAAElFTkSuQmCC"
-                             align="right" height="16" width="16">
-                    </span><br/>
-                <span>JVM: default</span>
-            </td>
-            <td class="group1_member group1_off">
-                <span>Server: isu-0815</span>
-                    <span>
-                        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAABIElEQVR42q2UPQrCQBCFF8QiKfQOwSLgHfQUgleIVbqIvQdQxNbgTawsbIW0YqNX8AfjC7zAOM6KoAMfIbOzb3dmZ9c520LQBwnISEJf6L60IdiA0sOGMV6rVlqAh5h0AgU5Cf+DsebuliLwAFLQBW0SM8WLiFtqkYEY3IGOZ9dzcFepDurBFtjSeQSRIRCAXAlc+d1Sw/XAjc7UEGmAlRKZMc2ScysNN6LjzDroA1grkZxjEeeU1HBj/hT1FmlNI51cnFSbcyr/RArtRVDoEWmKhaTQVKdWF1qLrI2eiUVqiS52xkJKkRULri3VxZbHfzXSCQyRiK3ycvy6IUs23dzTlB027VtDWlfkwjRjcUW6TOfw6Yr89dL+7Rn56WF7AsSolXRXdPSIAAAAAElFTkSuQmCC"
-                             align="right" height="16" width="16">
-                    </span><br/>
-                <span>JVM: default</span>
-            </td>
-            <td class="group0_member group0_off">
-                <span>Server: rsx-2</span>
-                    <span>
-                        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAAeklEQVR42mNgGAWDEogCcT8QG1FqUDkQfwbiOUDMTYpGYSR2JRD/R8J2xBigwMDIDFJ8EYg9gDgXiP8hGdIBxJyEjYEY8huq6SeaIa2keKkaiHeieQWEO8kJWB4g3kiuS9CBABAvBeIGLHJCpBqWBMQuWMTFRrMV6QAAJHsfWPdPzcAAAAAASUVORK5CYII="
-                             align="right" height="16" width="16">
-                    </span><br/>
-                <span>JVM: default</span>
-            </td>
-        </tr>
-        <tr>
-            <td id="group1" class="group1_on">
-                <span>Group: messaging</span><br/>
-                <span>Profile: full-ha</span>
-            </td>
-            <td class="group3_member group3_off">
-                <span>Server: rsx-12</span>
-                    <span>
-                        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAABIElEQVR42q2UPQrCQBCFF8QiKfQOwSLgHfQUgleIVbqIvQdQxNbgTawsbIW0YqNX8AfjC7zAOM6KoAMfIbOzb3dmZ9c520LQBwnISEJf6L60IdiA0sOGMV6rVlqAh5h0AgU5Cf+DsebuliLwAFLQBW0SM8WLiFtqkYEY3IGOZ9dzcFepDurBFtjSeQSRIRCAXAlc+d1Sw/XAjc7UEGmAlRKZMc2ScysNN6LjzDroA1grkZxjEeeU1HBj/hT1FmlNI51cnFSbcyr/RArtRVDoEWmKhaTQVKdWF1qLrI2eiUVqiS52xkJKkRULri3VxZbHfzXSCQyRiK3ycvy6IUs23dzTlB027VtDWlfkwjRjcUW6TOfw6Yr89dL+7Rn56WF7AsSolXRXdPSIAAAAAElFTkSuQmCC"
-                             align="right" height="16" width="16">
-                    </span><br/>
-                <span>JVM: default</span>
-            </td>
-            <td class="group2_member group2_off">
-                <span>Server: tazde10</span>
-                    <span>
-                        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAABIElEQVR42q2UPQrCQBCFF8QiKfQOwSLgHfQUgleIVbqIvQdQxNbgTawsbIW0YqNX8AfjC7zAOM6KoAMfIbOzb3dmZ9c520LQBwnISEJf6L60IdiA0sOGMV6rVlqAh5h0AgU5Cf+DsebuliLwAFLQBW0SM8WLiFtqkYEY3IGOZ9dzcFepDurBFtjSeQSRIRCAXAlc+d1Sw/XAjc7UEGmAlRKZMc2ScysNN6LjzDroA1grkZxjEeeU1HBj/hT1FmlNI51cnFSbcyr/RArtRVDoEWmKhaTQVKdWF1qLrI2eiUVqiS52xkJKkRULri3VxZbHfzXSCQyRiK3ycvy6IUs23dzTlB027VtDWlfkwjRjcUW6TOfw6Yr89dL+7Rn56WF7AsSolXRXdPSIAAAAAElFTkSuQmCC"
-                             align="right" height="16" width="16">
-                    </span><br/>
-                <span>JVM: default</span>
-            </td>
-            <td class="group2_member group2_off">
-                <span>Server: rsx200</span>
-                    <span>
-                        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAABIElEQVR42q2UPQrCQBCFF8QiKfQOwSLgHfQUgleIVbqIvQdQxNbgTawsbIW0YqNX8AfjC7zAOM6KoAMfIbOzb3dmZ9c520LQBwnISEJf6L60IdiA0sOGMV6rVlqAh5h0AgU5Cf+DsebuliLwAFLQBW0SM8WLiFtqkYEY3IGOZ9dzcFepDurBFtjSeQSRIRCAXAlc+d1Sw/XAjc7UEGmAlRKZMc2ScysNN6LjzDroA1grkZxjEeeU1HBj/hT1FmlNI51cnFSbcyr/RArtRVDoEWmKhaTQVKdWF1qLrI2eiUVqiS52xkJKkRULri3VxZbHfzXSCQyRiK3ycvy6IUs23dzTlB027VtDWlfkwjRjcUW6TOfw6Yr89dL+7Rn56WF7AsSolXRXdPSIAAAAAElFTkSuQmCC"
-                             align="right" height="16" width="16">
-                    </span><br/>
-                <span>JVM: default</span>
-            </td>
-            <td class="group0_member group0_off">
-                <span>Server: ibu-44</span>
-                    <span>
-                        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAABIElEQVR42q2UPQrCQBCFF8QiKfQOwSLgHfQUgleIVbqIvQdQxNbgTawsbIW0YqNX8AfjC7zAOM6KoAMfIbOzb3dmZ9c520LQBwnISEJf6L60IdiA0sOGMV6rVlqAh5h0AgU5Cf+DsebuliLwAFLQBW0SM8WLiFtqkYEY3IGOZ9dzcFepDurBFtjSeQSRIRCAXAlc+d1Sw/XAjc7UEGmAlRKZMc2ScysNN6LjzDroA1grkZxjEeeU1HBj/hT1FmlNI51cnFSbcyr/RArtRVDoEWmKhaTQVKdWF1qLrI2eiUVqiS52xkJKkRULri3VxZbHfzXSCQyRiK3ycvy6IUs23dzTlB027VtDWlfkwjRjcUW6TOfw6Yr89dL+7Rn56WF7AsSolXRXdPSIAAAAAElFTkSuQmCC"
-                             align="right" height="16" width="16">
-                    </span><br/>
-                <span>JVM: default</span>
-            </td>
-        </tr>
-        <tr>
-            <td id="group2" class="group2_on">
-                <span>Group: web</span><br/>
-                <span>Profile: web</span>
-            </td>
-            <td class="group0_member group0_off">
-                <span>Server: isu-123</span>
-                    <span>
-                        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAAeklEQVR42mNgGAWDEogCcT8QG1FqUDkQfwbiOUDMTYpGYSR2JRD/R8J2xBigwMDIDFJ8EYg9gDgXiP8hGdIBxJyEjYEY8huq6SeaIa2keKkaiHeieQWEO8kJWB4g3kiuS9CBABAvBeIGLHJCpBqWBMQuWMTFRrMV6QAAJHsfWPdPzcAAAAAASUVORK5CYII="
-                             align="right" height="16" width="16">
-                    </span><br/>
-                <span>JVM: default</span>
-            </td>
-            <td class="group2_member group2_off">
-                <span>Server: isu-456</span>
-                    <span>
-                        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAABIElEQVR42q2UPQrCQBCFF8QiKfQOwSLgHfQUgleIVbqIvQdQxNbgTawsbIW0YqNX8AfjC7zAOM6KoAMfIbOzb3dmZ9c520LQBwnISEJf6L60IdiA0sOGMV6rVlqAh5h0AgU5Cf+DsebuliLwAFLQBW0SM8WLiFtqkYEY3IGOZ9dzcFepDurBFtjSeQSRIRCAXAlc+d1Sw/XAjc7UEGmAlRKZMc2ScysNN6LjzDroA1grkZxjEeeU1HBj/hT1FmlNI51cnFSbcyr/RArtRVDoEWmKhaTQVKdWF1qLrI2eiUVqiS52xkJKkRULri3VxZbHfzXSCQyRiK3ycvy6IUs23dzTlB027VtDWlfkwjRjcUW6TOfw6Yr89dL+7Rn56WF7AsSolXRXdPSIAAAAAElFTkSuQmCC"
-                             align="right" height="16" width="16">
-                    </span><br/>
-                <span>JVM: default</span>
-            </td>
-            <td class="group1_member group1_off">
-                <span>Server: stux-23</span>
-                    <span>
-                        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAABIElEQVR42q2UPQrCQBCFF8QiKfQOwSLgHfQUgleIVbqIvQdQxNbgTawsbIW0YqNX8AfjC7zAOM6KoAMfIbOzb3dmZ9c520LQBwnISEJf6L60IdiA0sOGMV6rVlqAh5h0AgU5Cf+DsebuliLwAFLQBW0SM8WLiFtqkYEY3IGOZ9dzcFepDurBFtjSeQSRIRCAXAlc+d1Sw/XAjc7UEGmAlRKZMc2ScysNN6LjzDroA1grkZxjEeeU1HBj/hT1FmlNI51cnFSbcyr/RArtRVDoEWmKhaTQVKdWF1qLrI2eiUVqiS52xkJKkRULri3VxZbHfzXSCQyRiK3ycvy6IUs23dzTlB027VtDWlfkwjRjcUW6TOfw6Yr89dL+7Rn56WF7AsSolXRXdPSIAAAAAElFTkSuQmCC"
-                             align="right" height="16" width="16">
-                    </span><br/>
-                <span>JVM: default</span>
-            </td>
-            <td class="group3_member group3_off">
-                <span>Server: stux-99</span>
-                    <span>
-                        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAAeklEQVR42mNgGAWDEogCcT8QG1FqUDkQfwbiOUDMTYpGYSR2JRD/R8J2xBigwMDIDFJ8EYg9gDgXiP8hGdIBxJyEjYEY8huq6SeaIa2keKkaiHeieQWEO8kJWB4g3kiuS9CBABAvBeIGLHJCpBqWBMQuWMTFRrMV6QAAJHsfWPdPzcAAAAAASUVORK5CYII="
-                             align="right" height="16" width="16">
-                    </span><br/>
-                <span>JVM: default</span>
-            </td>
-        </tr>
-        <tr>
-            <td id="group3" class="group3_on">
-                <span>Group: serive</span><br/>
-                <span>Profile: default</span>
-            </td>
-            <td class="group0_member group0_off">
-                <span>Server: rsx-1</span>
-                    <span>
-                        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAAeklEQVR42mNgGAWDEogCcT8QG1FqUDkQfwbiOUDMTYpGYSR2JRD/R8J2xBigwMDIDFJ8EYg9gDgXiP8hGdIBxJyEjYEY8huq6SeaIa2keKkaiHeieQWEO8kJWB4g3kiuS9CBABAvBeIGLHJCpBqWBMQuWMTFRrMV6QAAJHsfWPdPzcAAAAAASUVORK5CYII="
-                             align="right" height="16" width="16">
-                    </span><br/>
-                <span>JVM: default</span>
-            </td>
-            <td class="group0_member group0_off">
-                <span>Server: rsx-3</span>
-                    <span>
-                        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAAeklEQVR42mNgGAWDEogCcT8QG1FqUDkQfwbiOUDMTYpGYSR2JRD/R8J2xBigwMDIDFJ8EYg9gDgXiP8hGdIBxJyEjYEY8huq6SeaIa2keKkaiHeieQWEO8kJWB4g3kiuS9CBABAvBeIGLHJCpBqWBMQuWMTFRrMV6QAAJHsfWPdPzcAAAAAASUVORK5CYII="
-                             align="right" height="16" width="16">
-                    </span><br/>
-                <span>JVM: default</span>
-            </td>
-            <td class="group1_member group1_off">
-                <span>Server: stux-78</span>
-                    <span>
-                        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAABIElEQVR42q2UPQrCQBCFF8QiKfQOwSLgHfQUgleIVbqIvQdQxNbgTawsbIW0YqNX8AfjC7zAOM6KoAMfIbOzb3dmZ9c520LQBwnISEJf6L60IdiA0sOGMV6rVlqAh5h0AgU5Cf+DsebuliLwAFLQBW0SM8WLiFtqkYEY3IGOZ9dzcFepDurBFtjSeQSRIRCAXAlc+d1Sw/XAjc7UEGmAlRKZMc2ScysNN6LjzDroA1grkZxjEeeU1HBj/hT1FmlNI51cnFSbcyr/RArtRVDoEWmKhaTQVKdWF1qLrI2eiUVqiS52xkJKkRULri3VxZbHfzXSCQyRiK3ycvy6IUs23dzTlB027VtDWlfkwjRjcUW6TOfw6Yr89dL+7Rn56WF7AsSolXRXdPSIAAAAAElFTkSuQmCC"
-                             align="right" height="16" width="16">
-                    </span><br/>
-                <span>JVM: default</span>
-            </td>
-            <td class="group1_member group1_off">
-                <span>Server: stux-42</span>
-                    <span>
-                        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAABIElEQVR42q2UPQrCQBCFF8QiKfQOwSLgHfQUgleIVbqIvQdQxNbgTawsbIW0YqNX8AfjC7zAOM6KoAMfIbOzb3dmZ9c520LQBwnISEJf6L60IdiA0sOGMV6rVlqAh5h0AgU5Cf+DsebuliLwAFLQBW0SM8WLiFtqkYEY3IGOZ9dzcFepDurBFtjSeQSRIRCAXAlc+d1Sw/XAjc7UEGmAlRKZMc2ScysNN6LjzDroA1grkZxjEeeU1HBj/hT1FmlNI51cnFSbcyr/RArtRVDoEWmKhaTQVKdWF1qLrI2eiUVqiS52xkJKkRULri3VxZbHfzXSCQyRiK3ycvy6IUs23dzTlB027VtDWlfkwjRjcUW6TOfw6Yr89dL+7Rn56WF7AsSolXRXdPSIAAAAAElFTkSuQmCC"
-                             align="right" height="16" width="16">
-                    </span><br/>
-                <span>JVM: default</span>
-            </td>
-        </tr>
-        </tbody>
-    </table>
-</div>
+
+<body>
+<!-- The visible table with the server groups, the current hosts and the navigation footer -->
+<div style="margin: 10px 200px;"><table id="main">
+    <colgroup>
+        <col width="12%">
+    </colgroup>
+    <thead>
+    <tr>
+        <th>
+            Hosts&nbsp;&rarr;<br/>
+            Groups&nbsp;&darr;
+        </th>
+    </tr>
+    </thead>
+    <tfoot>
+    <tr>
+        <td>&nbsp;</td>
+        <td><span id="prevhost">&larr; Previous Host</span></td>
+        <td>&nbsp;</td>
+        <td style="text-align: right;"><span id="nexthost">Next Host &rarr;</span></td>
+    </tr>
+    </tfoot>
+    <tbody>
+    <tr>
+        <td id="group0" class="group0_on" rowspan="2">
+            <span>Group: backoffice</span><br/>
+            <span>Profile: full</span>
+        </td>
+    </tr>
+    <tr>
+    </tr>
+    <tr>
+        <td id="group1" class="group1_on" rowspan="3">
+            <span>Group: messaging</span><br/>
+            <span>Profile: full-ha</span>
+        </td>
+    </tr>
+    <tr>
+    </tr>
+    <tr>
+    </tr>
+    <tr>
+        <td id="group2" class="group2_on" rowspan="2">
+            <span>Group: web</span><br/>
+            <span>Profile: web</span>
+        </td>
+    </tr>
+    <tr>
+    </tr>
+    <tr>
+        <td id="group3" class="group3_on">
+            <span>Group: serive</span><br/>
+            <span>Profile: default</span>
+        </td>
+    </tr>
+    </tbody>
+</table></div>
+
+
+<!-- The hidden table with *all* hosts -->
+<div style="margin: 10px 10%;"><table id="hostdata">
+    <thead>
+    <tr>
+        <th>
+        <span>
+            Host: homer<br/>
+            Domain: Controller
+        </span>
+        <span>
+            <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABSklEQVR42qVTO66CUBBlO6Ah/LFEO9cAYSHY29pZWGApDdGKhMLSgh62wA74hIJ5OZNAgqgvxptMGOacmTu/K9CPR3gHNE1Dt9uNrtcr618HwPF9n+XrDKqqosfjQYZhsECH7WOAuq451a7r+D8IAloul7RYLFjHAda27SQYB8iyjNI0pTiO6Xw+0+FwIMdx+HbTNFmHDRg44MJnDHA8HklVVZJlmW+VJIkdbdtmQSDYgIGjaRr7TEq4XC5MVhSFLMsanQeBDdhqtaIoiuY9QP33+5222y3puj5xHLIABg768HIKfd9znUgVjoMzvrCFYcict2NEd/f7/dgDpDyUJIoiY8/jnO2B53ljs1zXZYGOcQL7uEh5nvPN6/WaTqfTaIe+2WwYA+dlAKSWJAntdjsqimLSKOiwYaHAmS3ScMqy/Pf1PXOEX5/zH3IgP/0BiiyCAAAAAElFTkSuQmCC"
+                 height="16" width="16">
+        </span>
+        </th>
+        <th>
+        <span>
+            Host: bart<br/>
+            Domain: Member
+        </span>
+        </th>
+        <th>
+        <span>
+            Host: lisa<br/>
+            Domain: Member
+        </span>
+        </th>
+        <th>
+        <span>
+            Host: apu<br/>
+            Domain: Member
+        </span>
+        </th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td class="group0_member group0_off">
+            <span>Server: isu-123</span>
+        <span>
+            <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAAeklEQVR42mNgGAWDEogCcT8QG1FqUDkQfwbiOUDMTYpGYSR2JRD/R8J2xBigwMDIDFJ8EYg9gDgXiP8hGdIBxJyEjYEY8huq6SeaIa2keKkaiHeieQWEO8kJWB4g3kiuS9CBABAvBeIGLHJCpBqWBMQuWMTFRrMV6QAAJHsfWPdPzcAAAAAASUVORK5CYII="
+                 height="16" width="16">
+        </span><br/>
+            <span>JVM: default</span>
+        </td>
+        <td class="group0_member group0_off">
+            <span>Server: rsx-3</span>
+        <span>
+            <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAAeklEQVR42mNgGAWDEogCcT8QG1FqUDkQfwbiOUDMTYpGYSR2JRD/R8J2xBigwMDIDFJ8EYg9gDgXiP8hGdIBxJyEjYEY8huq6SeaIa2keKkaiHeieQWEO8kJWB4g3kiuS9CBABAvBeIGLHJCpBqWBMQuWMTFRrMV6QAAJHsfWPdPzcAAAAAASUVORK5CYII="
+                 height="16" width="16">
+        </span><br/>
+            <span>JVM: default</span>
+        </td>
+        <td>&nbsp;</td>
+        <td class="group0_member group0_off">
+            <span>Server: rsx-2</span>
+        <span>
+            <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAAeklEQVR42mNgGAWDEogCcT8QG1FqUDkQfwbiOUDMTYpGYSR2JRD/R8J2xBigwMDIDFJ8EYg9gDgXiP8hGdIBxJyEjYEY8huq6SeaIa2keKkaiHeieQWEO8kJWB4g3kiuS9CBABAvBeIGLHJCpBqWBMQuWMTFRrMV6QAAJHsfWPdPzcAAAAAASUVORK5CYII="
+                 height="16" width="16">
+        </span><br/>
+            <span>JVM: default</span>
+        </td>
+    </tr>
+    <tr>
+        <td class="group0_member group0_off">
+            <span>Server: rsx-1</span>
+        <span>
+            <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAAeklEQVR42mNgGAWDEogCcT8QG1FqUDkQfwbiOUDMTYpGYSR2JRD/R8J2xBigwMDIDFJ8EYg9gDgXiP8hGdIBxJyEjYEY8huq6SeaIa2keKkaiHeieQWEO8kJWB4g3kiuS9CBABAvBeIGLHJCpBqWBMQuWMTFRrMV6QAAJHsfWPdPzcAAAAAASUVORK5CYII="
+                 height="16" width="16">
+        </span><br/>
+            <span>JVM: default</span>
+        </td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td class="group0_member group0_off">
+            <span>Server: ibu-44</span>
+        <span>
+            <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAABIElEQVR42q2UPQrCQBCFF8QiKfQOwSLgHfQUgleIVbqIvQdQxNbgTawsbIW0YqNX8AfjC7zAOM6KoAMfIbOzb3dmZ9c520LQBwnISEJf6L60IdiA0sOGMV6rVlqAh5h0AgU5Cf+DsebuliLwAFLQBW0SM8WLiFtqkYEY3IGOZ9dzcFepDurBFtjSeQSRIRCAXAlc+d1Sw/XAjc7UEGmAlRKZMc2ScysNN6LjzDroA1grkZxjEeeU1HBj/hT1FmlNI51cnFSbcyr/RArtRVDoEWmKhaTQVKdWF1qLrI2eiUVqiS52xkJKkRULri3VxZbHfzXSCQyRiK3ycvy6IUs23dzTlB027VtDWlfkwjRjcUW6TOfw6Yr89dL+7Rn56WF7AsSolXRXdPSIAAAAAElFTkSuQmCC"
+                 height="16" width="16">
+        </span><br/>
+            <span>JVM: default</span>
+        </td>
+    </tr>
+    <tr>
+        <td class="group1_member group1_off">
+            <span>Server: rsx-5</span>
+        <span>
+            <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAAeklEQVR42mNgGAWDEogCcT8QG1FqUDkQfwbiOUDMTYpGYSR2JRD/R8J2xBigwMDIDFJ8EYg9gDgXiP8hGdIBxJyEjYEY8huq6SeaIa2keKkaiHeieQWEO8kJWB4g3kiuS9CBABAvBeIGLHJCpBqWBMQuWMTFRrMV6QAAJHsfWPdPzcAAAAAASUVORK5CYII="
+                 height="16" width="16">
+        </span><br/>
+            <span>JVM: default</span>
+        </td>
+        <td>&nbsp;</td>
+        <td class="group1_member group1_off">
+            <span>Server: isu-0815</span>
+        <span>
+            <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAABIElEQVR42q2UPQrCQBCFF8QiKfQOwSLgHfQUgleIVbqIvQdQxNbgTawsbIW0YqNX8AfjC7zAOM6KoAMfIbOzb3dmZ9c520LQBwnISEJf6L60IdiA0sOGMV6rVlqAh5h0AgU5Cf+DsebuliLwAFLQBW0SM8WLiFtqkYEY3IGOZ9dzcFepDurBFtjSeQSRIRCAXAlc+d1Sw/XAjc7UEGmAlRKZMc2ScysNN6LjzDroA1grkZxjEeeU1HBj/hT1FmlNI51cnFSbcyr/RArtRVDoEWmKhaTQVKdWF1qLrI2eiUVqiS52xkJKkRULri3VxZbHfzXSCQyRiK3ycvy6IUs23dzTlB027VtDWlfkwjRjcUW6TOfw6Yr89dL+7Rn56WF7AsSolXRXdPSIAAAAAElFTkSuQmCC"
+                 height="16" width="16">
+        </span><br/>
+            <span>JVM: default</span>
+        </td>
+        <td class="group1_member group1_off">
+            <span>Server: stux-42</span>
+        <span>
+            <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAABIElEQVR42q2UPQrCQBCFF8QiKfQOwSLgHfQUgleIVbqIvQdQxNbgTawsbIW0YqNX8AfjC7zAOM6KoAMfIbOzb3dmZ9c520LQBwnISEJf6L60IdiA0sOGMV6rVlqAh5h0AgU5Cf+DsebuliLwAFLQBW0SM8WLiFtqkYEY3IGOZ9dzcFepDurBFtjSeQSRIRCAXAlc+d1Sw/XAjc7UEGmAlRKZMc2ScysNN6LjzDroA1grkZxjEeeU1HBj/hT1FmlNI51cnFSbcyr/RArtRVDoEWmKhaTQVKdWF1qLrI2eiUVqiS52xkJKkRULri3VxZbHfzXSCQyRiK3ycvy6IUs23dzTlB027VtDWlfkwjRjcUW6TOfw6Yr89dL+7Rn56WF7AsSolXRXdPSIAAAAAElFTkSuQmCC"
+                 height="16" width="16">
+        </span><br/>
+            <span>JVM: default</span>
+        </td>
+    </tr>
+    <tr>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td class="group1_member group1_off">
+            <span>Server: stux-23</span>
+        <span>
+            <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAABIElEQVR42q2UPQrCQBCFF8QiKfQOwSLgHfQUgleIVbqIvQdQxNbgTawsbIW0YqNX8AfjC7zAOM6KoAMfIbOzb3dmZ9c520LQBwnISEJf6L60IdiA0sOGMV6rVlqAh5h0AgU5Cf+DsebuliLwAFLQBW0SM8WLiFtqkYEY3IGOZ9dzcFepDurBFtjSeQSRIRCAXAlc+d1Sw/XAjc7UEGmAlRKZMc2ScysNN6LjzDroA1grkZxjEeeU1HBj/hT1FmlNI51cnFSbcyr/RArtRVDoEWmKhaTQVKdWF1qLrI2eiUVqiS52xkJKkRULri3VxZbHfzXSCQyRiK3ycvy6IUs23dzTlB027VtDWlfkwjRjcUW6TOfw6Yr89dL+7Rn56WF7AsSolXRXdPSIAAAAAElFTkSuQmCC"
+                 height="16" width="16">
+        </span><br/>
+            <span>JVM: default</span>
+        </td>
+        <td>&nbsp;</td>
+    </tr>
+    <tr>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td class="group1_member group1_off">
+            <span>Server: stux-78</span>
+        <span>
+            <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAABIElEQVR42q2UPQrCQBCFF8QiKfQOwSLgHfQUgleIVbqIvQdQxNbgTawsbIW0YqNX8AfjC7zAOM6KoAMfIbOzb3dmZ9c520LQBwnISEJf6L60IdiA0sOGMV6rVlqAh5h0AgU5Cf+DsebuliLwAFLQBW0SM8WLiFtqkYEY3IGOZ9dzcFepDurBFtjSeQSRIRCAXAlc+d1Sw/XAjc7UEGmAlRKZMc2ScysNN6LjzDroA1grkZxjEeeU1HBj/hT1FmlNI51cnFSbcyr/RArtRVDoEWmKhaTQVKdWF1qLrI2eiUVqiS52xkJKkRULri3VxZbHfzXSCQyRiK3ycvy6IUs23dzTlB027VtDWlfkwjRjcUW6TOfw6Yr89dL+7Rn56WF7AsSolXRXdPSIAAAAAElFTkSuQmCC"
+                 height="16" width="16">
+        </span><br/>
+            <span>JVM: default</span>
+        </td>
+        <td>&nbsp;</td>
+    </tr>
+    <tr>
+        <td>&nbsp;</td>
+        <td class="group2_member group2_off">
+            <span>Server: tazde10</span>
+        <span>
+            <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAABIElEQVR42q2UPQrCQBCFF8QiKfQOwSLgHfQUgleIVbqIvQdQxNbgTawsbIW0YqNX8AfjC7zAOM6KoAMfIbOzb3dmZ9c520LQBwnISEJf6L60IdiA0sOGMV6rVlqAh5h0AgU5Cf+DsebuliLwAFLQBW0SM8WLiFtqkYEY3IGOZ9dzcFepDurBFtjSeQSRIRCAXAlc+d1Sw/XAjc7UEGmAlRKZMc2ScysNN6LjzDroA1grkZxjEeeU1HBj/hT1FmlNI51cnFSbcyr/RArtRVDoEWmKhaTQVKdWF1qLrI2eiUVqiS52xkJKkRULri3VxZbHfzXSCQyRiK3ycvy6IUs23dzTlB027VtDWlfkwjRjcUW6TOfw6Yr89dL+7Rn56WF7AsSolXRXdPSIAAAAAElFTkSuQmCC"
+                 height="16" width="16">
+        </span><br/>
+            <span>JVM: default</span>
+        </td>
+        <td class="group2_member group2_off">
+            <span>Server: rsx200</span>
+        <span>
+            <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAABIElEQVR42q2UPQrCQBCFF8QiKfQOwSLgHfQUgleIVbqIvQdQxNbgTawsbIW0YqNX8AfjC7zAOM6KoAMfIbOzb3dmZ9c520LQBwnISEJf6L60IdiA0sOGMV6rVlqAh5h0AgU5Cf+DsebuliLwAFLQBW0SM8WLiFtqkYEY3IGOZ9dzcFepDurBFtjSeQSRIRCAXAlc+d1Sw/XAjc7UEGmAlRKZMc2ScysNN6LjzDroA1grkZxjEeeU1HBj/hT1FmlNI51cnFSbcyr/RArtRVDoEWmKhaTQVKdWF1qLrI2eiUVqiS52xkJKkRULri3VxZbHfzXSCQyRiK3ycvy6IUs23dzTlB027VtDWlfkwjRjcUW6TOfw6Yr89dL+7Rn56WF7AsSolXRXdPSIAAAAAElFTkSuQmCC"
+                 height="16" width="16">
+        </span><br/>
+            <span>JVM: default</span>
+        </td>
+        <td>&nbsp;</td>
+    </tr>
+    <tr>
+        <td>&nbsp;</td>
+        <td class="group2_member group2_off">
+            <span>Server: isu-456</span>
+        <span>
+            <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAABIElEQVR42q2UPQrCQBCFF8QiKfQOwSLgHfQUgleIVbqIvQdQxNbgTawsbIW0YqNX8AfjC7zAOM6KoAMfIbOzb3dmZ9c520LQBwnISEJf6L60IdiA0sOGMV6rVlqAh5h0AgU5Cf+DsebuliLwAFLQBW0SM8WLiFtqkYEY3IGOZ9dzcFepDurBFtjSeQSRIRCAXAlc+d1Sw/XAjc7UEGmAlRKZMc2ScysNN6LjzDroA1grkZxjEeeU1HBj/hT1FmlNI51cnFSbcyr/RArtRVDoEWmKhaTQVKdWF1qLrI2eiUVqiS52xkJKkRULri3VxZbHfzXSCQyRiK3ycvy6IUs23dzTlB027VtDWlfkwjRjcUW6TOfw6Yr89dL+7Rn56WF7AsSolXRXdPSIAAAAAElFTkSuQmCC"
+                 height="16" width="16">
+        </span><br/>
+            <span>JVM: default</span>
+        </td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+    </tr>
+    <tr>
+        <td class="group3_member group3_off">
+            <span>Server: rsx-12</span>
+        <span>
+            <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAABIElEQVR42q2UPQrCQBCFF8QiKfQOwSLgHfQUgleIVbqIvQdQxNbgTawsbIW0YqNX8AfjC7zAOM6KoAMfIbOzb3dmZ9c520LQBwnISEJf6L60IdiA0sOGMV6rVlqAh5h0AgU5Cf+DsebuliLwAFLQBW0SM8WLiFtqkYEY3IGOZ9dzcFepDurBFtjSeQSRIRCAXAlc+d1Sw/XAjc7UEGmAlRKZMc2ScysNN6LjzDroA1grkZxjEeeU1HBj/hT1FmlNI51cnFSbcyr/RArtRVDoEWmKhaTQVKdWF1qLrI2eiUVqiS52xkJKkRULri3VxZbHfzXSCQyRiK3ycvy6IUs23dzTlB027VtDWlfkwjRjcUW6TOfw6Yr89dL+7Rn56WF7AsSolXRXdPSIAAAAAElFTkSuQmCC"
+                 height="16" width="16">
+        </span><br/>
+            <span>JVM: default</span>
+        </td>
+        <td class="group3_member group3_off">
+            <span>Server: tazde11</span>
+        <span>
+            <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAABIElEQVR42q2UPQrCQBCFF8QiKfQOwSLgHfQUgleIVbqIvQdQxNbgTawsbIW0YqNX8AfjC7zAOM6KoAMfIbOzb3dmZ9c520LQBwnISEJf6L60IdiA0sOGMV6rVlqAh5h0AgU5Cf+DsebuliLwAFLQBW0SM8WLiFtqkYEY3IGOZ9dzcFepDurBFtjSeQSRIRCAXAlc+d1Sw/XAjc7UEGmAlRKZMc2ScysNN6LjzDroA1grkZxjEeeU1HBj/hT1FmlNI51cnFSbcyr/RArtRVDoEWmKhaTQVKdWF1qLrI2eiUVqiS52xkJKkRULri3VxZbHfzXSCQyRiK3ycvy6IUs23dzTlB027VtDWlfkwjRjcUW6TOfw6Yr89dL+7Rn56WF7AsSolXRXdPSIAAAAAElFTkSuQmCC"
+                 height="16" width="16">
+        </span><br/>
+            <span>JVM: default</span>
+        </td>
+        <td>&nbsp;</td>
+        <td class="group3_member group3_off">
+            <span>Server: stux-99</span>
+        <span>
+            <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAAeklEQVR42mNgGAWDEogCcT8QG1FqUDkQfwbiOUDMTYpGYSR2JRD/R8J2xBigwMDIDFJ8EYg9gDgXiP8hGdIBxJyEjYEY8huq6SeaIa2keKkaiHeieQWEO8kJWB4g3kiuS9CBABAvBeIGLHJCpBqWBMQuWMTFRrMV6QAAJHsfWPdPzcAAAAAASUVORK5CYII="
+                 height="16" width="16">
+        </span><br/>
+            <span>JVM: default</span>
+        </td>
+    </tr>
+    </tbody>
+</table></div>
 
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
 <script>
     $(document).ready(function () {
         $("#group0, #group1, #group2, #group3").hover(
-            function () {
-                var group = $(this).attr("id");
-                $(this).addClass("selected");
-                $("td." + group + "_member").addClass(group + "_on");
-                $("td." + group + "_member").removeClass(group + "_off");
-            },
-            function () {
-                var group = $(this).attr("id");
-                $(this).removeClass("selected");
-                $("td." + group + "_member").addClass(group + "_off");
-                $("td." + group + "_member").removeClass(group + "_on");
-            }
+                function () {
+                    var group = $(this).attr("id");
+                    $(this).addClass("selected");
+                    $("td." + group + "_member").addClass(group + "_on");
+                    $("td." + group + "_member").removeClass(group + "_off");
+                },
+                function () {
+                    var group = $(this).attr("id");
+                    $(this).removeClass("selected");
+                    $("td." + group + "_member").addClass(group + "_off");
+                    $("td." + group + "_member").removeClass(group + "_on");
+                }
         );
+
+        $("#prevhost").click(
+                function() {
+                    if (cursor > 0) {
+                        cursor--;
+                        updateNavigation();
+                    }
+                }
+        );
+        $("#nexthost").click(
+                function() {
+                    if (cursor + visibleHosts < hosts) {
+                        cursor++;
+                        updateNavigation();
+                    }
+                }
+        );
+
+        var cursor = 0;
+        var visibleHosts = 3;
+        var hosts = 4;
+
+        fillHosts();
+        updateNavigation();
+
+        function fillHosts() {
+            for (var col = 0; col < visibleHosts; col++) {
+
+            }
+        }
+
+        function updateNavigation() {
+            $("#prevhost").toggle(cursor > 0);
+            $("#nexthost").toggle(cursor + visibleHosts < hosts);
+        }
     });
 </script>
 
