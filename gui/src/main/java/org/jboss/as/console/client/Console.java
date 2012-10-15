@@ -211,6 +211,7 @@ public class Console implements EntryPoint {
         return MODULES.getEventBus();
     }
 
+    @Deprecated
     public static MessageCenter getMessageCenter() {
         return MODULES.getMessageCenter();
     }
@@ -224,6 +225,7 @@ public class Console implements EntryPoint {
         return MODULES.getBootstrapContext();
     }
 
+    @Deprecated
     public static HelpSystem getHelpSystem() {
         return MODULES.getHelpSystem();
     }

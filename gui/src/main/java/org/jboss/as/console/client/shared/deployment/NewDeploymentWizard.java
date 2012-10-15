@@ -194,30 +194,26 @@ public class NewDeploymentWizard  {
 
                     String operation = Console.CONSTANTS.common_label_addContent();
                     if (isUpdate) operation = Console.CONSTANTS.common_label_updateContent();
-                    sendMsg(Console.CONSTANTS.common_label_success() +
+                    Console.info(Console.CONSTANTS.common_label_success() +
                             ": " + operation +
-                            ": " + deployment.getName(), Message.Severity.Info);
+                            ": " + deployment.getName());
                 }
 
                 @Override
                 public void onError(Request request, Throwable exception) {
-                    sendMsg(Console.CONSTANTS.common_error_deploymentFailed() + ": " + exception.getMessage(), Message.Severity.Error);
+                    Console.error(Console.CONSTANTS.common_error_deploymentFailed() + ": " + exception.getMessage());
                     Log.error(Console.CONSTANTS.common_error_deploymentFailed() + ": ", exception);
                 }
             });
         } catch (RequestException e) {
-            sendMsg(Console.CONSTANTS.common_error_deploymentFailed() + ": " + e.getMessage(), Message.Severity.Error);
+            Console.error(Console.CONSTANTS.common_error_deploymentFailed() + ": " + e.getMessage());
             Log.error(Console.CONSTANTS.common_error_unknownError(), e);
         }
     }
 
     private void onDeploymentFailed(DeploymentReference deployment, Response response) {
-        sendMsg(Console.CONSTANTS.common_error_deploymentFailed() +
+        Console.error(Console.CONSTANTS.common_error_deploymentFailed() +
                 ": " + deployment.getName() +
-                ": " + response.getText(), Message.Severity.Error);
-    }
-
-    private void sendMsg(String message, Message.Severity severity) {
-        Console.getMessageCenter().notify(new Message(message, severity));
+                ": " + response.getText());
     }
 }
