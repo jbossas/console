@@ -156,6 +156,7 @@ public class DeploymentListPresenter extends Presenter<DeploymentListPresenter.M
 
                 if(result.isFailure())
                 {
+                    loading.hide();
                     Console.error(Console.MESSAGES.modificationFailed("Deployment "+record.getRuntimeName()), result.getFailureDescription());
                 }
                 else

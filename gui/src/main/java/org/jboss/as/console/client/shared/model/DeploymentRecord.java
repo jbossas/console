@@ -28,6 +28,9 @@ public interface DeploymentRecord  {
     public String getName();
     public void setName(String name);
 
+    public String getStatus();
+    public void setStatus(String status);
+
     public String getRuntimeName();
     public void setRuntimeName(String runtimeName);
 

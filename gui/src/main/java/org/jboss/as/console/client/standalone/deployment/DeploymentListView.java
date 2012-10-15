@@ -190,7 +190,11 @@ public class DeploymentListView extends SuspendableViewImpl implements Deploymen
 
                 ImageResource res = null;
 
-                if (deployment.isEnabled()) {
+                if("FAILED".equalsIgnoreCase(deployment.getStatus()))
+                {
+                    res = Icons.INSTANCE.status_warn();
+                }
+                else if (deployment.isEnabled()) {
                     res = Icons.INSTANCE.status_good();
                 } else {
                     res = Icons.INSTANCE.status_bad();

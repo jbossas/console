@@ -87,6 +87,8 @@ public class DeploymentStoreImpl implements DeploymentStore {
                             if (!isStandalone) rec.setEnabled(true);
                             if (isStandalone) rec.setPersistent(handler.get("persistent").asBoolean());
                             if (!isStandalone) rec.setPersistent(true);
+
+                            rec.setStatus(handler.get("status").asString());
                             rec.setServerGroup(null);
                             deployments.add(rec);
                         } catch (IllegalArgumentException e) {
