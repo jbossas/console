@@ -232,6 +232,8 @@ public class DeploymentListPresenter extends Presenter<DeploymentListPresenter.M
         ModelNode path = new ModelNode();
         path.get("path").set(entity.getPath());
         path.get("archive").set(entity.isArchive());
+        if(entity.getRelativeTo()!=null && !entity.getRelativeTo().equals(""))
+            path.get("relative-to").set(entity.getRelativeTo());
 
         content.add(path);
         operation.get("content").set(content);

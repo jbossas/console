@@ -34,6 +34,9 @@ public interface DeploymentRecord  {
     public String getPath();
     public void setPath(String path);
 
+    public String getRelativeTo();
+    public void setRelativeTo(String relativeTo);
+
     public String getRuntimeName();
     public void setRuntimeName(String runtimeName);
 

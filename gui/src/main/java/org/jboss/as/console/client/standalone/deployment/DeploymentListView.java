@@ -37,6 +37,7 @@ import org.jboss.as.console.client.shared.deployment.DeploymentFilter;
 import org.jboss.as.console.client.shared.deployment.TitleColumn;
 import org.jboss.as.console.client.shared.model.DeploymentRecord;
 import org.jboss.as.console.client.shared.viewframework.builder.MultipleToOneLayout;
+import org.jboss.ballroom.client.widgets.forms.DisclosureGroupRenderer;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.TextAreaItem;
 import org.jboss.ballroom.client.widgets.icons.Icons;
@@ -165,15 +166,17 @@ public class DeploymentListView extends SuspendableViewImpl implements Deploymen
         form.setEnabled(true);
         TextAreaItem name = new TextAreaItem("name", "Name");
         TextAreaItem runtimeName = new TextAreaItem("runtimeName", "Runtime Name");
-        //TextBoxItem sha = new TextBoxItem("sha", "SHA");
+        TextAreaItem path = new TextAreaItem("path", "Path");
+        TextAreaItem relative = new TextAreaItem("relativeTo", "Relative To");
         form.setFields(name,runtimeName);
+        form.setFieldsInGroup("Unmanaged", new DisclosureGroupRenderer(), path, relative);
 
         form.bind(deploymentTable);
 
         MultipleToOneLayout layout = new MultipleToOneLayout()
                 .setTitle(Console.CONSTANTS.common_label_deployments())
                 .setHeadline(Console.CONSTANTS.common_label_deployments())
-                .setDescription("Currently deployed application components. Deployments that have been added through the filesystem will not be managable through the web interface.")
+                .setDescription("Currently deployed application components.")
                 .setMaster(Console.MESSAGES.available("Deployments"), deploymentTable)
                 .setMasterTools(toolStrip)
                 .setDetail(Console.CONSTANTS.common_label_selection(), form.asWidget());

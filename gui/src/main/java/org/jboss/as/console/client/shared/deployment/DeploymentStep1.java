@@ -119,7 +119,8 @@ public class DeploymentStep1 {
 
                 // verify form
                 String filename = upload.getFilename();
-                if(tabs.getTabBar().isTabEnabled(1))
+
+                if(tabs.getTabBar().getSelectedTab()==1)
                 {
                     // unmanaged content
                     if(unmanagedForm.validate().hasErrors())
@@ -214,11 +215,13 @@ public class DeploymentStep1 {
 
         unmanagedForm = new Form<DeploymentRecord>(DeploymentRecord.class);
         TextAreaItem path = new TextAreaItem("path", "Path");
+        TextAreaItem relativeTo= new TextAreaItem("relativeTo", "Relative To");
+
         TextBoxItem name = new TextBoxItem("name", "Name");
         TextBoxItem runtimeName = new TextBoxItem("runtimeName", "Runtime Name");
         CheckBoxItem archive = new CheckBoxItem("archive", "Is Archive?");
         archive.setValue(true);
-        unmanagedForm.setFields(path, archive, name, runtimeName);
+        unmanagedForm.setFields(path, relativeTo, archive, name, runtimeName);
         unmanagedPanel.add(unmanagedForm.asWidget());
 
 

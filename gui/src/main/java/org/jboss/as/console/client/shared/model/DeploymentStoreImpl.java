@@ -90,6 +90,18 @@ public class DeploymentStoreImpl implements DeploymentStore {
 
                             rec.setStatus(handler.get("status").asString());
                             rec.setServerGroup(null);
+
+                            List<ModelNode> contentList = handler.get("content").asList();
+                            if(!contentList.isEmpty())
+                            {
+                                // TODO: strange concept (list.size() always 1)
+                                ModelNode content = contentList.get(0);
+                                if(content.has("path")) rec.setPath(content.get("path").asString());
+                                if(content.has("relative-to")) rec.setRelativeTo(content.get("relative-to").asString());
+                                if(content.has("archive")) rec.setArchive(content.get("archive").asBoolean());
+                                if(content.has("hash")) rec.setSha(content.get("hash").asString());
+                            }
+
                             deployments.add(rec);
                         } catch (IllegalArgumentException e) {
                             Log.error("Failed to parse data source representation", e);
