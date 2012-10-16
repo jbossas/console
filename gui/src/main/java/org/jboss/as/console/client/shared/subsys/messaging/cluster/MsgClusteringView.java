@@ -78,7 +78,7 @@ public class MsgClusteringView extends SuspendableViewImpl implements MsgCluster
 
             presenter.loadDetails(selectedProvider);
 
-            // move to first page if still showing overview
+            // move to first page if still showing topology
             if(0==panel.getPage())
                 panel.showPage(1);
         }

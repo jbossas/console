@@ -84,7 +84,7 @@ public class MsgConnectionsView extends SuspendableViewImpl implements MsgConnec
 
             presenter.loadDetails(selectedProvider);
 
-            // move to first page if still showing overview
+            // move to first page if still showing topology
             if(0==panel.getPage())
                 panel.showPage(1);
         }

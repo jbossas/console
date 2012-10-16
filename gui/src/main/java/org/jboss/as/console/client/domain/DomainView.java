@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.as.console.client.domain.overview;
+package org.jboss.as.console.client.domain;
 
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
@@ -29,16 +29,16 @@ import org.jboss.as.console.client.core.message.Message;
  * @author Harald Pehl
  * @dat 10/09/12
  */
-public class DomainOverview extends ViewImpl implements DomainOverviewPresenter.MyView
+public class DomainView extends ViewImpl implements DomainPresenter.MyView
 {
     private SplitLayoutPanel layout;
     private LayoutPanel contentCanvas;
-    private DomainOverviewNavigation lhsNavigation;
+    private DomainNavigation lhsNavigation;
 
-    public DomainOverview()
+    public DomainView()
     {
         contentCanvas = new LayoutPanel();
-        lhsNavigation = new DomainOverviewNavigation();
+        lhsNavigation = new DomainNavigation();
 
         layout = new SplitLayoutPanel(10);
         layout.addWest(lhsNavigation.asWidget(), 180);
@@ -54,7 +54,7 @@ public class DomainOverview extends ViewImpl implements DomainOverviewPresenter.
     @Override
     public void setInSlot(Object slot, Widget content)
     {
-        if (slot == DomainOverviewPresenter.TYPE_MainContent)
+        if (slot == DomainPresenter.TYPE_MainContent)
         {
             if (content != null)
             {

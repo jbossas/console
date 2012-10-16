@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.as.console.client.domain.overview;
+package org.jboss.as.console.client.domain.topology;
 
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtml;
@@ -27,7 +27,7 @@ import org.jboss.as.console.client.widgets.icons.ConsoleIcons;
 import org.jboss.ballroom.client.widgets.icons.Icons;
 
 /**
- * Contains most of the html generator code used in {@link ServerGroupHostMatrixView}. The generated html contains several <a
+ * Contains most of the html generator code used in {@link TopologyView}. The generated html contains several <a
  * href="http://dev.w3.org/html5/spec/global-attributes.html#embedding-custom-non-visible-data-with-the-data-*-attributes">HTML5
  * data attributes</a> to mark special tags:
  * <ul>

@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.as.console.client.domain.overview;
+package org.jboss.as.console.client.domain.topology;
 
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Node;
@@ -33,18 +33,18 @@ import org.jboss.as.console.client.shared.viewframework.builder.SimpleLayout;
 import java.util.*;
 
 import static com.google.gwt.user.client.Event.*;
-import static org.jboss.as.console.client.domain.overview.HtmlGenerator.*;
+import static org.jboss.as.console.client.domain.topology.HtmlGenerator.*;
 
 /**
  * @author Harald Pehl
  * @dat 10/09/12
  */
-public class ServerGroupHostMatrixView extends SuspendableViewImpl implements ServerGroupHostMatrixPresenter.MyView
+public class TopologyView extends SuspendableViewImpl implements TopologyPresenter.MyView
 {
     static final int VISIBLE_HOSTS_COLUMNS = 3;
     static final int SERVER_GROUP_COLORS = 5; // must match the '.serverGroupX' css class names
 
-    private ServerGroupHostMatrixPresenter presenter;
+    private TopologyPresenter presenter;
     private HTMLPanel root;
     private int hostIndex = 0; // the index of the current visible host
     private int hostSize = 0;
@@ -54,16 +54,16 @@ public class ServerGroupHostMatrixView extends SuspendableViewImpl implements Se
     public Widget createWidget()
     {
         SimpleLayout layout = new SimpleLayout()
-                .setTitle("Domain Overview")
-                .setHeadline("Hosts & Servers")
-                .setDescription("");
+                .setTitle("Topology")
+                .setHeadline("Hosts, groups and server instances")
+                .setDescription("An overview of all hosts, groups and server instances of the domain.");
         root = new HTMLPanel(new HtmlGenerator().root().toSafeHtml().asString());
         layout.addContent("domain", root);
         return layout.build();
     }
 
     @Override
-    public void setPresenter(final ServerGroupHostMatrixPresenter presenter)
+    public void setPresenter(final TopologyPresenter presenter)
     {
         this.presenter = presenter;
     }

@@ -99,7 +99,7 @@ public class SocketBindingView extends DisposableViewImpl implements SocketBindi
 
             presenter.loadDetails(selectedGroup);
 
-            // move to first page if still showing overview
+            // move to first page if still showing topology
             if(0==panel.getPage())
                 panel.showPage(1);
         }

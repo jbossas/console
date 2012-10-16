@@ -45,8 +45,8 @@ import org.jboss.as.console.client.domain.hosts.general.HostPropertiesPresenter;
 import org.jboss.as.console.client.domain.model.HostInformationStore;
 import org.jboss.as.console.client.domain.model.ProfileStore;
 import org.jboss.as.console.client.domain.model.ServerGroupStore;
-import org.jboss.as.console.client.domain.overview.DomainOverviewPresenter;
-import org.jboss.as.console.client.domain.overview.ServerGroupHostMatrixPresenter;
+import org.jboss.as.console.client.domain.DomainPresenter;
+import org.jboss.as.console.client.domain.topology.TopologyPresenter;
 import org.jboss.as.console.client.domain.profiles.CurrentProfileSelection;
 import org.jboss.as.console.client.domain.profiles.ProfileMgmtPresenter;
 import org.jboss.as.console.client.domain.runtime.DomainRuntimePresenter;
@@ -207,8 +207,8 @@ public interface CoreUI {
 
     AsyncProvider<ServerGroupMgmtPresenter> getServerGroupMgmtPresenter();
 
-    AsyncProvider<DomainOverviewPresenter> getProfileToolPresenter();
-    AsyncProvider<ServerGroupHostMatrixPresenter> getServerGroupHostMatrixPresenter();
+    AsyncProvider<DomainPresenter> getProfileToolPresenter();
+    AsyncProvider<TopologyPresenter> getServerGroupHostMatrixPresenter();
     AsyncProvider<ServerGroupPresenter> getServerGroupsPresenter();
 
     ProfileStore getProfileStore();
