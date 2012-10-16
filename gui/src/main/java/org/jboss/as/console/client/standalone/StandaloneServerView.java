@@ -3,7 +3,6 @@ package org.jboss.as.console.client.standalone;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.*;
-import com.google.gwt.view.client.ListDataProvider;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.DisposableViewImpl;
 import org.jboss.as.console.client.shared.viewframework.builder.SimpleLayout;
@@ -25,9 +24,6 @@ public class StandaloneServerView extends DisposableViewImpl implements Standalo
     private Label headline;
     private DeckPanel reloadPanel;
     private Form<StandaloneServer> form;
-//    private DefaultCellTable<String> extensionTable;
-    private ListDataProvider<String> dataProvider;
-//    private EnvironmentProperties environmentProperties;
 
     @Override
     public Widget createWidget() {
@@ -64,8 +60,6 @@ public class StandaloneServerView extends DisposableViewImpl implements Standalo
         TextItem state = new TextItem("serverState", "Server State");
 
         form.setFields(codename, version, state);
-
-
 
         // ----
 
@@ -108,34 +102,6 @@ public class StandaloneServerView extends DisposableViewImpl implements Standalo
 
         configNeedsUpdate.add(staleContent);
 
-        // ----
-
-
-//        extensionTable = new DefaultCellTable<String>(8);
-//        extensionTable.addColumn(new Column<String, String>(new TextCell()) {
-//            @Override
-//            public String getValue(String object) {
-//                return object;
-//            }
-//        }, "Name");
-//
-//        dataProvider = new ListDataProvider<String>();
-//        dataProvider.addDataDisplay(extensionTable);
-
-//        VerticalPanel extPanel = new VerticalPanel();
-//        extPanel.setStyleName("fill-layout-width");
-//        extPanel.getElement().setAttribute("style", "padding-top:15px;");
-//
-//        DefaultPager pager = new DefaultPager();
-//        pager.setDisplay(extensionTable);
-//
-//
-//
-//        extPanel.add(extensionTable.asWidget());
-//        extPanel.add(pager);
-
-        // ---
-
         reloadPanel.add(configUptodate);
         reloadPanel.add(configNeedsUpdate);
         reloadPanel.showWidget(0);
@@ -146,25 +112,13 @@ public class StandaloneServerView extends DisposableViewImpl implements Standalo
         master.add(reloadPanel);
         master.add(form.asWidget());
 
-
-//        environmentProperties = new EnvironmentProperties();
-
-
         SimpleLayout layout = new SimpleLayout()
                 .setTitle("Standalone Server")
                 .setHeadlineWidget(headline)
                 .setDescription(Console.CONSTANTS.server_config_desc())
                 .addContent("Server Configuration", master);
-//                .addDetail("Extensions", extPanel)
-//                .addDetail("Environment Properties", environmentProperties.asWidget());
-
-
         return layout.build();
     }
-
-//    private void filterProperties(String prefix) {
-//        environmentProperties.filterByPrefix(prefix);
-//    }
 
     @Override
     public void setPresenter(StandaloneServerPresenter presenter) {
@@ -175,18 +129,10 @@ public class StandaloneServerView extends DisposableViewImpl implements Standalo
     public void updateFrom(StandaloneServer server) {
         form.edit(server);
         headline.setText("Server: "+ server.getName());
-
-//        dataProvider.setList(server.getExtensions());
-
     }
 
     @Override
     public void setReloadRequired(boolean reloadRequired) {
         reloadPanel.showWidget( reloadRequired ? 1:0);
     }
-
-//    @Override
-//    public void setEnvironment(List<PropertyRecord> environment) {
-//        environmentProperties.setProperties(environment);
-//    }
 }
