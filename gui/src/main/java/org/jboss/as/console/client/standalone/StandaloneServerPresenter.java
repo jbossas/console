@@ -27,10 +27,6 @@ import org.jboss.as.console.client.shared.state.ReloadEvent;
 import org.jboss.as.console.client.shared.state.ReloadState;
 import org.jboss.as.console.client.standalone.runtime.StandaloneRuntimePresenter;
 import org.jboss.dmr.client.ModelNode;
-import org.jboss.dmr.client.Property;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 
@@ -80,91 +76,24 @@ public class StandaloneServerPresenter extends Presenter<StandaloneServerPresent
 
     private void loadConfig()
     {
-        ModelNode operation = new ModelNode();
-        operation.get(OP).set(COMPOSITE);
-        operation.get(ADDRESS).setEmptyList();
-
-        List<ModelNode> steps = new ArrayList<ModelNode>();
-
         ModelNode serverConfig = new ModelNode();
         serverConfig.get(OP).set(READ_RESOURCE_OPERATION);
         serverConfig.get(INCLUDE_RUNTIME).set(true);
         serverConfig.get(ADDRESS).setEmptyList();
-        steps.add(serverConfig);
 
-        //:read-children-resources(child-type=socket-binding-group)
-
-//        ModelNode fetchExtensions = new ModelNode();
-//        fetchExtensions.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
-//        fetchExtensions.get(ADDRESS).setEmptyList();
-//        fetchExtensions.get(CHILD_TYPE).set("extension");
-//        steps.add(fetchExtensions);
-
-        // /core-service=platform-mbean/type=runtime:read-attribute(name=system-properties)
-//        ModelNode envProperties = new ModelNode();
-//        envProperties.get(OP).set(READ_ATTRIBUTE_OPERATION);
-//        envProperties.get(ADDRESS).add("core-service", "platform-mbean");
-//        envProperties.get(ADDRESS).add("type", "runtime");
-//        envProperties.get(NAME).set("system-properties");
-//        steps.add(envProperties);
-
-        operation.get(STEPS).set(steps);
-
-        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+        dispatcher.execute(new DMRAction(serverConfig), new SimpleCallback<DMRResponse>() {
             @Override
             public void onSuccess(DMRResponse result) {
                 ModelNode response = result.get();
 
-                List<Property> propertyList = response.get(RESULT).asPropertyList();
                 StandaloneServer server = factory.standaloneServer().as();
-
-                for(Property step : propertyList)
-                {
-                    ModelNode stepResult = step.getValue();
-                    if(step.getName().equals("step-1"))
-                    {
-                        // name response
-                        ModelNode serverAttributes = stepResult.get(RESULT).asObject();
-                        server.setName(serverAttributes.get("name").asString());
-                        server.setReleaseCodename(serverAttributes.get("release-codename").asString());
-                        server.setReleaseVersion(serverAttributes.get("release-version").asString());
-                        server.setServerState(serverAttributes.get("server-state").asString());
-                    }
-//                    else if(step.getName().equals("step-2"))
-//                    {
-//                        // socket-binding response
-//                        List<Property> model = stepResult.get(RESULT).asPropertyList();
-//                        List<String> extension = new ArrayList<String>(model.size());
-//                        for(Property item : model)
-//                        {
-//                            extension.add(item.getName());
-//                        }
-//
-//                        server.setExtensions(extension);
-//
-//
-//                    }
-//                    else if(step.getName().equals("step-3"))
-//                    {
-//                        List<Property> properties = stepResult.get(RESULT).asPropertyList();
-//                        List<PropertyRecord> environment = new ArrayList<PropertyRecord>(properties.size());
-//
-//                        for(Property prop : properties)
-//                        {
-//                            PropertyRecord model = factory.property().as();
-//                            model.setKey(prop.getName());
-//                            model.setValue(prop.getValue().asString());
-//
-//                            environment.add(model);
-//
-//                        }
-//
-//                        getView().setEnvironment(environment);
-//                    }
-                }
+                ModelNode serverAttributes = response.get(RESULT).asObject();
+                server.setName(serverAttributes.get("name").asString());
+                server.setReleaseCodename(serverAttributes.get("release-codename").asString());
+                server.setReleaseVersion(serverAttributes.get("release-version").asString());
+                server.setServerState(serverAttributes.get("server-state").asString());
                 getView().updateFrom(server);
                 getView().setReloadRequired(reloadState.isStaleModel());
-
             }
         });
 

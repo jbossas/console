@@ -77,7 +77,8 @@ public class NameTokens {
     public static final String WebMetricPresenter = "web-metrics";
     public static final String JmsMetricPresenter = "jms-metrics";
     public static final String DataSourceMetricPresenter  = "ds-metrics";
-    public static final String EnvironmentPropertiesPresenter = "env-props";
+    public static final String EnvironmentPresenter = "environment";
+    public static final String ExtensionsPresenter = "extension";
     public static final String JPAMetricPresenter = "jpa-metrics";
     public static final String WebServiceRuntimePresenter = "webservice-runtime";
     public static final String JGroupsPresenter = "jgroups";
