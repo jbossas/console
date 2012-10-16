@@ -39,7 +39,7 @@ import org.jboss.as.console.client.domain.model.EntityFilter;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.domain.model.ServerGroupStore;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
-import org.jboss.as.console.client.domain.overview.DomainOverviewPresenter;
+import org.jboss.as.console.client.domain.DomainPresenter;
 import org.jboss.as.console.client.shared.deployment.DeployCommandExecutor;
 import org.jboss.as.console.client.shared.deployment.DeploymentCommand;
 import org.jboss.as.console.client.shared.deployment.DeploymentCommandDelegate;
@@ -117,7 +117,7 @@ public class DeploymentsPresenter extends Presenter<DeploymentsPresenter.MyView,
 
     @Override
     protected void revealInParent() {
-        RevealContentEvent.fire(getEventBus(), DomainOverviewPresenter.TYPE_MainContent, this);
+        RevealContentEvent.fire(getEventBus(), DomainPresenter.TYPE_MainContent, this);
     }
 
     @Override

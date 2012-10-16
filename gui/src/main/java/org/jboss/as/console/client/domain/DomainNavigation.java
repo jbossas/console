@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.as.console.client.domain.overview;
+package org.jboss.as.console.client.domain;
 
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -30,7 +30,7 @@ import org.jboss.ballroom.client.layout.LHSTreeSection;
  * @author Harald Pehl
  * @date 12/15/10
  */
-class DomainOverviewNavigation
+class DomainNavigation
 {
     private VerticalPanel stack;
     private VerticalPanel layout;
@@ -50,7 +50,7 @@ class DomainOverviewNavigation
         navigation.getElement().setAttribute("aria-label", "Domain Tasks");
 
         LHSTreeSection domainLeaf = new LHSTreeSection("Domain");
-        domainLeaf.addItem(new LHSNavTreeItem("Overview", NameTokens.ServerGroupHostMatrixPresenter));
+        domainLeaf.addItem(new LHSNavTreeItem("Topology", NameTokens.Topology));
         domainLeaf.addItem(new LHSNavTreeItem("Manage Deployments", NameTokens.DeploymentsPresenter));
 
         navigation.addItem(domainLeaf);

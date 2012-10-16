@@ -1,4 +1,4 @@
-package org.jboss.as.console.client.domain.overview;
+package org.jboss.as.console.client.domain.topology;
 
 import org.jboss.as.console.client.domain.model.ServerInstance;
 

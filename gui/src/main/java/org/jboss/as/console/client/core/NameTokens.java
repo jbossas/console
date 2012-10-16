@@ -146,14 +146,14 @@ public class NameTokens {
         return ProfileMgmtPresenter;
     }
 
-    public static final String DomainOverviewPresenter = "domain-overview";
-    public static String getDomainOverviewPresenter() {
-        return DomainOverviewPresenter;
+    public static final String DomainPresenter = "domain";
+    public static String getDomainPresenter() {
+        return DomainPresenter;
     }
 
-    public static final String ServerGroupHostMatrixPresenter = "group-host-matrix";
-    public static String getServerGroupHostMatrixPresenter() {
-        return ServerGroupHostMatrixPresenter;
+    public static final String Topology = "topology";
+    public static String getTopology() {
+        return Topology;
     }
 
     public static final String ServerGroupPresenter = "server-groups";

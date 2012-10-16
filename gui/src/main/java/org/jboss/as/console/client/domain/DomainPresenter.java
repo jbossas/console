@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.as.console.client.domain.overview;
+package org.jboss.as.console.client.domain;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent;
@@ -38,17 +38,17 @@ import org.jboss.as.console.client.core.NameTokens;
  * @author Heiko Braun
  * @date 2/11/11
  */
-public class DomainOverviewPresenter
-        extends Presenter<DomainOverviewPresenter.MyView, DomainOverviewPresenter.MyProxy>
+public class DomainPresenter
+        extends Presenter<DomainPresenter.MyView, DomainPresenter.MyProxy>
 {
     @ContentSlot
     public static final GwtEvent.Type<RevealContentHandler<?>> TYPE_MainContent =
             new GwtEvent.Type<RevealContentHandler<?>>();
 
     @ProxyCodeSplit
-    @NameToken(NameTokens.DomainOverviewPresenter)
+    @NameToken(NameTokens.DomainPresenter)
     @UseGatekeeper(DomainGateKeeper.class)
-    public interface MyProxy extends Proxy<DomainOverviewPresenter>, Place
+    public interface MyProxy extends Proxy<DomainPresenter>, Place
     {
     }
 
@@ -66,7 +66,7 @@ public class DomainOverviewPresenter
     private boolean hasBeenRevealed;
 
     @Inject
-    public DomainOverviewPresenter(EventBus eventBus, MyView view, MyProxy proxy, PlaceManager placeManager,
+    public DomainPresenter(EventBus eventBus, MyView view, MyProxy proxy, PlaceManager placeManager,
             Header header)
     {
         super(eventBus, view, proxy);
@@ -77,7 +77,7 @@ public class DomainOverviewPresenter
     @Override
     protected void onReset()
     {
-        header.highlight(NameTokens.DomainOverviewPresenter);
+        header.highlight(NameTokens.DomainPresenter);
 
         String currentToken = placeManager.getCurrentPlaceRequest().getNameToken();
         if (!currentToken.equals(getProxy().getNameToken()))
@@ -90,9 +90,9 @@ public class DomainOverviewPresenter
         }
 
         // first request, select default contents
-        if (!hasBeenRevealed && NameTokens.DomainOverviewPresenter.equals(currentToken))
+        if (!hasBeenRevealed && NameTokens.DomainPresenter.equals(currentToken))
         {
-            placeManager.revealPlace(new PlaceRequest(NameTokens.ServerGroupHostMatrixPresenter));
+            placeManager.revealPlace(new PlaceRequest(NameTokens.Topology));
             hasBeenRevealed = true;
         }
     }

@@ -40,4 +40,10 @@ public class EnvironmentView extends SuspendableViewImpl implements EnvironmentP
     {
         properties.setProperties(environment);
     }
+
+    @Override
+    public void clearEnvironment()
+    {
+        properties.clearValues();
+    }
 }

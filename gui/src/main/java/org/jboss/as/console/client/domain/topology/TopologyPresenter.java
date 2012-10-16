@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.as.console.client.domain.overview;
+package org.jboss.as.console.client.domain.topology;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.Random;
@@ -31,7 +31,11 @@ import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import org.jboss.as.console.client.core.DomainGateKeeper;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.core.SuspendableView;
+import org.jboss.as.console.client.domain.DomainPresenter;
+import org.jboss.as.console.client.domain.model.Host;
+import org.jboss.as.console.client.domain.model.HostInformationStore;
 import org.jboss.as.console.client.domain.model.ServerInstance;
+import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.ballroom.client.widgets.window.Feedback;
 
@@ -43,31 +47,35 @@ import java.util.List;
  * @author Harald Pehl
  * @date 10/15/12
  */
-public class ServerGroupHostMatrixPresenter extends
-        Presenter<ServerGroupHostMatrixPresenter.MyView, ServerGroupHostMatrixPresenter.MyProxy>
+public class TopologyPresenter extends
+        Presenter<TopologyPresenter.MyView, TopologyPresenter.MyProxy>
 {
-    private final BeanFactory factory;
-
     @ProxyCodeSplit
-    @NameToken(NameTokens.ServerGroupHostMatrixPresenter)
+    @NameToken(NameTokens.Topology)
     @UseGatekeeper(DomainGateKeeper.class)
-    public interface MyProxy extends Proxy<ServerGroupHostMatrixPresenter>, Place
+    public interface MyProxy extends Proxy<TopologyPresenter>, Place
     {
 
     }
 
+
     public interface MyView extends SuspendableView
     {
-        void setPresenter(ServerGroupHostMatrixPresenter presenter);
+        void setPresenter(TopologyPresenter presenter);
+
         void updateHosts(List<HostInfo> hosts);
     }
 
 
+    private final HostInformationStore hostInfoStore;
+    private final BeanFactory factory;
+
     @Inject
-    public ServerGroupHostMatrixPresenter(final EventBus eventBus, final MyView view,
-            final MyProxy proxy, BeanFactory factory)
+    public TopologyPresenter(final EventBus eventBus, final MyView view,
+            final MyProxy proxy, final HostInformationStore hostInfoStore, final BeanFactory factory)
     {
         super(eventBus, view, proxy);
+        this.hostInfoStore = hostInfoStore;
         this.factory = factory;
     }
 
@@ -88,42 +96,35 @@ public class ServerGroupHostMatrixPresenter extends
     @Override
     protected void revealInParent()
     {
-        RevealContentEvent.fire(getEventBus(), DomainOverviewPresenter.TYPE_MainContent, this);
+        RevealContentEvent.fire(getEventBus(), DomainPresenter.TYPE_MainContent, this);
     }
 
 
-    private void loadHostsData() {
-        //        hostInfo.getHosts(new SimpleCallback<List<Host>>() {
-        //            @Override
-        //            public void onSuccess(final List<Host> hosts) {
-        //
-        //                final List<HostInfo> hostInfos = new ArrayList<HostInfo>();
-        //                for(final Host host : hosts)
-        //                {
-        //                    hostInfo.getServerInstances(host.getName(), new SimpleCallback<List<ServerInstance>>() {
-        //                        @Override
-        //                        public void onSuccess(List<ServerInstance> serverInstances) {
-        //
-        //                            HostInfo info = new HostInfo(host.getName(), host.isController());
-        //                            info.setServerInstances(serverInstances);
-        //                            hostInfos.add(info);
-        //                            if(hostInfos.size() == hosts.size())
-        //                            {
-        //                                // done
-        //                                Collections.sort(hostInfos, new Comparator<HostInfo>() {
-        //                                    @Override
-        //                                    public int compare(HostInfo host, HostInfo host1) {
-        //                                        return host.getName().compareTo(host1.getName());
-        //                                    }
-        //                                });
-        //                                getView().updateHosts(hostInfos, preselectedServer);
-        //                            }
-        //                        }
-        //                    });
-        //                }
-        //            }
-        //        });
-        getView().updateHosts(generateFakeDomain());
+    private void loadHostsData()
+    {
+        hostInfoStore.getHosts(new SimpleCallback<List<Host>>()
+        {
+            @Override
+            public void onSuccess(final List<Host> hosts)
+            {
+                final List<HostInfo> hostInfos = new ArrayList<HostInfo>();
+                for (final Host host : hosts)
+                {
+                    hostInfoStore.getServerInstances(host.getName(), new SimpleCallback<List<ServerInstance>>()
+                    {
+                        @Override
+                        public void onSuccess(List<ServerInstance> serverInstances)
+                        {
+                            HostInfo info = new HostInfo(host.getName(), host.isController());
+                            info.setServerInstances(serverInstances);
+                            hostInfos.add(info);
+                            getView().updateHosts(hostInfos);
+                        }
+                    });
+                }
+            }
+        });
+        //        getView().updateHosts(generateFakeDomain());
     }
 
     private List<HostInfo> generateFakeDomain()
@@ -135,7 +136,7 @@ public class ServerGroupHostMatrixPresenter extends
         final List<HostInfo> hostInfos = new ArrayList<HostInfo>();
         int numHosts = Random.nextInt(5) + 10;
 
-        for(int i = 0; i < numHosts; i++)
+        for (int i = 0; i < numHosts; i++)
         {
             // host info
             String name = hostNames[Random.nextInt(2)] + "-" + i;
@@ -145,15 +146,15 @@ public class ServerGroupHostMatrixPresenter extends
             host.setServerInstances(new ArrayList<ServerInstance>());
 
             // server instances
-            for(int x = 0; x < (Random.nextInt(5) + 1); x++)
+            for (int x = 0; x < (Random.nextInt(5) + 1); x++)
             {
-                int groupIndex = Random.nextInt(groupNames.length-1);
+                int groupIndex = Random.nextInt(groupNames.length - 1);
                 ServerInstance serverInstance = factory.serverInstance().as();
                 serverInstance.setGroup(groupNames[groupIndex]);
                 serverInstance.setRunning((groupIndex % 2 == 0));
                 serverInstance.setName(groupNames[groupIndex] + "-" + x);
-                serverInstance.setSocketBindings(Collections.<String,String> emptyMap());
-                serverInstance.setInterfaces(Collections.<String,String> emptyMap());
+                serverInstance.setSocketBindings(Collections.<String, String>emptyMap());
+                serverInstance.setInterfaces(Collections.<String, String>emptyMap());
 
                 host.getServerInstances().add(serverInstance);
             }
@@ -176,7 +177,6 @@ public class ServerGroupHostMatrixPresenter extends
                         { System.out.println(next + " server " + server.getName() + " on host: " + hostName); }
                     }
                 });
-
     }
 
     public void onStartStopGroup(final String hostName, final String group, boolean startIt)

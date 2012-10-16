@@ -25,14 +25,18 @@ import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.Place;
 import com.gwtplatform.mvp.client.proxy.Proxy;
+import org.jboss.as.console.client.Console;
+import org.jboss.as.console.client.core.BootstrapContext;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.core.SuspendableView;
+import org.jboss.as.console.client.domain.model.ServerInstance;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
+import org.jboss.as.console.client.shared.state.CurrentServerSelection;
 import org.jboss.as.console.client.shared.state.ServerSelectionEvent;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
 import org.jboss.dmr.client.ModelNode;
@@ -48,7 +52,7 @@ import static org.jboss.dmr.client.ModelDescriptionConstants.*;
  * @date 15/10/12
  */
 public class EnvironmentPresenter extends Presenter<EnvironmentPresenter.MyView,
-        EnvironmentPresenter.MyProxy>
+        EnvironmentPresenter.MyProxy> implements ServerSelectionEvent.ServerSelectionListener
 {
     @ProxyCodeSplit
     @NameToken(NameTokens.EnvironmentPresenter)
@@ -63,23 +67,28 @@ public class EnvironmentPresenter extends Presenter<EnvironmentPresenter.MyView,
         void setPresenter(EnvironmentPresenter environmentPresenter);
 
         void setEnvironment(List<PropertyRecord> environment);
+
+        void clearEnvironment();
     }
 
 
     private final DispatchAsync dispatcher;
     private final BeanFactory factory;
     private final RevealStrategy revealStrategy;
-
+    private final BootstrapContext bootstrap;
+    private final CurrentServerSelection serverSelection;
 
     @Inject
     public EnvironmentPresenter(final EventBus eventBus, final MyView view,
             final MyProxy proxy, final DispatchAsync dispatcher, final BeanFactory factory,
-            final RevealStrategy revealStrategy)
+            final RevealStrategy revealStrategy, final BootstrapContext bootstrap, final CurrentServerSelection serverSelection)
     {
         super(eventBus, view, proxy);
         this.dispatcher = dispatcher;
         this.factory = factory;
         this.revealStrategy = revealStrategy;
+        this.bootstrap = bootstrap;
+        this.serverSelection = serverSelection;
     }
 
     @Override
@@ -103,15 +112,34 @@ public class EnvironmentPresenter extends Presenter<EnvironmentPresenter.MyView,
         refresh();
     }
 
+    @Override
+    public void onServerSelection(final String hostName, final ServerInstance server,
+            final ServerSelectionEvent.Source source)
+    {
+        refresh();
+    }
+
     public void refresh()
     {
-        ModelNode systemProperties = new ModelNode();
-        systemProperties.get(OP).set(READ_ATTRIBUTE_OPERATION);
-        systemProperties.get(ADDRESS).add("core-service", "platform-mbean");
-        systemProperties.get(ADDRESS).add("type", "runtime");
-        systemProperties.get(NAME).set("system-properties");
+        if(!serverSelection.isActive())
+        {
+            Console.warning(Console.CONSTANTS.common_err_server_not_active());
+            getView().clearEnvironment();
+            return;
+        }
 
-        dispatcher.execute(new DMRAction(systemProperties), new SimpleCallback<DMRResponse>()
+        ModelNode operation = new ModelNode();
+        if (!bootstrap.isStandalone())
+        {
+            operation.get(ADDRESS).add("host", serverSelection.getHost());
+            operation.get(ADDRESS).add("server", serverSelection.getServer().getName());
+        }
+        operation.get(ADDRESS).add("core-service", "platform-mbean");
+        operation.get(ADDRESS).add("type", "runtime");
+        operation.get(OP).set(READ_ATTRIBUTE_OPERATION);
+        operation.get(NAME).set("system-properties");
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>()
         {
             @Override
             public void onSuccess(DMRResponse result)
