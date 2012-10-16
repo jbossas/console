@@ -86,9 +86,6 @@ class DomainRuntimeNavigation implements ServerSelectionEvent.ServerSelectionLis
         domainLeaf.addItem(domainOverview);*/
         domainLeaf.addItem(serverInstances);
 
-        domainLeaf.addItem(new LHSNavTreeItem("Manage Deployments", NameTokens.DeploymentsPresenter));
-
-
         //DisclosurePanel statusPanel  = new DisclosureStackPanel("Domain Status").asWidget();
         //statusPanel.setContent(statusTree);
         //stack.add(statusPanel);

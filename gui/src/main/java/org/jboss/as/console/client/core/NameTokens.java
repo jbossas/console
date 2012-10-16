@@ -77,6 +77,7 @@ public class NameTokens {
     public static final String WebMetricPresenter = "web-metrics";
     public static final String JmsMetricPresenter = "jms-metrics";
     public static final String DataSourceMetricPresenter  = "ds-metrics";
+    public static final String EnvironmentPropertiesPresenter = "env-props";
     public static final String JPAMetricPresenter = "jpa-metrics";
     public static final String WebServiceRuntimePresenter = "webservice-runtime";
     public static final String JGroupsPresenter = "jgroups";
@@ -147,6 +148,11 @@ public class NameTokens {
     public static final String DomainOverviewPresenter = "domain-overview";
     public static String getDomainOverviewPresenter() {
         return DomainOverviewPresenter;
+    }
+
+    public static final String ServerGroupHostMatrixPresenter = "group-host-matrix";
+    public static String getServerGroupHostMatrixPresenter() {
+        return ServerGroupHostMatrixPresenter;
     }
 
     public static final String ServerGroupPresenter = "server-groups";

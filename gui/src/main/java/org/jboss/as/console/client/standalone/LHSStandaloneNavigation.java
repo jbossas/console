@@ -46,7 +46,7 @@ public class LHSStandaloneNavigation {
 
     private VerticalPanel layout;
     private LHSNavTree navigation;
-    private LHSTreeSection serverLeaf;
+    private LHSTreeSection subsystemLeaf;
 
     public LHSStandaloneNavigation() {
         super();
@@ -64,8 +64,8 @@ public class LHSStandaloneNavigation {
         navigation.getElement().setAttribute("aria-label", "Profile Tasks");
         //navigation.getElement().setAttribute("aria-controls", "rhs-content-area");
 
-        serverLeaf = new LHSTreeSection(Console.CONSTANTS.common_label_profile(), true);
-        navigation.addItem(serverLeaf);
+        subsystemLeaf = new LHSTreeSection(Console.CONSTANTS.common_label_subsystems(), true);
+        navigation.addItem(subsystemLeaf);
 
         // ----------------------------------------------------
 
@@ -102,9 +102,9 @@ public class LHSStandaloneNavigation {
 
     public void updateFrom(List<SubsystemRecord> subsystems) {
 
-        serverLeaf.removeItems();
+        subsystemLeaf.removeItems();
 
-        SubsystemTreeBuilder.build(serverLeaf, subsystems);
+        SubsystemTreeBuilder.build(subsystemLeaf, subsystems);
 
         navigation.expandTopLevel();
 

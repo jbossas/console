@@ -18,357 +18,58 @@
  */
 package org.jboss.as.console.client.domain.overview;
 
-import com.google.gwt.dom.client.Element;
-import com.google.gwt.dom.client.Node;
-import com.google.gwt.dom.client.NodeList;
-import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.Event;
-import com.google.gwt.user.client.EventListener;
-import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.LayoutPanel;
+import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
-import org.jboss.as.console.client.core.SuspendableViewImpl;
-import org.jboss.as.console.client.domain.model.ServerInstance;
-import org.jboss.as.console.client.shared.viewframework.builder.SimpleLayout;
-
-import java.util.*;
-
-import static com.google.gwt.user.client.Event.*;
-import static org.jboss.as.console.client.domain.overview.HtmlGenerator.*;
+import com.gwtplatform.mvp.client.ViewImpl;
+import org.jboss.as.console.client.Console;
+import org.jboss.as.console.client.core.message.Message;
 
 /**
  * @author Harald Pehl
  * @dat 10/09/12
  */
-public class DomainOverview extends SuspendableViewImpl implements DomainOverviewPresenter.MyView
+public class DomainOverview extends ViewImpl implements DomainOverviewPresenter.MyView
 {
-    static final int VISIBLE_HOSTS_COLUMNS = 3;
-    static final int SERVER_GROUP_COLORS = 5; // must match the '.serverGroupX' css class names
+    private SplitLayoutPanel layout;
+    private LayoutPanel contentCanvas;
+    private DomainOverviewNavigation lhsNavigation;
 
-    private DomainOverviewPresenter presenter;
-    private HTMLPanel root;
-    private int hostIndex = 0; // the index of the current visible host
-    private int hostSize = 0;
-
-
-    @Override
-    public Widget createWidget()
+    public DomainOverview()
     {
-        SimpleLayout layout = new SimpleLayout()
-                .setTitle("Domain Overview")
-                .setHeadline("Host & Servers")
-                .setDescription("");
-        root = new HTMLPanel(new HtmlGenerator().root().toSafeHtml().asString());
-        layout.addContent("domain", root);
-        return layout.build();
+        contentCanvas = new LayoutPanel();
+        lhsNavigation = new DomainOverviewNavigation();
+
+        layout = new SplitLayoutPanel(10);
+        layout.addWest(lhsNavigation.asWidget(), 180);
+        layout.add(contentCanvas);
     }
 
     @Override
-    public void setPresenter(final DomainOverviewPresenter presenter)
+    public Widget asWidget()
     {
-        this.presenter = presenter;
+        return layout;
     }
 
     @Override
-    public void updateHosts(final List<HostInfo> hosts, final ServerPanelReference preselectedServer)
+    public void setInSlot(Object slot, Widget content)
     {
-        // initialize
-        hostIndex = 0;
-        hostSize = hosts.size();
-        HtmlGenerator hiddenHosts = new HtmlGenerator();
-        HtmlGenerator hiddenServers = new HtmlGenerator();
-        HtmlGenerator visible = new HtmlGenerator();
-
-        // get groups
-        SortedSet<ServerGroup> groups = deriveGroups(hosts);
-        for (ServerGroup group : groups)
+        if (slot == DomainOverviewPresenter.TYPE_MainContent)
         {
-            group.fill(hosts);
-        }
-        Set<HostInfo> orderedHosts = groups.first().getHosts();
-
-        // fill the hidden table
-        // first row: hosts
-        hiddenHosts.appendHtmlConstant("<tr>");
-        for (HostInfo host : orderedHosts)
-        {
-            hiddenHosts.appendHost(host);
-        }
-        hiddenHosts.appendHtmlConstant("</tr>");
-        com.google.gwt.user.client.Element hiddenHead = root.getElementById(HIDDEN_HOSTS_ID);
-        hiddenHead.setInnerHTML(hiddenHosts.toSafeHtml().asString());
-
-        // remaining rows: servers
-        for (ServerGroup group : groups)
-        {
-            for (int serverIndex = 0; serverIndex < group.maxServersPerHost; serverIndex++)
+            if (content != null)
             {
-                hiddenServers.appendHtmlConstant("<tr>");
-                for (HostInfo host : group.getHosts())
-                {
-                    List<ServerInstance> servers = group.serversPerHost.get(host);
-                    if (servers.isEmpty() || serverIndex >= servers.size())
-                    {
-                        hiddenServers.appendHtmlConstant("<td>&nbsp;</td>");
-                    }
-                    else
-                    {
-                        // Generate td for one server instance
-                        ServerInstance server = servers.get(serverIndex);
-                        hiddenServers.appendServer(group, server);
-                    }
-                }
-                hiddenServers.appendHtmlConstant("</tr>");
+                setContent(content);
             }
         }
-        com.google.gwt.user.client.Element hiddenBody = root.getElementById(HIDDEN_SERVERS_ID);
-        hiddenBody.setInnerHTML(hiddenServers.toSafeHtml().asString());
-
-        // fill the visible table
-        // Create tr/td for server groups
-        for (ServerGroup group : groups)
+        else
         {
-            visible.appendServerGroup(group);
-
-        }
-        com.google.gwt.user.client.Element visibleHostsBody = root.getElementById(VISIBLE_SERVERS_ID);
-        visibleHostsBody.setInnerHTML(visible.toSafeHtml().asString());
-
-        registerEvents(groups);
-
-        // "scroll" to the first host (copy the DOM nodes from hidden hosts table to visible table)
-        scrollTo(0);
-    }
-
-    private SortedSet<ServerGroup> deriveGroups(List<HostInfo> hosts)
-    {
-        SortedMap<String, ServerGroup> serverGroups = new TreeMap<String, ServerGroup>();
-        for (HostInfo host : hosts)
-        {
-            List<ServerInstance> serverInstances = host.getServerInstances();
-            for (ServerInstance server : serverInstances)
-            {
-                String group = server.getGroup();
-                String profile = server.getProfile();
-                ServerGroup serverGroup = serverGroups.get(group);
-                if (serverGroup == null)
-                {
-                    serverGroup = new ServerGroup(group, profile);
-                    serverGroups.put(group, serverGroup);
-                }
-            }
-        }
-
-        // assign colors *after* the groups were sorted
-        int index = 0;
-        TreeSet<ServerGroup> orderedGroups = new TreeSet<ServerGroup>(serverGroups.values());
-        for (ServerGroup group : orderedGroups)
-        {
-            group.cssClassname = SERVER_GROUP_CLASS + (index % SERVER_GROUP_COLORS);
-            index++;
-        }
-        return orderedGroups;
-    }
-
-    private void registerEvents(final SortedSet<ServerGroup> groups)
-    {
-        // register hover events over server group td
-        for (ServerGroup group : groups)
-        {
-            com.google.gwt.user.client.Element element = root.getElementById(group.id);
-            if (element != null)
-            {
-                DOM.setEventListener(element, new HoverListener());
-                DOM.sinkEvents(element, ONMOUSEOVER | ONMOUSEOUT);
-            }
-        }
-
-        // register "previous", "next" navigation
-        com.google.gwt.user.client.Element prev = root.getElementById(PREV_HOST_ID);
-        com.google.gwt.user.client.Element next = root.getElementById(NEXT_HOST_ID);
-        if (prev != null && next != null)
-        {
-            NavigationListener navigationListener = new NavigationListener();
-            DOM.setEventListener(prev, navigationListener);
-            DOM.setEventListener(next, navigationListener);
-            DOM.sinkEvents(prev, ONCLICK);
-            DOM.sinkEvents(next, ONCLICK);
+            Console.getMessageCenter().notify(new Message("Unknown slot requested:" + slot));
         }
     }
 
-    private List<Element> findServerCells(String groupId)
+    private void setContent(Widget newContent)
     {
-        List<Element> elements = new ArrayList<Element>();
-        Element serversTableBody = root.getElementById(VISIBLE_SERVERS_ID);
-        NodeList<Node> serverTrs = serversTableBody.getChildNodes();
-        for (int i = 0; i < serverTrs.getLength(); i++)
-        {
-            Element serverTr = serverTrs.getItem(i).cast();
-            NodeList<Node> serverTds = serverTr.getChildNodes();
-            for (int j = 0; j < serverTds.getLength(); j++)
-            {
-                Element serverTd = serverTds.getItem(j).cast();
-                if (groupId.equals(serverTd.getAttribute("data-member-of-group")))
-                {
-                    elements.add(serverTd);
-                }
-            }
-        }
-        return elements;
-    }
-
-    private void scrollTo(int index)
-    {
-        // validation
-        if (index < 0 || index > hostSize - 1)
-        {
-            return;
-        }
-        hostIndex = index;
-        int rowsToCopy = VISIBLE_HOSTS_COLUMNS;
-        if (hostIndex + rowsToCopy > hostSize)
-        {
-            rowsToCopy = hostSize - hostIndex;
-        }
-
-        // 1. Hosts
-        Element hiddenHostsTableHead = root.getElementById(HIDDEN_HOSTS_ID);
-        Element visibleHostsTableHead = root.getElementById(VISIBLE_HOSTS_ID);
-
-        // 1.1 Clear the visible hosts
-        Element visibleHostsTr = visibleHostsTableHead.getFirstChildElement();
-        while (visibleHostsTr.getChildNodes().getLength() > 1)
-        {
-            visibleHostsTr.removeChild(visibleHostsTr.getChild(1));
-        }
-
-        // 1.2 Clone and copy hosts from hidden to visible
-        Element hiddenHostsTr = hiddenHostsTableHead.getFirstChildElement();
-        NodeList<Node> hiddenHostsTds = hiddenHostsTr.getChildNodes();
-        for (int i = 0; i < rowsToCopy; i++)
-        {
-            Node hiddenHostTd = hiddenHostsTds.getItem(hostIndex + i);
-            Node visibleHostTd = hiddenHostTd.cloneNode(true);
-            visibleHostsTr.appendChild(visibleHostTd);
-        }
-
-        // 2. Servers
-        Element hiddenServersTableBody = root.getElementById(HIDDEN_SERVERS_ID);
-        Element visibleServersTableBody = root.getElementById(VISIBLE_SERVERS_ID);
-
-        // 2.1 Clear the visible servers
-        NodeList<Node> visibleServerTrs = visibleServersTableBody.getChildNodes();
-        for (int i = 0; i < visibleServerTrs.getLength(); i++)
-        {
-            int indexAndCount = 0;
-            Element visibleServerTr = visibleServerTrs.getItem(i).cast();
-            if (SERVER_GROUP_START_DATA.equals(visibleServerTr.getAttribute("data-group")))
-            {
-                // This row contains the server group which must not be removed
-                indexAndCount = 1;
-            }
-            while (visibleServerTr.getChildNodes().getLength() > indexAndCount)
-            {
-                visibleServerTr.removeChild(visibleServerTr.getChild(indexAndCount));
-            }
-        }
-
-        // 2.2 Clone and copy servers from hidden to visible
-        NodeList<Node> hiddenServerTrs = hiddenServersTableBody.getChildNodes();
-        if (hiddenServerTrs.getLength() != visibleServerTrs.getLength())
-        {
-            // TODO: Something is messed up --> Log error and return?
-        }
-        for (int i = 0; i < hiddenServerTrs.getLength(); i++)
-        {
-            Node hiddenServerTr = hiddenServerTrs.getItem(i);
-            Node visibleServerTr = visibleServerTrs.getItem(i);
-            NodeList<Node> hiddenServerTds = hiddenServerTr.getChildNodes();
-            for (int j = 0; j < rowsToCopy; j++)
-            {
-                Node hiddenServerTd = hiddenServerTds.getItem(hostIndex + j);
-                Node visibleServerTd = hiddenServerTd.cloneNode(true);
-                visibleServerTr.appendChild(visibleServerTd);
-            }
-        }
-
-        // update visibility of navigation
-        com.google.gwt.user.client.Element prev = root.getElementById(PREV_HOST_ID);
-        com.google.gwt.user.client.Element next = root.getElementById(NEXT_HOST_ID);
-        if (prev != null && next != null)
-        {
-            if (hostIndex - VISIBLE_HOSTS_COLUMNS < 0)
-            {
-                prev.addClassName("hidden");
-                prev.removeClassName("visible");
-            }
-            else
-            {
-                prev.addClassName("visible");
-                prev.removeClassName("hidden");
-            }
-            if (hostIndex + VISIBLE_HOSTS_COLUMNS > hostSize)
-            {
-                next.addClassName("hidden");
-                next.removeClassName("visible");
-            }
-            else
-            {
-                next.addClassName("visible");
-                next.removeClassName("hidden");
-            }
-        }
-    }
-
-    private class HoverListener implements EventListener
-    {
-        @Override
-        public void onBrowserEvent(final Event event)
-        {
-            if (event.getTypeInt() == ONMOUSEOVER)
-            {
-                Element serverGroupTd = event.getEventTarget().cast();
-                String cssClassname = serverGroupTd.getClassName();
-                List<Element> serverCells = findServerCells(serverGroupTd.getId());
-                for (Element serverCell : serverCells)
-                {
-                    String index = serverCell.getAttribute("data-group-index");
-                    serverCell.removeClassName(index + "_light");
-                    serverCell.addClassName(index);
-                }
-            }
-            else if (event.getTypeInt() == ONMOUSEOUT)
-            {
-                Element serverGroupTd = event.getEventTarget().cast();
-                String cssClassname = serverGroupTd.getClassName();
-                List<Element> serverCells = findServerCells(serverGroupTd.getId());
-                for (Element serverCell : serverCells)
-                {
-                    String index = serverCell.getAttribute("data-group-index");
-                    serverCell.removeClassName(index);
-                    serverCell.addClassName(index + "_light");
-                }
-            }
-        }
-    }
-
-    private class NavigationListener implements EventListener
-    {
-        @Override
-        public void onBrowserEvent(final Event event)
-        {
-            if (event.getTypeInt() == ONCLICK)
-            {
-                Element element = event.getEventTarget().cast();
-                String id = element.getId();
-                if (PREV_HOST_ID.equals(id))
-                {
-                    scrollTo(hostIndex - VISIBLE_HOSTS_COLUMNS);
-                }
-                else if (NEXT_HOST_ID.equals(id))
-                {
-                    scrollTo(hostIndex + VISIBLE_HOSTS_COLUMNS);
-                }
-            }
-        }
+        contentCanvas.clear();
+        contentCanvas.add(newContent);
     }
 }
