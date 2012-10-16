@@ -52,6 +52,7 @@ import org.jboss.as.console.client.domain.model.HostInformationStore;
 import org.jboss.as.console.client.domain.model.ProfileStore;
 import org.jboss.as.console.client.domain.model.ServerGroupStore;
 import org.jboss.as.console.client.domain.overview.DomainOverviewPresenter;
+import org.jboss.as.console.client.domain.overview.ServerGroupHostMatrixPresenter;
 import org.jboss.as.console.client.domain.profiles.CurrentProfileSelection;
 import org.jboss.as.console.client.domain.profiles.ProfileMgmtPresenter;
 import org.jboss.as.console.client.domain.runtime.DomainRuntimePresenter;
@@ -71,6 +72,7 @@ import org.jboss.as.console.client.shared.model.DeploymentStore;
 import org.jboss.as.console.client.shared.model.SubsystemStore;
 import org.jboss.as.console.client.shared.runtime.RuntimeBaseAddress;
 import org.jboss.as.console.client.shared.runtime.ds.DataSourceMetricPresenter;
+import org.jboss.as.console.client.shared.runtime.env.EnvironmentPropertiesPresenter;
 import org.jboss.as.console.client.shared.runtime.jms.JMSMetricPresenter;
 import org.jboss.as.console.client.shared.runtime.jpa.JPAMetricPresenter;
 import org.jboss.as.console.client.shared.runtime.naming.JndiPresenter;
@@ -215,6 +217,7 @@ public interface CoreUI {
     AsyncProvider<ServerGroupMgmtPresenter> getServerGroupMgmtPresenter();
 
     AsyncProvider<DomainOverviewPresenter> getProfileToolPresenter();
+    AsyncProvider<ServerGroupHostMatrixPresenter> getServerGroupHostMatrixPresenter();
     AsyncProvider<ServerGroupPresenter> getServerGroupsPresenter();
 
     ProfileStore getProfileStore();
@@ -311,6 +314,8 @@ public interface CoreUI {
     AsyncProvider<DataSourceMetricPresenter> DataSourceMetricPresenter();
 
     AsyncProvider<JPAMetricPresenter> JPAMetricPresenter();
+
+    AsyncProvider<EnvironmentPropertiesPresenter> getEnvironmentPropertiesPresenter();
 
     AsyncProvider<JGroupsPresenter> JGroupsPresenter();
 

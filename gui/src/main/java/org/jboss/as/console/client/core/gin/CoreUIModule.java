@@ -56,6 +56,8 @@ import org.jboss.as.console.client.domain.model.impl.ProfileStoreImpl;
 import org.jboss.as.console.client.domain.model.impl.ServerGroupStoreImpl;
 import org.jboss.as.console.client.domain.overview.DomainOverview;
 import org.jboss.as.console.client.domain.overview.DomainOverviewPresenter;
+import org.jboss.as.console.client.domain.overview.ServerGroupHostMatrixPresenter;
+import org.jboss.as.console.client.domain.overview.ServerGroupHostMatrixView;
 import org.jboss.as.console.client.domain.profiles.CurrentProfileSelection;
 import org.jboss.as.console.client.domain.profiles.ProfileMgmtPresenter;
 import org.jboss.as.console.client.domain.profiles.ProfileMgmtView;
@@ -83,6 +85,8 @@ import org.jboss.as.console.client.shared.model.SubsystemStoreImpl;
 import org.jboss.as.console.client.shared.runtime.RuntimeBaseAddress;
 import org.jboss.as.console.client.shared.runtime.ds.DataSourceMetricPresenter;
 import org.jboss.as.console.client.shared.runtime.ds.DataSourceMetricView;
+import org.jboss.as.console.client.shared.runtime.env.EnvironmentPropertiesPresenter;
+import org.jboss.as.console.client.shared.runtime.env.EnvironmentPropertiesView;
 import org.jboss.as.console.client.shared.runtime.jms.JMSMetricPresenter;
 import org.jboss.as.console.client.shared.runtime.jms.JMSMetricView;
 import org.jboss.as.console.client.shared.runtime.jpa.JPAMetricPresenter;
@@ -320,6 +324,11 @@ public class CoreUIModule extends AbstractPresenterModule {
                 DomainOverviewPresenter.MyView.class,
                 DomainOverview.class,
                 DomainOverviewPresenter.MyProxy.class);
+
+        bindPresenter(ServerGroupHostMatrixPresenter.class,
+                ServerGroupHostMatrixPresenter.MyView.class,
+                ServerGroupHostMatrixView.class,
+                ServerGroupHostMatrixPresenter.MyProxy.class);
 
         bind(CurrentProfileSelection.class).in(Singleton.class);
         bind(CurrentHostSelection.class).in(Singleton.class);
@@ -598,7 +607,10 @@ public class CoreUIModule extends AbstractPresenterModule {
                 PathManagementView.class,
                 PathManagementPresenter.MyProxy.class);
 
-
+        bindPresenter(EnvironmentPropertiesPresenter.class,
+                EnvironmentPropertiesPresenter.MyView.class,
+                EnvironmentPropertiesView.class,
+                EnvironmentPropertiesPresenter.MyProxy.class);
     }
 
 }

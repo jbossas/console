@@ -27,7 +27,7 @@ import org.jboss.as.console.client.widgets.icons.ConsoleIcons;
 import org.jboss.ballroom.client.widgets.icons.Icons;
 
 /**
- * Contains most of the html generator code used in {@link DomainOverview}. The generated html contains several <a
+ * Contains most of the html generator code used in {@link ServerGroupHostMatrixView}. The generated html contains several <a
  * href="http://dev.w3.org/html5/spec/global-attributes.html#embedding-custom-non-visible-data-with-the-data-*-attributes">HTML5
  * data attributes</a> to mark special tags:
  * <ul>
@@ -38,7 +38,7 @@ import org.jboss.ballroom.client.widgets.icons.Icons;
  * </ul>
  *
  * @author Harald Pehl
- * @dat 10/09/12
+ * @date 10/15/12
  */
 final class HtmlGenerator
 {
@@ -47,13 +47,10 @@ final class HtmlGenerator
     static final String HIDDEN_SERVERS_ID = "hiddenServers";
     static final String VISIBLE_HOSTS_ID = "visibleHost";
     static final String VISIBLE_SERVERS_ID = "visibleServers";
-    /**
-     * The data flag which marks the start of a new server group. Used as a flag for the &lt;tr/&gt; element which
-     * contains the server group.
-     */
     static final String SERVER_GROUP_START_DATA = "serverGroup";
     static final String PREV_HOST_ID = "prevHost";
     static final String NEXT_HOST_ID = "nextHost";
+
     final SafeHtmlBuilder html;
 
 
@@ -65,7 +62,7 @@ final class HtmlGenerator
 
     // ------------------------------------------------------ custom methods
 
-    SafeHtmlBuilder root()
+    HtmlGenerator root()
     {
         html.appendHtmlConstant("<table style='width:100%;'>");
         html.appendHtmlConstant("<colgroup><col width='16%'><col width='28%'><col width='28%'><col " +
@@ -74,10 +71,10 @@ final class HtmlGenerator
                 "class='domainOverviewHeader'>Hosts&nbsp;&rarr;<br/>Groups&nbsp;&darr;</th></tr></thead>");
         html.appendHtmlConstant("<tfoot><tr>");
         html.appendHtmlConstant("<td>&nbsp;</td>");
-        html.appendHtmlConstant("<td id='" + PREV_HOST_ID + "' class='hostNavigation'>&larr; Previous Host</td>");
+        html.appendHtmlConstant("<td id='" + PREV_HOST_ID + "' class='hostNavigation'>&larr; Previous Hosts</td>");
         html.appendHtmlConstant("<td>&nbsp;</td>");
         html.appendHtmlConstant(
-                "<td id='" + NEXT_HOST_ID + "'class='hostNavigation' style='text-align:right;'>Next Host &rarr;" +
+                "<td id='" + NEXT_HOST_ID + "'class='hostNavigation' style='text-align:right;'>Next Hosts &rarr;" +
                         "</td>");
         html.appendHtmlConstant("</tr></tfoot>");
         html.appendHtmlConstant("<tbody id='" + VISIBLE_SERVERS_ID + "'/>");
@@ -85,12 +82,12 @@ final class HtmlGenerator
 
         html.appendHtmlConstant("<table style='display:none;'><thead id='" + HIDDEN_HOSTS_ID + "'/><tbody " +
                 "id='" + HIDDEN_SERVERS_ID + "'/></table>");
-        return html;
+        return this;
     }
 
-    SafeHtmlBuilder appendHost(final HostInfo host)
+    HtmlGenerator appendHost(final HostInfo host)
     {
-        html.appendHtmlConstant("<th class='domainOverviewHeader'><span>Host: ")
+        html.appendHtmlConstant("<th class='domainOverviewHeader'><span>")
                 .appendEscaped(host.getName()).appendHtmlConstant("<br/>Domain: ");
         html.appendHtmlConstant(host.isController() ? "Controller" : "Member");
         html.appendHtmlConstant("</span>");
@@ -100,15 +97,15 @@ final class HtmlGenerator
             html.appendHtmlConstant("<span style='float:right;'><img src='" + new Image(star).getUrl()
                     + "' width='16' " + "height='16'/></span>");
         }
-        return html;
+        return this;
     }
 
-    SafeHtmlBuilder appendServer(final ServerGroup group,
+    HtmlGenerator appendServer(final ServerGroup group,
             final ServerInstance server)
     {
         html.appendHtmlConstant("<td class='domainOverviewCell " + group.cssClassname +
                 "_light' data-member-of-group='" + group.id + "' data-group-index='" + group.cssClassname + "'>");
-        html.appendHtmlConstant("<span>Server: ").appendEscaped(server.getName())
+        html.appendHtmlConstant("<span>").appendEscaped(server.getName())
                 .appendHtmlConstant("</span>");
         ImageResource status = server.isRunning() ? Icons.INSTANCE.status_good() : Icons.INSTANCE
                 .status_bad();
@@ -120,16 +117,16 @@ final class HtmlGenerator
                 "<span style='float:right;'><img src='" + new Image(status).getUrl() + "' width='16' " +
                         "height='16'/></span>");
         html.appendHtmlConstant("</td>");
-        return html;
+        return this;
     }
 
-    SafeHtmlBuilder appendServerGroup(final ServerGroup group)
+    HtmlGenerator appendServerGroup(final ServerGroup group)
     {
         // first row contains the group name and is marked with the "data-group" attribute
         html.appendHtmlConstant("<tr data-group='" + SERVER_GROUP_START_DATA + "'>");
         html.appendHtmlConstant("<td id='" + group.id + "' rowspan='" + group.maxServersPerHost +
                 "' class='domainOverviewCell " + group.cssClassname + "'>");
-        html.appendHtmlConstant("Group: ").appendEscaped(group.name);
+        html.appendEscaped(group.name);
         if (group.profile != null)
         {
             html.appendHtmlConstant("<br/>Profile: ").appendEscaped(group.profile);
@@ -143,20 +140,40 @@ final class HtmlGenerator
                 html.appendHtmlConstant("<tr/>");
             }
         }
-        return html;
+        return this;
     }
+
+    HtmlGenerator startRow()
+    {
+        html.appendHtmlConstant("<tr>");
+        return this;
+    }
+
+    HtmlGenerator endRow()
+    {
+        html.appendHtmlConstant("</tr>");
+        return this;
+    }
+
+
+    HtmlGenerator emptyCell()
+    {
+        html.appendHtmlConstant("<td class='domainOverviewCell'>&nbsp;</td>");
+        return this;
+    }
+
 
     // ------------------------------------------------------ delegate methods
 
-    public HtmlGenerator appendHtmlConstant(final String html)
+    public HtmlGenerator appendHtmlConstant(final String text)
     {
-        this.html.appendHtmlConstant(html);
+        html.appendHtmlConstant(text);
         return this;
     }
 
     public HtmlGenerator appendEscaped(final String text)
     {
-        this.html.appendEscaped(text);
+        html.appendEscaped(text);
         return this;
     }
 
