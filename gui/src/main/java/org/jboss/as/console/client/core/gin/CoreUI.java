@@ -313,5 +313,4 @@ public interface CoreUI {
     AsyncProvider<JGroupsPresenter> JGroupsPresenter();
 
     AsyncProvider<PathManagementPresenter> PathManagementPresenter();
-
 }
