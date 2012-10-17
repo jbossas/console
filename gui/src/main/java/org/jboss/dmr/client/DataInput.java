@@ -62,7 +62,16 @@ public class DataInput {
         //return IEEE754.toDouble(bytes[pos++], bytes[pos++], bytes[pos++], bytes[pos++], bytes[pos++], bytes[pos++], bytes[pos++], bytes[pos++]);
         byte doubleBytes[] = new byte[8];
         readFully(doubleBytes);
-        return IEEE754.toDouble(doubleBytes);
+
+        return IEEE754.toDouble(
+                doubleBytes[0],
+                doubleBytes[1],
+                doubleBytes[2],
+                doubleBytes[3],
+                doubleBytes[4],
+                doubleBytes[5],
+                doubleBytes[6],
+                doubleBytes[7]);
     }
 
     public float readFloat() throws IOException {
@@ -81,10 +90,20 @@ public class DataInput {
         throw new RuntimeException("readline NYI");
     }
 
-    public long readLong() throws IOException {
-        long a = readInt();
-        long b = readInt() & 0x0ffffffff;
-        return (a << 32) | b;
+    public long readLong() throws IOException
+    {
+        byte longBytes[] = new byte[8];
+        readFully(longBytes);
+
+        return (((long)longBytes[0] << 56) +
+                ((long)(longBytes[1] & 255) << 48) +
+                ((long)(longBytes[2] & 255) << 40) +
+                ((long)(longBytes[3] & 255) << 32) +
+                ((long)(longBytes[4] & 255) << 24) +
+                ((longBytes[5] & 255) << 16) +
+                ((longBytes[6] & 255) <<  8) +
+                ((longBytes[7] & 255) <<  0));
+
     }
 
     public short readShort() throws IOException {

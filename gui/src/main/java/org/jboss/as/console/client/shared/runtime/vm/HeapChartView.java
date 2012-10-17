@@ -88,7 +88,7 @@ public class HeapChartView implements Sampler {
     }
 
     private static long toMB(long value) {
-        return (value/1024)/1024;
+        return (value/1024l)/1024l;
     }
 
     @Override
