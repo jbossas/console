@@ -19,7 +19,7 @@
 
 package org.jboss.as.console.client.model;
 
-import com.google.gwt.autobean.shared.AutoBean;
+import com.google.web.bindery.autobean.shared.AutoBean;
 
 import org.jboss.as.console.client.core.settings.CommonSettings;
 import org.jboss.as.console.client.domain.model.Host;

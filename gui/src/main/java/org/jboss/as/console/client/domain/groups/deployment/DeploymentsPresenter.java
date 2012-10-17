@@ -18,8 +18,6 @@
  */
 package org.jboss.as.console.client.domain.groups.deployment;
 
-import com.google.gwt.event.logical.shared.CloseEvent;
-import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.inject.Inject;
@@ -117,7 +115,7 @@ public class DeploymentsPresenter extends Presenter<DeploymentsPresenter.MyView,
 
     @Override
     protected void revealInParent() {
-        RevealContentEvent.fire(getEventBus(), DomainPresenter.TYPE_MainContent, this);
+        RevealContentEvent.fire(this, DomainRuntimePresenter.TYPE_MainContent, this);
     }
 
     @Override

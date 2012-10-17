@@ -1,7 +1,7 @@
 package org.jboss.as.console.client.shared.general.validation;
 
-import com.google.gwt.autobean.shared.AutoBean;
-import com.google.gwt.autobean.shared.AutoBeanUtils;
+import com.google.web.bindery.autobean.shared.AutoBean;
+import com.google.web.bindery.autobean.shared.AutoBeanUtils;
 import org.jboss.as.console.client.shared.general.model.Interface;
 import org.jboss.ballroom.client.widgets.forms.FormItem;
 

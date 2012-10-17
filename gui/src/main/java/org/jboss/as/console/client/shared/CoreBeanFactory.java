@@ -19,8 +19,11 @@
 
 package org.jboss.as.console.client.shared;
 
-import com.google.gwt.autobean.shared.AutoBean;
-import com.google.gwt.autobean.shared.AutoBeanFactory.Category;
+//import com.google.web.bindery.autobean.shared.AutoBean;
+//import com.google.web.bindery.autobean.shared.AutoBeanFactory.Category;
+
+import com.google.web.bindery.autobean.shared.AutoBean;
+import com.google.web.bindery.autobean.shared.AutoBeanFactory;
 import org.jboss.as.console.client.core.settings.CommonSettings;
 import org.jboss.as.console.client.domain.model.Host;
 import org.jboss.as.console.client.domain.model.ProfileRecord;
@@ -135,7 +138,7 @@ import org.jboss.as.console.spi.BeanFactoryExtension;
  * @author Heiko Braun
  * @date 2/22/11
  */
-@Category(PropertyRecordCategory.class)
+@AutoBeanFactory.Category(PropertyRecordCategory.class)
 @BeanFactoryExtension
 public interface CoreBeanFactory {
 
