@@ -609,11 +609,6 @@ public class CoreUIModule extends AbstractPresenterModule {
                 PathManagementView.class,
                 PathManagementPresenter.MyProxy.class);
 
-        bindPresenter(EnvironmentPropertiesPresenter.class,
-                EnvironmentPropertiesPresenter.MyView.class,
-                EnvironmentPropertiesView.class,
-                EnvironmentPropertiesPresenter.MyProxy.class);
-
         bindPresenter(EnvironmentPresenter.class,
                 EnvironmentPresenter.MyView.class,
                 EnvironmentView.class,
