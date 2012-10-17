@@ -130,7 +130,7 @@ public class HostPropertiesPresenter extends Presenter<HostPropertiesPresenter.M
 
     @Override
     protected void revealInParent() {
-        RevealContentEvent.fire(getEventBus(), HostMgmtPresenter.TYPE_MainContent, this);
+        RevealContentEvent.fire(this, HostMgmtPresenter.TYPE_MainContent, this);
     }
 
     public void closePropertyDialoge() {

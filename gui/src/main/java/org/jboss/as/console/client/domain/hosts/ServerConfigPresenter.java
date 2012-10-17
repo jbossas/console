@@ -215,7 +215,7 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
 
     @Override
     protected void revealInParent() {
-        RevealContentEvent.fire(getEventBus(), HostMgmtPresenter.TYPE_MainContent, this);
+        RevealContentEvent.fire(this, HostMgmtPresenter.TYPE_MainContent, this);
     }
 
     @Override

@@ -126,7 +126,7 @@ public class HostVMMetricPresenter extends Presenter<VMView, HostVMMetricPresent
 
     @Override
     protected void revealInParent() {
-        RevealContentEvent.fire(getEventBus(), DomainRuntimePresenter.TYPE_MainContent, this);
+        RevealContentEvent.fire(this, DomainRuntimePresenter.TYPE_MainContent, this);
     }
 
     public void loadVMStatus(final String serverName) {

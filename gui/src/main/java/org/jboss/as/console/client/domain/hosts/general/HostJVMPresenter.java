@@ -127,7 +127,7 @@ public class HostJVMPresenter extends Presenter<HostJVMPresenter.MyView, HostJVM
 
     @Override
     protected void revealInParent() {
-        RevealContentEvent.fire(getEventBus(), HostMgmtPresenter.TYPE_MainContent, this);
+        RevealContentEvent.fire(this, HostMgmtPresenter.TYPE_MainContent, this);
     }
 
     @Override

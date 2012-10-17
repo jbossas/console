@@ -209,7 +209,7 @@ public class ProfileMgmtPresenter
     @Override
     protected void revealInParent() {
         // reveal in main layout
-        RevealContentEvent.fire(getEventBus(), MainLayoutPresenter.TYPE_MainContent, this);
+        RevealContentEvent.fire(this, MainLayoutPresenter.TYPE_MainContent, this);
     }
 
     @Override

@@ -153,6 +153,6 @@ public class HostInterfacesPresenter extends Presenter<HostInterfacesPresenter.M
 
     @Override
     protected void revealInParent() {
-        RevealContentEvent.fire(getEventBus(), HostMgmtPresenter.TYPE_MainContent, this);
+        RevealContentEvent.fire(this, HostMgmtPresenter.TYPE_MainContent, this);
     }
 }

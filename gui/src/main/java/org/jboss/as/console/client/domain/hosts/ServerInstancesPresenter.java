@@ -160,7 +160,7 @@ public class ServerInstancesPresenter extends Presenter<ServerInstancesPresenter
 
     @Override
     protected void revealInParent() {
-        RevealContentEvent.fire(getEventBus(), DomainRuntimePresenter.TYPE_MainContent, this);
+        RevealContentEvent.fire(this, DomainRuntimePresenter.TYPE_MainContent, this);
     }
 
     @Override
