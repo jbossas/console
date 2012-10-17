@@ -23,6 +23,7 @@ import org.jboss.as.console.client.domain.model.ServerInstance;
 import java.util.*;
 
 /**
+ * Simple class for rendering a server group in {@link TopologyView}
  * @author Harald Pehl
  * @dat 10/11/12
  */

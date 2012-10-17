@@ -26,6 +26,8 @@ import org.jboss.as.console.client.domain.model.ServerInstance;
 import org.jboss.as.console.client.widgets.icons.ConsoleIcons;
 import org.jboss.ballroom.client.widgets.icons.Icons;
 
+import java.util.Set;
+
 /**
  * Contains most of the html generator code used in {@link TopologyView}. The generated html contains several <a
  * href="http://dev.w3.org/html5/spec/global-attributes.html#embedding-custom-non-visible-data-with-the-data-*-attributes">HTML5
@@ -43,9 +45,11 @@ import org.jboss.ballroom.client.widgets.icons.Icons;
 final class HtmlGenerator
 {
     static final String SERVER_GROUP_CLASS = "serverGroup";
+    static final String HOST_COLGROUP_ID = "hostColumns";
     static final String HIDDEN_HOSTS_ID = "hiddenHosts";
     static final String HIDDEN_SERVERS_ID = "hiddenServers";
     static final String VISIBLE_HOSTS_ID = "visibleHost";
+    static final String NAVIGATION_ID = "hostNavigation";
     static final String VISIBLE_SERVERS_ID = "visibleServers";
     static final String SERVER_GROUP_START_DATA = "serverGroup";
     static final String PREV_HOST_ID = "prevHost";
@@ -65,18 +69,10 @@ final class HtmlGenerator
     HtmlGenerator root()
     {
         html.appendHtmlConstant("<table style='width:100%;'>");
-        html.appendHtmlConstant("<colgroup><col width='16%'><col width='28%'><col width='28%'><col " +
-                "width='28%'></colgroup>");
+        html.appendHtmlConstant("<colgroup id='" + HOST_COLGROUP_ID + "'></colgroup>");
         html.appendHtmlConstant("<thead id='" + VISIBLE_HOSTS_ID + "'><tr><th " +
                 "class='domainOverviewHeader'>Hosts&nbsp;&rarr;<br/>Groups&nbsp;&darr;</th></tr></thead>");
-        html.appendHtmlConstant("<tfoot><tr>");
-        html.appendHtmlConstant("<td>&nbsp;</td>");
-        html.appendHtmlConstant("<td id='" + PREV_HOST_ID + "' class='hostNavigation'>&larr; Previous Hosts</td>");
-        html.appendHtmlConstant("<td>&nbsp;</td>");
-        html.appendHtmlConstant(
-                "<td id='" + NEXT_HOST_ID + "'class='hostNavigation' style='text-align:right;'>Next Hosts &rarr;" +
-                        "</td>");
-        html.appendHtmlConstant("</tr></tfoot>");
+        html.appendHtmlConstant("<tfoot id='" + NAVIGATION_ID + "'/>");
         html.appendHtmlConstant("<tbody id='" + VISIBLE_SERVERS_ID + "'/>");
         html.appendHtmlConstant("</table>");
 
@@ -105,17 +101,23 @@ final class HtmlGenerator
     {
         html.appendHtmlConstant("<td class='domainOverviewCell " + group.cssClassname +
                 "_light' data-member-of-group='" + group.id + "' data-group-index='" + group.cssClassname + "'>");
-        html.appendHtmlConstant("<span>").appendEscaped(server.getName())
-                .appendHtmlConstant("</span>");
-        ImageResource status = server.isRunning() ? Icons.INSTANCE.status_good() : Icons.INSTANCE
-                .status_bad();
+        ImageResource status = server.isRunning() ? Icons.INSTANCE.status_good() : Icons.INSTANCE.status_bad();
         if (server.isRunning() && server.getFlag() != null)
         {
             status = Icons.INSTANCE.status_warn();
         }
-        html.appendHtmlConstant(
-                "<span style='float:right;'><img src='" + new Image(status).getUrl() + "' width='16' " +
+        html.appendHtmlConstant("<span style='float:right;'><img src='" + new Image(status).getUrl() + "' width='16' " +
                         "height='16'/></span>");
+        html.appendHtmlConstant("<span>").appendEscaped(server.getName())
+                .appendHtmlConstant("</span>");
+        if (server.getSocketBindings().size() > 0)
+        {
+            Set<String> sockets = server.getSocketBindings().keySet();
+            String first = sockets.iterator().next();
+            html.appendHtmlConstant("<span><br/>Socket Binding: ").appendEscaped(first).appendHtmlConstant("<br/>");
+            html.appendHtmlConstant("Ports: + ").appendEscaped(server.getSocketBindings().get(first))
+                    .appendHtmlConstant("</span>");
+        }
         html.appendHtmlConstant("</td>");
         return this;
     }
@@ -124,8 +126,15 @@ final class HtmlGenerator
     {
         // first row contains the group name and is marked with the "data-group" attribute
         html.appendHtmlConstant("<tr data-group='" + SERVER_GROUP_START_DATA + "'>");
-        html.appendHtmlConstant("<td id='" + group.id + "' rowspan='" + group.maxServersPerHost +
-                "' class='domainOverviewCell " + group.cssClassname + "'>");
+        if (group.maxServersPerHost > 1)
+        {
+            html.appendHtmlConstant("<td id='" + group.id + "' class='domainOverviewCell " + group.cssClassname +
+                    "' rowspan='" + group.maxServersPerHost + "'>");
+        }
+        else
+        {
+            html.appendHtmlConstant("<td id='" + group.id + "' class='domainOverviewCell " + group.cssClassname + "'>");
+        }
         html.appendEscaped(group.name);
         if (group.profile != null)
         {
@@ -143,11 +152,18 @@ final class HtmlGenerator
         return this;
     }
 
+    HtmlGenerator appendColumn(final int width)
+    {
+        html.appendHtmlConstant("<col width='" + width + "%'/>");
+        return this;
+    }
+
     HtmlGenerator startRow()
     {
         html.appendHtmlConstant("<tr>");
         return this;
     }
+
 
     HtmlGenerator endRow()
     {
@@ -162,6 +178,18 @@ final class HtmlGenerator
         return this;
     }
 
+    HtmlGenerator appendNavigation()
+    {
+        html.appendHtmlConstant("<tr>");
+        html.appendHtmlConstant("<td>&nbsp;</td>");
+        html.appendHtmlConstant("<td id='" + PREV_HOST_ID + "' class='hostNavigation'>&larr; Previous Hosts</td>");
+        html.appendHtmlConstant("<td>&nbsp;</td>");
+        html.appendHtmlConstant(
+                "<td id='" + NEXT_HOST_ID + "'class='hostNavigation' style='text-align:right;'>Next Hosts &rarr;" +
+                        "</td>");
+        html.appendHtmlConstant("</tr>");
+        return this;
+    }
 
     // ------------------------------------------------------ delegate methods
 

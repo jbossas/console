@@ -33,6 +33,7 @@ import org.jboss.as.console.client.shared.viewframework.builder.SimpleLayout;
 import java.util.*;
 
 import static com.google.gwt.user.client.Event.*;
+import static java.lang.Math.min;
 import static org.jboss.as.console.client.domain.topology.HtmlGenerator.*;
 
 /**
@@ -41,7 +42,10 @@ import static org.jboss.as.console.client.domain.topology.HtmlGenerator.*;
  */
 public class TopologyView extends SuspendableViewImpl implements TopologyPresenter.MyView
 {
+    static final int TABLE_WIDTH = 100; // percent
     static final int VISIBLE_HOSTS_COLUMNS = 3;
+    static final int ONE_COLUMN = TABLE_WIDTH / (VISIBLE_HOSTS_COLUMNS + 1); // one column for the groups
+    static final int HOSTS_COLUMNS = TABLE_WIDTH - ONE_COLUMN;
     static final int SERVER_GROUP_COLORS = 5; // must match the '.serverGroupX' css class names
 
     private TopologyPresenter presenter;
@@ -77,6 +81,8 @@ public class TopologyView extends SuspendableViewImpl implements TopologyPresent
         HtmlGenerator hiddenHosts = new HtmlGenerator();
         HtmlGenerator hiddenServers = new HtmlGenerator();
         HtmlGenerator visible = new HtmlGenerator();
+        HtmlGenerator columns = new HtmlGenerator();
+        HtmlGenerator navigation = new HtmlGenerator();
 
         // get groups
         SortedSet<ServerGroup> groups = deriveGroups(hosts);
@@ -123,7 +129,18 @@ public class TopologyView extends SuspendableViewImpl implements TopologyPresent
         hiddenBody.setInnerHTML(hiddenServers.toSafeHtml().asString());
 
         // fill the visible table
-        // Create tr/td for server groups
+        // Adjust columns
+        int hostColumns = min(VISIBLE_HOSTS_COLUMNS, hostSize);
+        int columnWidth = HOSTS_COLUMNS / hostColumns;
+        columns.appendColumn(ONE_COLUMN);
+        for (int i = 0; i < hostColumns; i++)
+        {
+            columns.appendColumn(columnWidth);
+        }
+        com.google.gwt.user.client.Element hostColGroup = root.getElementById(HOST_COLGROUP_ID);
+        hostColGroup.setInnerHTML(columns.toSafeHtml().asString());
+
+        // create tr/td for server groups
         for (ServerGroup group : groups)
         {
             visible.appendServerGroup(group);
@@ -131,6 +148,14 @@ public class TopologyView extends SuspendableViewImpl implements TopologyPresent
         }
         com.google.gwt.user.client.Element visibleHostsBody = root.getElementById(VISIBLE_SERVERS_ID);
         visibleHostsBody.setInnerHTML(visible.toSafeHtml().asString());
+
+        // add navigation
+        if (hostSize > VISIBLE_HOSTS_COLUMNS)
+        {
+            navigation.appendNavigation();
+        }
+        com.google.gwt.user.client.Element navigationFooter = root.getElementById(NAVIGATION_ID);
+        navigationFooter.setInnerHTML(navigation.toSafeHtml().asString());
 
         registerEvents(groups);
 
@@ -319,7 +344,7 @@ public class TopologyView extends SuspendableViewImpl implements TopologyPresent
                     serverCell.addClassName(index);
                 }
             }
-            else if (event.getTypeInt() == ONMOUSEOUT)
+            if (event.getTypeInt() == ONMOUSEOUT)
             {
                 Element serverGroupTd = event.getEventTarget().cast();
                 String cssClassname = serverGroupTd.getClassName();

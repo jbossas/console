@@ -26,6 +26,7 @@ import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.annotations.UseGatekeeper;
 import com.gwtplatform.mvp.client.proxy.Place;
+import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import org.jboss.as.console.client.core.DomainGateKeeper;
@@ -44,6 +45,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
+ * TODO Remove fake code when in production
  * @author Harald Pehl
  * @date 10/15/12
  */
@@ -69,6 +71,7 @@ public class TopologyPresenter extends
 
     private final HostInformationStore hostInfoStore;
     private final BeanFactory factory;
+    private boolean fake;
 
     @Inject
     public TopologyPresenter(final EventBus eventBus, final MyView view,
@@ -94,6 +97,13 @@ public class TopologyPresenter extends
     }
 
     @Override
+    public void prepareFromRequest(final PlaceRequest request)
+    {
+        super.prepareFromRequest(request);
+        fake = Boolean.valueOf(request.getParameter("fake", "false"));
+    }
+
+    @Override
     protected void revealInParent()
     {
         RevealContentEvent.fire(getEventBus(), DomainPresenter.TYPE_MainContent, this);
@@ -102,29 +112,35 @@ public class TopologyPresenter extends
 
     private void loadHostsData()
     {
-        hostInfoStore.getHosts(new SimpleCallback<List<Host>>()
+        if (fake)
         {
-            @Override
-            public void onSuccess(final List<Host> hosts)
+            getView().updateHosts(generateFakeDomain());
+        }
+        else
+        {
+            hostInfoStore.getHosts(new SimpleCallback<List<Host>>()
             {
-                final List<HostInfo> hostInfos = new ArrayList<HostInfo>();
-                for (final Host host : hosts)
+                @Override
+                public void onSuccess(final List<Host> hosts)
                 {
-                    hostInfoStore.getServerInstances(host.getName(), new SimpleCallback<List<ServerInstance>>()
+                    final List<HostInfo> hostInfos = new ArrayList<HostInfo>();
+                    for (final Host host : hosts)
                     {
-                        @Override
-                        public void onSuccess(List<ServerInstance> serverInstances)
+                        hostInfoStore.getServerInstances(host.getName(), new SimpleCallback<List<ServerInstance>>()
                         {
-                            HostInfo info = new HostInfo(host.getName(), host.isController());
-                            info.setServerInstances(serverInstances);
-                            hostInfos.add(info);
-                            getView().updateHosts(hostInfos);
-                        }
-                    });
+                            @Override
+                            public void onSuccess(List<ServerInstance> serverInstances)
+                            {
+                                HostInfo info = new HostInfo(host.getName(), host.isController());
+                                info.setServerInstances(serverInstances);
+                                hostInfos.add(info);
+                                getView().updateHosts(hostInfos);
+                            }
+                        });
+                    }
                 }
-            }
-        });
-        //        getView().updateHosts(generateFakeDomain());
+            });
+        }
     }
 
     private List<HostInfo> generateFakeDomain()
