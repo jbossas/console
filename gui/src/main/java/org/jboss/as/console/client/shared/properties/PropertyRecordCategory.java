@@ -18,7 +18,7 @@
  */
 package org.jboss.as.console.client.shared.properties;
 
-import com.google.gwt.autobean.shared.AutoBean;
+import com.google.web.bindery.autobean.shared.AutoBean;
 
 /**
  * Creates a more appealing return value for PropertyRecord.toString().
