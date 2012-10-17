@@ -18,7 +18,7 @@
  */
 package org.jboss.as.console.client.shared.runtime.naming;
 
-import com.google.gwt.event.shared.EventBus;
+import com.google.web.bindery.event.shared.EventBus;
 import com.google.gwt.user.cellview.client.CellTree;
 import com.google.gwt.view.client.SingleSelectionModel;
 import com.google.inject.Inject;
