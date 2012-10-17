@@ -19,7 +19,6 @@
 
 package org.jboss.as.console.client.shared.subsys;
 
-import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import org.jboss.as.console.client.core.ApplicationProperties;
@@ -37,26 +36,23 @@ import javax.inject.Inject;
 public class RevealStrategy {
 
     private ApplicationProperties bootstrap;
-    private EventBus eventBus;
-
 
     @Inject
-    public RevealStrategy(EventBus eventBus, ApplicationProperties bootstrap) {
+    public RevealStrategy(ApplicationProperties bootstrap) {
         this.bootstrap = bootstrap;
-        this.eventBus = eventBus;
     }
 
     public void revealInParent(Presenter presenter) {
          if(bootstrap.isStandalone())
-            RevealContentEvent.fire(eventBus, ServerMgmtApplicationPresenter.TYPE_MainContent, presenter);
+            RevealContentEvent.fire(presenter, ServerMgmtApplicationPresenter.TYPE_MainContent, presenter);
         else
-            RevealContentEvent.fire(eventBus, ProfileMgmtPresenter.TYPE_MainContent, presenter);
+            RevealContentEvent.fire(presenter, ProfileMgmtPresenter.TYPE_MainContent, presenter);
     }
 
     public void revealInRuntimeParent(Presenter presenter) {
          if(bootstrap.isStandalone())
-            RevealContentEvent.fire(eventBus, StandaloneRuntimePresenter.TYPE_MainContent, presenter);
+            RevealContentEvent.fire(presenter, StandaloneRuntimePresenter.TYPE_MainContent, presenter);
         else
-            RevealContentEvent.fire(eventBus, DomainRuntimePresenter.TYPE_MainContent, presenter);
+            RevealContentEvent.fire(presenter, DomainRuntimePresenter.TYPE_MainContent, presenter);
     }
 }
