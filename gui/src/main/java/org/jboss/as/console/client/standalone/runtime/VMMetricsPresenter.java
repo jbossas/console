@@ -150,6 +150,6 @@ public class VMMetricsPresenter
 
     @Override
     protected void revealInParent() {
-        RevealContentEvent.fire(getEventBus(), StandaloneRuntimePresenter.TYPE_MainContent, this);
+        RevealContentEvent.fire(this, StandaloneRuntimePresenter.TYPE_MainContent, this);
     }
 }

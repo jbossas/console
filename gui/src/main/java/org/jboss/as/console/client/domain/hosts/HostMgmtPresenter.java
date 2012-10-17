@@ -166,6 +166,6 @@ public class HostMgmtPresenter
 
     @Override
     protected void revealInParent() {
-        RevealContentEvent.fire(getEventBus(), MainLayoutPresenter.TYPE_MainContent, this);
+        RevealContentEvent.fire(this, MainLayoutPresenter.TYPE_MainContent, this);
     }
 }
