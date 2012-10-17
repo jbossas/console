@@ -259,7 +259,7 @@
                             <disableClassMetadata>true</disableClassMetadata>
                             <module>org.jboss.as.console.composite.App_dev</module>
                             <enableClosureCompiler>true</enableClosureCompiler>
-                            <fragmentCount>60</fragmentCount>
+                            <fragmentCount>30</fragmentCount>
                         </configuration>
                     </plugin>
 
