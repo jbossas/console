@@ -22,7 +22,7 @@ package org.jboss.as.console.client.core.settings;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.shared.EventBus;
+import com.google.web.bindery.event.shared.EventBus;
 import com.google.gwt.i18n.rebind.LocaleUtils;
 import com.google.gwt.i18n.shared.GwtLocale;
 import com.google.gwt.user.client.ui.VerticalPanel;

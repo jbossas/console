@@ -19,7 +19,7 @@
 
 package org.jboss.as.console.client.shared.subsys;
 
-import com.google.gwt.event.shared.EventBus;
+import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import org.jboss.as.console.client.core.ApplicationProperties;
