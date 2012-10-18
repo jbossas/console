@@ -7,6 +7,7 @@ build.number
 *.bak
 build/app/war
 build/war
+build/app/gwt-unitCache/
 
 gui/war/WEB-INF
 gui/war/app
