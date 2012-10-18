@@ -107,6 +107,10 @@
                     <localWorkers>2</localWorkers>
                     <compileReport>false</compileReport>
                     <module>org.jboss.as.console.composite.App</module>
+                    <disableCastChecking>true</disableCastChecking>
+                    <disableClassMetadata>true</disableClassMetadata>
+                    <enableClosureCompiler>true</enableClosureCompiler>
+                    <fragmentCount>30</fragmentCount>
                 </configuration>
                 <executions>
                     <execution>
@@ -255,11 +259,7 @@
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>gwt-maven-plugin</artifactId>
                         <configuration>
-                            <disableCastChecking>true</disableCastChecking>
-                            <disableClassMetadata>true</disableClassMetadata>
                             <module>org.jboss.as.console.composite.App_dev</module>
-                            <enableClosureCompiler>true</enableClosureCompiler>
-                            <fragmentCount>30</fragmentCount>
                         </configuration>
                     </plugin>
 
