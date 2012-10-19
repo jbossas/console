@@ -122,7 +122,7 @@ public class BootstrapContext implements ApplicationProperties {
     public PlaceRequest getDefaultPlace() {
 
         PlaceRequest defaultPlace  = getProperty(STANDALONE).equals("true") ?
-                new PlaceRequest(NameTokens.StandaloneServerPresenter) : new PlaceRequest(NameTokens.DomainRuntimePresenter);
+                new PlaceRequest(NameTokens.StandaloneServerPresenter) : new PlaceRequest(NameTokens.DomainPresenter);
         return defaultPlace;
     }
 

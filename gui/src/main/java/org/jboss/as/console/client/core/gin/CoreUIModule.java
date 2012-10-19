@@ -31,19 +31,7 @@ import com.gwtplatform.mvp.client.proxy.TokenFormatter;
 import org.jboss.as.console.client.auth.CurrentUser;
 import org.jboss.as.console.client.auth.SignInPagePresenter;
 import org.jboss.as.console.client.auth.SignInPageView;
-import org.jboss.as.console.client.core.ApplicationProperties;
-import org.jboss.as.console.client.core.BootstrapContext;
-import org.jboss.as.console.client.core.DebugEventBus;
-import org.jboss.as.console.client.core.DefaultPlaceManager;
-import org.jboss.as.console.client.core.DomainGateKeeper;
-import org.jboss.as.console.client.core.DomainUse;
-import org.jboss.as.console.client.core.Footer;
-import org.jboss.as.console.client.core.Header;
-import org.jboss.as.console.client.core.MainLayoutPresenter;
-import org.jboss.as.console.client.core.MainLayoutViewImpl;
-import org.jboss.as.console.client.core.NewTokenFormatter;
-import org.jboss.as.console.client.core.StandaloneGateKeeper;
-import org.jboss.as.console.client.core.StandaloneUse;
+import org.jboss.as.console.client.core.*;
 import org.jboss.as.console.client.core.message.MessageBar;
 import org.jboss.as.console.client.core.message.MessageCenter;
 import org.jboss.as.console.client.core.message.MessageCenterImpl;
@@ -58,37 +46,27 @@ import org.jboss.as.console.client.domain.groups.ServerGroupPresenter;
 import org.jboss.as.console.client.domain.groups.ServerGroupView;
 import org.jboss.as.console.client.domain.groups.deployment.ContentRepositoryView;
 import org.jboss.as.console.client.domain.groups.deployment.DeploymentsPresenter;
-import org.jboss.as.console.client.domain.hosts.HostMgmtPresenter;
-import org.jboss.as.console.client.domain.hosts.HostMgmtView;
-import org.jboss.as.console.client.domain.hosts.HostVMMetricPresenter;
-import org.jboss.as.console.client.domain.hosts.HostVMMetricView;
-import org.jboss.as.console.client.domain.hosts.ServerConfigPresenter;
-import org.jboss.as.console.client.domain.hosts.ServerConfigView;
-import org.jboss.as.console.client.domain.hosts.ServerInstancesPresenter;
-import org.jboss.as.console.client.domain.hosts.ServerInstancesView;
-import org.jboss.as.console.client.domain.hosts.general.HostInterfacesPresenter;
-import org.jboss.as.console.client.domain.hosts.general.HostInterfacesView;
-import org.jboss.as.console.client.domain.hosts.general.HostJVMPresenter;
-import org.jboss.as.console.client.domain.hosts.general.HostJVMView;
-import org.jboss.as.console.client.domain.hosts.general.HostPropertiesPresenter;
-import org.jboss.as.console.client.domain.hosts.general.HostPropertiesView;
+import org.jboss.as.console.client.domain.hosts.*;
+import org.jboss.as.console.client.domain.hosts.general.*;
 import org.jboss.as.console.client.domain.model.HostInformationStore;
 import org.jboss.as.console.client.domain.model.ProfileStore;
 import org.jboss.as.console.client.domain.model.ServerGroupStore;
 import org.jboss.as.console.client.domain.model.impl.HostInfoStoreImpl;
 import org.jboss.as.console.client.domain.model.impl.ProfileStoreImpl;
 import org.jboss.as.console.client.domain.model.impl.ServerGroupStoreImpl;
-import org.jboss.as.console.client.domain.overview.DomainOverview;
-import org.jboss.as.console.client.domain.overview.DomainOverviewPresenter;
+import org.jboss.as.console.client.domain.DomainPresenter;
+import org.jboss.as.console.client.domain.DomainView;
+import org.jboss.as.console.client.domain.topology.TopologyPresenter;
+import org.jboss.as.console.client.domain.topology.TopologyView;
 import org.jboss.as.console.client.domain.profiles.CurrentProfileSelection;
 import org.jboss.as.console.client.domain.profiles.ProfileMgmtPresenter;
 import org.jboss.as.console.client.domain.profiles.ProfileMgmtView;
 import org.jboss.as.console.client.domain.runtime.DomainRuntimePresenter;
 import org.jboss.as.console.client.domain.runtime.DomainRuntimeView;
 import org.jboss.as.console.client.plugins.RuntimeExtensionRegistry;
+import org.jboss.as.console.client.plugins.RuntimeLHSItemExtensionRegistryImpl;
 import org.jboss.as.console.client.plugins.SubsystemRegistry;
 import org.jboss.as.console.client.plugins.SubsystemRegistryImpl;
-import org.jboss.as.console.client.plugins.RuntimeLHSItemExtensionRegistryImpl;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.HandlerMapping;
 import org.jboss.as.console.client.shared.dispatch.InvocationMetrics;
@@ -98,14 +76,7 @@ import org.jboss.as.console.client.shared.dispatch.impl.DispatchAsyncImpl;
 import org.jboss.as.console.client.shared.dispatch.impl.HandlerRegistry;
 import org.jboss.as.console.client.shared.expr.DefaultExpressionResolver;
 import org.jboss.as.console.client.shared.expr.ExpressionResolver;
-import org.jboss.as.console.client.shared.general.InterfacePresenter;
-import org.jboss.as.console.client.shared.general.InterfaceView;
-import org.jboss.as.console.client.shared.general.PathManagementPresenter;
-import org.jboss.as.console.client.shared.general.PathManagementView;
-import org.jboss.as.console.client.shared.general.PropertiesPresenter;
-import org.jboss.as.console.client.shared.general.PropertiesView;
-import org.jboss.as.console.client.shared.general.SocketBindingPresenter;
-import org.jboss.as.console.client.shared.general.SocketBindingView;
+import org.jboss.as.console.client.shared.general.*;
 import org.jboss.as.console.client.shared.help.HelpSystem;
 import org.jboss.as.console.client.shared.model.DeploymentStore;
 import org.jboss.as.console.client.shared.model.DeploymentStoreImpl;
@@ -114,6 +85,10 @@ import org.jboss.as.console.client.shared.model.SubsystemStoreImpl;
 import org.jboss.as.console.client.shared.runtime.RuntimeBaseAddress;
 import org.jboss.as.console.client.shared.runtime.ds.DataSourceMetricPresenter;
 import org.jboss.as.console.client.shared.runtime.ds.DataSourceMetricView;
+import org.jboss.as.console.client.shared.runtime.env.EnvironmentPresenter;
+import org.jboss.as.console.client.shared.runtime.env.EnvironmentView;
+import org.jboss.as.console.client.shared.runtime.ext.ExtensionPresenter;
+import org.jboss.as.console.client.shared.runtime.ext.ExtensionView;
 import org.jboss.as.console.client.shared.runtime.jms.JMSMetricPresenter;
 import org.jboss.as.console.client.shared.runtime.jms.JMSMetricView;
 import org.jboss.as.console.client.shared.runtime.jpa.JPAMetricPresenter;
@@ -138,28 +113,14 @@ import org.jboss.as.console.client.shared.subsys.ejb3.EEPresenter;
 import org.jboss.as.console.client.shared.subsys.ejb3.EESubsystemView;
 import org.jboss.as.console.client.shared.subsys.ejb3.EJB3Presenter;
 import org.jboss.as.console.client.shared.subsys.ejb3.EJB3View;
-import org.jboss.as.console.client.shared.subsys.infinispan.CacheContainerPresenter;
-import org.jboss.as.console.client.shared.subsys.infinispan.CacheContainerView;
-import org.jboss.as.console.client.shared.subsys.infinispan.DistributedCachePresenter;
-import org.jboss.as.console.client.shared.subsys.infinispan.DistributedCacheView;
-import org.jboss.as.console.client.shared.subsys.infinispan.InvalidationCachePresenter;
-import org.jboss.as.console.client.shared.subsys.infinispan.InvalidationCacheView;
-import org.jboss.as.console.client.shared.subsys.infinispan.LocalCachePresenter;
-import org.jboss.as.console.client.shared.subsys.infinispan.LocalCacheView;
-import org.jboss.as.console.client.shared.subsys.infinispan.ReplicatedCachePresenter;
-import org.jboss.as.console.client.shared.subsys.infinispan.ReplicatedCacheView;
+import org.jboss.as.console.client.shared.subsys.infinispan.*;
 import org.jboss.as.console.client.shared.subsys.infinispan.model.CacheContainerStore;
 import org.jboss.as.console.client.shared.subsys.infinispan.model.CacheContainerStoreImpl;
 import org.jboss.as.console.client.shared.subsys.infinispan.model.LocalCacheStore;
 import org.jboss.as.console.client.shared.subsys.infinispan.model.LocalCacheStoreImpl;
 import org.jboss.as.console.client.shared.subsys.jacorb.JacOrbPresenter;
 import org.jboss.as.console.client.shared.subsys.jacorb.JacOrbView;
-import org.jboss.as.console.client.shared.subsys.jca.DataSourcePresenter;
-import org.jboss.as.console.client.shared.subsys.jca.DatasourceView;
-import org.jboss.as.console.client.shared.subsys.jca.JcaPresenter;
-import org.jboss.as.console.client.shared.subsys.jca.JcaSubsystemView;
-import org.jboss.as.console.client.shared.subsys.jca.ResourceAdapterPresenter;
-import org.jboss.as.console.client.shared.subsys.jca.ResourceAdapterView;
+import org.jboss.as.console.client.shared.subsys.jca.*;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSourceStore;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSourceStoreImpl;
 import org.jboss.as.console.client.shared.subsys.jca.model.DomainDriverStrategy;
@@ -197,11 +158,7 @@ import org.jboss.as.console.client.shared.subsys.tx.TransactionPresenter;
 import org.jboss.as.console.client.shared.subsys.tx.TransactionView;
 import org.jboss.as.console.client.shared.subsys.web.WebPresenter;
 import org.jboss.as.console.client.shared.subsys.web.WebSubsystemView;
-import org.jboss.as.console.client.shared.subsys.ws.DomainEndpointStrategy;
-import org.jboss.as.console.client.shared.subsys.ws.EndpointRegistry;
-import org.jboss.as.console.client.shared.subsys.ws.StandaloneEndpointStrategy;
-import org.jboss.as.console.client.shared.subsys.ws.WebServicePresenter;
-import org.jboss.as.console.client.shared.subsys.ws.WebServiceView;
+import org.jboss.as.console.client.shared.subsys.ws.*;
 import org.jboss.as.console.client.standalone.ServerMgmtApplicationPresenter;
 import org.jboss.as.console.client.standalone.ServerMgmtApplicationView;
 import org.jboss.as.console.client.standalone.StandaloneServerPresenter;
@@ -365,10 +322,15 @@ public class CoreUIModule extends AbstractPresenterModule {
                 ProfileMgmtPresenter.MyProxy.class);
 
         // domain/profiles
-        bindPresenter(DomainOverviewPresenter.class,
-                DomainOverviewPresenter.MyView.class,
-                DomainOverview.class,
-                DomainOverviewPresenter.MyProxy.class);
+        bindPresenter(DomainPresenter.class,
+                DomainPresenter.MyView.class,
+                DomainView.class,
+                DomainPresenter.MyProxy.class);
+
+        bindPresenter(TopologyPresenter.class,
+                TopologyPresenter.MyView.class,
+                TopologyView.class,
+                TopologyPresenter.MyProxy.class);
 
         bind(CurrentProfileSelection.class).in(Singleton.class);
         bind(CurrentHostSelection.class).in(Singleton.class);
@@ -647,8 +609,15 @@ public class CoreUIModule extends AbstractPresenterModule {
                 PathManagementView.class,
                 PathManagementPresenter.MyProxy.class);
 
+        bindPresenter(EnvironmentPresenter.class,
+                EnvironmentPresenter.MyView.class,
+                EnvironmentView.class,
+                EnvironmentPresenter.MyProxy.class);
 
+        bindPresenter(ExtensionPresenter.class,
+                ExtensionPresenter.MyView.class,
+                ExtensionView.class,
+                ExtensionPresenter.MyProxy.class);
     }
-
 }
 

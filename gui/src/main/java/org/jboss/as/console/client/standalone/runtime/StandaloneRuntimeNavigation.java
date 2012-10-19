@@ -56,7 +56,7 @@ public class StandaloneRuntimeNavigation {
 
         TreeItem serverLeaf = new LHSTreeSection("Server", true);
 
-        LHSNavTreeItem server = new LHSNavTreeItem("Configuration", NameTokens.StandaloneServerPresenter);
+        LHSNavTreeItem server = new LHSNavTreeItem("Overview", NameTokens.StandaloneServerPresenter);
 
         serverLeaf.addItem(server);
         serverLeaf.addItem(new LHSNavTreeItem("Manage Deployments", NameTokens.DeploymentListPresenter));
@@ -67,10 +67,9 @@ public class StandaloneRuntimeNavigation {
 
         metricLeaf = new LHSTreeSection("Status");
 
-
-        LHSNavTreeItem datasources = new LHSNavTreeItem("Datasources", "ds-metrics");
-        LHSNavTreeItem jmsQueues = new LHSNavTreeItem("JMS Destinations", "jms-metrics");
-        LHSNavTreeItem web = new LHSNavTreeItem("Web", "web-metrics");
+        LHSNavTreeItem datasources = new LHSNavTreeItem("Datasources", NameTokens.DataSourceMetricPresenter);
+        LHSNavTreeItem jmsQueues = new LHSNavTreeItem("JMS Destinations", NameTokens.JmsMetricPresenter);
+        LHSNavTreeItem web = new LHSNavTreeItem("Web", NameTokens.WebMetricPresenter);
         LHSNavTreeItem jpa = new LHSNavTreeItem("JPA", NameTokens.JPAMetricPresenter);
         LHSNavTreeItem ws = new LHSNavTreeItem("Webservices", NameTokens.WebServiceRuntimePresenter);
         LHSNavTreeItem naming = new LHSNavTreeItem("JNDI View", NameTokens.JndiPresenter);
@@ -145,7 +144,10 @@ public class StandaloneRuntimeNavigation {
         metricLeaf.removeItems();
         runtimeLeaf.removeItems();
 
-        metricLeaf.addItem( new LHSNavTreeItem("JVM", NameTokens.VirtualMachine));
+        metricLeaf.addItem(new LHSNavTreeItem("JVM", NameTokens.VirtualMachine));
+        metricLeaf.addItem(new LHSNavTreeItem("Environment", NameTokens.EnvironmentPresenter));
+        metricLeaf.addItem(new LHSNavTreeItem("Extensions", NameTokens.ExtensionsPresenter));
+
         // match subsystems
         for(SubsystemRecord subsys : subsystems)
         {

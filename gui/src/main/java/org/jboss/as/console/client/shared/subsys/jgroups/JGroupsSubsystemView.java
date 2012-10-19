@@ -86,7 +86,7 @@ public class JGroupsSubsystemView extends SuspendableViewImpl implements JGroups
                 }
             }
 
-            // move to first page if still showing overview
+            // move to first page if still showing topology
             if(0==panel.getPage())
                 panel.showPage(1);
         }

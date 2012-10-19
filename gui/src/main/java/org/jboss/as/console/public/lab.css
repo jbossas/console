@@ -225,79 +225,7 @@ input[type="checkbox"] {
     border:none!important;
 }
 
-/* domain overview */
-
-.domain-hostcontainer {
-    border-left:1px solid #DCDCDC;
-    border-top:1px solid #DCDCDC;
-    border-bottom:1px solid #DCDCDC;
-
-    font-size:12px;
-    min-width:100px;
-    margin-right:4px;
-    margin-bottom:4px;
-
-    -moz-border-radius: 4px;
-    -webkit-border-radius: 4px;
-    border-radius: 4px;
-
-    color: #000000;
-}
-
-.domain-hostcontainer:last-child {
-    border-right:1px solid #DCDCDC;
-}
-
-.domain-servercontainer {
-    -moz-border-bottom-radius: 4px;
-    -webkit-border-bottom-radius: 4px;
-    border-bottom-radius: 4px;
-}
-
-.domain-serverinfo{
-    font-size:10px;
-    padding:4px;
-    cursor: pointer;
-    border-left:1px solid #DCDCDC;
-    border-right:1px solid #DCDCDC;
-    border-bottom:1px solid #DCDCDC;
-}
-
-.domain-serverinfo-active {
-    opacity: 1.0;
-    background-color: #F8F8F8;
-}
-
-.domain-serverinfo:hover {
-    opacity: 1.0;
-}
-
-.server-tools {
-    padding:8px;
-    visibility: collapse;
-}
-
-.domain-hostinfo {
-    border-bottom: 1px solid #BABABA;
-    color: #000000;
-    font-weight: normal !important;
-    padding: 5px;
-    text-align: left !important;
-    margin-bottom:10px;
-}
-
-.domain-controller {
-
-}
-
-.is-visible {
-    visibility: visible;
-}
-
-
 .paged-view-navigation {
-
-
     /* fallback */
     background-color: #F3F3F3;
 
@@ -320,9 +248,7 @@ input[type="checkbox"] {
     padding-left: 10px;
 }
 
-
 /* speech bubbles */
-
 .triangle-border:before {
     content:"";
     position:absolute;
@@ -446,4 +372,66 @@ input[type="checkbox"] {
     padding-bottom:10px;
     padding-left:10px;
     font-size: 10px;
+}
+
+/*----------------------------- new domain topology */
+.domainOverviewHeader {
+    text-align: left;
+    margin: 0;
+    padding: 3px;
+    font-weight: bold;
+}
+.domainOverviewCell {
+    padding: 5px;
+    cursor: pointer;
+    transition: color .66s ease-out, background-color .66s ease-out;
+    -moz-transition: color .66s ease-out, background-color .66s ease-out;
+    -webkit-transition: color .66s ease-out, background-color .66s ease-out;
+}
+.statusIcon {
+    display: inline;
+    float: right;
+}
+.lifecycleLinks {
+    margin-top: 3px;
+}
+.lifecycleLink {
+    color: #000 !important;
+}
+.lifecycleLink:hover {
+    text-decoration: underline;
+}
+.hostNavigation {
+    font-weight: bold;
+    cursor: pointer;
+}
+.serverGroup0, .serverGroup0_light:hover {
+    background-color: rgb(136,171,194);
+}
+.serverGroup0_light {
+    background-color: rgba(136,171,194,.4);
+}
+.serverGroup1, .serverGroup1_light:hover {
+    background-color: rgb(249,212,35);
+}
+.serverGroup1_light {
+    background-color: rgba(249,212,35,.4);
+}
+.serverGroup2, .serverGroup2_light:hover {
+    background-color: rgb(166,140,181);
+}
+.serverGroup2_light {
+    background-color: rgba(166,140,181,.4);
+}
+.serverGroup3, .serverGroup3_light:hover {
+    background-color: rgb(119,184,184);
+}
+.serverGroup3_light {
+    background-color: rgba(119,184,184,.4);
+}
+.serverGroup4, .serverGroup4_light:hover {
+    background-color: rgb(179,202,87);
+}
+.serverGroup4_light {
+    background-color: rgba(179,202,87,.4);
 }
