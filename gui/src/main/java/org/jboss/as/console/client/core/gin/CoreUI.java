@@ -26,13 +26,7 @@ import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.TokenFormatter;
 import org.jboss.as.console.client.auth.CurrentUser;
 import org.jboss.as.console.client.auth.SignInPagePresenter;
-import org.jboss.as.console.client.core.ApplicationProperties;
-import org.jboss.as.console.client.core.BootstrapContext;
-import org.jboss.as.console.client.core.DomainGateKeeper;
-import org.jboss.as.console.client.core.Footer;
-import org.jboss.as.console.client.core.Header;
-import org.jboss.as.console.client.core.MainLayoutPresenter;
-import org.jboss.as.console.client.core.StandaloneGateKeeper;
+import org.jboss.as.console.client.core.*;
 import org.jboss.as.console.client.core.message.MessageBar;
 import org.jboss.as.console.client.core.message.MessageCenter;
 import org.jboss.as.console.client.core.message.MessageCenterView;
@@ -51,7 +45,8 @@ import org.jboss.as.console.client.domain.hosts.general.HostPropertiesPresenter;
 import org.jboss.as.console.client.domain.model.HostInformationStore;
 import org.jboss.as.console.client.domain.model.ProfileStore;
 import org.jboss.as.console.client.domain.model.ServerGroupStore;
-import org.jboss.as.console.client.domain.overview.DomainOverviewPresenter;
+import org.jboss.as.console.client.domain.DomainPresenter;
+import org.jboss.as.console.client.domain.topology.TopologyPresenter;
 import org.jboss.as.console.client.domain.profiles.CurrentProfileSelection;
 import org.jboss.as.console.client.domain.profiles.ProfileMgmtPresenter;
 import org.jboss.as.console.client.domain.runtime.DomainRuntimePresenter;
@@ -71,6 +66,8 @@ import org.jboss.as.console.client.shared.model.DeploymentStore;
 import org.jboss.as.console.client.shared.model.SubsystemStore;
 import org.jboss.as.console.client.shared.runtime.RuntimeBaseAddress;
 import org.jboss.as.console.client.shared.runtime.ds.DataSourceMetricPresenter;
+import org.jboss.as.console.client.shared.runtime.env.EnvironmentPresenter;
+import org.jboss.as.console.client.shared.runtime.ext.ExtensionPresenter;
 import org.jboss.as.console.client.shared.runtime.jms.JMSMetricPresenter;
 import org.jboss.as.console.client.shared.runtime.jpa.JPAMetricPresenter;
 import org.jboss.as.console.client.shared.runtime.naming.JndiPresenter;
@@ -85,11 +82,7 @@ import org.jboss.as.console.client.shared.subsys.configadmin.ConfigAdminPresente
 import org.jboss.as.console.client.shared.subsys.deploymentscanner.ScannerPresenter;
 import org.jboss.as.console.client.shared.subsys.ejb3.EEPresenter;
 import org.jboss.as.console.client.shared.subsys.ejb3.EJB3Presenter;
-import org.jboss.as.console.client.shared.subsys.infinispan.CacheContainerPresenter;
-import org.jboss.as.console.client.shared.subsys.infinispan.DistributedCachePresenter;
-import org.jboss.as.console.client.shared.subsys.infinispan.InvalidationCachePresenter;
-import org.jboss.as.console.client.shared.subsys.infinispan.LocalCachePresenter;
-import org.jboss.as.console.client.shared.subsys.infinispan.ReplicatedCachePresenter;
+import org.jboss.as.console.client.shared.subsys.infinispan.*;
 import org.jboss.as.console.client.shared.subsys.infinispan.model.CacheContainerStore;
 import org.jboss.as.console.client.shared.subsys.infinispan.model.LocalCacheStore;
 import org.jboss.as.console.client.shared.subsys.jacorb.JacOrbPresenter;
@@ -214,7 +207,8 @@ public interface CoreUI {
 
     AsyncProvider<ServerGroupMgmtPresenter> getServerGroupMgmtPresenter();
 
-    AsyncProvider<DomainOverviewPresenter> getProfileToolPresenter();
+    AsyncProvider<DomainPresenter> getProfileToolPresenter();
+    AsyncProvider<TopologyPresenter> getServerGroupHostMatrixPresenter();
     AsyncProvider<ServerGroupPresenter> getServerGroupsPresenter();
 
     ProfileStore getProfileStore();
@@ -312,8 +306,11 @@ public interface CoreUI {
 
     AsyncProvider<JPAMetricPresenter> JPAMetricPresenter();
 
+    AsyncProvider<EnvironmentPresenter> getEnvironmentPresenter();
+
+    AsyncProvider<ExtensionPresenter> getExtensionPresenter();
+
     AsyncProvider<JGroupsPresenter> JGroupsPresenter();
 
     AsyncProvider<PathManagementPresenter> PathManagementPresenter();
-
 }
