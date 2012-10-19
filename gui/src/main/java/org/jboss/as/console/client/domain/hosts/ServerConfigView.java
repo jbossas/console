@@ -112,7 +112,7 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
         toolStrip.addToolButtonRight(deleteBtn);
 
 
-        ToolButton copyBtn = new ToolButton("Copy");
+        ToolButton copyBtn = new ToolButton("Clone");
         copyBtn.addClickHandler(new ClickHandler(){
             @Override
             public void onClick(ClickEvent clickEvent) {

@@ -69,8 +69,8 @@ public class CopyServerWizard {
         layout.setStyleName("window-content");
 
 
-        layout.add(new ContentDescription("<h3>Create copy</h3> You are about to create a copy of server-configuration "+original.getName()+
-        ". Please verify the port offset to avoid conflicts when starting the server."));
+        layout.add(new ContentDescription("<h3>Create copy</h3> You are about to create a copy of server-configuration <b>'"+original.getName()+
+        "'</b>. Please verify the port offset to avoid conflicts when starting the server."));
 
         final Form<Server> form = new Form<Server>(Server.class);
         form.setNumColumns(1);
