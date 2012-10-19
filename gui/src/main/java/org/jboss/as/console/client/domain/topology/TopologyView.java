@@ -58,17 +58,17 @@ import static org.jboss.as.console.client.domain.topology.HtmlGenerator.*;
 public class TopologyView extends SuspendableViewImpl implements TopologyPresenter.MyView
 {
     static final int TABLE_WIDTH = 100; // percent
-    static final int GROUPS_COLUMN = 15; // percent
-    static final int HOSTS_COLUMNS = TABLE_WIDTH - GROUPS_COLUMN;
+    static final int SERVER_GROUPS_COLUMN = 15; // percent
+    static final int HOSTS_COLUMNS = TABLE_WIDTH - SERVER_GROUPS_COLUMN;
     static final int VISIBLE_HOSTS_COLUMNS = 3;
     static final int SERVER_GROUP_COLORS = 5; // must match the '.serverGroupX' css class names
 
     private TopologyPresenter presenter;
     private HTMLPanel root;
-    private DefaultPager pager;
     private int hostIndex = 0; // the index of the current visible host
     private int visibleHosts;
     private int hostSize = 0;
+    private HostsPager pager;
     private HostsDisplay display;
     private LifecycleLinkListener lifecycleLinkListener;
 
@@ -84,38 +84,8 @@ public class TopologyView extends SuspendableViewImpl implements TopologyPresent
                 .setDescription("An overview of all hosts, groups and server instances in the domain.");
         root = new HTMLPanel(new HtmlGenerator().root().toSafeHtml().asString());
         display = new HostsDisplay();
-        pager = new DefaultPager()
-        {
-            @Override
-            public void firstPage()
-            {
-                scrollTo(0);
-                super.firstPage();
-            }
-
-            @Override
-            public void lastPage()
-            {
-                scrollTo((getPageCount() - 1) * VISIBLE_HOSTS_COLUMNS);
-                super.lastPage();
-            }
-
-            @Override
-            public void nextPage()
-            {
-                scrollTo(getPageStart() + VISIBLE_HOSTS_COLUMNS);
-                super.nextPage();
-            }
-
-            @Override
-            public void previousPage()
-            {
-                scrollTo(getPageStart() - VISIBLE_HOSTS_COLUMNS);
-                super.previousPage();
-            }
-        };
+        pager = new HostsPager();
         pager.setDisplay(display);
-        pager.setPage(0);
         pager.setPageSize(VISIBLE_HOSTS_COLUMNS);
         root.add(pager);
         layout.addContent("domain", root);
@@ -188,7 +158,7 @@ public class TopologyView extends SuspendableViewImpl implements TopologyPresent
         // fill the visible table
         // Adjust columns
         int columnWidth = HOSTS_COLUMNS / visibleHosts;
-        columns.appendColumn(GROUPS_COLUMN);
+        columns.appendColumn(SERVER_GROUPS_COLUMN);
         for (int i = 0; i < visibleHosts; i++)
         {
             columns.appendColumn(columnWidth);
@@ -207,9 +177,7 @@ public class TopologyView extends SuspendableViewImpl implements TopologyPresent
         registerEvents(visible.getClickIds());
 
         // update navigation
-        display.setRowCount(visibleHosts);
-
-        // "scroll" to the first host (copy the DOM nodes from hidden hosts table to visible table)
+        RowCountChangeEvent.fire(display, hostSize, true);
         scrollTo(0);
     }
 
@@ -367,6 +335,34 @@ public class TopologyView extends SuspendableViewImpl implements TopologyPresent
     }
 
 
+    private class HostsPager extends DefaultPager
+    {
+        @Override
+        public void firstPage()
+        {
+            scrollTo(0);
+        }
+
+        @Override
+        public void lastPage()
+        {
+            scrollTo((getPageCount() - 1) * VISIBLE_HOSTS_COLUMNS);
+        }
+
+        @Override
+        public void nextPage()
+        {
+            scrollTo(getPageStart() + VISIBLE_HOSTS_COLUMNS);
+        }
+
+        @Override
+        public void previousPage()
+        {
+            scrollTo(getPageStart() - VISIBLE_HOSTS_COLUMNS);
+        }
+    }
+
+
     /**
      * An implementation for the pagers display. Although this class implements Has<em>Rows</em> the paging is over
      * <em>columns</em>.
@@ -376,14 +372,12 @@ public class TopologyView extends SuspendableViewImpl implements TopologyPresent
         @Override
         public HandlerRegistration addRangeChangeHandler(final RangeChangeEvent.Handler handler)
         {
-            GWT.log("addRangeChangeHandler() called");
             return root.addHandler(handler, RangeChangeEvent.getType());
         }
 
         @Override
         public HandlerRegistration addRowCountChangeHandler(final RowCountChangeEvent.Handler handler)
         {
-            GWT.log("addRowCountChangeHandler() called");
             return root.addHandler(handler, RowCountChangeEvent.getType());
         }
 
@@ -408,33 +402,26 @@ public class TopologyView extends SuspendableViewImpl implements TopologyPresent
         @Override
         public void setRowCount(final int count)
         {
-            GWT.log("setRowCount(" + count + ") called");
-            setRowCount(count, true);
         }
 
         @Override
         public void setRowCount(final int count, final boolean isExact)
         {
-            GWT.log("setRowCount(" + count + ", " + isExact + ") called");
-            RowCountChangeEvent.fire(this, count, isExact);
         }
 
         @Override
         public void setVisibleRange(final int start, final int length)
         {
-            GWT.log("setVisibleRange(" + start + ", " + length + ") called");
         }
 
         @Override
         public void setVisibleRange(final Range range)
         {
-            GWT.log("setVisibleRange(" + range + ") called");
         }
 
         @Override
         public void fireEvent(final GwtEvent<?> event)
         {
-            GWT.log("fireEvent(" + event + ") called");
             root.fireEvent(event);
         }
     }
