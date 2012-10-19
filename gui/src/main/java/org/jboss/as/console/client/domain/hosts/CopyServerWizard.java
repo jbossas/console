@@ -90,6 +90,8 @@ public class CopyServerWizard {
             }
         };
 
+        nameItem.setValue(original.getName()+"_copy");
+
         NumberBoxItem portOffset = new NumberBoxItem("portOffset", Console.CONSTANTS.common_label_portOffset());
 
         // host names
