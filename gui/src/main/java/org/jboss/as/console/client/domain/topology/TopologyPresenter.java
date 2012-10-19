@@ -18,9 +18,9 @@
  */
 package org.jboss.as.console.client.domain.topology;
 
-import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.Random;
 import com.google.inject.Inject;
+import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
@@ -109,7 +109,7 @@ public class TopologyPresenter extends
     @Override
     protected void revealInParent()
     {
-        RevealContentEvent.fire(getEventBus(), DomainPresenter.TYPE_MainContent, this);
+        RevealContentEvent.fire(this, DomainPresenter.TYPE_MainContent, this);
     }
 
 
