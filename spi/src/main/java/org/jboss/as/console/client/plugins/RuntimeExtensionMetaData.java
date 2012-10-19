@@ -18,6 +18,10 @@ public class RuntimeExtensionMetaData {
         this.key = key;
     }
 
+    public String setName(String Name){
+        this.name = name
+    }
+
     public String getName() {
         return name;
     }
