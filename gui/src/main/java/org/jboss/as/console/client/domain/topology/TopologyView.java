@@ -18,6 +18,7 @@
  */
 package org.jboss.as.console.client.domain.topology;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Node;
@@ -25,7 +26,6 @@ import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.EventListener;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
@@ -334,7 +334,7 @@ public class TopologyView extends SuspendableViewImpl implements TopologyPresent
                 }
                 else
                 {
-                    Window.alert("Click handler for " + id + " not yet implemented");
+                    GWT.log("Click handler for " + id + " not yet implemented");
                 }
             }
         }
