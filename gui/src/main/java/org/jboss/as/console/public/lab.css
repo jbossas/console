@@ -375,63 +375,71 @@ input[type="checkbox"] {
 }
 
 /*----------------------------- new domain topology */
-.domainOverviewHeader {
-    text-align: left;
-    margin: 0;
-    padding: 3px;
-    font-weight: bold;
-}
 .domainOverviewCell {
-    padding: 5px;
     cursor: pointer;
+    vertical-align: top;
+    white-space: normal !important; /* overwrites cellTableCell to render the status icons correctly */
+    border-bottom: 1px solid rgb(229,229,229) !important;
     transition: color .66s ease-out, background-color .66s ease-out;
     -moz-transition: color .66s ease-out, background-color .66s ease-out;
     -webkit-transition: color .66s ease-out, background-color .66s ease-out;
 }
+.domainOverviewCell:hover .lifecycleLinks {
+    visibility: visible;
+}
 .statusIcon {
-    display: inline;
     float: right;
+    margin-left: 16px;
 }
 .lifecycleLinks {
     margin-top: 3px;
+    visibility: hidden;
 }
 .lifecycleLink {
-    color: #000 !important;
-}
-.lifecycleLink:hover {
     text-decoration: underline;
 }
-.hostNavigation {
-    font-weight: bold;
-    cursor: pointer;
-}
-.serverGroup0, .serverGroup0_light:hover {
-    background-color: rgb(136,171,194);
+.serverGroup0 {
+    border-right: 5px solid rgb(136,171,194) !important;
 }
 .serverGroup0_light {
     background-color: rgba(136,171,194,.4);
 }
-.serverGroup1, .serverGroup1_light:hover {
-    background-color: rgb(249,212,35);
+.serverGroup0_light:hover {
+    background-color: rgb(136,171,194);
+}
+.serverGroup1 {
+    border-right: 5px solid rgb(249,212,35) !important;
 }
 .serverGroup1_light {
     background-color: rgba(249,212,35,.4);
 }
-.serverGroup2, .serverGroup2_light:hover {
-    background-color: rgb(166,140,181);
+.serverGroup1_light:hover {
+    background-color: rgb(249,212,35);
+}
+.serverGroup2 {
+    border-right: 5px solid rgb(166,140,181) !important;
 }
 .serverGroup2_light {
     background-color: rgba(166,140,181,.4);
 }
-.serverGroup3, .serverGroup3_light:hover {
-    background-color: rgb(119,184,184);
+.serverGroup2_light:hover {
+    background-color: rgb(166,140,181);
+}
+.serverGroup3 {
+    border-right: 5px solid rgb(119,184,184) !important;
 }
 .serverGroup3_light {
     background-color: rgba(119,184,184,.4);
 }
-.serverGroup4, .serverGroup4_light:hover {
-    background-color: rgb(179,202,87);
+.serverGroup3_light:hover {
+    background-color: rgb(119,184,184);
+}
+.serverGroup4 {
+    border-right: 5px solid rgb(179,202,87) !important;
 }
 .serverGroup4_light {
     background-color: rgba(179,202,87,.4);
+}
+.serverGroup4_light:hover {
+    background-color: rgb(179,202,87);
 }
