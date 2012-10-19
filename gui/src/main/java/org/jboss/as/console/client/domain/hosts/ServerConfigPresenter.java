@@ -675,22 +675,10 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
 
                             loadServerConfigurations(null);
 
-                            /*
-                            TODO: Make this work with the host selector
-
                             if(!hostSelection.getName().equals(targetHost))
                             {
-
-                                hostSelection.setName(targetHost);
-                                Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
-                                    @Override
-                                    public void execute() {
-                                        getEventBus().fireEventFromSource(
-                                                new HostSelectionEvent(targetHost), this
-                                        );
-                                    }
-                                });
-                            } */
+                                //TODO: hostSelection.setName(targetHost);
+                            }
                         }
                     });
 
