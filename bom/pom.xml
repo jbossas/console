@@ -22,7 +22,7 @@
     </description>
 
     <properties>
-        <ballroom.version>1.5.0-SNAPSHOT</ballroom.version>
+        <ballroom.version>1.5.0.Final</ballroom.version>
         <gwt.version>2.5.0-rc2</gwt.version>
         <gwtp.version>0.7</gwtp.version>
         <gwt.maven>2.5.0-rc2</gwt.maven>
