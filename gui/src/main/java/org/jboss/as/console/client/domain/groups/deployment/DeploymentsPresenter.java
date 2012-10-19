@@ -115,7 +115,7 @@ public class DeploymentsPresenter extends Presenter<DeploymentsPresenter.MyView,
 
     @Override
     protected void revealInParent() {
-        RevealContentEvent.fire(this, DomainRuntimePresenter.TYPE_MainContent, this);
+        RevealContentEvent.fire(this, DomainPresenter.TYPE_MainContent, this);
     }
 
     @Override
