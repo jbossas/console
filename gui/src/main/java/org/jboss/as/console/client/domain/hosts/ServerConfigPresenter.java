@@ -21,12 +21,9 @@ package org.jboss.as.console.client.domain.hosts;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.event.logical.shared.CloseEvent;
-import com.google.gwt.event.logical.shared.CloseHandler;
-import com.google.web.bindery.event.shared.EventBus;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.inject.Inject;
+import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
@@ -43,6 +40,7 @@ import org.jboss.as.console.client.core.SuspendableView;
 import org.jboss.as.console.client.core.message.Message;
 import org.jboss.as.console.client.domain.events.HostSelectionEvent;
 import org.jboss.as.console.client.domain.events.StaleModelEvent;
+import org.jboss.as.console.client.domain.model.Host;
 import org.jboss.as.console.client.domain.model.HostInformationStore;
 import org.jboss.as.console.client.domain.model.Server;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
@@ -101,6 +99,7 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
     private PlaceManager placeManager;
 
     private LoadSocketBindingsCmd loadSocketCmd;
+
 
     @ProxyCodeSplit
     @NameToken(NameTokens.ServerPresenter)
@@ -531,12 +530,6 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
         propertyWindow = new DefaultWindow(Console.MESSAGES.createTitle("System Property"));
         propertyWindow.setWidth(320);
         propertyWindow.setHeight(279);
-        propertyWindow.addCloseHandler(new CloseHandler<PopupPanel>() {
-            @Override
-            public void onClose(CloseEvent<PopupPanel> event) {
-
-            }
-        });
 
         propertyWindow.trapWidget(
                 new NewPropertyWizard(this, reference, true).asWidget()
@@ -591,6 +584,120 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
             public void onSuccess(List<PropertyRecord> properties) {
                 getView().setProperties(server.getName(), properties);
             }
+        });
+    }
+
+    public void onLaunchCopyWizard(final Server orig) {
+
+        window = new DefaultWindow("New Server Configuration");
+        window.setWidth(480);
+        window.setHeight(380);
+
+
+        hostInfoStore.getHosts(new SimpleCallback<List<Host>>() {
+            @Override
+            public void onSuccess(List<Host> result) {
+
+                window.trapWidget(
+                        new CopyServerWizard(ServerConfigPresenter.this, orig, result, hostSelection.getName()).asWidget()
+                );
+
+                window.setGlassEnabled(true);
+                window.center();
+            }
+        });
+
+    }
+
+    public void onSaveCopy(final String targetHost, final Server original, final Server newServer) {
+        window.hide();
+
+        assert hostSelection.isSet();
+
+        final ModelNode operation = new ModelNode();
+        operation.get(OP).set(READ_RESOURCE_OPERATION);
+        operation.get(ADDRESS).setEmptyList();
+        operation.get(ADDRESS).add("host", hostSelection.getName());
+        operation.get(ADDRESS).add("server-config", original.getName());
+        operation.get(RECURSIVE).set(true);
+
+        dispatcher.execute(new DMRAction(operation, false), new AsyncCallback<DMRResponse>() {
+            @Override
+            public void onFailure(Throwable caught) {
+                Console.error("Failed to read server-config: "+original.getName(), caught.getMessage());
+            }
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+
+                ModelNode response = result.get();
+
+                if(response.isFailure())
+                {
+                    Console.error("Failed to read server-config: "+original.getName(), response.getFailureDescription());
+                }
+                else
+                {
+                    ModelNode model = response.get("result").asObject();
+
+                    // required attribute changes: portOffset & serverGroup
+                    model.get("socket-binding-port-offset").set(newServer.getPortOffset());
+                    model.remove("name");
+
+                    // re-create node
+
+                    final ModelNode addOperation = new ModelNode();
+                    addOperation.get(OP).set(ADD);
+                    addOperation.get(ADDRESS).add("host", targetHost);
+                    addOperation.get(ADDRESS).add("server-config", newServer.getName());
+                    //addOperation.set(model).set(model);
+
+                    for(String key :model.keys())
+                    {
+                        addOperation.get(key).set(model.get(key));
+                    }
+
+                    //System.out.println(addOperation);
+
+                    dispatcher.execute(new DMRAction(addOperation), new SimpleCallback<DMRResponse>() {
+                        @Override
+                        public void onSuccess(DMRResponse dmrResponse) {
+                            ModelNode response = dmrResponse.get();
+
+                            if(response.isFailure())
+                            {
+                                Console.error("Failed to copy server-config", response.getFailureDescription());
+                            }
+                            else
+                            {
+                                Console.info("Successfully copied server-config '"+newServer.getName()+"'");
+                            }
+
+                            loadServerConfigurations(null);
+
+                            /*
+                            TODO: Make this work with the host selector
+
+                            if(!hostSelection.getName().equals(targetHost))
+                            {
+
+                                hostSelection.setName(targetHost);
+                                Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+                                    @Override
+                                    public void execute() {
+                                        getEventBus().fireEventFromSource(
+                                                new HostSelectionEvent(targetHost), this
+                                        );
+                                    }
+                                });
+                            } */
+                        }
+                    });
+
+                }
+
+            }
+
         });
     }
 }

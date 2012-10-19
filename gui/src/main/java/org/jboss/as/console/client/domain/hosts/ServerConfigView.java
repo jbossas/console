@@ -112,6 +112,18 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
         toolStrip.addToolButtonRight(deleteBtn);
 
 
+        ToolButton copyBtn = new ToolButton("Copy");
+        copyBtn.addClickHandler(new ClickHandler(){
+            @Override
+            public void onClick(ClickEvent clickEvent) {
+
+                final Server server = getSelectionModel().getSelectedObject();
+                presenter.onLaunchCopyWizard(server);
+            }
+        });
+
+        toolStrip.addToolButtonRight(copyBtn);
+
         // ------------------------------------------------------
 
         // Create columns
