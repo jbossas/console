@@ -65,33 +65,7 @@ class DomainRuntimeNavigation implements ServerSelectionEvent.ServerSelectionLis
         // ----------------------------------------------------
 
         navigation = new LHSNavTree("domain-runtime");
-        navigation.getElement().setAttribute("aria-label", "Profile Tasks");
-
-        //Tree statusTree = new LHSNavTree("domain-runtime");
-
-        LHSTreeSection domainLeaf = new LHSTreeSection("Host");
-        navigation.addItem(domainLeaf);
-
-
-        //domainLeaf.addItem(new LHSNavTreeItem("Overview", ""));
-
-        LHSNavTreeItem serverInstances= new LHSNavTreeItem(
-                Console.CONSTANTS.common_label_serverInstances(),
-                NameTokens.InstancesPresenter);
-
-        /*LHSNavTreeItem domainOverview= new LHSNavTreeItem(
-                        "Domain",
-                        NameTokens.DomainOverviewPresenter);
-
-        domainLeaf.addItem(domainOverview);*/
-        domainLeaf.addItem(serverInstances);
-
-        domainLeaf.addItem(new LHSNavTreeItem("Manage Deployments", NameTokens.DeploymentsPresenter));
-
-
-        //DisclosurePanel statusPanel  = new DisclosureStackPanel("Domain Status").asWidget();
-        //statusPanel.setContent(statusTree);
-        //stack.add(statusPanel);
+        navigation.getElement().setAttribute("aria-label", "Runtime Tasks");
 
         // -------------
 
@@ -168,12 +142,11 @@ class DomainRuntimeNavigation implements ServerSelectionEvent.ServerSelectionLis
 
     public void setSubsystems(List<SubsystemRecord> subsystems) {
 
-
         metricLeaf.removeItems();
         runtimeLeaf.removeItems();
 
-        LHSNavTreeItem jvm = new LHSNavTreeItem("JVM", NameTokens.HostVMMetricPresenter);
-        metricLeaf.addItem(jvm);
+        metricLeaf.addItem(new LHSNavTreeItem("JVM", NameTokens.HostVMMetricPresenter));
+        metricLeaf.addItem(new LHSNavTreeItem("Environment", NameTokens.EnvironmentPresenter));
 
         // match subsystems
         for(SubsystemRecord subsys : subsystems)

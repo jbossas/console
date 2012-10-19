@@ -1,35 +1,17 @@
 package org.jboss.as.console.client.standalone;
 
-import com.google.gwt.cell.client.TextCell;
-import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.cellview.client.Column;
-import com.google.gwt.user.client.ui.DeckPanel;
-import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Image;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.view.client.ListDataProvider;
+import com.google.gwt.user.client.ui.*;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.DisposableViewImpl;
-import org.jboss.as.console.client.shared.general.EnvironmentProperties;
-import org.jboss.as.console.client.shared.properties.PropertyRecord;
-import org.jboss.as.console.client.shared.viewframework.builder.OneToOneLayout;
+import org.jboss.as.console.client.shared.viewframework.builder.SimpleLayout;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.TextItem;
 import org.jboss.ballroom.client.widgets.icons.Icons;
-import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
-import org.jboss.ballroom.client.widgets.tables.DefaultPager;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
 import org.jboss.ballroom.client.widgets.tools.ToolStrip;
 import org.jboss.ballroom.client.widgets.window.Feedback;
-
-import java.util.List;
 
 
 /**
@@ -42,9 +24,6 @@ public class StandaloneServerView extends DisposableViewImpl implements Standalo
     private Label headline;
     private DeckPanel reloadPanel;
     private Form<StandaloneServer> form;
-    private DefaultCellTable<String> extensionTable;
-    private ListDataProvider<String> dataProvider;
-    private EnvironmentProperties environmentProperties;
 
     @Override
     public Widget createWidget() {
@@ -81,8 +60,6 @@ public class StandaloneServerView extends DisposableViewImpl implements Standalo
         TextItem state = new TextItem("serverState", "Server State");
 
         form.setFields(codename, version, state);
-
-
 
         // ----
 
@@ -125,34 +102,6 @@ public class StandaloneServerView extends DisposableViewImpl implements Standalo
 
         configNeedsUpdate.add(staleContent);
 
-        // ----
-
-
-        extensionTable = new DefaultCellTable<String>(8);
-        extensionTable.addColumn(new Column<String, String>(new TextCell()) {
-            @Override
-            public String getValue(String object) {
-                return object;
-            }
-        }, "Name");
-
-        dataProvider = new ListDataProvider<String>();
-        dataProvider.addDataDisplay(extensionTable);
-
-        VerticalPanel extPanel = new VerticalPanel();
-        extPanel.setStyleName("fill-layout-width");
-        extPanel.getElement().setAttribute("style", "padding-top:15px;");
-
-        DefaultPager pager = new DefaultPager();
-        pager.setDisplay(extensionTable);
-
-
-
-        extPanel.add(extensionTable.asWidget());
-        extPanel.add(pager);
-
-        // ---
-
         reloadPanel.add(configUptodate);
         reloadPanel.add(configNeedsUpdate);
         reloadPanel.showWidget(0);
@@ -163,24 +112,12 @@ public class StandaloneServerView extends DisposableViewImpl implements Standalo
         master.add(reloadPanel);
         master.add(form.asWidget());
 
-
-        environmentProperties = new EnvironmentProperties();
-
-
-        OneToOneLayout layout = new OneToOneLayout()
+        SimpleLayout layout = new SimpleLayout()
                 .setTitle("Standalone Server")
                 .setHeadlineWidget(headline)
                 .setDescription(Console.CONSTANTS.server_config_desc())
-                .setMaster("Server Configuration", master)
-                .addDetail("Extensions", extPanel)
-                .addDetail("Environment Properties", environmentProperties.asWidget());
-
-
+                .addContent("Server Configuration", master);
         return layout.build();
-    }
-
-    private void filterProperties(String prefix) {
-        environmentProperties.filterByPrefix(prefix);
     }
 
     @Override
@@ -192,18 +129,10 @@ public class StandaloneServerView extends DisposableViewImpl implements Standalo
     public void updateFrom(StandaloneServer server) {
         form.edit(server);
         headline.setText("Server: "+ server.getName());
-
-        dataProvider.setList(server.getExtensions());
-
     }
 
     @Override
     public void setReloadRequired(boolean reloadRequired) {
         reloadPanel.showWidget( reloadRequired ? 1:0);
-    }
-
-    @Override
-    public void setEnvironment(List<PropertyRecord> environment) {
-        environmentProperties.setProperties(environment);
     }
 }
