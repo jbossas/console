@@ -24,9 +24,13 @@ import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.ui.Image;
 import org.jboss.as.console.client.domain.model.ServerInstance;
 import org.jboss.as.console.client.widgets.icons.ConsoleIcons;
-import org.jboss.ballroom.client.widgets.icons.Icons;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
+
+import static org.jboss.as.console.client.domain.model.ServerFlag.RELOAD_REQUIRED;
+import static org.jboss.as.console.client.domain.model.ServerFlag.RESTART_REQUIRED;
 
 /**
  * Contains most of the html generator code used in {@link TopologyView}. The generated html contains several <a
@@ -34,9 +38,9 @@ import java.util.Set;
  * data attributes</a> to mark special tags:
  * <ul>
  *     <li>data-group: Marks a &lt;tr&gt; element as start of a new server group</li>
- *     <li>data-group-index: Holds the name of the css class for the accompanying server group for one server insance.
- *     Needed for hovering effects.</li>
- *     <li>data-member-of-group: Marks a server instance as part of a distinct server group.</li>
+ *     <li>data-group-name: The name of a server group. Used for lifecycle links.</li>
+ *     <li>data-host-name: The name of the host. Used for lifecycle links.</li>
+ *     <li>data-server-name: The name of a server instance. Used for lifecycle links.</li>
  * </ul>
  *
  * @author Harald Pehl
@@ -56,11 +60,13 @@ final class HtmlGenerator
     static final String NEXT_HOST_ID = "nextHost";
 
     final SafeHtmlBuilder html;
+    final List<String> clickIds;
 
 
     HtmlGenerator()
     {
         this.html = new SafeHtmlBuilder();
+        this.clickIds = new ArrayList<String>();
     }
 
 
@@ -76,48 +82,78 @@ final class HtmlGenerator
         html.appendHtmlConstant("<tbody id='" + VISIBLE_SERVERS_ID + "'/>");
         html.appendHtmlConstant("</table>");
 
-        html.appendHtmlConstant("<table style='display:none;'><thead id='" + HIDDEN_HOSTS_ID + "'/><tbody " +
-                "id='" + HIDDEN_SERVERS_ID + "'/></table>");
+        html.appendHtmlConstant("<table style='display:none;'><thead id='" + HIDDEN_HOSTS_ID + "'/><tbody id='" +
+                HIDDEN_SERVERS_ID + "'/></table>");
         return this;
     }
 
     HtmlGenerator appendHost(final HostInfo host)
     {
-        html.appendHtmlConstant("<th class='domainOverviewHeader'><span>")
-                .appendEscaped(host.getName()).appendHtmlConstant("<br/>Domain: ");
-        html.appendHtmlConstant(host.isController() ? "Controller" : "Member");
-        html.appendHtmlConstant("</span>");
+        html.appendHtmlConstant("<th class='domainOverviewCell'>");
         if (host.isController())
         {
-            ImageResource star = ConsoleIcons.INSTANCE.star();
-            html.appendHtmlConstant("<span style='float:right;'><img src='" + new Image(star).getUrl()
-                    + "' width='16' " + "height='16'/></span>");
+            appendIcon(ConsoleIcons.INSTANCE.star());
         }
+        startLine().appendText(host.getName()).endLine();
+        startLine().appendText("Domain: ").appendText(host.isController() ? "Controller" : "Member").endLine();
+        html.appendHtmlConstant("</th>");
         return this;
     }
 
-    HtmlGenerator appendServer(final ServerGroup group,
-            final ServerInstance server)
+    HtmlGenerator appendServer(final ServerGroup group, final String host, final ServerInstance server)
     {
-        html.appendHtmlConstant("<td class='domainOverviewCell " + group.cssClassname +
-                "_light' data-member-of-group='" + group.id + "' data-group-index='" + group.cssClassname + "'>");
-        ImageResource status = server.isRunning() ? Icons.INSTANCE.status_good() : Icons.INSTANCE.status_bad();
-        if (server.isRunning() && server.getFlag() != null)
+        String tooltip = "";
+        ImageResource icon  = null;
+        if (server.isRunning())
         {
-            status = Icons.INSTANCE.status_warn();
+            if (server.getFlag() != null)
+            {
+                if (server.getFlag() == RELOAD_REQUIRED)
+                {
+                    tooltip = "Server has to be reloaded";
+                    icon = ConsoleIcons.INSTANCE.refresh();
+                }
+                else if (server.getFlag() == RESTART_REQUIRED)
+                {
+                    tooltip = "Server has to be restarted";
+                    icon = ConsoleIcons.INSTANCE.stepForward();
+                }
+            }
+            else
+            {
+                tooltip = "Server is up and running";
+                icon = ConsoleIcons.INSTANCE.ok();
+            }
         }
-        html.appendHtmlConstant("<span style='float:right;'><img src='" + new Image(status).getUrl() + "' width='16' " +
-                        "height='16'/></span>");
-        html.appendHtmlConstant("<span>").appendEscaped(server.getName())
-                .appendHtmlConstant("</span>");
+        else
+        {
+            tooltip = "Server is stopped";
+            icon = ConsoleIcons.INSTANCE.off();
+        }
+        html.appendHtmlConstant("<td class='domainOverviewCell " + group.cssClassname + "_light' title='" + tooltip + "'>");
+        appendIcon(icon);
+
+        startLine().appendText(server.getName()).endLine();
         if (server.getSocketBindings().size() > 0)
         {
             Set<String> sockets = server.getSocketBindings().keySet();
             String first = sockets.iterator().next();
-            html.appendHtmlConstant("<span><br/>Socket Binding: ").appendEscaped(first).appendHtmlConstant("<br/>");
-            html.appendHtmlConstant("Ports: + ").appendEscaped(server.getSocketBindings().get(first))
-                    .appendHtmlConstant("</span>");
+            startLine().appendText("Socket Binding: ").appendText(first).endLine();
+            startLine().appendText("Ports: +").appendText(server.getSocketBindings().get(first)).endLine();
         }
+
+        startLinks();
+        String startStop = server.isRunning() ? "stop" : "start";
+        String startStopId = startStop + "_server_" + server.getName();
+        String text = startStop.substring(0, 1).toUpperCase() + startStop.substring(1) + " Server";
+        appendLifecycleLink(startStopId, null, host, server.getName(), text);
+        if (server.isRunning() && server.getFlag() == RELOAD_REQUIRED)
+        {
+            String reloadId = "reload_server_" + server.getName();
+            html.appendHtmlConstant("<br/>");
+            appendLifecycleLink(reloadId, null, host, server.getName(), "Reload Server");
+        }
+        endLine();
         html.appendHtmlConstant("</td>");
         return this;
     }
@@ -128,18 +164,26 @@ final class HtmlGenerator
         html.appendHtmlConstant("<tr data-group='" + SERVER_GROUP_START_DATA + "'>");
         if (group.maxServersPerHost > 1)
         {
-            html.appendHtmlConstant("<td id='" + group.id + "' class='domainOverviewCell " + group.cssClassname +
-                    "' rowspan='" + group.maxServersPerHost + "'>");
+            html.appendHtmlConstant("<td class='domainOverviewCell " + group.cssClassname + "' rowspan='" +
+                    group.maxServersPerHost + "'>");
         }
         else
         {
-            html.appendHtmlConstant("<td id='" + group.id + "' class='domainOverviewCell " + group.cssClassname + "'>");
+            html.appendHtmlConstant("<td class='domainOverviewCell " + group.cssClassname + "'>");
         }
-        html.appendEscaped(group.name);
+        startLine().appendText(group.name).endLine();
         if (group.profile != null)
         {
-            html.appendHtmlConstant("<br/>Profile: ").appendEscaped(group.profile);
+            startLine().appendText(group.profile).endLine();
         }
+
+        startLinks();
+        String startId = "start_group_" + group.name;
+        String stopId = "stop_group_" + group.name;
+        appendLifecycleLink(startId, group.name, null, null, "Start Group");
+        html.appendHtmlConstant("<br/>");
+        appendLifecycleLink(stopId, group.name, null, null, "Stop Group");
+        endLine();
         html.appendHtmlConstant("</td></tr>");
         if (group.maxServersPerHost > 1)
         {
@@ -152,9 +196,46 @@ final class HtmlGenerator
         return this;
     }
 
+    HtmlGenerator appendNavigation()
+    {
+        clickIds.add(PREV_HOST_ID);
+        clickIds.add(NEXT_HOST_ID);
+        html.appendHtmlConstant("<tr>");
+        html.appendHtmlConstant("<td>&nbsp;</td>");
+        html.appendHtmlConstant("<td id='" + PREV_HOST_ID + "' class='hostNavigation'>&larr; Previous Hosts</td>");
+        html.appendHtmlConstant("<td>&nbsp;</td>");
+        html.appendHtmlConstant("<td id='" + NEXT_HOST_ID + "'class='hostNavigation' style='text-align:right;'>Next Hosts &rarr;</td>");
+        html.appendHtmlConstant("</tr>");
+        return this;
+    }
+
+    HtmlGenerator appendIcon(final ImageResource img)
+    {
+        html.appendHtmlConstant("<div class='statusIcon'><img src='" + new Image(img).getUrl() +
+                "' width='16' " + "height='16'/></div>");
+        return this;
+    }
+
     HtmlGenerator appendColumn(final int width)
     {
         html.appendHtmlConstant("<col width='" + width + "%'/>");
+        return this;
+    }
+
+    HtmlGenerator appendLifecycleLink(String id, String group, String host, String server, String text)
+    {
+        clickIds.add(id);
+        html.appendHtmlConstant("<a id='" + id + "' class='lifecycleLink'" +
+                (group != null ? " data-group-name='" + group + "'" : "") +
+                (host != null ? " data-host-name='" + host + "'" : "") +
+                (server != null ? " data-server-name='" + server + "'" : "") +
+                ">").appendEscaped(text).appendHtmlConstant("</a>");
+        return this;
+    }
+
+    HtmlGenerator appendText(String text)
+    {
+        html.appendEscaped(text);
         return this;
     }
 
@@ -171,6 +252,29 @@ final class HtmlGenerator
         return this;
     }
 
+    HtmlGenerator startHeader()
+    {
+        html.appendHtmlConstant("th class='domainOverviewCell'>");
+        return this;
+    }
+
+    HtmlGenerator endHeader()
+    {
+        html.appendHtmlConstant("</th>");
+        return this;
+    }
+
+    HtmlGenerator startCell()
+    {
+        html.appendHtmlConstant("<td class='domainOverviewCell'>");
+        return this;
+    }
+
+    HtmlGenerator endCell()
+    {
+        html.appendHtmlConstant("</td>");
+        return this;
+    }
 
     HtmlGenerator emptyCell()
     {
@@ -178,18 +282,29 @@ final class HtmlGenerator
         return this;
     }
 
-    HtmlGenerator appendNavigation()
+    HtmlGenerator startLine()
     {
-        html.appendHtmlConstant("<tr>");
-        html.appendHtmlConstant("<td>&nbsp;</td>");
-        html.appendHtmlConstant("<td id='" + PREV_HOST_ID + "' class='hostNavigation'>&larr; Previous Hosts</td>");
-        html.appendHtmlConstant("<td>&nbsp;</td>");
-        html.appendHtmlConstant(
-                "<td id='" + NEXT_HOST_ID + "'class='hostNavigation' style='text-align:right;'>Next Hosts &rarr;" +
-                        "</td>");
-        html.appendHtmlConstant("</tr>");
+        html.appendHtmlConstant("<div>");
         return this;
     }
+
+    HtmlGenerator endLine()
+    {
+        html.appendHtmlConstant("</div>");
+        return this;
+    }
+
+    HtmlGenerator startLinks()
+    {
+        html.appendHtmlConstant("<div class='lifecycleLinks'>");
+        return this;
+    }
+
+    List<String> getClickIds()
+    {
+        return clickIds;
+    }
+
 
     // ------------------------------------------------------ delegate methods
 

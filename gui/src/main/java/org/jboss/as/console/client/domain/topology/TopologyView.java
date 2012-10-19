@@ -18,21 +18,29 @@
  */
 package org.jboss.as.console.client.domain.topology;
 
+import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Node;
 import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.EventListener;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.domain.model.ServerInstance;
 import org.jboss.as.console.client.shared.viewframework.builder.SimpleLayout;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.SortedMap;
+import java.util.SortedSet;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
-import static com.google.gwt.user.client.Event.*;
+import static com.google.gwt.user.client.Event.ONCLICK;
 import static java.lang.Math.min;
 import static org.jboss.as.console.client.domain.topology.HtmlGenerator.*;
 
@@ -119,7 +127,7 @@ public class TopologyView extends SuspendableViewImpl implements TopologyPresent
                     else
                     {
                         // Generate td for one server instance
-                        hiddenServers.appendServer(group, servers.get(serverIndex));
+                        hiddenServers.appendServer(group, host.getName(), servers.get(serverIndex));
                     }
                 }
                 hiddenServers.endRow();
@@ -148,6 +156,7 @@ public class TopologyView extends SuspendableViewImpl implements TopologyPresent
         }
         com.google.gwt.user.client.Element visibleHostsBody = root.getElementById(VISIBLE_SERVERS_ID);
         visibleHostsBody.setInnerHTML(visible.toSafeHtml().asString());
+        registerEvents(visible.getClickIds());
 
         // add navigation
         if (hostSize > VISIBLE_HOSTS_COLUMNS)
@@ -156,8 +165,7 @@ public class TopologyView extends SuspendableViewImpl implements TopologyPresent
         }
         com.google.gwt.user.client.Element navigationFooter = root.getElementById(NAVIGATION_ID);
         navigationFooter.setInnerHTML(navigation.toSafeHtml().asString());
-
-        registerEvents(groups);
+        registerEvents(navigation.getClickIds());
 
         // "scroll" to the first host (copy the DOM nodes from hidden hosts table to visible table)
         scrollTo(0);
@@ -193,51 +201,18 @@ public class TopologyView extends SuspendableViewImpl implements TopologyPresent
         return orderedGroups;
     }
 
-    private void registerEvents(final SortedSet<ServerGroup> groups)
+    private void registerEvents(List<String> ids)
     {
-        // register hover events over server group td
-        for (ServerGroup group : groups)
+        ClickListener clickListener = new ClickListener();
+        for (String id : ids)
         {
-            com.google.gwt.user.client.Element element = root.getElementById(group.id);
+            com.google.gwt.user.client.Element element = root.getElementById(id);
             if (element != null)
             {
-                DOM.setEventListener(element, new HoverListener());
-                DOM.sinkEvents(element, ONMOUSEOVER | ONMOUSEOUT);
+                DOM.setEventListener(element, clickListener);
+                DOM.sinkEvents(element, ONCLICK);
             }
         }
-
-        // register "previous", "next" navigation
-        com.google.gwt.user.client.Element prev = root.getElementById(PREV_HOST_ID);
-        com.google.gwt.user.client.Element next = root.getElementById(NEXT_HOST_ID);
-        if (prev != null && next != null)
-        {
-            NavigationListener navigationListener = new NavigationListener();
-            DOM.setEventListener(prev, navigationListener);
-            DOM.setEventListener(next, navigationListener);
-            DOM.sinkEvents(prev, ONCLICK);
-            DOM.sinkEvents(next, ONCLICK);
-        }
-    }
-
-    private List<Element> findServerCells(final String groupId)
-    {
-        List<Element> elements = new ArrayList<Element>();
-        Element serversTableBody = root.getElementById(VISIBLE_SERVERS_ID);
-        NodeList<Node> serverTrs = serversTableBody.getChildNodes();
-        for (int i = 0; i < serverTrs.getLength(); i++)
-        {
-            Element serverTr = serverTrs.getItem(i).cast();
-            NodeList<Node> serverTds = serverTr.getChildNodes();
-            for (int j = 0; j < serverTds.getLength(); j++)
-            {
-                Element serverTd = serverTds.getItem(j).cast();
-                if (groupId.equals(serverTd.getAttribute("data-member-of-group")))
-                {
-                    elements.add(serverTd);
-                }
-            }
-        }
-        return elements;
     }
 
     private void scrollTo(final int index)
@@ -309,11 +284,24 @@ public class TopologyView extends SuspendableViewImpl implements TopologyPresent
             NodeList<Node> hiddenServerTds = hiddenServerTr.getChildNodes();
             for (int j = 0; j < rowsToCopy; j++)
             {
-                Node hiddenServerTd = hiddenServerTds.getItem(hostIndex + j);
-                Node visibleServerTd = hiddenServerTd.cloneNode(true);
+                Element hiddenServerTd = hiddenServerTds.getItem(hostIndex + j).cast();
+                Element visibleServerTd = hiddenServerTd.cloneNode(true).cast();
                 visibleServerTr.appendChild(visibleServerTd);
             }
         }
+
+        // Register click handlers for lifecycle links
+        List<String> ids = new ArrayList<String>();
+        NodeList<Element> elements = Document.get().getElementsByTagName("a");
+        for (int i = 0; i < elements.getLength(); i++)
+        {
+            Element element = elements.getItem(i);
+            if ("lifecycleLink".equals(element.getClassName()))
+            {
+                ids.add(element.getId());
+            }
+        }
+        registerEvents(ids);
 
         // update visibility of navigation
         com.google.gwt.user.client.Element prev = root.getElementById(PREV_HOST_ID);
@@ -327,39 +315,7 @@ public class TopologyView extends SuspendableViewImpl implements TopologyPresent
         }
     }
 
-    private class HoverListener implements EventListener
-    {
-        @Override
-        public void onBrowserEvent(final Event event)
-        {
-            if (event.getTypeInt() == ONMOUSEOVER)
-            {
-                Element serverGroupTd = event.getEventTarget().cast();
-                String cssClassname = serverGroupTd.getClassName();
-                List<Element> serverCells = findServerCells(serverGroupTd.getId());
-                for (Element serverCell : serverCells)
-                {
-                    String index = serverCell.getAttribute("data-group-index");
-                    serverCell.removeClassName(index + "_light");
-                    serverCell.addClassName(index);
-                }
-            }
-            if (event.getTypeInt() == ONMOUSEOUT)
-            {
-                Element serverGroupTd = event.getEventTarget().cast();
-                String cssClassname = serverGroupTd.getClassName();
-                List<Element> serverCells = findServerCells(serverGroupTd.getId());
-                for (Element serverCell : serverCells)
-                {
-                    String index = serverCell.getAttribute("data-group-index");
-                    serverCell.removeClassName(index);
-                    serverCell.addClassName(index + "_light");
-                }
-            }
-        }
-    }
-
-    private class NavigationListener implements EventListener
+    private class ClickListener implements EventListener
     {
         @Override
         public void onBrowserEvent(final Event event)
@@ -375,6 +331,10 @@ public class TopologyView extends SuspendableViewImpl implements TopologyPresent
                 else if (NEXT_HOST_ID.equals(id))
                 {
                     scrollTo(hostIndex + VISIBLE_HOSTS_COLUMNS);
+                }
+                else
+                {
+                    Window.alert("Click handler for " + id + " not yet implemented");
                 }
             }
         }

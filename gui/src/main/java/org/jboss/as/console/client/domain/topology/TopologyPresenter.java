@@ -44,6 +44,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static org.jboss.as.console.client.domain.model.ServerFlag.RELOAD_REQUIRED;
+import static org.jboss.as.console.client.domain.model.ServerFlag.RESTART_REQUIRED;
+
 /**
  * TODO Remove fake code when in production
  * @author Harald Pehl
@@ -168,6 +171,17 @@ public class TopologyPresenter extends
                 ServerInstance serverInstance = factory.serverInstance().as();
                 serverInstance.setGroup(groupNames[groupIndex]);
                 serverInstance.setRunning((groupIndex % 2 == 0));
+                if (serverInstance.isRunning())
+                {
+                    if (Random.nextBoolean())
+                    {
+                        serverInstance.setFlag(Random.nextBoolean() ? RESTART_REQUIRED : RELOAD_REQUIRED);
+                    }
+                    else
+                    {
+                        serverInstance.setFlag(null);
+                    }
+                }
                 serverInstance.setName(groupNames[groupIndex] + "-" + x);
                 serverInstance.setSocketBindings(Collections.<String, String>emptyMap());
                 serverInstance.setInterfaces(Collections.<String, String>emptyMap());

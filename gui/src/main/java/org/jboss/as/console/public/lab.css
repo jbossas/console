@@ -383,47 +383,55 @@ input[type="checkbox"] {
 }
 .domainOverviewCell {
     padding: 5px;
+    cursor: pointer;
     transition: color .66s ease-out, background-color .66s ease-out;
     -moz-transition: color .66s ease-out, background-color .66s ease-out;
     -webkit-transition: color .66s ease-out, background-color .66s ease-out;
+}
+.statusIcon {
+    display: inline;
+    float: right;
+}
+.lifecycleLinks {
+    margin-top: 3px;
+}
+.lifecycleLink {
+    color: #000 !important;
+}
+.lifecycleLink:hover {
+    text-decoration: underline;
 }
 .hostNavigation {
     font-weight: bold;
     cursor: pointer;
 }
 .serverGroup0, .serverGroup0_light:hover {
-    color: #fff;
-    background-color: rgb(59,77,100);
+    background-color: rgb(136,171,194);
 }
 .serverGroup0_light {
-    color: #000;
-    background-color: rgba(59,77,100,.2);
+    background-color: rgba(136,171,194,.4);
 }
 .serverGroup1, .serverGroup1_light:hover {
-    background-color: rgb(189,237,230);
+    background-color: rgb(249,212,35);
 }
 .serverGroup1_light {
-    background-color: rgba(189,237,230,.2);
+    background-color: rgba(249,212,35,.4);
 }
 .serverGroup2, .serverGroup2_light:hover {
-    color: #fff;
-    background-color: rgb(65,71,76);
+    background-color: rgb(166,140,181);
 }
 .serverGroup2_light {
-    color: #000;
-    background-color: rgba(65,71,76,.2);
+    background-color: rgba(166,140,181,.4);
 }
 .serverGroup3, .serverGroup3_light:hover {
-    background-color: rgb(91,131,190);
+    background-color: rgb(119,184,184);
 }
 .serverGroup3_light {
-    background-color: rgba(91,131,190,.2);
+    background-color: rgba(119,184,184,.4);
 }
 .serverGroup4, .serverGroup4_light:hover {
-    color: #fff;
-    background-color: rgb(107,10,18);
+    background-color: rgb(179,202,87);
 }
 .serverGroup4_light {
-    color: #000;
-    background-color: rgba(107,10,18,.2);
+    background-color: rgba(179,202,87,.4);
 }
