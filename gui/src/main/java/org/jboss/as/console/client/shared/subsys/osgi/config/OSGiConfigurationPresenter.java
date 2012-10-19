@@ -18,7 +18,7 @@
  */
 package org.jboss.as.console.client.shared.subsys.osgi.config;
 
-import com.google.gwt.event.shared.EventBus;
+import com.google.web.bindery.event.shared.EventBus;
 import com.google.gwt.user.client.Command;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.Presenter;

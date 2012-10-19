@@ -1,7 +1,7 @@
 package org.jboss.as.console.client.standalone;
 
 import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.event.shared.EventBus;
+import com.google.web.bindery.event.shared.EventBus;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.Presenter;
@@ -199,7 +199,7 @@ public class StandaloneServerPresenter extends Presenter<StandaloneServerPresent
     @Override
     protected void revealInParent() {
 
-        RevealContentEvent.fire(getEventBus(), StandaloneRuntimePresenter.TYPE_MainContent, this);
+        RevealContentEvent.fire(this, StandaloneRuntimePresenter.TYPE_MainContent, this);
     }
 
     public void onReloadServerConfig() {

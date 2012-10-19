@@ -20,7 +20,7 @@
 package org.jboss.as.console.client.domain.overview;
 
 import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.event.shared.EventBus;
+import com.google.web.bindery.event.shared.EventBus;
 import com.google.gwt.user.client.Random;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.Presenter;
@@ -223,7 +223,7 @@ public class DomainOverviewPresenter
 
     @Override
     protected void revealInParent() {
-        RevealContentEvent.fire(getEventBus(), MainLayoutPresenter.TYPE_MainContent, this);
+        RevealContentEvent.fire(this, MainLayoutPresenter.TYPE_MainContent, this);
     }
 
     public void onSelectServer(final ServerPanelReference serverTuple) {

@@ -19,7 +19,7 @@
 package org.jboss.as.console.client.shared.subsys.osgi.runtime;
 
 import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.event.shared.EventBus;
+import com.google.web.bindery.event.shared.EventBus;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.inject.Inject;

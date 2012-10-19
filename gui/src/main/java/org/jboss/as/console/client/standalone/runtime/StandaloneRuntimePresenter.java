@@ -1,7 +1,7 @@
 package org.jboss.as.console.client.standalone.runtime;
 
 import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.event.shared.EventBus;
+import com.google.web.bindery.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.user.client.Timer;
 import com.google.inject.Inject;
@@ -141,6 +141,6 @@ public class StandaloneRuntimePresenter extends Presenter<StandaloneRuntimePrese
 
     @Override
     protected void revealInParent() {
-        RevealContentEvent.fire(getEventBus(), MainLayoutPresenter.TYPE_MainContent, this);
+        RevealContentEvent.fire(this, MainLayoutPresenter.TYPE_MainContent, this);
     }
 }

@@ -109,7 +109,7 @@ public class DataOutput {
 
     public void writeDouble(double v) throws IOException {
         growToFit(8);
-        JsArrayInteger bytes = IEEE754.fromDouble(v);
+        JsArrayInteger bytes = IEEE754.fromDoubleClosure(v);
         for (int i = 0; i < 8; i++) {
             this.bytes[pos++] = (byte)bytes.get(i);
         }

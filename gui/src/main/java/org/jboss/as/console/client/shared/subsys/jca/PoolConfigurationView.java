@@ -46,8 +46,9 @@ public class PoolConfigurationView {
         	@Override
         	public FormValidation validate() {
         		FormValidation superValidation = super.validate();
-        		int minPoolSize = this.getUpdatedEntity().getMinPoolSize();
-        		int maxPoolSize = this.getUpdatedEntity().getMaxPoolSize();
+                PoolConfig updatedEntity = this.getUpdatedEntity();
+                int minPoolSize = updatedEntity.getMinPoolSize();
+        		int maxPoolSize = updatedEntity.getMaxPoolSize();
         		if(minPoolSize > maxPoolSize){
         			superValidation.addError("maxPoolSize");
         			maxCon.setErroneous(true);

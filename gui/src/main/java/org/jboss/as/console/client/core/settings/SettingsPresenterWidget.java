@@ -19,8 +19,8 @@
 
 package org.jboss.as.console.client.core.settings;
 
-import com.google.gwt.autobean.shared.AutoBeanUtils;
-import com.google.gwt.event.shared.EventBus;
+import com.google.web.bindery.autobean.shared.AutoBeanUtils;
+import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.PopupView;
 import com.gwtplatform.mvp.client.PresenterWidget;
 import org.jboss.as.console.client.Console;

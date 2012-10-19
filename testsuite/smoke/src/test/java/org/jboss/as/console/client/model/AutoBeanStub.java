@@ -19,9 +19,9 @@
 
 package org.jboss.as.console.client.model;
 
-import com.google.gwt.autobean.shared.AutoBean;
-import com.google.gwt.autobean.shared.AutoBeanFactory;
-import com.google.gwt.autobean.shared.AutoBeanVisitor;
+import com.google.web.bindery.autobean.shared.AutoBean;
+import com.google.web.bindery.autobean.shared.AutoBeanFactory;
+import com.google.web.bindery.autobean.shared.AutoBeanVisitor;
 
 /**
  * @author Heiko Braun

@@ -94,7 +94,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>gwt-maven-plugin</artifactId>
-                <version>2.3.0</version>
+                <version>2.5.0-rc2</version>
                 <configuration>
                     <inplace>true</inplace>
                     <logLevel>TRACE</logLevel>
@@ -107,6 +107,10 @@
                     <localWorkers>2</localWorkers>
                     <compileReport>false</compileReport>
                     <module>org.jboss.as.console.composite.App</module>
+                    <disableCastChecking>true</disableCastChecking>
+                    <disableClassMetadata>true</disableClassMetadata>
+                    <enableClosureCompiler>true</enableClosureCompiler>
+                    <fragmentCount>30</fragmentCount>
                 </configuration>
                 <executions>
                     <execution>
@@ -254,10 +258,7 @@
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>gwt-maven-plugin</artifactId>
-                        <version>2.3.0</version>
                         <configuration>
-                            <disableCastChecking>true</disableCastChecking>
-                            <disableClassMetadata>true</disableClassMetadata>
                             <module>org.jboss.as.console.composite.App_dev</module>
                         </configuration>
                     </plugin>
@@ -290,7 +291,6 @@
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>gwt-maven-plugin</artifactId>
-                        <version>2.3.0</version>
                         <configuration>
                             <disableCastChecking>true</disableCastChecking>
                             <disableClassMetadata>true</disableClassMetadata>
