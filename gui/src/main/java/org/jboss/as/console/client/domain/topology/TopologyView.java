@@ -320,6 +320,11 @@ public class TopologyView extends SuspendableViewImpl implements TopologyPresent
         RangeChangeEvent.fire(display, new Range(hostIndex, columnsToCopy));
     }
 
+
+    /**
+     * Listener for lifecycle links (start, stop, reload (server) groups. The clicked element contains
+     * "data"- attributes which carry the relevant (server) group and host.
+     */
     private class LifecycleLinkListener implements EventListener
     {
         @Override
@@ -335,6 +340,9 @@ public class TopologyView extends SuspendableViewImpl implements TopologyPresent
     }
 
 
+    /**
+     * Pager which delegates to {@link TopologyView#scrollTo(int)}.
+     */
     private class HostsPager extends DefaultPager
     {
         @Override
@@ -364,8 +372,8 @@ public class TopologyView extends SuspendableViewImpl implements TopologyPresent
 
 
     /**
-     * An implementation for the pagers display. Although this class implements Has<em>Rows</em> the paging is over
-     * <em>columns</em>.
+     * An implementation for the topology tabel pagers display. Although this class implements
+     * Has<em>Rows</em> the paging is over <em>columns</em>.
      */
     private class HostsDisplay implements HasRows
     {
