@@ -64,12 +64,6 @@ public class NewHostJvmWizard {
         HeapBoxItem permgen = new HeapBoxItem("permgen", "Permgen Size", false);
         HeapBoxItem maxPermgen = new HeapBoxItem("maxPermgen", "Max Permgen Size", false);
 
-
-        heapItem.setValue("64m");
-        maxHeapItem.setValue("256m");
-        permgen.setValue("128m");
-        maxPermgen.setValue("128m");
-
         form.setFields(nameItem, heapItem, maxHeapItem, permgen, maxPermgen);
 
 
@@ -87,6 +81,11 @@ public class NewHostJvmWizard {
         layout.add(helpPanel.asWidget());
 
         layout.add(form.asWidget());
+
+        heapItem.setValue("64m");
+        maxHeapItem.setValue("256m");
+        permgen.setValue("128m");
+        maxPermgen.setValue("128m");
 
         DialogueOptions options = new DialogueOptions(
                 new ClickHandler() {
