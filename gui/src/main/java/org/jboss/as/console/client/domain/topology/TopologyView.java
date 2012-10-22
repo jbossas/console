@@ -18,7 +18,6 @@
  */
 package org.jboss.as.console.client.domain.topology;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Node;
@@ -36,8 +35,10 @@ import com.google.gwt.view.client.RangeChangeEvent;
 import com.google.gwt.view.client.RowCountChangeEvent;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.domain.model.ServerInstance;
+import org.jboss.as.console.client.domain.model.impl.LifecycleOperation;
 import org.jboss.as.console.client.shared.viewframework.builder.SimpleLayout;
 import org.jboss.ballroom.client.widgets.tables.DefaultPager;
+import org.jboss.ballroom.client.widgets.window.Feedback;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,6 +51,7 @@ import java.util.TreeSet;
 import static com.google.gwt.user.client.Event.ONCLICK;
 import static java.lang.Math.min;
 import static org.jboss.as.console.client.domain.topology.HtmlGenerator.*;
+import static org.jboss.as.console.client.domain.model.impl.LifecycleOperation.*;
 
 /**
  * @author Harald Pehl
@@ -333,9 +335,71 @@ public class TopologyView extends SuspendableViewImpl implements TopologyPresent
             if (event.getTypeInt() == ONCLICK)
             {
                 Element element = event.getEventTarget().cast();
-                String id = element.getId();
-                GWT.log("Click handler for " + id + " not yet implemented");
+                final String id = element.getId();
+                if (id != null)
+                {
+                    if (id.contains("_server_"))
+                    {
+                        final String server = element.getAttribute(DATA_SERVER_NAME);
+                        final String host = element.getAttribute(DATA_HOST_NAME);
+                        final LifecycleOperation op = getLifecycleOperation(id);
+                        if (op != null)
+                        {
+                            Feedback.confirm("Modify Server",
+                                    "Do really want to " + op.name().toLowerCase() + " server " + server + "?",
+                                    new Feedback.ConfirmationHandler()
+                                    {
+                                        @Override
+                                        public void onConfirmation(boolean isConfirmed)
+                                        {
+                                            if (isConfirmed)
+                                            {
+                                                presenter.onServerInstanceLifecycle(host, server, op);
+                                            }
+                                        }
+                                    });
+                        }
+                    }
+                    else if (id.contains("_group_"))
+                    {
+                        final String group = element.getAttribute(DATA_GROUP_NAME);
+                        final LifecycleOperation op = getLifecycleOperation(id);
+                        if (op != null)
+                        {
+                            Feedback.confirm("Modify Server", "Do really want to " + op.name().toLowerCase() + " all servers in group " + group + "?",
+                                    new Feedback.ConfirmationHandler()
+                                    {
+                                        @Override
+                                        public void onConfirmation(boolean isConfirmed)
+                                        {
+                                            if (isConfirmed)
+                                            {
+                                                presenter.onGroupLifecycle(group, op);
+                                            }
+                                        }
+                                    });
+                        }
+                    }
+                }
             }
+        }
+
+        private LifecycleOperation getLifecycleOperation(final String id)
+        {
+            LifecycleOperation op = null;
+            if (id.startsWith(START_SERVER_ID))
+            {
+                op = START;
+            }
+            else if (id.startsWith(STOP_SERVER_ID))
+            {
+                op = STOP;
+            }
+            else if (id.startsWith(RELOAD_SERVER_ID))
+            {
+                op = RELOAD;
+            }
+            return op;
         }
     }
 

@@ -55,7 +55,17 @@ final class HtmlGenerator
     static final String HIDDEN_SERVERS_ID = "hiddenServers";
     static final String VISIBLE_HOSTS_ID = "visibleHost";
     static final String VISIBLE_SERVERS_ID = "visibleServers";
+    static final String DATA_GROUP = "data-group";
+    static final String DATA_GROUP_NAME = "data-group-name";
+    static final String DATA_HOST_NAME = "data-host-name";
+    static final String DATA_SERVER_NAME = "data-server-name";
     static final String SERVER_GROUP_START_DATA = "serverGroup";
+    static final String START_SERVER_ID = "start_server_";
+    static final String STOP_SERVER_ID = "stop_server_";
+    static final String RELOAD_SERVER_ID = "reload_server_";
+    static final String START_GROUP_ID = "start_group_";
+    static final String STOP_GROUP_ID = "stop_group_";
+
 
     final SafeHtmlBuilder html;
     final List<String> clickIds;
@@ -139,17 +149,19 @@ final class HtmlGenerator
         }
 
         startLinks();
-        String startStop = server.isRunning() ? "stop" : "start";
-        String startStopId = startStop + "_server_" + server.getName();
-        String text = startStop.substring(0, 1).toUpperCase() + startStop.substring(1) + " Server";
-        appendLifecycleLink(startStopId, null, host, server.getName(), text);
-        if (server.isRunning() && server.getFlag() == RELOAD_REQUIRED)
+        if (server.isRunning())
         {
-            String reloadId = "reload_server_" + server.getName();
-            html.appendHtmlConstant("<br/>");
-            appendLifecycleLink(reloadId, null, host, server.getName(), "Reload Server");
+            appendLifecycleLink(STOP_SERVER_ID + server.getName(), null, host, server.getName(), "Stop Server");
+            if (server.getFlag() == RELOAD_REQUIRED)
+            {
+                html.appendHtmlConstant("<br/>");
+                appendLifecycleLink(RELOAD_SERVER_ID + server.getName(), null, host, server.getName(), "Reload Server");
+            }
         }
-        endLine();
+        else
+        {
+            appendLifecycleLink(START_SERVER_ID + server.getName(), null, host, server.getName(), "Start Server");
+        }
         html.appendHtmlConstant("</td>");
         return this;
     }
@@ -157,7 +169,7 @@ final class HtmlGenerator
     HtmlGenerator appendServerGroup(final ServerGroup group)
     {
         // first row contains the group name and is marked with the "data-group" attribute
-        html.appendHtmlConstant("<tr data-group='" + SERVER_GROUP_START_DATA + "'>");
+        html.appendHtmlConstant("<tr " + DATA_GROUP + "='" + SERVER_GROUP_START_DATA + "'>");
         if (group.maxServersPerHost > 1)
         {
             html.appendHtmlConstant("<td class='domainOverviewCell cellTableCell endOfServerGroup " +
@@ -175,8 +187,8 @@ final class HtmlGenerator
         }
 
         startLinks();
-        String startId = "start_group_" + group.name;
-        String stopId = "stop_group_" + group.name;
+        String startId = START_GROUP_ID + group.name;
+        String stopId = STOP_GROUP_ID + group.name;
         appendLifecycleLink(startId, group.name, null, null, "Start Group");
         html.appendHtmlConstant("<br/>");
         appendLifecycleLink(stopId, group.name, null, null, "Stop Group");
@@ -209,9 +221,9 @@ final class HtmlGenerator
     {
         clickIds.add(id);
         html.appendHtmlConstant("<a id='" + id + "' class='lifecycleLink'" +
-                (group != null ? " data-group-name='" + group + "'" : "") +
-                (host != null ? " data-host-name='" + host + "'" : "") +
-                (server != null ? " data-server-name='" + server + "'" : "") +
+                (group != null ? " " + DATA_GROUP_NAME + "='" + group + "'" : "") +
+                (host != null ? " " + DATA_HOST_NAME + "='" + host + "'" : "") +
+                (server != null ? " " + DATA_SERVER_NAME + "='" + server + "'" : "") +
                 ">").appendEscaped(text).appendHtmlConstant("</a>");
         return this;
     }
@@ -266,18 +278,6 @@ final class HtmlGenerator
 
 
     // ------------------------------------------------------ delegate methods
-
-    public HtmlGenerator appendHtmlConstant(final String text)
-    {
-        html.appendHtmlConstant(text);
-        return this;
-    }
-
-    public HtmlGenerator appendEscaped(final String text)
-    {
-        html.appendEscaped(text);
-        return this;
-    }
 
     public SafeHtml toSafeHtml()
     {

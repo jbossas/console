@@ -21,9 +21,8 @@ package org.jboss.as.console.client.domain.hosts;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.core.client.Scheduler;
-import com.google.web.bindery.event.shared.EventBus;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
+import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
@@ -43,13 +42,13 @@ import org.jboss.as.console.client.domain.model.Server;
 import org.jboss.as.console.client.domain.model.ServerInstance;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.domain.runtime.DomainRuntimePresenter;
+import org.jboss.as.console.client.domain.model.impl.LifecycleOperation;
+import org.jboss.as.console.client.domain.model.impl.ServerInstanceLifecycleCallback;
 import org.jboss.as.console.client.shared.BeanFactory;
-import org.jboss.as.console.client.shared.dispatch.AsyncCommand;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
-import org.jboss.as.console.client.shared.schedule.LongRunningTask;
 import org.jboss.as.console.client.shared.state.CurrentServerSelection;
 import org.jboss.as.console.client.shared.state.ReloadState;
 import org.jboss.as.console.client.shared.state.ServerSelectionEvent;
@@ -65,6 +64,8 @@ import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 
 /**
  * Manage server instances on a specific host.
+ *
+ * TODO Remove once the new domain overview / topology is in place
  *
  * @author Heiko Braun
  * @date 3/8/11
@@ -210,63 +211,80 @@ public class ServerInstancesPresenter extends Presenter<ServerInstancesPresenter
     }
 
     public void startServer(final String hostName, final String serverName, final boolean startIt) {
-
         reloadState.resetServer(serverName);
 
-        hostInfoStore.startServer(hostName, serverName, startIt, new SimpleCallback<Boolean>() {
-            @Override
-            public void onSuccess(final Boolean wasSuccessful) {
+        LifecycleOperation op = startIt ? LifecycleOperation.START : LifecycleOperation.STOP;
+        ServerInstanceLifecycleCallback lifecycleCallback = new ServerInstanceLifecycleCallback(hostInfoStore, hostName, serverName, op,
+                new SimpleCallback<Server>() {
+                    @Override
+                    public void onSuccess(final Server server) {
+                        getView().mergeUpdatedInstance(serverName, server.isStarted());
+                        Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand()
+                        {
+                            @Override
+                            public void execute()
+                            {
+                                // force reload of server selector (LHS nav)
+                                //getEventBus().fireEvent(new StaleModelEvent(StaleModelEvent.SERVER_INSTANCES));
+                                onReset();
+                            }
+                        });
+                    }
+                });
+        hostInfoStore.startServer(hostName, serverName, startIt, lifecycleCallback);
 
-                if(wasSuccessful)
-                {
-                    int limit = startIt ? 15:5;
-                    LongRunningTask poll = new LongRunningTask(new AsyncCommand<Boolean>() {
-                        @Override
-                        public void execute(final AsyncCallback<Boolean> callback) {
-
-
-                            hostInfoStore.getServerConfiguration(hostName, serverName, new SimpleCallback<Server>() {
-                                @Override
-                                public void onSuccess(final Server server) {
-
-                                    boolean keepPolling = false;
-
-                                    if(startIt)
-                                        keepPolling = !server.isStarted();
-                                    else
-                                        keepPolling = server.isStarted();
-
-
-                                    if(!keepPolling) {
-
-                                        getView().mergeUpdatedInstance(server.getName(), server.isStarted());
-
-                                        Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
-                                            @Override
-                                            public void execute() {
-
-                                                // force reload of server selector (LHS nav)
-                                                //getEventBus().fireEvent(new StaleModelEvent(StaleModelEvent.SERVER_INSTANCES));
-                                                onReset();
-                                            }
-                                        });
-
-                                    }
-
-                                    // notify scheduler
-                                    callback.onSuccess(keepPolling);
-                                }
-                            });
-
-                        }
-                    }, limit);
-
-                    // kick of the polling request
-                    poll.schedule(500);
-
-                }
-            }
-        });
+//        hostInfoStore.startServer(hostName, serverName, startIt, new SimpleCallback<Boolean>() {
+//            @Override
+//            public void onSuccess(final Boolean wasSuccessful) {
+//
+//                if(wasSuccessful)
+//                {
+//                    int limit = startIt ? 15:5;
+//                    LongRunningTask poll = new LongRunningTask(new AsyncCommand<Boolean>() {
+//                        @Override
+//                        public void execute(final AsyncCallback<Boolean> callback) {
+//
+//
+//                            hostInfoStore.getServerConfiguration(hostName, serverName, new SimpleCallback<Server>() {
+//                                @Override
+//                                public void onSuccess(final Server server) {
+//
+//                                    boolean keepPolling = false;
+//
+//                                    if(startIt)
+//                                        keepPolling = !server.isStarted();
+//                                    else
+//                                        keepPolling = server.isStarted();
+//
+//
+//                                    if(!keepPolling) {
+//
+//                                        getView().mergeUpdatedInstance(server.getName(), server.isStarted());
+//                                        Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+//                                            @Override
+//                                            public void execute() {
+//                                                // force reload of server selector (LHS nav)
+//                                                //getEventBus().fireEvent(new StaleModelEvent(StaleModelEvent.SERVER_INSTANCES));
+//                                                onReset();
+//                                            }
+//                                        });
+//
+//                                    }
+//
+//                                    // notify scheduler
+//                                    callback.onSuccess(keepPolling);
+//                                }
+//                            });
+//
+//                        }
+//                    }, limit);
+//
+//                    // kick of the polling request
+//                    poll.schedule(500);
+//
+//                }
+//            }
+//        });
     }
 
     public void loadEnvironment(ServerInstance selectedObject) {
