@@ -106,6 +106,18 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
         deleteBtn.ensureDebugId(Console.DEBUG_CONSTANTS.debug_label_delete_serverGroupsView());
         toolStrip.addToolButtonRight(deleteBtn);
 
+
+        ToolButton copyBtn = new ToolButton(Console.CONSTANTS.common_label_copy());
+        copyBtn.addClickHandler(new ClickHandler(){
+            @Override
+            public void onClick(ClickEvent clickEvent) {
+                final ServerGroupRecord serverGroup = getSelectionModel().getSelectedObject();
+                presenter.launchCopyWizard(serverGroup);
+            }
+        });
+
+        toolStrip.addToolButtonRight(copyBtn);
+
         // ---------------------------------------------
 
         serverGroupTable = new DefaultCellTable<ServerGroupRecord>(8, new ProvidesKey<ServerGroupRecord>() {

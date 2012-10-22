@@ -26,7 +26,6 @@ import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.domain.model.Host;
 import org.jboss.as.console.client.domain.model.Server;
-import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.widgets.ContentDescription;
 import org.jboss.ballroom.client.widgets.forms.ComboBoxItem;
@@ -159,20 +158,5 @@ public class CopyServerWizard {
 
         return new WindowContentBuilder(layout, options).build();
 
-    }
-
-    private ServerGroupRecord getSelectedServerGroup(List<ServerGroupRecord> available, String selectedName)
-    {
-        ServerGroupRecord match = null;
-        for(ServerGroupRecord rec : available)
-        {
-            if(rec.getGroupName().equals(selectedName))
-            {
-                match = rec;
-                break;
-            }
-        }
-
-        return match;
     }
 }

@@ -64,12 +64,16 @@ import org.jboss.as.console.client.shared.properties.NewPropertyWizard;
 import org.jboss.as.console.client.shared.properties.PropertyManagement;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.shared.state.CurrentHostSelection;
+import org.jboss.as.console.client.shared.util.DMRUtil;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.as.console.client.widgets.forms.PropertyBinding;
 import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 import org.jboss.dmr.client.ModelDescriptionConstants;
 import org.jboss.dmr.client.ModelNode;
+import org.jboss.dmr.client.ModelType;
+import org.jboss.dmr.client.Property;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -589,7 +593,7 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
 
     public void onLaunchCopyWizard(final Server orig) {
 
-        window = new DefaultWindow("Create Server Configuration");
+        window = new DefaultWindow("New Server Configuration");
         window.setWidth(480);
         window.setHeight(380);
 
@@ -646,41 +650,45 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
 
                     // re-create node
 
-                    final ModelNode addOperation = new ModelNode();
-                    addOperation.get(OP).set(ADD);
-                    addOperation.get(ADDRESS).add("host", targetHost);
-                    addOperation.get(ADDRESS).add("server-config", newServer.getName());
-                    //addOperation.set(model).set(model);
+                    ModelNode compositeOp = new ModelNode();
+                    compositeOp.get(OP).set(COMPOSITE);
+                    compositeOp.get(ADDRESS).setEmptyList();
 
-                    for(String key :model.keys())
-                    {
-                        addOperation.get(key).set(model.get(key));
-                    }
+                    List<ModelNode> steps = new ArrayList<ModelNode>();
 
-                    //System.out.println(addOperation);
+                    final ModelNode rootResourceOp = new ModelNode();
+                    rootResourceOp.get(OP).set(ADD);
+                    rootResourceOp.get(ADDRESS).add("host", targetHost);
+                    rootResourceOp.get(ADDRESS).add("server-config", newServer.getName());
 
-                    dispatcher.execute(new DMRAction(addOperation), new SimpleCallback<DMRResponse>() {
-                        @Override
-                        public void onSuccess(DMRResponse dmrResponse) {
-                            ModelNode response = dmrResponse.get();
+                    steps.add(rootResourceOp);
 
-                            if(response.isFailure())
-                            {
-                                Console.error("Failed to copy server-config", response.getFailureDescription());
-                            }
-                            else
-                            {
-                                Console.info("Successfully copied server-config '"+newServer.getName()+"'");
-                            }
+                    DMRUtil.copyResourceValues(model, rootResourceOp, steps);
 
-                            loadServerConfigurations(null);
+                    compositeOp.get(STEPS).set(steps);
 
-                            if(!hostSelection.getName().equals(targetHost))
-                            {
-                                //TODO: hostSelection.setName(targetHost);
-                            }
-                        }
-                    });
+                    dispatcher.execute(new DMRAction(compositeOp), new SimpleCallback<DMRResponse>() {
+                       @Override
+                       public void onSuccess(DMRResponse dmrResponse) {
+                           ModelNode response = dmrResponse.get();
+
+                           if(response.isFailure())
+                           {
+                               Console.error("Failed to copy server-config", response.getFailureDescription());
+                           }
+                           else
+                           {
+                               Console.info("Successfully copied server-config '"+newServer.getName()+"'");
+                           }
+
+                           loadServerConfigurations(null);
+
+                           if(!hostSelection.getName().equals(targetHost))
+                           {
+                               //TODO: hostSelection.setName(targetHost);
+                           }
+                       }
+                   });
 
                 }
 
@@ -688,4 +696,6 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
 
         });
     }
+
+
 }

@@ -630,4 +630,6 @@ public interface UIConstants extends Constants {
     String help_need_help();
 
     String help_close_help();
+
+    String common_label_copy();
 }

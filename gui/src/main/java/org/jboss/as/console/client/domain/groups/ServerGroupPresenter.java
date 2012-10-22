@@ -22,9 +22,10 @@ package org.jboss.as.console.client.domain.groups;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
-import com.google.web.bindery.event.shared.EventBus;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.inject.Inject;
+import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
@@ -44,9 +45,10 @@ import org.jboss.as.console.client.domain.model.ProfileStore;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.domain.model.ServerGroupStore;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
-import org.jboss.as.console.client.domain.profiles.ProfileMgmtPresenter;
 import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
+import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
+import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.as.console.client.shared.jvm.CreateJvmCmd;
 import org.jboss.as.console.client.shared.jvm.DeleteJvmCmd;
 import org.jboss.as.console.client.shared.jvm.Jvm;
@@ -57,13 +59,17 @@ import org.jboss.as.console.client.shared.properties.DeletePropertyCmd;
 import org.jboss.as.console.client.shared.properties.NewPropertyWizard;
 import org.jboss.as.console.client.shared.properties.PropertyManagement;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
+import org.jboss.as.console.client.shared.util.DMRUtil;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.ballroom.client.layout.LHSHighlightEvent;
 import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 import org.jboss.dmr.client.ModelNode;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 
 /**
  * Maintains a single server group.
@@ -400,6 +406,90 @@ public class ServerGroupPresenter
             public void onSuccess(List<PropertyRecord> properties) {
                 getView().setProperties(group, properties);
             }
+        });
+    }
+
+    public void launchCopyWizard(final ServerGroupRecord orig) {
+        window = new DefaultWindow("New Server Group");
+        window.setWidth(400);
+        window.setHeight(320);
+
+        window.trapWidget(
+                new CopyGroupWizard(ServerGroupPresenter.this, orig).asWidget()
+        );
+
+        window.setGlassEnabled(true);
+        window.center();
+    }
+
+    public void onSaveCopy(final ServerGroupRecord orig, final ServerGroupRecord newGroup) {
+        window.hide();
+
+        final ModelNode operation = new ModelNode();
+        operation.get(OP).set(READ_RESOURCE_OPERATION);
+        operation.get(ADDRESS).add("server-group", orig.getGroupName());
+        operation.get(RECURSIVE).set(true);
+
+        dispatcher.execute(new DMRAction(operation, false), new AsyncCallback<DMRResponse>() {
+            @Override
+            public void onFailure(Throwable caught) {
+                Console.error("Failed to read server-group: "+orig.getGroupName(), caught.getMessage());
+            }
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+
+                ModelNode response = result.get();
+
+                if(response.isFailure())
+                {
+                    Console.error("Failed to read server-group: "+orig.getGroupName(), response.getFailureDescription());
+                }
+                else
+                {
+                    ModelNode model = response.get("result").asObject();
+                    model.remove("name");
+
+                    // re-create node
+
+                    ModelNode compositeOp = new ModelNode();
+                    compositeOp.get(OP).set(COMPOSITE);
+                    compositeOp.get(ADDRESS).setEmptyList();
+
+                    List<ModelNode> steps = new ArrayList<ModelNode>();
+
+                    final ModelNode rootResourceOp = new ModelNode();
+                    rootResourceOp.get(OP).set(ADD);
+                    rootResourceOp.get(ADDRESS).add("server-group", newGroup.getGroupName());
+
+                    steps.add(rootResourceOp);
+
+                    DMRUtil.copyResourceValues(model, rootResourceOp, steps);
+
+                    compositeOp.get(STEPS).set(steps);
+
+                    dispatcher.execute(new DMRAction(compositeOp), new SimpleCallback<DMRResponse>() {
+                        @Override
+                        public void onSuccess(DMRResponse dmrResponse) {
+                            ModelNode response = dmrResponse.get();
+
+                            if(response.isFailure())
+                            {
+                                Console.error("Failed to copy server-group", response.getFailureDescription());
+                            }
+                            else
+                            {
+                                Console.info("Successfully copied server-group '"+newGroup.getGroupName()+"'");
+                            }
+
+                            loadServerGroups();
+                        }
+                    });
+
+                }
+
+            }
+
         });
     }
 
