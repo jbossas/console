@@ -35,10 +35,13 @@ import org.jboss.as.console.client.core.SuspendableView;
 import org.jboss.as.console.client.domain.DomainPresenter;
 import org.jboss.as.console.client.domain.model.Host;
 import org.jboss.as.console.client.domain.model.HostInformationStore;
+import org.jboss.as.console.client.domain.model.Server;
+import org.jboss.as.console.client.domain.model.ServerGroupStore;
 import org.jboss.as.console.client.domain.model.ServerInstance;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
+import org.jboss.as.console.client.domain.model.impl.LifecycleOperation;
+import org.jboss.as.console.client.domain.model.impl.ServerInstanceLifecycleCallback;
 import org.jboss.as.console.client.shared.BeanFactory;
-import org.jboss.ballroom.client.widgets.window.Feedback;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -49,6 +52,7 @@ import static org.jboss.as.console.client.domain.model.ServerFlag.RESTART_REQUIR
 
 /**
  * TODO Remove fake code when in production
+ *
  * @author Harald Pehl
  * @date 10/15/12
  */
@@ -72,17 +76,21 @@ public class TopologyPresenter extends
     }
 
 
+    private final ServerGroupStore serverGroupStore;
     private final HostInformationStore hostInfoStore;
-    private final BeanFactory factory;
+    private final BeanFactory beanFactory;
     private boolean fake;
+
 
     @Inject
     public TopologyPresenter(final EventBus eventBus, final MyView view,
-            final MyProxy proxy, final HostInformationStore hostInfoStore, final BeanFactory factory)
+            final MyProxy proxy, final HostInformationStore hostInfoStore,
+            final ServerGroupStore serverGroupStore, final BeanFactory beanFactory)
     {
         super(eventBus, view, proxy);
+        this.serverGroupStore = serverGroupStore;
         this.hostInfoStore = hostInfoStore;
-        this.factory = factory;
+        this.beanFactory = beanFactory;
     }
 
     @Override
@@ -111,7 +119,6 @@ public class TopologyPresenter extends
     {
         RevealContentEvent.fire(this, DomainPresenter.TYPE_MainContent, this);
     }
-
 
     private void loadHostsData()
     {
@@ -168,7 +175,7 @@ public class TopologyPresenter extends
             for (int x = 0; x < (Random.nextInt(5) + 1); x++)
             {
                 int groupIndex = Random.nextInt(groupNames.length - 1);
-                ServerInstance serverInstance = factory.serverInstance().as();
+                ServerInstance serverInstance = beanFactory.serverInstance().as();
                 serverInstance.setGroup(groupNames[groupIndex]);
                 serverInstance.setRunning((groupIndex % 2 == 0));
                 if (serverInstance.isRunning())
@@ -193,35 +200,32 @@ public class TopologyPresenter extends
         return hostInfos;
     }
 
-    public void onStartStopServer(final String hostName, final ServerInstance server)
+    public void onServerInstanceLifecycle(final String host, final String server, final LifecycleOperation op)
     {
-        final String next = server.isRunning() ? "stop" : "start";
-
-        Feedback.confirm("Modify Server", "Do really want to " + next + " server " + server.getName() + "?",
-                new Feedback.ConfirmationHandler()
+        ServerInstanceLifecycleCallback lifecycleCallback = new ServerInstanceLifecycleCallback(
+                hostInfoStore, host, server, op, new SimpleCallback<Server>()
                 {
                     @Override
-                    public void onConfirmation(boolean isConfirmed)
+                    public void onSuccess(final Server server)
                     {
-                        if (isConfirmed)
-                        { System.out.println(next + " server " + server.getName() + " on host: " + hostName); }
+                        loadHostsData();
                     }
                 });
+        switch (op)
+        {
+            case START:
+                hostInfoStore.startServer(host, server, true, lifecycleCallback);
+                break;
+            case STOP:
+                hostInfoStore.startServer(host, server, false, lifecycleCallback);
+                break;
+            case RELOAD:
+                hostInfoStore.reloadServer(host, server, lifecycleCallback);
+                break;
+        }
     }
 
-    public void onStartStopGroup(final String hostName, final String group, boolean startIt)
+    public void onGroupLifecycle(final String group, final LifecycleOperation op)
     {
-        final String next = startIt ? "start" : "stop";
-
-        Feedback.confirm("Modify Server", "Do really want to " + next + " all servers in group " + group + "?",
-                new Feedback.ConfirmationHandler()
-                {
-                    @Override
-                    public void onConfirmation(boolean isConfirmed)
-                    {
-                        if (isConfirmed)
-                        { System.out.println(next + " group " + group); }
-                    }
-                });
     }
 }

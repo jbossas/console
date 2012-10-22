@@ -18,19 +18,27 @@
  */
 package org.jboss.as.console.client.domain.topology;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Node;
 import com.google.gwt.dom.client.NodeList;
+import com.google.gwt.event.shared.GwtEvent;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.EventListener;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.view.client.HasRows;
+import com.google.gwt.view.client.Range;
+import com.google.gwt.view.client.RangeChangeEvent;
+import com.google.gwt.view.client.RowCountChangeEvent;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.domain.model.ServerInstance;
+import org.jboss.as.console.client.domain.model.impl.LifecycleOperation;
 import org.jboss.as.console.client.shared.viewframework.builder.SimpleLayout;
+import org.jboss.ballroom.client.widgets.tables.DefaultPager;
+import org.jboss.ballroom.client.widgets.window.Feedback;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,6 +51,7 @@ import java.util.TreeSet;
 import static com.google.gwt.user.client.Event.ONCLICK;
 import static java.lang.Math.min;
 import static org.jboss.as.console.client.domain.topology.HtmlGenerator.*;
+import static org.jboss.as.console.client.domain.model.impl.LifecycleOperation.*;
 
 /**
  * @author Harald Pehl
@@ -51,25 +60,36 @@ import static org.jboss.as.console.client.domain.topology.HtmlGenerator.*;
 public class TopologyView extends SuspendableViewImpl implements TopologyPresenter.MyView
 {
     static final int TABLE_WIDTH = 100; // percent
+    static final int SERVER_GROUPS_COLUMN = 15; // percent
+    static final int HOSTS_COLUMNS = TABLE_WIDTH - SERVER_GROUPS_COLUMN;
     static final int VISIBLE_HOSTS_COLUMNS = 3;
-    static final int ONE_COLUMN = TABLE_WIDTH / (VISIBLE_HOSTS_COLUMNS + 1); // one column for the groups
-    static final int HOSTS_COLUMNS = TABLE_WIDTH - ONE_COLUMN;
     static final int SERVER_GROUP_COLORS = 5; // must match the '.serverGroupX' css class names
 
     private TopologyPresenter presenter;
     private HTMLPanel root;
     private int hostIndex = 0; // the index of the current visible host
+    private int visibleHosts;
     private int hostSize = 0;
+    private HostsPager pager;
+    private HostsDisplay display;
+    private LifecycleLinkListener lifecycleLinkListener;
 
 
     @Override
     public Widget createWidget()
     {
+        lifecycleLinkListener = new LifecycleLinkListener();
+
         SimpleLayout layout = new SimpleLayout()
                 .setTitle("Topology")
                 .setHeadline("Hosts, groups and server instances")
-                .setDescription("An overview of all hosts, groups and server instances of the domain.");
+                .setDescription("An overview of all hosts, groups and server instances in the domain.");
         root = new HTMLPanel(new HtmlGenerator().root().toSafeHtml().asString());
+        display = new HostsDisplay();
+        pager = new HostsPager();
+        pager.setDisplay(display);
+        pager.setPageSize(VISIBLE_HOSTS_COLUMNS);
+        root.add(pager);
         layout.addContent("domain", root);
         return layout.build();
     }
@@ -86,11 +106,11 @@ public class TopologyView extends SuspendableViewImpl implements TopologyPresent
         // initialize
         hostIndex = 0;
         hostSize = hosts.size();
+        visibleHosts = min(VISIBLE_HOSTS_COLUMNS, hostSize);
         HtmlGenerator hiddenHosts = new HtmlGenerator();
         HtmlGenerator hiddenServers = new HtmlGenerator();
         HtmlGenerator visible = new HtmlGenerator();
         HtmlGenerator columns = new HtmlGenerator();
-        HtmlGenerator navigation = new HtmlGenerator();
 
         // get groups
         SortedSet<ServerGroup> groups = deriveGroups(hosts);
@@ -117,6 +137,7 @@ public class TopologyView extends SuspendableViewImpl implements TopologyPresent
             for (int serverIndex = 0; serverIndex < group.maxServersPerHost; serverIndex++)
             {
                 hiddenServers.startRow();
+                boolean endOfServerGroup = serverIndex == group.maxServersPerHost - 1;
                 for (HostInfo host : group.getHosts())
                 {
                     List<ServerInstance> servers = group.serversPerHost.get(host);
@@ -138,10 +159,9 @@ public class TopologyView extends SuspendableViewImpl implements TopologyPresent
 
         // fill the visible table
         // Adjust columns
-        int hostColumns = min(VISIBLE_HOSTS_COLUMNS, hostSize);
-        int columnWidth = HOSTS_COLUMNS / hostColumns;
-        columns.appendColumn(ONE_COLUMN);
-        for (int i = 0; i < hostColumns; i++)
+        int columnWidth = HOSTS_COLUMNS / visibleHosts;
+        columns.appendColumn(SERVER_GROUPS_COLUMN);
+        for (int i = 0; i < visibleHosts; i++)
         {
             columns.appendColumn(columnWidth);
         }
@@ -158,16 +178,8 @@ public class TopologyView extends SuspendableViewImpl implements TopologyPresent
         visibleHostsBody.setInnerHTML(visible.toSafeHtml().asString());
         registerEvents(visible.getClickIds());
 
-        // add navigation
-        if (hostSize > VISIBLE_HOSTS_COLUMNS)
-        {
-            navigation.appendNavigation();
-        }
-        com.google.gwt.user.client.Element navigationFooter = root.getElementById(NAVIGATION_ID);
-        navigationFooter.setInnerHTML(navigation.toSafeHtml().asString());
-        registerEvents(navigation.getClickIds());
-
-        // "scroll" to the first host (copy the DOM nodes from hidden hosts table to visible table)
+        // update navigation
+        RowCountChangeEvent.fire(display, hostSize, true);
         scrollTo(0);
     }
 
@@ -203,13 +215,12 @@ public class TopologyView extends SuspendableViewImpl implements TopologyPresent
 
     private void registerEvents(List<String> ids)
     {
-        ClickListener clickListener = new ClickListener();
         for (String id : ids)
         {
             com.google.gwt.user.client.Element element = root.getElementById(id);
             if (element != null)
             {
-                DOM.setEventListener(element, clickListener);
+                DOM.setEventListener(element, lifecycleLinkListener);
                 DOM.sinkEvents(element, ONCLICK);
             }
         }
@@ -223,10 +234,10 @@ public class TopologyView extends SuspendableViewImpl implements TopologyPresent
             return;
         }
         hostIndex = index;
-        int rowsToCopy = VISIBLE_HOSTS_COLUMNS;
-        if (hostIndex + rowsToCopy > hostSize)
+        int columnsToCopy = VISIBLE_HOSTS_COLUMNS;
+        if (hostIndex + columnsToCopy > hostSize)
         {
-            rowsToCopy = hostSize - hostIndex;
+            columnsToCopy = hostSize - hostIndex;
         }
 
         // 1. Hosts
@@ -243,7 +254,7 @@ public class TopologyView extends SuspendableViewImpl implements TopologyPresent
         // 1.2 Clone and copy hosts from hidden to visible
         Element hiddenHostsTr = hiddenHostsTableHead.getFirstChildElement();
         NodeList<Node> hiddenHostsTds = hiddenHostsTr.getChildNodes();
-        for (int i = 0; i < rowsToCopy; i++)
+        for (int i = 0; i < columnsToCopy; i++)
         {
             Node hiddenHostTd = hiddenHostsTds.getItem(hostIndex + i);
             Node visibleHostTd = hiddenHostTd.cloneNode(true);
@@ -282,11 +293,15 @@ public class TopologyView extends SuspendableViewImpl implements TopologyPresent
             Node hiddenServerTr = hiddenServerTrs.getItem(i);
             Node visibleServerTr = visibleServerTrs.getItem(i);
             NodeList<Node> hiddenServerTds = hiddenServerTr.getChildNodes();
-            for (int j = 0; j < rowsToCopy; j++)
+            for (int j = 0; j < columnsToCopy; j++)
             {
                 Element hiddenServerTd = hiddenServerTds.getItem(hostIndex + j).cast();
                 Element visibleServerTd = hiddenServerTd.cloneNode(true).cast();
                 visibleServerTr.appendChild(visibleServerTd);
+                if (j == columnsToCopy - 1)
+                {
+                    visibleServerTd.addClassName("cellTableLastColumn");
+                }
             }
         }
 
@@ -303,19 +318,16 @@ public class TopologyView extends SuspendableViewImpl implements TopologyPresent
         }
         registerEvents(ids);
 
-        // update visibility of navigation
-        com.google.gwt.user.client.Element prev = root.getElementById(PREV_HOST_ID);
-        com.google.gwt.user.client.Element next = root.getElementById(NEXT_HOST_ID);
-        if (prev != null && next != null)
-        {
-            String prevVisibility = hostIndex - VISIBLE_HOSTS_COLUMNS < 0 ? "hidden" : "visible";
-            String nextVisibility = hostIndex + VISIBLE_HOSTS_COLUMNS > hostSize ? "hidden" : "visible";
-            DOM.setStyleAttribute(prev, "visibility", prevVisibility);
-            DOM.setStyleAttribute(next, "visibility", nextVisibility);
-        }
+        // update navigation
+        RangeChangeEvent.fire(display, new Range(hostIndex, columnsToCopy));
     }
 
-    private class ClickListener implements EventListener
+
+    /**
+     * Listener for lifecycle links (start, stop, reload (server) groups. The clicked element contains
+     * "data"- attributes which carry the relevant (server) group and host.
+     */
+    private class LifecycleLinkListener implements EventListener
     {
         @Override
         public void onBrowserEvent(final Event event)
@@ -323,20 +335,166 @@ public class TopologyView extends SuspendableViewImpl implements TopologyPresent
             if (event.getTypeInt() == ONCLICK)
             {
                 Element element = event.getEventTarget().cast();
-                String id = element.getId();
-                if (PREV_HOST_ID.equals(id))
+                final String id = element.getId();
+                if (id != null)
                 {
-                    scrollTo(hostIndex - VISIBLE_HOSTS_COLUMNS);
-                }
-                else if (NEXT_HOST_ID.equals(id))
-                {
-                    scrollTo(hostIndex + VISIBLE_HOSTS_COLUMNS);
-                }
-                else
-                {
-                    GWT.log("Click handler for " + id + " not yet implemented");
+                    if (id.contains("_server_"))
+                    {
+                        final String server = element.getAttribute(DATA_SERVER_NAME);
+                        final String host = element.getAttribute(DATA_HOST_NAME);
+                        final LifecycleOperation op = getLifecycleOperation(id);
+                        if (op != null)
+                        {
+                            Feedback.confirm("Modify Server",
+                                    "Do really want to " + op.name().toLowerCase() + " server " + server + "?",
+                                    new Feedback.ConfirmationHandler()
+                                    {
+                                        @Override
+                                        public void onConfirmation(boolean isConfirmed)
+                                        {
+                                            if (isConfirmed)
+                                            {
+                                                presenter.onServerInstanceLifecycle(host, server, op);
+                                            }
+                                        }
+                                    });
+                        }
+                    }
+                    else if (id.contains("_group_"))
+                    {
+                        final String group = element.getAttribute(DATA_GROUP_NAME);
+                        final LifecycleOperation op = getLifecycleOperation(id);
+                        if (op != null)
+                        {
+                            Feedback.confirm("Modify Server", "Do really want to " + op.name().toLowerCase() + " all servers in group " + group + "?",
+                                    new Feedback.ConfirmationHandler()
+                                    {
+                                        @Override
+                                        public void onConfirmation(boolean isConfirmed)
+                                        {
+                                            if (isConfirmed)
+                                            {
+                                                presenter.onGroupLifecycle(group, op);
+                                            }
+                                        }
+                                    });
+                        }
+                    }
                 }
             }
+        }
+
+        private LifecycleOperation getLifecycleOperation(final String id)
+        {
+            LifecycleOperation op = null;
+            if (id.startsWith(START_SERVER_ID))
+            {
+                op = START;
+            }
+            else if (id.startsWith(STOP_SERVER_ID))
+            {
+                op = STOP;
+            }
+            else if (id.startsWith(RELOAD_SERVER_ID))
+            {
+                op = RELOAD;
+            }
+            return op;
+        }
+    }
+
+
+    /**
+     * Pager which delegates to {@link TopologyView#scrollTo(int)}.
+     */
+    private class HostsPager extends DefaultPager
+    {
+        @Override
+        public void firstPage()
+        {
+            scrollTo(0);
+        }
+
+        @Override
+        public void lastPage()
+        {
+            scrollTo((getPageCount() - 1) * VISIBLE_HOSTS_COLUMNS);
+        }
+
+        @Override
+        public void nextPage()
+        {
+            scrollTo(getPageStart() + VISIBLE_HOSTS_COLUMNS);
+        }
+
+        @Override
+        public void previousPage()
+        {
+            scrollTo(getPageStart() - VISIBLE_HOSTS_COLUMNS);
+        }
+    }
+
+
+    /**
+     * An implementation for the topology tabel pagers display. Although this class implements
+     * Has<em>Rows</em> the paging is over <em>columns</em>.
+     */
+    private class HostsDisplay implements HasRows
+    {
+        @Override
+        public HandlerRegistration addRangeChangeHandler(final RangeChangeEvent.Handler handler)
+        {
+            return root.addHandler(handler, RangeChangeEvent.getType());
+        }
+
+        @Override
+        public HandlerRegistration addRowCountChangeHandler(final RowCountChangeEvent.Handler handler)
+        {
+            return root.addHandler(handler, RowCountChangeEvent.getType());
+        }
+
+        @Override
+        public int getRowCount()
+        {
+            return hostSize;
+        }
+
+        @Override
+        public Range getVisibleRange()
+        {
+            return new Range(hostIndex, visibleHosts);
+        }
+
+        @Override
+        public boolean isRowCountExact()
+        {
+            return true;
+        }
+
+        @Override
+        public void setRowCount(final int count)
+        {
+        }
+
+        @Override
+        public void setRowCount(final int count, final boolean isExact)
+        {
+        }
+
+        @Override
+        public void setVisibleRange(final int start, final int length)
+        {
+        }
+
+        @Override
+        public void setVisibleRange(final Range range)
+        {
+        }
+
+        @Override
+        public void fireEvent(final GwtEvent<?> event)
+        {
+            root.fireEvent(event);
         }
     }
 }

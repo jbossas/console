@@ -24,6 +24,7 @@ import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.ui.Image;
 import org.jboss.as.console.client.domain.model.ServerInstance;
 import org.jboss.as.console.client.widgets.icons.ConsoleIcons;
+import org.jboss.ballroom.client.widgets.icons.Icons;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,11 +54,18 @@ final class HtmlGenerator
     static final String HIDDEN_HOSTS_ID = "hiddenHosts";
     static final String HIDDEN_SERVERS_ID = "hiddenServers";
     static final String VISIBLE_HOSTS_ID = "visibleHost";
-    static final String NAVIGATION_ID = "hostNavigation";
     static final String VISIBLE_SERVERS_ID = "visibleServers";
+    static final String DATA_GROUP = "data-group";
+    static final String DATA_GROUP_NAME = "data-group-name";
+    static final String DATA_HOST_NAME = "data-host-name";
+    static final String DATA_SERVER_NAME = "data-server-name";
     static final String SERVER_GROUP_START_DATA = "serverGroup";
-    static final String PREV_HOST_ID = "prevHost";
-    static final String NEXT_HOST_ID = "nextHost";
+    static final String START_SERVER_ID = "start_server_";
+    static final String STOP_SERVER_ID = "stop_server_";
+    static final String RELOAD_SERVER_ID = "reload_server_";
+    static final String START_GROUP_ID = "start_group_";
+    static final String STOP_GROUP_ID = "stop_group_";
+
 
     final SafeHtmlBuilder html;
     final List<String> clickIds;
@@ -74,11 +82,10 @@ final class HtmlGenerator
 
     HtmlGenerator root()
     {
-        html.appendHtmlConstant("<table style='width:100%;'>");
+        html.appendHtmlConstant("<table cellspacing='0' class='default-cell-table'>");
         html.appendHtmlConstant("<colgroup id='" + HOST_COLGROUP_ID + "'></colgroup>");
-        html.appendHtmlConstant("<thead id='" + VISIBLE_HOSTS_ID + "'><tr><th " +
-                "class='domainOverviewHeader'>Hosts&nbsp;&rarr;<br/>Groups&nbsp;&darr;</th></tr></thead>");
-        html.appendHtmlConstant("<tfoot id='" + NAVIGATION_ID + "'/>");
+        html.appendHtmlConstant("<thead id='" + VISIBLE_HOSTS_ID + "'><tr>" +
+                "<th class='cellTableHeader'>Hosts&nbsp;&rarr;<br/>Groups&nbsp;&darr;</th></tr></thead>");
         html.appendHtmlConstant("<tbody id='" + VISIBLE_SERVERS_ID + "'/>");
         html.appendHtmlConstant("</table>");
 
@@ -89,7 +96,7 @@ final class HtmlGenerator
 
     HtmlGenerator appendHost(final HostInfo host)
     {
-        html.appendHtmlConstant("<th class='domainOverviewCell'>");
+        html.appendHtmlConstant("<th class='cellTableHeader'>");
         if (host.isController())
         {
             appendIcon(ConsoleIcons.INSTANCE.star());
@@ -108,32 +115,31 @@ final class HtmlGenerator
         {
             if (server.getFlag() != null)
             {
+                icon = Icons.INSTANCE.status_warn();
                 if (server.getFlag() == RELOAD_REQUIRED)
                 {
                     tooltip = "Server has to be reloaded";
-                    icon = ConsoleIcons.INSTANCE.refresh();
                 }
                 else if (server.getFlag() == RESTART_REQUIRED)
                 {
                     tooltip = "Server has to be restarted";
-                    icon = ConsoleIcons.INSTANCE.stepForward();
                 }
             }
             else
             {
                 tooltip = "Server is up and running";
-                icon = ConsoleIcons.INSTANCE.ok();
+                icon = Icons.INSTANCE.status_good();
             }
         }
         else
         {
             tooltip = "Server is stopped";
-            icon = ConsoleIcons.INSTANCE.off();
+            icon = Icons.INSTANCE.status_bad();
         }
-        html.appendHtmlConstant("<td class='domainOverviewCell " + group.cssClassname + "_light' title='" + tooltip + "'>");
-        appendIcon(icon);
+        html.appendHtmlConstant("<td class='cellTableCell domainOverviewCell " + group.cssClassname + "_light" +
+                "' title='" + tooltip + "'>");
 
-        startLine().appendText(server.getName()).endLine();
+        startLine().appendIcon(icon).appendText(server.getName()).endLine();
         if (server.getSocketBindings().size() > 0)
         {
             Set<String> sockets = server.getSocketBindings().keySet();
@@ -143,17 +149,19 @@ final class HtmlGenerator
         }
 
         startLinks();
-        String startStop = server.isRunning() ? "stop" : "start";
-        String startStopId = startStop + "_server_" + server.getName();
-        String text = startStop.substring(0, 1).toUpperCase() + startStop.substring(1) + " Server";
-        appendLifecycleLink(startStopId, null, host, server.getName(), text);
-        if (server.isRunning() && server.getFlag() == RELOAD_REQUIRED)
+        if (server.isRunning())
         {
-            String reloadId = "reload_server_" + server.getName();
-            html.appendHtmlConstant("<br/>");
-            appendLifecycleLink(reloadId, null, host, server.getName(), "Reload Server");
+            appendLifecycleLink(STOP_SERVER_ID + server.getName(), null, host, server.getName(), "Stop Server");
+            if (server.getFlag() == RELOAD_REQUIRED)
+            {
+                html.appendHtmlConstant("<br/>");
+                appendLifecycleLink(RELOAD_SERVER_ID + server.getName(), null, host, server.getName(), "Reload Server");
+            }
         }
-        endLine();
+        else
+        {
+            appendLifecycleLink(START_SERVER_ID + server.getName(), null, host, server.getName(), "Start Server");
+        }
         html.appendHtmlConstant("</td>");
         return this;
     }
@@ -161,15 +169,16 @@ final class HtmlGenerator
     HtmlGenerator appendServerGroup(final ServerGroup group)
     {
         // first row contains the group name and is marked with the "data-group" attribute
-        html.appendHtmlConstant("<tr data-group='" + SERVER_GROUP_START_DATA + "'>");
+        html.appendHtmlConstant("<tr " + DATA_GROUP + "='" + SERVER_GROUP_START_DATA + "'>");
         if (group.maxServersPerHost > 1)
         {
-            html.appendHtmlConstant("<td class='domainOverviewCell " + group.cssClassname + "' rowspan='" +
-                    group.maxServersPerHost + "'>");
+            html.appendHtmlConstant("<td class='domainOverviewCell cellTableCell endOfServerGroup " +
+                    group.cssClassname + "' rowspan='" + group.maxServersPerHost + "'>");
         }
         else
         {
-            html.appendHtmlConstant("<td class='domainOverviewCell " + group.cssClassname + "'>");
+            html.appendHtmlConstant("<td class='domainOverviewCell cellTableCell endOfServerGroup " +
+                    group.cssClassname + "'>");
         }
         startLine().appendText(group.name).endLine();
         if (group.profile != null)
@@ -178,8 +187,8 @@ final class HtmlGenerator
         }
 
         startLinks();
-        String startId = "start_group_" + group.name;
-        String stopId = "stop_group_" + group.name;
+        String startId = START_GROUP_ID + group.name;
+        String stopId = STOP_GROUP_ID + group.name;
         appendLifecycleLink(startId, group.name, null, null, "Start Group");
         html.appendHtmlConstant("<br/>");
         appendLifecycleLink(stopId, group.name, null, null, "Stop Group");
@@ -196,23 +205,9 @@ final class HtmlGenerator
         return this;
     }
 
-    HtmlGenerator appendNavigation()
-    {
-        clickIds.add(PREV_HOST_ID);
-        clickIds.add(NEXT_HOST_ID);
-        html.appendHtmlConstant("<tr>");
-        html.appendHtmlConstant("<td>&nbsp;</td>");
-        html.appendHtmlConstant("<td id='" + PREV_HOST_ID + "' class='hostNavigation'>&larr; Previous Hosts</td>");
-        html.appendHtmlConstant("<td>&nbsp;</td>");
-        html.appendHtmlConstant("<td id='" + NEXT_HOST_ID + "'class='hostNavigation' style='text-align:right;'>Next Hosts &rarr;</td>");
-        html.appendHtmlConstant("</tr>");
-        return this;
-    }
-
     HtmlGenerator appendIcon(final ImageResource img)
     {
-        html.appendHtmlConstant("<div class='statusIcon'><img src='" + new Image(img).getUrl() +
-                "' width='16' " + "height='16'/></div>");
+        html.appendHtmlConstant("<img src='" + new Image(img).getUrl() + "' width='16' " + "height='16' class='statusIcon'/>");
         return this;
     }
 
@@ -226,9 +221,9 @@ final class HtmlGenerator
     {
         clickIds.add(id);
         html.appendHtmlConstant("<a id='" + id + "' class='lifecycleLink'" +
-                (group != null ? " data-group-name='" + group + "'" : "") +
-                (host != null ? " data-host-name='" + host + "'" : "") +
-                (server != null ? " data-server-name='" + server + "'" : "") +
+                (group != null ? " " + DATA_GROUP_NAME + "='" + group + "'" : "") +
+                (host != null ? " " + DATA_HOST_NAME + "='" + host + "'" : "") +
+                (server != null ? " " + DATA_SERVER_NAME + "='" + server + "'" : "") +
                 ">").appendEscaped(text).appendHtmlConstant("</a>");
         return this;
     }
@@ -252,33 +247,9 @@ final class HtmlGenerator
         return this;
     }
 
-    HtmlGenerator startHeader()
-    {
-        html.appendHtmlConstant("th class='domainOverviewCell'>");
-        return this;
-    }
-
-    HtmlGenerator endHeader()
-    {
-        html.appendHtmlConstant("</th>");
-        return this;
-    }
-
-    HtmlGenerator startCell()
-    {
-        html.appendHtmlConstant("<td class='domainOverviewCell'>");
-        return this;
-    }
-
-    HtmlGenerator endCell()
-    {
-        html.appendHtmlConstant("</td>");
-        return this;
-    }
-
     HtmlGenerator emptyCell()
     {
-        html.appendHtmlConstant("<td class='domainOverviewCell'>&nbsp;</td>");
+        html.appendHtmlConstant("<td class='cellTableCell domainOverviewCell'>&nbsp;</td>");
         return this;
     }
 
@@ -307,18 +278,6 @@ final class HtmlGenerator
 
 
     // ------------------------------------------------------ delegate methods
-
-    public HtmlGenerator appendHtmlConstant(final String text)
-    {
-        html.appendHtmlConstant(text);
-        return this;
-    }
-
-    public HtmlGenerator appendEscaped(final String text)
-    {
-        html.appendEscaped(text);
-        return this;
-    }
 
     public SafeHtml toSafeHtml()
     {
