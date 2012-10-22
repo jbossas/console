@@ -18,7 +18,10 @@
  */
 package org.jboss.as.console.client.domain.topology;
 
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Random;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.Presenter;
@@ -49,6 +52,7 @@ import java.util.List;
 
 import static org.jboss.as.console.client.domain.model.ServerFlag.RELOAD_REQUIRED;
 import static org.jboss.as.console.client.domain.model.ServerFlag.RESTART_REQUIRED;
+import static org.jboss.as.console.client.domain.model.impl.LifecycleOperation.START;
 
 /**
  * TODO Remove fake code when in production
@@ -133,21 +137,61 @@ public class TopologyPresenter extends
                 @Override
                 public void onSuccess(final List<Host> hosts)
                 {
-                    final List<HostInfo> hostInfos = new ArrayList<HostInfo>();
-                    for (final Host host : hosts)
+                    // The command is used to defer the call to getView().updateHosts()
+                    // until all server instances of all hosts are available
+                    final Command cmd = new Command()
                     {
-                        hostInfoStore.getServerInstances(host.getName(), new SimpleCallback<List<ServerInstance>>()
+                        int numRequests = 0;
+                        int numResponses = 0;
+                        final List<HostInfo> hostInfos = new ArrayList<HostInfo>();
+
+                        @Override
+                        public void execute()
                         {
-                            @Override
-                            public void onSuccess(List<ServerInstance> serverInstances)
+                            for (final Host host : hosts)
                             {
-                                HostInfo info = new HostInfo(host.getName(), host.isController());
-                                info.setServerInstances(serverInstances);
-                                hostInfos.add(info);
+                                numRequests++;
+                                hostInfoStore.getServerInstances(host.getName(), new SimpleCallback<List<ServerInstance>>()
+                                {
+                                    @Override
+                                    public void onFailure(final Throwable caught)
+                                    {
+                                        numResponses++;
+                                        HostInfo info = new HostInfo(host.getName(), host.isController());
+                                        info.setServerInstances(Collections.<ServerInstance>emptyList());
+                                        hostInfos.add(info);
+                                        checkComplete();
+                                    }
+
+                                    @Override
+                                    public void onSuccess(List<ServerInstance> serverInstances)
+                                    {
+                                        numResponses++;
+                                        HostInfo info = new HostInfo(host.getName(), host.isController());
+                                        info.setServerInstances(serverInstances);
+                                        hostInfos.add(info);
+                                        checkComplete();
+                                    }
+                                });
+                            }
+                        }
+
+                        private void checkComplete()
+                        {
+                            if(numRequests == numResponses)
+                            {
                                 getView().updateHosts(hostInfos);
                             }
-                        });
-                    }
+                        }
+                    };
+                    Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand()
+                    {
+                        @Override
+                        public void execute()
+                        {
+                            cmd.execute();
+                        }
+                    });
                 }
             });
         }
@@ -227,5 +271,22 @@ public class TopologyPresenter extends
 
     public void onGroupLifecycle(final String group, final LifecycleOperation op)
     {
+        if (op == START)
+        {
+            serverGroupStore.startServerGroup(group, new AsyncCallback<Boolean>()
+            {
+                @Override
+                public void onFailure(final Throwable caught)
+                {
+
+                }
+
+                @Override
+                public void onSuccess(final Boolean result)
+                {
+                    loadHostsData();
+                }
+            });
+        }
     }
 }

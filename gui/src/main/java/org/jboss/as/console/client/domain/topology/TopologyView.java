@@ -295,6 +295,8 @@ public class TopologyView extends SuspendableViewImpl implements TopologyPresent
             NodeList<Node> hiddenServerTds = hiddenServerTr.getChildNodes();
             for (int j = 0; j < columnsToCopy; j++)
             {
+                // TODO The hidden td contains lifecylce links with special ids.
+                // TODO After cloning these ids exist twice which is invalid.
                 Element hiddenServerTd = hiddenServerTds.getItem(hostIndex + j).cast();
                 Element visibleServerTd = hiddenServerTd.cloneNode(true).cast();
                 visibleServerTr.appendChild(visibleServerTd);
@@ -325,7 +327,7 @@ public class TopologyView extends SuspendableViewImpl implements TopologyPresent
 
     /**
      * Listener for lifecycle links (start, stop, reload (server) groups. The clicked element contains
-     * "data"- attributes which carry the relevant (server) group and host.
+     * "data"- attributes which carry the relevant (server) group and host informations.
      */
     private class LifecycleLinkListener implements EventListener
     {
@@ -387,15 +389,15 @@ public class TopologyView extends SuspendableViewImpl implements TopologyPresent
         private LifecycleOperation getLifecycleOperation(final String id)
         {
             LifecycleOperation op = null;
-            if (id.startsWith(START_SERVER_ID))
+            if (id.startsWith("start_"))
             {
                 op = START;
             }
-            else if (id.startsWith(STOP_SERVER_ID))
+            else if (id.startsWith("stop_"))
             {
                 op = STOP;
             }
-            else if (id.startsWith(RELOAD_SERVER_ID))
+            else if (id.startsWith("reload_"))
             {
                 op = RELOAD;
             }

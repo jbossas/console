@@ -24,7 +24,7 @@ package org.jboss.as.console.client.domain.model.impl;
 */
 public enum LifecycleOperation
 {
-    START(15), STOP(10), RELOAD(15);
+    START(15), STOP(5), RELOAD(15), RESTART(15);
     private final int limit;
 
 

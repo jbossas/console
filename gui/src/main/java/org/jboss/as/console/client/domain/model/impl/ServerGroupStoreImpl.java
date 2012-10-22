@@ -68,6 +68,55 @@ public class ServerGroupStoreImpl implements ServerGroupStore {
     }
 
     @Override
+    public void startServerGroup(final String name, final AsyncCallback<Boolean> callback)
+    {
+        lifecycle("start-servers", name, callback);
+    }
+
+    @Override
+    public void stopServerGroup(final String name, final AsyncCallback<Boolean> callback)
+    {
+        lifecycle("stop-servers", name, callback);
+
+    }
+
+    @Override
+    public void reloadServerGroup(final String name, final AsyncCallback<Boolean> callback)
+    {
+        lifecycle("restart-servers", name, callback);
+    }
+
+    private void lifecycle(final String op, final String name, final AsyncCallback<Boolean> callback)
+    {
+        final ModelNode operation = new ModelNode();
+        operation.get(OP).set(op);
+        operation.get(ADDRESS).add("server-group", name);
+
+        dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>()
+        {
+            @Override
+            public void onSuccess(DMRResponse result)
+            {
+                ModelNode response = result.get();
+                if (response.get("outcome").asString().equals("success"))
+                {
+                    callback.onSuccess(Boolean.TRUE);
+                }
+                else
+                {
+                    callback.onSuccess(Boolean.FALSE);
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable caught)
+            {
+                callback.onFailure(caught);
+            }
+        });
+    }
+
+    @Override
     public void loadServerGroups(final AsyncCallback<List<ServerGroupRecord>> callback) {
 
         // :read-children-resources(child-type=server-group)
