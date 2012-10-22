@@ -589,7 +589,7 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
 
     public void onLaunchCopyWizard(final Server orig) {
 
-        window = new DefaultWindow("Clone Server Configuration");
+        window = new DefaultWindow("Create Server Configuration");
         window.setWidth(480);
         window.setHeight(380);
 
