@@ -45,6 +45,7 @@ import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.domain.model.impl.LifecycleOperation;
 import org.jboss.as.console.client.domain.model.impl.ServerGroupLifecycleCallback;
 import org.jboss.as.console.client.domain.model.impl.ServerInstanceLifecycleCallback;
+import org.jboss.as.console.client.domain.runtime.DomainRuntimePresenter;
 import org.jboss.as.console.client.shared.BeanFactory;
 
 import java.util.ArrayList;
@@ -138,7 +139,7 @@ public class TopologyPresenter extends
     @Override
     protected void revealInParent()
     {
-        RevealContentEvent.fire(this, DomainPresenter.TYPE_MainContent, this);
+        RevealContentEvent.fire(this, DomainRuntimePresenter.TYPE_MainContent, this);
     }
 
 

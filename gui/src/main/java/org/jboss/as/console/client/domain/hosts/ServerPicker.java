@@ -60,7 +60,7 @@ public class ServerPicker implements HostServerManagement {
         VerticalPanel layout = new VerticalPanel();
         layout.setStyleName("fill-layout-width");
         layout.addStyleName("lhs-selector");
-        layout.getElement().setAttribute("style","padding:4px;");
+        layout.getElement().setAttribute("style","padding:4px;margin-top:10px");
 
         hostServerTable = new HostServerTable(this);
 

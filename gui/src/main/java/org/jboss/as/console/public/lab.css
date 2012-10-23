@@ -381,10 +381,8 @@ input[type="checkbox"] {
 }
 
 .tree-section > table:first-child {
-    background-color: #F8F8F8;
-    border-bottom: 1px solid #A7ABB4;
-    border-top: 1px solid #A7ABB4;
-    border-left: 1px solid #A7ABB4;
+    background-color: #F0F0F0!important;
+    border: none!important;
     color: #606060;
     cursor: pointer;
     line-height: 12px !important;

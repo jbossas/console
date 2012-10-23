@@ -59,6 +59,21 @@ class DomainRuntimeNavigation implements ServerSelectionEvent.ServerSelectionLis
 
         // ----------------------------------------------------
 
+        LHSNavTree domainNavigation = new LHSNavTree("domain-runtime");
+        domainNavigation.getElement().setAttribute("aria-label", "Domain Tasks");
+
+        LHSTreeSection domainLeaf = new LHSTreeSection("Domain", true);
+        domainLeaf.addItem(new LHSNavTreeItem("Topology", NameTokens.Topology));
+        domainLeaf.addItem(new LHSNavTreeItem("Manage Deployments", NameTokens.DeploymentsPresenter));
+
+        domainNavigation.addItem(domainLeaf);
+        domainNavigation.expandTopLevel();
+
+        stack.add(domainNavigation);
+        domainNavigation.getElement().getParentElement().setAttribute("style", "border-bottom: 1px solid #BEBEBE;");
+
+        // ----------------------------------------------------
+
         serverPicker = new ServerPicker();
         stack.add(serverPicker.asWidget());
 
@@ -86,7 +101,7 @@ class DomainRuntimeNavigation implements ServerSelectionEvent.ServerSelectionLis
         metricPredicates.add(new Predicate("naming", naming));
 
 
-         // Extension based additions
+        // Extension based additions
         RuntimeExtensionRegistry registry = Console.getRuntimeLHSItemExtensionRegistry();
         List<RuntimeExtensionMetaData> menuExtensions = registry.getExtensions();
         for (RuntimeExtensionMetaData ext : menuExtensions) {

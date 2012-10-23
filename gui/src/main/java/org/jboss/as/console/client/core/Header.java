@@ -61,8 +61,8 @@ public class Header implements ValueChangeHandler<String> {
     public static final String[][] SECTIONS = {
             new String[]{NameTokens.ProfileMgmtPresenter, Console.CONSTANTS.common_label_profiles()},
             new String[]{NameTokens.HostMgmtPresenter, "Hosts"},
-            new String[]{NameTokens.DomainRuntimePresenter, "Runtime"},
-            new String[]{NameTokens.DomainPresenter, "Domain"}
+            new String[]{NameTokens.DomainRuntimePresenter, "Runtime"}
+            //new String[]{NameTokens.DomainPresenter, "Domain"}
     };
 
     public static final String[][] SECTIONS_STANADLONE = {
