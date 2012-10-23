@@ -58,7 +58,9 @@ public class StackedBar {
             inner.setAttribute("style", "background:none");
             inner.setAttribute("cssText", "background:none");
         }
-        inner.setInnerHTML(percentage+"%");
+        SafeHtmlBuilder html = new SafeHtmlBuilder();
+        html.appendHtmlConstant("<span style='padding-right:5px;'>").appendEscaped(percentage + "%").appendHtmlConstant("</span>");
+        inner.setInnerHTML(html.toSafeHtml().asString());
     }
 
 
