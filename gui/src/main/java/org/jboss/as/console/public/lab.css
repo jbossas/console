@@ -374,6 +374,38 @@ input[type="checkbox"] {
     font-size: 10px;
 }
 
+/*LHS Updates */
+.stack-section {
+    margin-left:5px!important;
+    width:auto!important;
+}
+
+.tree-section > table:first-child {
+    background-color: #F8F8F8;
+    border-bottom: 1px solid #A7ABB4;
+    border-top: 1px solid #A7ABB4;
+    border-left: 1px solid #A7ABB4;
+    color: #606060;
+    cursor: pointer;
+    line-height: 12px !important;
+    max-height: 25px;
+    padding: 0;
+    width: 100%;
+    margin-bottom:10px;
+}
+
+.gwt-TabLayoutPanelTab {
+    min-width: 193px!important;
+}
+
+.gwt-TabLayoutPanelTab-selected {
+    min-width: 193px!important;
+}
+
+.tab-title {
+    min-width: 193px!important;
+}
+
 /*----------------------------- new domain topology */
 .domainOverviewCell {
     cursor: pointer;

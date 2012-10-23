@@ -61,7 +61,7 @@ public class ServerMgmtApplicationView extends ViewImpl
         Widget nav = lhsNavigation.asWidget();
         nav.getElement().setAttribute("role", "navigation");
 
-        layout.addWest(nav, 180);
+        layout.addWest(nav, 197);
         layout.add(contentCanvas);
 
     }

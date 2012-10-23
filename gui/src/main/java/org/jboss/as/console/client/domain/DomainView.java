@@ -41,7 +41,7 @@ public class DomainView extends ViewImpl implements DomainPresenter.MyView
         lhsNavigation = new DomainNavigation();
 
         layout = new SplitLayoutPanel(10);
-        layout.addWest(lhsNavigation.asWidget(), 180);
+        layout.addWest(lhsNavigation.asWidget(), 197);
         layout.add(contentCanvas);
     }
 

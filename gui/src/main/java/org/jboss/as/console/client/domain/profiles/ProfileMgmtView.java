@@ -52,7 +52,7 @@ public class ProfileMgmtView extends SuspendableViewImpl
         contentCanvas = new LayoutPanel();
         lhsNavigation = new LHSProfileNavigation();
 
-        layout.addWest(lhsNavigation.asWidget(), 180);
+        layout.addWest(lhsNavigation.asWidget(), 197);
         layout.add(contentCanvas);
     }
 

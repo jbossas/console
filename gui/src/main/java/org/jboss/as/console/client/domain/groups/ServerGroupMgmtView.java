@@ -47,7 +47,7 @@ public class ServerGroupMgmtView extends SuspendableViewImpl implements ServerGr
         contentCanvas = new LayoutPanel();
         lhsNavigation = new LHSServerGroupNavigation();
 
-        layout.addWest(lhsNavigation.asWidget(), 180);
+        layout.addWest(lhsNavigation.asWidget(), 197);
         layout.add(contentCanvas);
     }
 

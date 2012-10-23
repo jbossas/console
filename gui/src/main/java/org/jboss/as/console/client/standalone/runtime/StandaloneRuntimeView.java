@@ -35,7 +35,7 @@ public class StandaloneRuntimeView extends ViewImpl implements StandaloneRuntime
 
         contentCanvas.getElement().setAttribute("role", "main");
 
-        layout.addWest(nav, 180);
+        layout.addWest(nav, 197);
         layout.add(contentCanvas);
 
     }
