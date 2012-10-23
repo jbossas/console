@@ -17,7 +17,7 @@ public class HostInfo implements Comparable<HostInfo> {
 
     public HostInfo(String name, boolean controller) {
         this.name = name;
-        isController = controller;
+        this.isController = controller;
     }
 
     @Override

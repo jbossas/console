@@ -32,6 +32,10 @@ import java.util.Map;
  */
 public interface ServerGroupStore {
 
+    void startServerGroup(String nme, final AsyncCallback<Boolean> callback);
+    void stopServerGroup(String nme, final AsyncCallback<Boolean> callback);
+    void restartServerGroup(String nme, final AsyncCallback<Boolean> callback);
+
     void loadServerGroups(AsyncCallback<List<ServerGroupRecord>> callback);
     void loadServerGroup(String name, AsyncCallback<ServerGroupRecord> callback);
     void loadSocketBindingGroupNames(final AsyncCallback<List<String>> callback);
