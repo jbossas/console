@@ -35,7 +35,6 @@ import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import org.jboss.as.console.client.core.DomainGateKeeper;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.core.SuspendableView;
-import org.jboss.as.console.client.domain.DomainPresenter;
 import org.jboss.as.console.client.domain.model.Host;
 import org.jboss.as.console.client.domain.model.HostInformationStore;
 import org.jboss.as.console.client.domain.model.Server;
@@ -105,8 +104,8 @@ public class TopologyPresenter extends
         this.serverGroupStore = serverGroupStore;
         this.hostInfoStore = hostInfoStore;
         this.beanFactory = beanFactory;
-        this.serverGroups = new HashMap<String, ServerGroup>();
 
+        this.serverGroups = new HashMap<String, ServerGroup>();
         this.fake = false;
         this.hostIndex = 0;
     }
@@ -172,29 +171,28 @@ public class TopologyPresenter extends
                             for (final Host host : hosts)
                             {
                                 numRequests++;
-                                hostInfoStore
-                                        .getServerInstances(host.getName(), new SimpleCallback<List<ServerInstance>>()
-                                        {
-                                            @Override
-                                            public void onFailure(final Throwable caught)
-                                            {
-                                                numResponses++;
-                                                HostInfo info = new HostInfo(host.getName(), host.isController());
-                                                info.setServerInstances(Collections.<ServerInstance>emptyList());
-                                                hostInfos.add(info);
-                                                checkComplete();
-                                            }
+                                hostInfoStore.getServerInstances(host.getName(), new SimpleCallback<List<ServerInstance>>()
+                                {
+                                    @Override
+                                    public void onFailure(final Throwable caught)
+                                    {
+                                        numResponses++;
+                                        HostInfo info = new HostInfo(host.getName(), host.isController());
+                                        info.setServerInstances(Collections.<ServerInstance>emptyList());
+                                        hostInfos.add(info);
+                                        checkComplete();
+                                    }
 
-                                            @Override
-                                            public void onSuccess(List<ServerInstance> serverInstances)
-                                            {
-                                                numResponses++;
-                                                HostInfo info = new HostInfo(host.getName(), host.isController());
-                                                info.setServerInstances(serverInstances);
-                                                hostInfos.add(info);
-                                                checkComplete();
-                                            }
-                                        });
+                                    @Override
+                                    public void onSuccess(List<ServerInstance> serverInstances)
+                                    {
+                                        numResponses++;
+                                        HostInfo info = new HostInfo(host.getName(), host.isController());
+                                        info.setServerInstances(serverInstances);
+                                        hostInfos.add(info);
+                                        checkComplete();
+                                    }
+                                });
                             }
                         }
 
