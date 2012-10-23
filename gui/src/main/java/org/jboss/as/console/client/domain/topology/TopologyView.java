@@ -51,6 +51,7 @@ import java.util.Set;
 import java.util.SortedSet;
 
 import static com.google.gwt.user.client.Event.ONCLICK;
+import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static org.jboss.as.console.client.domain.model.impl.LifecycleOperation.*;
 import static org.jboss.as.console.client.domain.topology.HtmlGenerator.*;
@@ -190,11 +191,10 @@ public class TopologyView extends SuspendableViewImpl implements TopologyPresent
     private void scrollTo(final int hostIndex)
     {
         // validation
-        if (hostIndex < 0 || hostIndex > hostSize - 1)
-        {
-            return;
-        }
         this.hostIndex = hostIndex;
+        this.hostIndex = max(0, this.hostIndex);
+        this.hostIndex = min(this.hostIndex, this.hostSize - 1);
+
         int columnsToCopy = TopologyPresenter.VISIBLE_HOSTS_COLUMNS;
         if (this.hostIndex + columnsToCopy > hostSize)
         {

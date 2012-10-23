@@ -184,7 +184,7 @@ final class HtmlGenerator
         startLine().appendText(group.name).endLine();
         if (group.profile != null)
         {
-            startLine().appendText(group.profile).endLine();
+            startLine().appendText("Profile: " + group.profile).endLine();
         }
 
         startLinks();
