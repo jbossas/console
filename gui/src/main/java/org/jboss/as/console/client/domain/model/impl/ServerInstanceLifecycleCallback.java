@@ -29,6 +29,12 @@ import static org.jboss.as.console.client.domain.model.impl.LifecycleOperation.R
 import static org.jboss.as.console.client.domain.model.impl.LifecycleOperation.START;
 
 /**
+ * Callback which can be used in {@link HostInfoStoreImpl#startServer(String, String, boolean,
+ * com.google.gwt.user.client.rpc.AsyncCallback)} and {@link HostInfoStoreImpl#reloadServer(String, String,
+ * com.google.gwt.user.client.rpc.AsyncCallback)}. This callback uses a {@link LongRunningTask} to poll for the
+ * requested status. Once the status is available the {@link SimpleCallback#onSuccess(Object)} method specified
+ * as constructor parameter is executed.
+ *
  * @author Harald Pehl
  * @date 10/22/2012
  */
@@ -38,17 +44,17 @@ public class ServerInstanceLifecycleCallback extends SimpleCallback<Boolean>
     private final String server;
     private final LifecycleOperation lifecycleOp;
     private final HostInformationStore hostInfoStore;
-    private final SimpleCallback<Server> opSuccessful;
+    private final SimpleCallback<Server> callback;
 
 
     public ServerInstanceLifecycleCallback(final HostInformationStore hostInfoStore, final String host,
-            final String server, final LifecycleOperation lifecycleOp, final SimpleCallback<Server> opSuccessful)
+            final String server, final LifecycleOperation lifecycleOp, final SimpleCallback<Server> callback)
     {
         this.hostInfoStore = hostInfoStore;
         this.host = host;
         this.server = server;
         this.lifecycleOp = lifecycleOp;
-        this.opSuccessful = opSuccessful;
+        this.callback = callback;
     }
 
     @Override
@@ -66,12 +72,12 @@ public class ServerInstanceLifecycleCallback extends SimpleCallback<Boolean>
                         @Override
                         public void onSuccess(final Server server)
                         {
-                            boolean keepPolling = lifecycleOp == START || lifecycleOp == RELOAD ? !server.isStarted() : server.isStarted();
+                            boolean keepPolling = lifecycleOp == START || lifecycleOp == RELOAD ? !server
+                                    .isStarted() : server.isStarted();
                             if (!keepPolling)
                             {
-                                opSuccessful.onSuccess(server);
+                                ServerInstanceLifecycleCallback.this.callback.onSuccess(server);
                             }
-                            // notify scheduler
                             callback.onSuccess(keepPolling);
                         }
                     });

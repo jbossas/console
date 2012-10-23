@@ -29,7 +29,6 @@ import java.util.*;
  */
 class ServerGroup implements Comparable<ServerGroup>
 {
-    final String id;
     final String name;
     final String profile;
     String cssClassname;
@@ -39,7 +38,6 @@ class ServerGroup implements Comparable<ServerGroup>
 
     ServerGroup(final String name, final String profile)
     {
-        this.id = "sg" + String.valueOf(name.hashCode()); // to have a websafe id (without spaces and other crap)
         this.name = name;
         this.profile = profile;
         this.cssClassname = "255,255,255";
