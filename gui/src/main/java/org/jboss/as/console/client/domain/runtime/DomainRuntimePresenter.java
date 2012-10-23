@@ -53,10 +53,10 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
     private CurrentHostSelection hostSelection;
     private SubsystemStore subsysStore;
     private BootstrapContext bootstrap;
-    private String lastSubPlace;
     private ServerGroupStore serverGroupStore;
     private String previousServerSelection = null;
     private Header header;
+    private PlaceRequest lastSubRequest = null;
 
 
     @ProxyCodeSplit
@@ -130,17 +130,24 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
         String currentToken = placeManager.getCurrentPlaceRequest().getNameToken();
         if(!currentToken.equals(getProxy().getNameToken()))
         {
-            lastSubPlace = currentToken;
+            lastSubRequest = placeManager.getCurrentPlaceRequest();
         }
-        else if(lastSubPlace!=null)
+        else if(lastSubRequest!=null)
         {
-            placeManager.revealPlace(new PlaceRequest(lastSubPlace));
+            placeManager.revealPlace(lastSubRequest);
         }
 
         // first request, select default contents
         if(!hasBeenRevealed && NameTokens.DomainRuntimePresenter.equals(currentToken))
         {
-            placeManager.revealPlace(new PlaceRequest(NameTokens.Topology));
+            if (lastSubRequest != null)
+            {
+                placeManager.revealPlace(lastSubRequest);
+            }
+            else
+            {
+                placeManager.revealPlace(new PlaceRequest(NameTokens.Topology));
+            }
             hasBeenRevealed = true;
         }
         else if(!NameTokens.DomainRuntimePresenter.equals(currentToken))
