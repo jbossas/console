@@ -140,7 +140,7 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
         // first request, select default contents
         if(!hasBeenRevealed && NameTokens.DomainRuntimePresenter.equals(currentToken))
         {
-            placeManager.revealPlace(new PlaceRequest(NameTokens.HostVMMetricPresenter));
+            placeManager.revealPlace(new PlaceRequest(NameTokens.Topology));
             hasBeenRevealed = true;
         }
         else if(!NameTokens.DomainRuntimePresenter.equals(currentToken))
