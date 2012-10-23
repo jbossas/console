@@ -65,7 +65,7 @@ public class DomainPresenter
 
     private final PlaceManager placeManager;
     private final Header header;
-    private String lastSubPlace;
+    private PlaceRequest lastSubRequest;
 
 
     private boolean hasBeenRevealed;
@@ -87,17 +87,24 @@ public class DomainPresenter
         String currentToken = placeManager.getCurrentPlaceRequest().getNameToken();
         if (!currentToken.equals(getProxy().getNameToken()))
         {
-            lastSubPlace = currentToken;
+            lastSubRequest = placeManager.getCurrentPlaceRequest();
         }
-        else if (lastSubPlace != null)
+        else if (lastSubRequest != null)
         {
-            placeManager.revealPlace(new PlaceRequest(lastSubPlace));
+            placeManager.revealPlace(lastSubRequest);
         }
 
         // first request, select default contents
         if (!hasBeenRevealed && NameTokens.DomainPresenter.equals(currentToken))
         {
-            placeManager.revealPlace(new PlaceRequest(NameTokens.Topology));
+            if (lastSubRequest != null)
+            {
+                placeManager.revealPlace(lastSubRequest);
+            }
+            else
+            {
+                placeManager.revealPlace(new PlaceRequest(NameTokens.Topology));
+            }
             hasBeenRevealed = true;
         }
     }

@@ -22,6 +22,8 @@ import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Node;
 import com.google.gwt.dom.client.NodeList;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.DOM;
@@ -33,11 +35,14 @@ import com.google.gwt.view.client.HasRows;
 import com.google.gwt.view.client.Range;
 import com.google.gwt.view.client.RangeChangeEvent;
 import com.google.gwt.view.client.RowCountChangeEvent;
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.domain.model.ServerInstance;
 import org.jboss.as.console.client.domain.model.impl.LifecycleOperation;
 import org.jboss.as.console.client.shared.viewframework.builder.SimpleLayout;
 import org.jboss.ballroom.client.widgets.tables.DefaultPager;
+import org.jboss.ballroom.client.widgets.tools.ToolButton;
+import org.jboss.ballroom.client.widgets.tools.ToolStrip;
 import org.jboss.ballroom.client.widgets.window.Feedback;
 
 import java.util.ArrayList;
@@ -52,22 +57,20 @@ import static org.jboss.as.console.client.domain.topology.HtmlGenerator.*;
 
 /**
  * @author Harald Pehl
- * @dat 10/09/12
+ * @date 10/09/12
  */
 public class TopologyView extends SuspendableViewImpl implements TopologyPresenter.MyView
 {
     static final int TABLE_WIDTH = 100; // percent
     static final int SERVER_GROUPS_COLUMN = 15; // percent
     static final int HOSTS_COLUMNS = TABLE_WIDTH - SERVER_GROUPS_COLUMN;
-    static final int VISIBLE_HOSTS_COLUMNS = 3;
     static final int SERVER_GROUP_COLORS = 5; // must match the '.serverGroupX' css class names
 
+    private int hostIndex = 0; // the index of the current visible host
+    private int visibleHosts = TopologyPresenter.VISIBLE_HOSTS_COLUMNS;
+    private int hostSize = 0;
     private TopologyPresenter presenter;
     private HTMLPanel root;
-    private int hostIndex = 0; // the index of the current visible host
-    private int visibleHosts;
-    private int hostSize = 0;
-    private HostsPager pager;
     private HostsDisplay display;
     private LifecycleLinkListener lifecycleLinkListener;
 
@@ -77,15 +80,27 @@ public class TopologyView extends SuspendableViewImpl implements TopologyPresent
     {
         lifecycleLinkListener = new LifecycleLinkListener();
 
+        ToolStrip topLevelTools = new ToolStrip();
+        topLevelTools.addToolButtonRight(new ToolButton(Console.CONSTANTS.common_label_refresh(),
+                new ClickHandler()
+                {
+                    @Override
+                    public void onClick(ClickEvent event)
+                    {
+                        presenter.loadTopology();
+                    }
+                }));
+
         SimpleLayout layout = new SimpleLayout()
+                .setTopLevelTools(topLevelTools)
                 .setTitle("Topology")
                 .setHeadline("Hosts, groups and server instances")
                 .setDescription("An overview of all hosts, groups and server instances in the domain.");
         root = new HTMLPanel(new HtmlGenerator().root().toSafeHtml().asString());
         display = new HostsDisplay();
-        pager = new HostsPager();
+        HostsPager pager = new HostsPager();
         pager.setDisplay(display);
-        pager.setPageSize(VISIBLE_HOSTS_COLUMNS);
+        pager.setPageSize(TopologyPresenter.VISIBLE_HOSTS_COLUMNS);
         root.add(pager);
         layout.addContent("domain", root);
         return layout.build();
@@ -98,13 +113,12 @@ public class TopologyView extends SuspendableViewImpl implements TopologyPresent
     }
 
     @Override
-    public void updateHosts(SortedSet<ServerGroup> groups)
+    public void updateHosts(SortedSet<ServerGroup> groups, final int hostIndex)
     {
         // initialize
         Set<HostInfo> hosts = groups.first().getHosts();
-        hostIndex = 0;
-        hostSize = hosts.size();
-        visibleHosts = min(VISIBLE_HOSTS_COLUMNS, hostSize);
+        this.hostSize = hosts.size();
+        this.visibleHosts = min(TopologyPresenter.VISIBLE_HOSTS_COLUMNS, hostSize);
         HtmlGenerator hiddenHosts = new HtmlGenerator();
         HtmlGenerator hiddenServers = new HtmlGenerator();
         HtmlGenerator visible = new HtmlGenerator();
@@ -128,7 +142,6 @@ public class TopologyView extends SuspendableViewImpl implements TopologyPresent
             for (int serverIndex = 0; serverIndex < group.maxServersPerHost; serverIndex++)
             {
                 hiddenServers.startRow();
-                boolean endOfServerGroup = serverIndex == group.maxServersPerHost - 1;
                 for (HostInfo host : group.getHosts())
                 {
                     List<ServerInstance> servers = group.serversPerHost.get(host);
@@ -171,44 +184,21 @@ public class TopologyView extends SuspendableViewImpl implements TopologyPresent
 
         // update navigation
         RowCountChangeEvent.fire(display, hostSize, true);
-        scrollTo(0);
+        scrollTo(hostIndex);
     }
 
-    private void assignColors(SortedSet<ServerGroup> serverGroups)
-    {
-        int index = 0;
-        for (ServerGroup group : serverGroups)
-        {
-            group.cssClassname = SERVER_GROUP_CLASS + (index % SERVER_GROUP_COLORS);
-            index++;
-        }
-    }
-
-    private void registerEvents(List<String> ids)
-    {
-        for (String id : ids)
-        {
-            com.google.gwt.user.client.Element element = root.getElementById(id);
-            if (element != null)
-            {
-                DOM.setEventListener(element, lifecycleLinkListener);
-                DOM.sinkEvents(element, ONCLICK);
-            }
-        }
-    }
-
-    private void scrollTo(final int index)
+    private void scrollTo(final int hostIndex)
     {
         // validation
-        if (index < 0 || index > hostSize - 1)
+        if (hostIndex < 0 || hostIndex > hostSize - 1)
         {
             return;
         }
-        hostIndex = index;
-        int columnsToCopy = VISIBLE_HOSTS_COLUMNS;
-        if (hostIndex + columnsToCopy > hostSize)
+        this.hostIndex = hostIndex;
+        int columnsToCopy = TopologyPresenter.VISIBLE_HOSTS_COLUMNS;
+        if (this.hostIndex + columnsToCopy > hostSize)
         {
-            columnsToCopy = hostSize - hostIndex;
+            columnsToCopy = hostSize - this.hostIndex;
         }
 
         // 1. Hosts
@@ -227,7 +217,7 @@ public class TopologyView extends SuspendableViewImpl implements TopologyPresent
         NodeList<Node> hiddenHostsTds = hiddenHostsTr.getChildNodes();
         for (int i = 0; i < columnsToCopy; i++)
         {
-            Node hiddenHostTd = hiddenHostsTds.getItem(hostIndex + i);
+            Node hiddenHostTd = hiddenHostsTds.getItem(this.hostIndex + i);
             Node visibleHostTd = hiddenHostTd.cloneNode(true);
             visibleHostsTr.appendChild(visibleHostTd);
         }
@@ -268,7 +258,7 @@ public class TopologyView extends SuspendableViewImpl implements TopologyPresent
             {
                 // TODO The hidden td contains lifecylce links with special ids.
                 // TODO After cloning these ids exist twice which is invalid.
-                Element hiddenServerTd = hiddenServerTds.getItem(hostIndex + j).cast();
+                Element hiddenServerTd = hiddenServerTds.getItem(this.hostIndex + j).cast();
                 Element visibleServerTd = hiddenServerTd.cloneNode(true).cast();
                 visibleServerTr.appendChild(visibleServerTd);
                 if (j == columnsToCopy - 1)
@@ -292,7 +282,30 @@ public class TopologyView extends SuspendableViewImpl implements TopologyPresent
         registerEvents(ids);
 
         // update navigation
-        RangeChangeEvent.fire(display, new Range(hostIndex, columnsToCopy));
+        RangeChangeEvent.fire(display, new Range(this.hostIndex, columnsToCopy));
+    }
+
+    private void assignColors(SortedSet<ServerGroup> serverGroups)
+    {
+        int index = 0;
+        for (ServerGroup group : serverGroups)
+        {
+            group.cssClassname = SERVER_GROUP_CLASS + (index % SERVER_GROUP_COLORS);
+            index++;
+        }
+    }
+
+    private void registerEvents(List<String> ids)
+    {
+        for (String id : ids)
+        {
+            com.google.gwt.user.client.Element element = root.getElementById(id);
+            if (element != null)
+            {
+                DOM.setEventListener(element, lifecycleLinkListener);
+                DOM.sinkEvents(element, ONCLICK);
+            }
+        }
     }
 
 
@@ -374,38 +387,42 @@ public class TopologyView extends SuspendableViewImpl implements TopologyPresent
             {
                 op = RELOAD;
             }
+            else if (id.startsWith("restart_"))
+            {
+                op = RESTART;
+            }
             return op;
         }
     }
 
 
     /**
-     * Pager which delegates to {@link TopologyView#scrollTo(int)}.
+     * Pager which delegates to {@link TopologyPresenter#requestHostIndex(int)}
      */
     private class HostsPager extends DefaultPager
     {
         @Override
         public void firstPage()
         {
-            scrollTo(0);
+            presenter.requestHostIndex(0);
         }
 
         @Override
         public void lastPage()
         {
-            scrollTo((getPageCount() - 1) * VISIBLE_HOSTS_COLUMNS);
+            presenter.requestHostIndex((getPageCount() - 1) * TopologyPresenter.VISIBLE_HOSTS_COLUMNS);
         }
 
         @Override
         public void nextPage()
         {
-            scrollTo(getPageStart() + VISIBLE_HOSTS_COLUMNS);
+            presenter.requestHostIndex(getPageStart() + TopologyPresenter.VISIBLE_HOSTS_COLUMNS);
         }
 
         @Override
         public void previousPage()
         {
-            scrollTo(getPageStart() - VISIBLE_HOSTS_COLUMNS);
+            presenter.requestHostIndex(getPageStart() - TopologyPresenter.VISIBLE_HOSTS_COLUMNS);
         }
     }
 

@@ -31,7 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static org.jboss.as.console.client.domain.model.impl.LifecycleOperation.RELOAD;
+import static org.jboss.as.console.client.domain.model.impl.LifecycleOperation.RESTART;
 import static org.jboss.as.console.client.domain.model.impl.LifecycleOperation.START;
 
 /**
@@ -89,7 +89,7 @@ public class ServerGroupLifecycleCallback extends SimpleCallback<Boolean>
                                         public void onSuccess(final Server server)
                                         {
                                             finishedServers.add(server);
-                                            boolean keepPolling = lifecycleOp == START || lifecycleOp == RELOAD ? !server
+                                            boolean keepPolling = lifecycleOp == START || lifecycleOp == RESTART ? !server
                                                     .isStarted() : server.isStarted();
                                             if (!keepPolling && finishedServers.size() == servers)
                                             {

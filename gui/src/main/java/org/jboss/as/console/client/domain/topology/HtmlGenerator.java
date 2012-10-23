@@ -65,6 +65,7 @@ final class HtmlGenerator
     static final String RELOAD_SERVER_ID = "reload_server_";
     static final String START_GROUP_ID = "start_group_";
     static final String STOP_GROUP_ID = "stop_group_";
+    static final String RESTART_GROUP_ID = "restart_group_";
 
 
     final SafeHtmlBuilder html;
@@ -189,9 +190,12 @@ final class HtmlGenerator
         startLinks();
         String startId = START_GROUP_ID + group.name;
         String stopId = STOP_GROUP_ID + group.name;
+        String restartId = RESTART_GROUP_ID + group.name;
         appendLifecycleLink(startId, group.name, null, null, "Start Group");
         html.appendHtmlConstant("<br/>");
         appendLifecycleLink(stopId, group.name, null, null, "Stop Group");
+        html.appendHtmlConstant("<br/>");
+        appendLifecycleLink(restartId, group.name, null, null, "Restart Group");
         endLine();
         html.appendHtmlConstant("</td></tr>");
         if (group.maxServersPerHost > 1)
