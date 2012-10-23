@@ -31,9 +31,9 @@ import static org.jboss.as.console.client.domain.model.impl.LifecycleOperation.S
 /**
  * Callback which can be used in {@link HostInfoStoreImpl#startServer(String, String, boolean,
  * com.google.gwt.user.client.rpc.AsyncCallback)} and {@link HostInfoStoreImpl#reloadServer(String, String,
- * com.google.gwt.user.client.rpc.AsyncCallback)}. This callback uses an {@link LongRunningTask} to poll for the
- * requested status. Once the status is available the {@link SimpleCallback} specified as constructor parameter is
- * executed.
+ * com.google.gwt.user.client.rpc.AsyncCallback)}. This callback uses a {@link LongRunningTask} to poll for the
+ * requested status. Once the status is available the {@link SimpleCallback#onSuccess(Object)} method specified
+ * as constructor parameter is executed.
  *
  * @author Harald Pehl
  * @date 10/22/2012
@@ -78,7 +78,6 @@ public class ServerInstanceLifecycleCallback extends SimpleCallback<Boolean>
                             {
                                 ServerInstanceLifecycleCallback.this.callback.onSuccess(server);
                             }
-                            // notify scheduler
                             callback.onSuccess(keepPolling);
                         }
                     });

@@ -43,15 +43,12 @@ import org.jboss.ballroom.client.widgets.window.Feedback;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.SortedMap;
 import java.util.SortedSet;
-import java.util.TreeMap;
-import java.util.TreeSet;
 
 import static com.google.gwt.user.client.Event.ONCLICK;
 import static java.lang.Math.min;
-import static org.jboss.as.console.client.domain.topology.HtmlGenerator.*;
 import static org.jboss.as.console.client.domain.model.impl.LifecycleOperation.*;
+import static org.jboss.as.console.client.domain.topology.HtmlGenerator.*;
 
 /**
  * @author Harald Pehl
@@ -101,9 +98,10 @@ public class TopologyView extends SuspendableViewImpl implements TopologyPresent
     }
 
     @Override
-    public void updateHosts(final List<HostInfo> hosts)
+    public void updateHosts(SortedSet<ServerGroup> groups)
     {
         // initialize
+        Set<HostInfo> hosts = groups.first().getHosts();
         hostIndex = 0;
         hostSize = hosts.size();
         visibleHosts = min(VISIBLE_HOSTS_COLUMNS, hostSize);
@@ -111,19 +109,12 @@ public class TopologyView extends SuspendableViewImpl implements TopologyPresent
         HtmlGenerator hiddenServers = new HtmlGenerator();
         HtmlGenerator visible = new HtmlGenerator();
         HtmlGenerator columns = new HtmlGenerator();
-
-        // get groups
-        SortedSet<ServerGroup> groups = deriveGroups(hosts);
-        for (ServerGroup group : groups)
-        {
-            group.fill(hosts);
-        }
-        Set<HostInfo> orderedHosts = groups.first().getHosts();
+        assignColors(groups);
 
         // fill the hidden table
         // first row: hosts
         hiddenHosts.startRow();
-        for (HostInfo host : orderedHosts)
+        for (HostInfo host : hosts)
         {
             hiddenHosts.appendHost(host);
         }
@@ -183,34 +174,14 @@ public class TopologyView extends SuspendableViewImpl implements TopologyPresent
         scrollTo(0);
     }
 
-    private SortedSet<ServerGroup> deriveGroups(List<HostInfo> hosts)
+    private void assignColors(SortedSet<ServerGroup> serverGroups)
     {
-        SortedMap<String, ServerGroup> serverGroups = new TreeMap<String, ServerGroup>();
-        for (HostInfo host : hosts)
-        {
-            List<ServerInstance> serverInstances = host.getServerInstances();
-            for (ServerInstance server : serverInstances)
-            {
-                String group = server.getGroup();
-                String profile = server.getProfile();
-                ServerGroup serverGroup = serverGroups.get(group);
-                if (serverGroup == null)
-                {
-                    serverGroup = new ServerGroup(group, profile);
-                    serverGroups.put(group, serverGroup);
-                }
-            }
-        }
-
-        // assign colors *after* the groups were sorted
         int index = 0;
-        TreeSet<ServerGroup> orderedGroups = new TreeSet<ServerGroup>(serverGroups.values());
-        for (ServerGroup group : orderedGroups)
+        for (ServerGroup group : serverGroups)
         {
             group.cssClassname = SERVER_GROUP_CLASS + (index % SERVER_GROUP_COLORS);
             index++;
         }
-        return orderedGroups;
     }
 
     private void registerEvents(List<String> ids)
@@ -324,6 +295,8 @@ public class TopologyView extends SuspendableViewImpl implements TopologyPresent
         RangeChangeEvent.fire(display, new Range(hostIndex, columnsToCopy));
     }
 
+
+    // ------------------------------------------------------ inner classes
 
     /**
      * Listener for lifecycle links (start, stop, reload (server) groups. The clicked element contains

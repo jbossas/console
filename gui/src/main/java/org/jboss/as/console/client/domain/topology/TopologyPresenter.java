@@ -21,7 +21,6 @@ package org.jboss.as.console.client.domain.topology;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Random;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.Presenter;
@@ -43,16 +42,20 @@ import org.jboss.as.console.client.domain.model.ServerGroupStore;
 import org.jboss.as.console.client.domain.model.ServerInstance;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.domain.model.impl.LifecycleOperation;
+import org.jboss.as.console.client.domain.model.impl.ServerGroupLifecycleCallback;
 import org.jboss.as.console.client.domain.model.impl.ServerInstanceLifecycleCallback;
 import org.jboss.as.console.client.shared.BeanFactory;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import static org.jboss.as.console.client.domain.model.ServerFlag.RELOAD_REQUIRED;
 import static org.jboss.as.console.client.domain.model.ServerFlag.RESTART_REQUIRED;
-import static org.jboss.as.console.client.domain.model.impl.LifecycleOperation.START;
 
 /**
  * TODO Remove fake code when in production
@@ -68,21 +71,20 @@ public class TopologyPresenter extends
     @UseGatekeeper(DomainGateKeeper.class)
     public interface MyProxy extends Proxy<TopologyPresenter>, Place
     {
-
     }
 
 
     public interface MyView extends SuspendableView
     {
         void setPresenter(TopologyPresenter presenter);
-
-        void updateHosts(List<HostInfo> hosts);
+        void updateHosts(SortedSet<ServerGroup> groups);
     }
 
 
     private final ServerGroupStore serverGroupStore;
     private final HostInformationStore hostInfoStore;
     private final BeanFactory beanFactory;
+    private final Map<String,ServerGroup> serverGroups;
     private boolean fake;
 
 
@@ -95,6 +97,7 @@ public class TopologyPresenter extends
         this.serverGroupStore = serverGroupStore;
         this.hostInfoStore = hostInfoStore;
         this.beanFactory = beanFactory;
+        this.serverGroups = new HashMap<String, ServerGroup>();
     }
 
     @Override
@@ -128,7 +131,8 @@ public class TopologyPresenter extends
     {
         if (fake)
         {
-            getView().updateHosts(generateFakeDomain());
+            List<HostInfo> hostInfos = generateFakeDomain();
+            getView().updateHosts(deriveGroups(hostInfos));
         }
         else
         {
@@ -180,10 +184,11 @@ public class TopologyPresenter extends
                         {
                             if(numRequests == numResponses)
                             {
-                                getView().updateHosts(hostInfos);
+                                getView().updateHosts(deriveGroups(hostInfos));
                             }
                         }
                     };
+
                     Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand()
                     {
                         @Override
@@ -244,6 +249,28 @@ public class TopologyPresenter extends
         return hostInfos;
     }
 
+    private SortedSet<ServerGroup> deriveGroups(List<HostInfo> hosts)
+    {
+        serverGroups.clear();
+        for (HostInfo host : hosts)
+        {
+            List<ServerInstance> serverInstances = host.getServerInstances();
+            for (ServerInstance server : serverInstances)
+            {
+                String group = server.getGroup();
+                String profile = server.getProfile();
+                ServerGroup serverGroup = serverGroups.get(group);
+                if (serverGroup == null)
+                {
+                    serverGroup = new ServerGroup(group, profile);
+                    serverGroup.fill(hosts);
+                    serverGroups.put(group, serverGroup);
+                }
+            }
+        }
+        return new TreeSet<ServerGroup>(serverGroups.values());
+    }
+
     public void onServerInstanceLifecycle(final String host, final String server, final LifecycleOperation op)
     {
         ServerInstanceLifecycleCallback lifecycleCallback = new ServerInstanceLifecycleCallback(
@@ -266,27 +293,39 @@ public class TopologyPresenter extends
             case RELOAD:
                 hostInfoStore.reloadServer(host, server, lifecycleCallback);
                 break;
+            case RESTART:
+                break;
         }
     }
 
     public void onGroupLifecycle(final String group, final LifecycleOperation op)
     {
-        if (op == START)
+        ServerGroup serverGroup = serverGroups.get(group);
+        if (serverGroup != null)
         {
-            serverGroupStore.startServerGroup(group, new AsyncCallback<Boolean>()
+            ServerGroupLifecycleCallback lifecycleCallback = new ServerGroupLifecycleCallback(hostInfoStore,
+                    serverGroup.serversPerHost, op, new SimpleCallback<List<Server>>()
+                    {
+                        @Override
+                        public void onSuccess(final List<Server> result)
+                        {
+                            loadHostsData();
+                        }
+                    });
+            switch (op)
             {
-                @Override
-                public void onFailure(final Throwable caught)
-                {
-
-                }
-
-                @Override
-                public void onSuccess(final Boolean result)
-                {
-                    loadHostsData();
-                }
-            });
+                case START:
+                    serverGroupStore.startServerGroup(group, lifecycleCallback);
+                    break;
+                case STOP:
+                    serverGroupStore.stopServerGroup(group, lifecycleCallback);
+                    break;
+                case RELOAD:
+                    break;
+                case RESTART:
+                    serverGroupStore.restartServerGroup(group, lifecycleCallback);
+                    break;
+            }
         }
     }
 }

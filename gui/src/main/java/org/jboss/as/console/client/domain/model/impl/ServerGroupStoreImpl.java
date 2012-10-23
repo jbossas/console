@@ -81,7 +81,7 @@ public class ServerGroupStoreImpl implements ServerGroupStore {
     }
 
     @Override
-    public void reloadServerGroup(final String name, final AsyncCallback<Boolean> callback)
+    public void restartServerGroup(final String name, final AsyncCallback<Boolean> callback)
     {
         lifecycle("restart-servers", name, callback);
     }
