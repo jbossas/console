@@ -378,6 +378,7 @@ input[type="checkbox"] {
 .stack-section {
     margin-left:5px!important;
     width:auto!important;
+    padding-bottom: 0px!important;
 }
 
 .tree-section > table:first-child {
