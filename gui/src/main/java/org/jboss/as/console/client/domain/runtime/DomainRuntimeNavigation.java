@@ -59,7 +59,7 @@ class DomainRuntimeNavigation implements ServerSelectionEvent.ServerSelectionLis
 
         // ----------------------------------------------------
 
-        LHSNavTree domainNavigation = new LHSNavTree("domain-runtime");
+        LHSNavTree domainNavigation = new LHSNavTree("domain");
         domainNavigation.getElement().setAttribute("aria-label", "Domain Tasks");
 
         LHSTreeSection domainLeaf = new LHSTreeSection("Domain", true);
