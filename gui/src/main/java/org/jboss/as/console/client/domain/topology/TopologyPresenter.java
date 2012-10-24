@@ -176,6 +176,9 @@ public class TopologyPresenter extends
                                     @Override
                                     public void onFailure(final Throwable caught)
                                     {
+                                        // log error
+                                        super.onFailure(caught);
+
                                         numResponses++;
                                         HostInfo info = new HostInfo(host.getName(), host.isController());
                                         info.setServerInstances(Collections.<ServerInstance>emptyList());

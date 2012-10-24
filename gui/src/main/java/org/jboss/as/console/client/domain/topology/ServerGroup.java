@@ -101,8 +101,8 @@ class ServerGroup implements Comparable<ServerGroup>
         }
     }
 
-    Set<HostInfo> getHosts()
+    List<HostInfo> getHosts()
     {
-        return serversPerHost.keySet();
+        return new ArrayList<HostInfo>(serversPerHost.keySet());
     }
 }

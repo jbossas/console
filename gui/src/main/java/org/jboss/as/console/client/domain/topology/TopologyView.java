@@ -18,10 +18,7 @@
  */
 package org.jboss.as.console.client.domain.topology;
 
-import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Element;
-import com.google.gwt.dom.client.Node;
-import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.GwtEvent;
@@ -29,6 +26,7 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.EventListener;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.HasRows;
@@ -45,9 +43,7 @@ import org.jboss.ballroom.client.widgets.tools.ToolButton;
 import org.jboss.ballroom.client.widgets.tools.ToolStrip;
 import org.jboss.ballroom.client.widgets.window.Feedback;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.SortedSet;
 
 import static com.google.gwt.user.client.Event.ONCLICK;
@@ -62,6 +58,7 @@ import static org.jboss.as.console.client.domain.topology.HtmlGenerator.*;
  */
 public class TopologyView extends SuspendableViewImpl implements TopologyPresenter.MyView
 {
+    static final String SERVER_GROUP_CLASS = "serverGroup";
     static final int TABLE_WIDTH = 100; // percent
     static final int SERVER_GROUPS_COLUMN = 15; // percent
     static final int HOSTS_COLUMNS = TABLE_WIDTH - SERVER_GROUPS_COLUMN;
@@ -71,9 +68,9 @@ public class TopologyView extends SuspendableViewImpl implements TopologyPresent
     private int visibleHosts = TopologyPresenter.VISIBLE_HOSTS_COLUMNS;
     private int hostSize = 0;
     private TopologyPresenter presenter;
-    private HTMLPanel root;
     private HostsDisplay display;
     private LifecycleLinkListener lifecycleLinkListener;
+    private FlowPanel container;
 
 
     @Override
@@ -97,13 +94,13 @@ public class TopologyView extends SuspendableViewImpl implements TopologyPresent
                 .setTitle("Topology")
                 .setHeadline("Hosts, groups and server instances")
                 .setDescription("An overview of all hosts, groups and server instances in the domain.");
-        root = new HTMLPanel(new HtmlGenerator().root().toSafeHtml().asString());
+        container = new FlowPanel();
         display = new HostsDisplay();
         HostsPager pager = new HostsPager();
         pager.setDisplay(display);
         pager.setPageSize(TopologyPresenter.VISIBLE_HOSTS_COLUMNS);
-        root.add(pager);
-        layout.addContent("domain", root);
+        container.add(pager);
+        layout.addContent("topology", container);
         return layout.build();
     }
 
@@ -116,173 +113,91 @@ public class TopologyView extends SuspendableViewImpl implements TopologyPresent
     @Override
     public void updateHosts(SortedSet<ServerGroup> groups, final int hostIndex)
     {
-        // initialize
-        Set<HostInfo> hosts = groups.first().getHosts();
+        // validation
+        HtmlGenerator html = new HtmlGenerator();
+        if (groups == null || groups.isEmpty())
+        {
+            // TODO Add "no data" html
+            return;
+        }
+
+        // initialization
+        assignColors(groups);
+        List<HostInfo> hosts = groups.first().getHosts();
         this.hostSize = hosts.size();
         this.visibleHosts = min(TopologyPresenter.VISIBLE_HOSTS_COLUMNS, hostSize);
-        HtmlGenerator hiddenHosts = new HtmlGenerator();
-        HtmlGenerator hiddenServers = new HtmlGenerator();
-        HtmlGenerator visible = new HtmlGenerator();
-        HtmlGenerator columns = new HtmlGenerator();
-        assignColors(groups);
+        this.hostIndex = hostIndex;
+        this.hostIndex = max(0, this.hostIndex);
+        this.hostIndex = min(this.hostIndex, this.hostSize - 1);
+        int endIndex = min(hostIndex + TopologyPresenter.VISIBLE_HOSTS_COLUMNS, hostSize);
 
-        // fill the hidden table
-        // first row: hosts
-        hiddenHosts.startRow();
-        for (HostInfo host : hosts)
+        // start table and add columns
+        html.startTable().appendHtmlConstant("<colgroup>");
+        int columnWidth = HOSTS_COLUMNS / (endIndex - hostIndex);
+        html.appendColumn(SERVER_GROUPS_COLUMN);
+        for (int i = hostIndex; i < endIndex; i++)
         {
-            hiddenHosts.appendHost(host);
+            html.appendColumn(columnWidth);
         }
-        hiddenHosts.endRow();
-        com.google.gwt.user.client.Element hiddenHead = root.getElementById(HIDDEN_HOSTS_ID);
-        hiddenHead.setInnerHTML(hiddenHosts.toSafeHtml().asString());
+        html.appendHtmlConstant("</colgroup>");
 
-        // remaining rows: servers
+        // first row contains host, groups description and hostnames
+        html.appendHtmlConstant("<thead><tr><th class='cellTableHeader'>Hosts&nbsp;&rarr;<br/>Groups&nbsp;&darr;</th>");
+        for (int i = hostIndex; i < endIndex; i++)
+        {
+            HostInfo host = hosts.get(i);
+            html.appendHost(host);
+        }
+        html.appendHtmlConstant("</tr></thead>");
+
+        // remaining rows server groups and server instances
+        html.appendHtmlConstant("<tbody>");
         for (ServerGroup group : groups)
         {
             for (int serverIndex = 0; serverIndex < group.maxServersPerHost; serverIndex++)
             {
-                hiddenServers.startRow();
-                for (HostInfo host : group.getHosts())
+                html.appendHtmlConstant("<tr>");
+                if (serverIndex == 0)
                 {
+                    html.appendServerGroup(group);
+                }
+                for (int i = hostIndex; i < endIndex; i++)
+                {
+                    HostInfo host = hosts.get(i);
                     List<ServerInstance> servers = group.serversPerHost.get(host);
                     if (servers.isEmpty() || serverIndex >= servers.size())
                     {
-                        hiddenServers.emptyCell();
+                        html.emptyCell();
                     }
                     else
                     {
-                        // Generate td for one server instance
-                        hiddenServers.appendServer(group, host.getName(), servers.get(serverIndex));
+                        html.appendServer(group, host.getName(), servers.get(serverIndex));
                     }
                 }
-                hiddenServers.endRow();
+                html.appendHtmlConstant("</tr>");
             }
         }
-        com.google.gwt.user.client.Element hiddenBody = root.getElementById(HIDDEN_SERVERS_ID);
-        hiddenBody.setInnerHTML(hiddenServers.toSafeHtml().asString());
+        html.appendHtmlConstant("</tbody>").endTable();
 
-        // fill the visible table
-        // Adjust columns
-        int columnWidth = HOSTS_COLUMNS / visibleHosts;
-        columns.appendColumn(SERVER_GROUPS_COLUMN);
-        for (int i = 0; i < visibleHosts; i++)
+        // create widget and register events
+        HTMLPanel panel = html.createWidget();
+        for (String id : html.getLifecycleIds())
         {
-            columns.appendColumn(columnWidth);
+            com.google.gwt.user.client.Element element = panel.getElementById(id);
+            if (element != null)
+            {
+                DOM.setEventListener(element, lifecycleLinkListener);
+                DOM.sinkEvents(element, ONCLICK);
+            }
         }
-        com.google.gwt.user.client.Element hostColGroup = root.getElementById(HOST_COLGROUP_ID);
-        hostColGroup.setInnerHTML(columns.toSafeHtml().asString());
-
-        // create tr/td for server groups
-        for (ServerGroup group : groups)
+        if (container.getWidgetCount() == 2)
         {
-            visible.appendServerGroup(group);
-
+            container.remove(0);
         }
-        com.google.gwt.user.client.Element visibleHostsBody = root.getElementById(VISIBLE_SERVERS_ID);
-        visibleHostsBody.setInnerHTML(visible.toSafeHtml().asString());
-        registerEvents(visible.getClickIds());
+        container.insert(panel, 0);
 
         // update navigation
         RowCountChangeEvent.fire(display, hostSize, true);
-        scrollTo(hostIndex);
-    }
-
-    private void scrollTo(final int hostIndex)
-    {
-        // validation
-        this.hostIndex = hostIndex;
-        this.hostIndex = max(0, this.hostIndex);
-        this.hostIndex = min(this.hostIndex, this.hostSize - 1);
-
-        int columnsToCopy = TopologyPresenter.VISIBLE_HOSTS_COLUMNS;
-        if (this.hostIndex + columnsToCopy > hostSize)
-        {
-            columnsToCopy = hostSize - this.hostIndex;
-        }
-
-        // 1. Hosts
-        Element hiddenHostsTableHead = root.getElementById(HIDDEN_HOSTS_ID);
-        Element visibleHostsTableHead = root.getElementById(VISIBLE_HOSTS_ID);
-
-        // 1.1 Clear the visible hosts
-        Element visibleHostsTr = visibleHostsTableHead.getFirstChildElement();
-        while (visibleHostsTr.getChildNodes().getLength() > 1)
-        {
-            visibleHostsTr.removeChild(visibleHostsTr.getChild(1));
-        }
-
-        // 1.2 Clone and copy hosts from hidden to visible
-        Element hiddenHostsTr = hiddenHostsTableHead.getFirstChildElement();
-        NodeList<Node> hiddenHostsTds = hiddenHostsTr.getChildNodes();
-        for (int i = 0; i < columnsToCopy; i++)
-        {
-            Node hiddenHostTd = hiddenHostsTds.getItem(this.hostIndex + i);
-            Node visibleHostTd = hiddenHostTd.cloneNode(true);
-            visibleHostsTr.appendChild(visibleHostTd);
-        }
-
-        // 2. Servers
-        Element hiddenServersTableBody = root.getElementById(HIDDEN_SERVERS_ID);
-        Element visibleServersTableBody = root.getElementById(VISIBLE_SERVERS_ID);
-
-        // 2.1 Clear the visible servers
-        NodeList<Node> visibleServerTrs = visibleServersTableBody.getChildNodes();
-        for (int i = 0; i < visibleServerTrs.getLength(); i++)
-        {
-            int indexAndCount = 0;
-            Element visibleServerTr = visibleServerTrs.getItem(i).cast();
-            if (SERVER_GROUP_START_DATA.equals(visibleServerTr.getAttribute("data-group")))
-            {
-                // This row contains the server group which must not be removed
-                indexAndCount = 1;
-            }
-            while (visibleServerTr.getChildNodes().getLength() > indexAndCount)
-            {
-                visibleServerTr.removeChild(visibleServerTr.getChild(indexAndCount));
-            }
-        }
-
-        // 2.2 Clone and copy servers from hidden to visible
-        NodeList<Node> hiddenServerTrs = hiddenServersTableBody.getChildNodes();
-        if (hiddenServerTrs.getLength() != visibleServerTrs.getLength())
-        {
-            // TODO: Something is messed up --> Log error and return?
-        }
-        for (int i = 0; i < hiddenServerTrs.getLength(); i++)
-        {
-            Node hiddenServerTr = hiddenServerTrs.getItem(i);
-            Node visibleServerTr = visibleServerTrs.getItem(i);
-            NodeList<Node> hiddenServerTds = hiddenServerTr.getChildNodes();
-            for (int j = 0; j < columnsToCopy; j++)
-            {
-                // TODO The hidden td contains lifecylce links with special ids.
-                // TODO After cloning these ids exist twice which is invalid.
-                Element hiddenServerTd = hiddenServerTds.getItem(this.hostIndex + j).cast();
-                Element visibleServerTd = hiddenServerTd.cloneNode(true).cast();
-                visibleServerTr.appendChild(visibleServerTd);
-                if (j == columnsToCopy - 1)
-                {
-                    visibleServerTd.addClassName("cellTableLastColumn");
-                }
-            }
-        }
-
-        // Register click handlers for lifecycle links
-        List<String> ids = new ArrayList<String>();
-        NodeList<Element> elements = Document.get().getElementsByTagName("a");
-        for (int i = 0; i < elements.getLength(); i++)
-        {
-            Element element = elements.getItem(i);
-            if ("lifecycleLink".equals(element.getClassName()))
-            {
-                ids.add(element.getId());
-            }
-        }
-        registerEvents(ids);
-
-        // update navigation
-        RangeChangeEvent.fire(display, new Range(this.hostIndex, columnsToCopy));
     }
 
     private void assignColors(SortedSet<ServerGroup> serverGroups)
@@ -294,20 +209,6 @@ public class TopologyView extends SuspendableViewImpl implements TopologyPresent
             index++;
         }
     }
-
-    private void registerEvents(List<String> ids)
-    {
-        for (String id : ids)
-        {
-            com.google.gwt.user.client.Element element = root.getElementById(id);
-            if (element != null)
-            {
-                DOM.setEventListener(element, lifecycleLinkListener);
-                DOM.sinkEvents(element, ONCLICK);
-            }
-        }
-    }
-
 
     // ------------------------------------------------------ inner classes
 
@@ -436,13 +337,13 @@ public class TopologyView extends SuspendableViewImpl implements TopologyPresent
         @Override
         public HandlerRegistration addRangeChangeHandler(final RangeChangeEvent.Handler handler)
         {
-            return root.addHandler(handler, RangeChangeEvent.getType());
+            return container.addHandler(handler, RangeChangeEvent.getType());
         }
 
         @Override
         public HandlerRegistration addRowCountChangeHandler(final RowCountChangeEvent.Handler handler)
         {
-            return root.addHandler(handler, RowCountChangeEvent.getType());
+            return container.addHandler(handler, RowCountChangeEvent.getType());
         }
 
         @Override
@@ -486,7 +387,7 @@ public class TopologyView extends SuspendableViewImpl implements TopologyPresent
         @Override
         public void fireEvent(final GwtEvent<?> event)
         {
-            root.fireEvent(event);
+            container.fireEvent(event);
         }
     }
 }

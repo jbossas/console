@@ -244,9 +244,9 @@ public class XmlHttpProxy {
             cookies.put(c.name, c);
         }
 
-        if(null==in)
+        int responseCode = httpclient.getResponseCode();
+        if(responseCode != 200)
         {
-            int responseCode = httpclient.getResponseCode();
             if(401== responseCode || 403==responseCode)
             {
                 // authentication required
