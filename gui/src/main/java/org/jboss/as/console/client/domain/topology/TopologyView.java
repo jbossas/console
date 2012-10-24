@@ -111,7 +111,7 @@ public class TopologyView extends SuspendableViewImpl implements TopologyPresent
     }
 
     @Override
-    public void updateHosts(SortedSet<ServerGroup> groups, final int hostIndex)
+    public void updateHosts(SortedSet<ServerGroup> groups, final int index)
     {
         // validation
         HtmlGenerator html = new HtmlGenerator();
@@ -126,31 +126,31 @@ public class TopologyView extends SuspendableViewImpl implements TopologyPresent
         List<HostInfo> hosts = groups.first().getHosts();
         this.hostSize = hosts.size();
         this.visibleHosts = min(TopologyPresenter.VISIBLE_HOSTS_COLUMNS, hostSize);
-        this.hostIndex = hostIndex;
+        this.hostIndex = index;
         this.hostIndex = max(0, this.hostIndex);
         this.hostIndex = min(this.hostIndex, this.hostSize - 1);
-        int endIndex = min(hostIndex + TopologyPresenter.VISIBLE_HOSTS_COLUMNS, hostSize);
+        int endIndex = min(this.hostIndex + TopologyPresenter.VISIBLE_HOSTS_COLUMNS, hostSize);
 
         // start table and add columns
         html.startTable().appendHtmlConstant("<colgroup>");
-        int columnWidth = HOSTS_COLUMNS / (endIndex - hostIndex);
+        int columnWidth = HOSTS_COLUMNS / (endIndex - this.hostIndex);
         html.appendColumn(SERVER_GROUPS_COLUMN);
-        for (int i = hostIndex; i < endIndex; i++)
+        for (int i = this.hostIndex; i < endIndex; i++)
         {
             html.appendColumn(columnWidth);
         }
         html.appendHtmlConstant("</colgroup>");
 
-        // first row contains host, groups description and hostnames
+        // first row contains host names
         html.appendHtmlConstant("<thead><tr><th class='cellTableHeader'>Hosts&nbsp;&rarr;<br/>Groups&nbsp;&darr;</th>");
-        for (int i = hostIndex; i < endIndex; i++)
+        for (int i = this.hostIndex; i < endIndex; i++)
         {
             HostInfo host = hosts.get(i);
             html.appendHost(host);
         }
         html.appendHtmlConstant("</tr></thead>");
 
-        // remaining rows server groups and server instances
+        // remaining rows contain server groups and server instances
         html.appendHtmlConstant("<tbody>");
         for (ServerGroup group : groups)
         {
@@ -161,7 +161,7 @@ public class TopologyView extends SuspendableViewImpl implements TopologyPresent
                 {
                     html.appendServerGroup(group);
                 }
-                for (int i = hostIndex; i < endIndex; i++)
+                for (int i = this.hostIndex; i < endIndex; i++)
                 {
                     HostInfo host = hosts.get(i);
                     List<ServerInstance> servers = group.serversPerHost.get(host);
@@ -179,8 +179,8 @@ public class TopologyView extends SuspendableViewImpl implements TopologyPresent
         }
         html.appendHtmlConstant("</tbody>").endTable();
 
-        // create widget and register events
-        HTMLPanel panel = html.createWidget();
+        // create html panel and register events
+        HTMLPanel panel = html.createPanel();
         for (String id : html.getLifecycleIds())
         {
             com.google.gwt.user.client.Element element = panel.getElementById(id);

@@ -242,7 +242,7 @@ final class HtmlGenerator
         return lifecycleIds;
     }
 
-    HTMLPanel createWidget()
+    HTMLPanel createPanel()
     {
         return new HTMLPanel(this.toSafeHtml().asString());
     }
