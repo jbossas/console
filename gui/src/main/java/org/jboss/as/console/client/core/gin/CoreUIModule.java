@@ -24,10 +24,16 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.google.gwt.event.shared.SimpleEventBus;
 import com.google.inject.Singleton;
 import com.gwtplatform.mvp.client.RootPresenter;
+import com.gwtplatform.mvp.client.annotations.GaAccount;
 import com.gwtplatform.mvp.client.gin.AbstractPresenterModule;
+import com.gwtplatform.mvp.client.googleanalytics.GoogleAnalytics;
+import com.gwtplatform.mvp.client.googleanalytics.GoogleAnalyticsImpl;
+import com.gwtplatform.mvp.client.googleanalytics.GoogleAnalyticsNavigationTracker;
 import com.gwtplatform.mvp.client.proxy.Gatekeeper;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.TokenFormatter;
+import org.jboss.as.console.client.analytics.AnalyticsProvider;
+import org.jboss.as.console.client.analytics.NavigationTracker;
 import org.jboss.as.console.client.auth.CurrentUser;
 import org.jboss.as.console.client.auth.SignInPagePresenter;
 import org.jboss.as.console.client.auth.SignInPageView;
@@ -210,6 +216,9 @@ public class CoreUIModule extends AbstractPresenterModule {
         bind(Baseadress.class).in(Singleton.class);
         bind(RuntimeBaseAddress.class).in(Singleton.class);
 
+        bindConstant().annotatedWith(GaAccount.class).to("UA-35829315-1");
+        bind(NavigationTracker.class).asEagerSingleton();
+        bind(GoogleAnalytics.class).toProvider(AnalyticsProvider.class).in(Singleton.class);
         // ----------------------------------------------------------------------
 
         //TODO: bind(EventBus.class).to(DebugEventBus.class).in(Singleton.class);

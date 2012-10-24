@@ -68,7 +68,9 @@ public class SettingsView extends PopupViewImpl implements SettingsPresenterWidg
         localeItem.setValueMap(new String[] {"en", "de", "zh_Hans", "pt_BR", "fr", "es", "ja"});
 
         //CheckBoxItem useCache = new CheckBoxItem(Preferences.Key.USE_CACHE.getToken(), Preferences.Key.USE_CACHE.getTitle());
-        form.setFields(localeItem);
+
+        CheckBoxItem disableAnalytics = new CheckBoxItem(Preferences.Key.DISBALE_ANALYTICS.getToken(), Preferences.Key.DISBALE_ANALYTICS.getTitle());
+        form.setFields(localeItem, disableAnalytics);
 
         Widget formWidget = form.asWidget();
         formWidget.getElement().setAttribute("style", "margin:15px");

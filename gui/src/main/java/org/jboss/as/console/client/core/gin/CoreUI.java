@@ -19,11 +19,17 @@
 
 package org.jboss.as.console.client.core.gin;
 
+import com.google.inject.Singleton;
 import com.google.web.bindery.event.shared.EventBus;
 import com.google.gwt.inject.client.AsyncProvider;
 import com.google.inject.Provider;
+import com.gwtplatform.mvp.client.annotations.GaAccount;
+import com.gwtplatform.mvp.client.googleanalytics.GoogleAnalytics;
+import com.gwtplatform.mvp.client.googleanalytics.GoogleAnalyticsImpl;
+import com.gwtplatform.mvp.client.googleanalytics.GoogleAnalyticsNavigationTracker;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.TokenFormatter;
+import org.jboss.as.console.client.analytics.NavigationTracker;
 import org.jboss.as.console.client.auth.CurrentUser;
 import org.jboss.as.console.client.auth.SignInPagePresenter;
 import org.jboss.as.console.client.core.*;
@@ -153,6 +159,9 @@ public interface CoreUI {
     CurrentUser getCurrentUser();
     BootstrapContext getBootstrapContext();
     ApplicationProperties getAppProperties();
+
+    GoogleAnalytics getAnalytics();
+    NavigationTracker getTracker();
 
     // ----------------------------------------------------------------------
 
