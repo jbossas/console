@@ -65,7 +65,7 @@ public class BrowserView extends PopupViewImpl implements BrowserPresenter.MyVie
     }
 
     private void create() {
-        window = new DefaultWindow("Configuration Browser");
+        window = new DefaultWindow("Management Model View");
         window.setGlassEnabled(true);
 
         tree = new Tree();

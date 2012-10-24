@@ -68,21 +68,31 @@ public class Footer {
 
         final PopupPanel toolsPopup = new DefaultPopup(DefaultPopup.Arrow.BOTTOM);
 
-        final VerticalPanel toolsList = new VerticalPanel();
-        toolsList.getElement().setAttribute("width", "180px");
-        InlineLink browser = new InlineLink("Browser");
-        browser.getElement().setAttribute("style", "margin:4px");
-        browser.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent clickEvent) {
-                toolsPopup.hide();
-                placeManager.revealPlace(
-                        new PlaceRequest(NameTokens.ToolsPresenter).with("name","browser")
-                );
-            }
-        });
 
-        toolsList.add(browser);
+        final String[][] toolReference = new String[][]{
+            new String[]{"Management Model", "browser"},
+            new String[]{"Expression Resolver", "expressions"}
+        };
+        final VerticalPanel toolsList = new VerticalPanel();
+        toolsList.getElement().setAttribute("width", "160px");
+
+
+        for(final String[] tool : toolReference)
+        {
+            InlineLink browser = new InlineLink(tool[0]);
+            browser.getElement().setAttribute("style", "margin:4px");
+            browser.addClickHandler(new ClickHandler() {
+                @Override
+                public void onClick(ClickEvent clickEvent) {
+                    toolsPopup.hide();
+                    placeManager.revealPlace(
+                            new PlaceRequest(NameTokens.ToolsPresenter).with("name", tool[1])
+                    );
+                }
+            });
+
+            toolsList.add(browser);
+        }
         toolsPopup.setWidget(toolsList);
 
         final HTML toolsLink = new HTML("Tools");
@@ -91,14 +101,16 @@ public class Footer {
             @Override
             public void onClick(ClickEvent clickEvent) {
 
+                int listHeight = toolsList.getWidgetCount() * 25;
+
                 toolsPopup.setPopupPosition(
                         toolsLink.getAbsoluteLeft()-45,
-                        toolsLink.getAbsoluteTop()-50
+                        toolsLink.getAbsoluteTop()-(listHeight-25)-50
 
                 );
 
-                toolsPopup.setWidth("240");
-                toolsPopup.setHeight(toolsList.getWidgetCount()*25+"");
+                toolsPopup.setWidth("165");
+                toolsPopup.setHeight(listHeight +"");
 
                 toolsPopup.show();
             }

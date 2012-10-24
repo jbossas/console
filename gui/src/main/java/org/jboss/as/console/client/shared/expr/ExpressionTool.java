@@ -63,7 +63,7 @@ public class ExpressionTool implements Tool {
 
         form.setFields(input, output);
 
-        panel.add(new ContentDescription("Expressions can only be resolved on servers that are running."));
+        panel.add(new ContentDescription("Expressions will be resolved against running server instances."));
         panel.add(form.asWidget());
 
 

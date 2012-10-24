@@ -10,6 +10,7 @@ import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.Place;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
+import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
 import com.gwtplatform.mvp.client.proxy.RevealRootPopupContentEvent;
@@ -25,6 +26,7 @@ public class ToolsPresenter extends Presenter<ToolsPresenter.MyView, ToolsPresen
 
     private final PlaceManager placeManager;
     private BrowserPresenter browser;
+    private String requestedTool;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.ToolsPresenter)
@@ -49,7 +51,20 @@ public class ToolsPresenter extends Presenter<ToolsPresenter.MyView, ToolsPresen
     }
 
     @Override
+    public void prepareFromRequest(PlaceRequest request) {
+        requestedTool = request.getParameter("name", null);
+    }
+
+    @Override
     protected void revealInParent() {
-        RevealRootPopupContentEvent.fire(this, browser);
+
+        if("expressions".equals(requestedTool))
+        {
+            getEventBus().fireEventFromSource(new ResolveExpressionEvent("${name:default_value}"), this);
+        }
+        else if("browser".equals(requestedTool))
+        {
+            RevealRootPopupContentEvent.fire(this, browser);
+        }
     }
 }
