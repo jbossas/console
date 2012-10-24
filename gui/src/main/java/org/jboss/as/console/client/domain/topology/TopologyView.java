@@ -117,6 +117,12 @@ public class TopologyView extends SuspendableViewImpl implements TopologyPresent
     public void updateHosts(SortedSet<ServerGroup> groups, final int hostIndex)
     {
         // initialize
+        if (groups == null || groups.isEmpty())
+        {
+            // TODO Add "empty data" html
+            return;
+        }
+
         Set<HostInfo> hosts = groups.first().getHosts();
         this.hostSize = hosts.size();
         this.visibleHosts = min(TopologyPresenter.VISIBLE_HOSTS_COLUMNS, hostSize);
