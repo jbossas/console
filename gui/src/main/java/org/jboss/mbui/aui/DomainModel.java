@@ -31,6 +31,8 @@ import java.util.Map;
  */
 public class DomainModel extends Model
 {
+    public final static DomainModel EMPTY = new DomainModel("__empty_domain_model__", "__no_address__");
+
     private final String address;
     private final Attributes defaultAttributes;
     private final Map<Group, Attributes> attributesByGroup;
@@ -43,6 +45,7 @@ public class DomainModel extends Model
         this.defaultAttributes = new Attributes();
         this.attributesByGroup = new HashMap<Group, Attributes>();
         this.attributesByGroup.put(Group.DEFAULT, defaultAttributes);
+        setAuthor(Author.JBOSS);
     }
 
     public void addAttributes(final String... attributes)

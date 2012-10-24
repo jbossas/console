@@ -18,9 +18,10 @@
  */
 package org.jboss.mbui.aui;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 /**
  * @author Harald Pehl
@@ -29,6 +30,7 @@ import org.junit.Test;
 public class DomainModelTest
 {
     DomainModel cut;
+    DomainModel.Group groupFixture = new DomainModel.Group("test");
 
     @Before
     public void setUp()
@@ -37,29 +39,45 @@ public class DomainModelTest
     }
 
     @Test
-    public void addNullAttributes()
+    public void addNullAttribute()
     {
-        cut.addAttributes(null);
-        Assert.assertTrue(cut.getAttributes().isEmpty());
+        cut.addAttributes((String)null);
+        assertTrue(cut.getAttributes().isEmpty());
     }
 
     @Test
-    public void addEmptyAttributes()
+    public void addEmptyAttribute()
     {
         cut.addAttributes("");
-        Assert.assertTrue(cut.getAttributes().isEmpty());
+        assertTrue(cut.getAttributes().isEmpty());
     }
 
     @Test
-    public void addAttribtes()
+    public void addNullAndEmptyAttributes()
+    {
+        cut.addAttributes("", null, "", "", null, "");
+        assertTrue(cut.getAttributes().isEmpty());
+    }
+
+    @Test
+    public void addDefaultAttribtes()
     {
         cut.addAttributes("foo", "bar");
-        Assert.assertEquals(2, cut.getAttributes().size());
+        assertTrue(cut.getAttributes(groupFixture).isEmpty());
+        assertEquals(2, cut.getAttributes().size());
     }
 
     @Test
-    public void getAttributes()
+    public void addGroupAttribtes()
     {
+        cut.addAttributes(groupFixture, "foo", "bar");
+        assertTrue(cut.getAttributes().isEmpty());
+        assertEquals(2, cut.getAttributes(groupFixture).size());
+    }
 
+    @Test
+    public void getUnknownGroupAttributes()
+    {
+        assertNotNull(cut.getAttributes(new DomainModel.Group("unknown")));
     }
 }
