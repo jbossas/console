@@ -25,8 +25,6 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
-import static java.util.Arrays.asList;
-
 /**
  * @author Harald Pehl
  * @date 10/24/2012
@@ -49,10 +47,10 @@ public class DomainModel extends Model
 
     public void addAttributes(final String... attributes)
     {
-        addAttribtes(Group.DEFAULT, attributes);
+        addAttributes(Group.DEFAULT, attributes);
     }
 
-    public void addAttribtes(final Group name, final String... attributes)
+    public void addAttributes(final Group name, final String... attributes)
     {
         assert name != null : "Name must not be null";
         if (attributes == null || attributes.length == 0)
@@ -163,7 +161,13 @@ public class DomainModel extends Model
 
         private void add(final String... attributes)
         {
-            this.attributes.addAll(asList(attributes));
+            for (String attribute : attributes)
+            {
+                if (attribute != null && attribute.length() != 0)
+                {
+                    this.attributes.add(attribute);
+                }
+            }
         }
 
         @Override
