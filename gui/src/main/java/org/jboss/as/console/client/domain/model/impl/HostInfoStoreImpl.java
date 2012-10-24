@@ -339,6 +339,8 @@ public class HostInfoStoreImpl implements HostInformationStore {
                                     ServerInstance instance = createInstanceModel(handle);
                                     instance.setHost(host);
                                     instance.setRunning(false);
+                                    instance.setInterfaces(new HashMap<String, String>());
+                                    instance.setSocketBindings(new HashMap<String, String>());
                                     instanceList.add(instance);
 
                                     checkComplete(instanceList, cb);
