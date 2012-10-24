@@ -21,6 +21,7 @@ package org.jboss.as.console.client.domain.topology;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Image;
 import org.jboss.as.console.client.domain.model.ServerInstance;
 import org.jboss.as.console.client.widgets.icons.ConsoleIcons;
@@ -49,17 +50,9 @@ import static org.jboss.as.console.client.domain.model.ServerFlag.RESTART_REQUIR
  */
 final class HtmlGenerator
 {
-    static final String SERVER_GROUP_CLASS = "serverGroup";
-    static final String HOST_COLGROUP_ID = "hostColumns";
-    static final String HIDDEN_HOSTS_ID = "hiddenHosts";
-    static final String HIDDEN_SERVERS_ID = "hiddenServers";
-    static final String VISIBLE_HOSTS_ID = "visibleHost";
-    static final String VISIBLE_SERVERS_ID = "visibleServers";
-    static final String DATA_GROUP = "data-group";
     static final String DATA_GROUP_NAME = "data-group-name";
     static final String DATA_HOST_NAME = "data-host-name";
     static final String DATA_SERVER_NAME = "data-server-name";
-    static final String SERVER_GROUP_START_DATA = "serverGroup";
     static final String START_SERVER_ID = "start_server_";
     static final String STOP_SERVER_ID = "stop_server_";
     static final String RELOAD_SERVER_ID = "reload_server_";
@@ -69,49 +62,67 @@ final class HtmlGenerator
 
 
     final SafeHtmlBuilder html;
-    final List<String> clickIds;
+    final List<String> lifecycleIds;
 
 
     HtmlGenerator()
     {
         this.html = new SafeHtmlBuilder();
-        this.clickIds = new ArrayList<String>();
+        this.lifecycleIds = new ArrayList<String>();
     }
 
 
     // ------------------------------------------------------ custom methods
 
-    HtmlGenerator root()
-    {
-        html.appendHtmlConstant("<table cellspacing='0' class='default-cell-table'>");
-        html.appendHtmlConstant("<colgroup id='" + HOST_COLGROUP_ID + "'></colgroup>");
-        html.appendHtmlConstant("<thead id='" + VISIBLE_HOSTS_ID + "'><tr>" +
-                "<th class='cellTableHeader'>Hosts&nbsp;&rarr;<br/>Groups&nbsp;&darr;</th></tr></thead>");
-        html.appendHtmlConstant("<tbody id='" + VISIBLE_SERVERS_ID + "'/>");
-        html.appendHtmlConstant("</table>");
-
-        html.appendHtmlConstant("<table style='display:none;'><thead id='" + HIDDEN_HOSTS_ID + "'/><tbody id='" +
-                HIDDEN_SERVERS_ID + "'/></table>");
-        return this;
-    }
-
     HtmlGenerator appendHost(final HostInfo host)
     {
-        html.appendHtmlConstant("<th class='cellTableHeader'>");
+        appendHtmlConstant("<th class='cellTableHeader'>");
         if (host.isController())
         {
             appendIcon(ConsoleIcons.INSTANCE.star());
         }
-        startLine().appendText(host.getName()).endLine();
-        startLine().appendText("Domain: ").appendText(host.isController() ? "Controller" : "Member").endLine();
+        startLine().appendEscaped(host.getName()).endLine();
+        startLine().appendHtmlConstant("Domain: ").appendHtmlConstant(host.isController() ? "Controller" : "Member").endLine();
         html.appendHtmlConstant("</th>");
+        return this;
+    }
+
+    HtmlGenerator appendServerGroup(final ServerGroup group)
+    {
+        if (group.maxServersPerHost > 1)
+        {
+            appendHtmlConstant("<td class='domainOverviewCell cellTableCell endOfServerGroup " +
+                    group.cssClassname + "' rowspan='" + group.maxServersPerHost + "'>");
+        }
+        else
+        {
+            appendHtmlConstant("<td class='domainOverviewCell cellTableCell endOfServerGroup " +
+                    group.cssClassname + "'>");
+        }
+        startLine().appendEscaped(group.name).endLine();
+        if (group.profile != null)
+        {
+            startLine().appendEscaped("Profile: " + group.profile).endLine();
+        }
+
+        startLinks();
+        String startId = START_GROUP_ID + group.name;
+        String stopId = STOP_GROUP_ID + group.name;
+        String restartId = RESTART_GROUP_ID + group.name;
+        appendLifecycleLink(startId, group.name, null, null, "Start Group")
+                .appendHtmlConstant("<br/>")
+                .appendLifecycleLink(stopId, group.name, null, null, "Stop Group")
+                .appendHtmlConstant("<br/>")
+                .appendLifecycleLink(restartId, group.name, null, null, "Restart Group");
+        endLine();
+        appendHtmlConstant("</td>");
         return this;
     }
 
     HtmlGenerator appendServer(final ServerGroup group, final String host, final ServerInstance server)
     {
+        ImageResource icon;
         String tooltip = "";
-        ImageResource icon  = null;
         if (server.isRunning())
         {
             if (server.getFlag() != null)
@@ -137,16 +148,16 @@ final class HtmlGenerator
             tooltip = "Server is stopped";
             icon = Icons.INSTANCE.status_bad();
         }
-        html.appendHtmlConstant("<td class='cellTableCell domainOverviewCell " + group.cssClassname + "_light" +
+        appendHtmlConstant("<td class='cellTableCell domainOverviewCell " + group.cssClassname + "_light" +
                 "' title='" + tooltip + "'>");
 
-        startLine().appendIcon(icon).appendText(server.getName()).endLine();
+        startLine().appendIcon(icon).appendEscaped(server.getName()).endLine();
         if (server.getSocketBindings().size() > 0)
         {
             Set<String> sockets = server.getSocketBindings().keySet();
             String first = sockets.iterator().next();
-            startLine().appendText("Socket Binding: ").appendText(first).endLine();
-            startLine().appendText("Ports: +").appendText(server.getSocketBindings().get(first)).endLine();
+            startLine().appendHtmlConstant("Socket Binding: ").appendEscaped(first).endLine();
+            startLine().appendHtmlConstant("Ports: +").appendEscaped(server.getSocketBindings().get(first)).endLine();
         }
 
         startLinks();
@@ -155,7 +166,7 @@ final class HtmlGenerator
             appendLifecycleLink(STOP_SERVER_ID + server.getName(), null, host, server.getName(), "Stop Server");
             if (server.getFlag() == RELOAD_REQUIRED)
             {
-                html.appendHtmlConstant("<br/>");
+                appendHtmlConstant("<br/>");
                 appendLifecycleLink(RELOAD_SERVER_ID + server.getName(), null, host, server.getName(), "Reload Server");
             }
         }
@@ -163,68 +174,26 @@ final class HtmlGenerator
         {
             appendLifecycleLink(START_SERVER_ID + server.getName(), null, host, server.getName(), "Start Server");
         }
-        html.appendHtmlConstant("</td>");
-        return this;
-    }
-
-    HtmlGenerator appendServerGroup(final ServerGroup group)
-    {
-        // first row contains the group name and is marked with the "data-group" attribute
-        html.appendHtmlConstant("<tr " + DATA_GROUP + "='" + SERVER_GROUP_START_DATA + "'>");
-        if (group.maxServersPerHost > 1)
-        {
-            html.appendHtmlConstant("<td class='domainOverviewCell cellTableCell endOfServerGroup " +
-                    group.cssClassname + "' rowspan='" + group.maxServersPerHost + "'>");
-        }
-        else
-        {
-            html.appendHtmlConstant("<td class='domainOverviewCell cellTableCell endOfServerGroup " +
-                    group.cssClassname + "'>");
-        }
-        startLine().appendText(group.name).endLine();
-        if (group.profile != null)
-        {
-            startLine().appendText("Profile: " + group.profile).endLine();
-        }
-
-        startLinks();
-        String startId = START_GROUP_ID + group.name;
-        String stopId = STOP_GROUP_ID + group.name;
-        String restartId = RESTART_GROUP_ID + group.name;
-        appendLifecycleLink(startId, group.name, null, null, "Start Group");
-        html.appendHtmlConstant("<br/>");
-        appendLifecycleLink(stopId, group.name, null, null, "Stop Group");
-        html.appendHtmlConstant("<br/>");
-        appendLifecycleLink(restartId, group.name, null, null, "Restart Group");
-        endLine();
-        html.appendHtmlConstant("</td></tr>");
-        if (group.maxServersPerHost > 1)
-        {
-            // prepare remaining rows (make copy node more easy)
-            for (int i = 1; i < group.maxServersPerHost; i++)
-            {
-                html.appendHtmlConstant("<tr/>");
-            }
-        }
+        appendHtmlConstant("</td>");
         return this;
     }
 
     HtmlGenerator appendIcon(final ImageResource img)
     {
-        html.appendHtmlConstant("<img src='" + new Image(img).getUrl() + "' width='16' " + "height='16' class='statusIcon'/>");
+        appendHtmlConstant("<img src='" + new Image(img).getUrl() + "' width='16' " + "height='16' class='statusIcon'/>");
         return this;
     }
 
     HtmlGenerator appendColumn(final int width)
     {
-        html.appendHtmlConstant("<col width='" + width + "%'/>");
+        appendHtmlConstant("<col width='" + width + "%'/>");
         return this;
     }
 
     HtmlGenerator appendLifecycleLink(String id, String group, String host, String server, String text)
     {
-        clickIds.add(id);
-        html.appendHtmlConstant("<a id='" + id + "' class='lifecycleLink'" +
+        lifecycleIds.add(id);
+        appendHtmlConstant("<a id='" + id + "' class='lifecycleLink'" +
                 (group != null ? " " + DATA_GROUP_NAME + "='" + group + "'" : "") +
                 (host != null ? " " + DATA_HOST_NAME + "='" + host + "'" : "") +
                 (server != null ? " " + DATA_SERVER_NAME + "='" + server + "'" : "") +
@@ -232,56 +201,66 @@ final class HtmlGenerator
         return this;
     }
 
-    HtmlGenerator appendText(String text)
+    HtmlGenerator startTable()
     {
-        html.appendEscaped(text);
+        appendHtmlConstant("<table cellspacing='0' class='default-cell-table'>");
         return this;
     }
 
-    HtmlGenerator startRow()
+    HtmlGenerator endTable()
     {
-        html.appendHtmlConstant("<tr>");
-        return this;
-    }
-
-
-    HtmlGenerator endRow()
-    {
-        html.appendHtmlConstant("</tr>");
-        return this;
-    }
-
-    HtmlGenerator emptyCell()
-    {
-        html.appendHtmlConstant("<td class='cellTableCell domainOverviewCell'>&nbsp;</td>");
+        appendHtmlConstant("</table>");
         return this;
     }
 
     HtmlGenerator startLine()
     {
-        html.appendHtmlConstant("<div>");
+        appendHtmlConstant("<div>");
         return this;
     }
 
     HtmlGenerator endLine()
     {
-        html.appendHtmlConstant("</div>");
+        appendHtmlConstant("</div>");
         return this;
     }
 
     HtmlGenerator startLinks()
     {
-        html.appendHtmlConstant("<div class='lifecycleLinks'>");
+        appendHtmlConstant("<div class='lifecycleLinks'>");
         return this;
     }
 
-    List<String> getClickIds()
+    HtmlGenerator emptyCell()
     {
-        return clickIds;
+        appendHtmlConstant("<td class='cellTableCell domainOverviewCell'>&nbsp;</td>");
+        return this;
+    }
+
+    List<String> getLifecycleIds()
+    {
+        return lifecycleIds;
+    }
+
+    HTMLPanel createWidget()
+    {
+        return new HTMLPanel(this.toSafeHtml().asString());
     }
 
 
     // ------------------------------------------------------ delegate methods
+
+    public HtmlGenerator appendHtmlConstant(final String text)
+    {
+        html.appendHtmlConstant(text);
+        return this;
+    }
+
+    public HtmlGenerator appendEscaped(final String text)
+    {
+        html.appendEscaped(text);
+        return this;
+    }
 
     public SafeHtml toSafeHtml()
     {
