@@ -52,6 +52,19 @@
 
             <dependency>
                 <groupId>org.jboss.as</groupId>
+                <artifactId>diagnostics</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.jboss.as</groupId>
+                <artifactId>diagnostics</artifactId>
+                <version>${project.version}</version>
+                <classifier>sources</classifier>
+            </dependency>
+
+            <dependency>
+                <groupId>org.jboss.as</groupId>
                 <artifactId>jboss-as-console-core</artifactId>
                 <version>${project.version}</version>
             </dependency>
