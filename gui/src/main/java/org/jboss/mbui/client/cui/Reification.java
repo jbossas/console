@@ -35,7 +35,6 @@ public abstract class Reification
         this.interactionUnit = interactionUnit;
     }
 
-
     public abstract Widget create(Context context);
 
     public abstract Widget update(Context context);
