@@ -23,7 +23,6 @@ import org.jboss.mbui.client.aui.aim.DataInputOutput;
 import org.jboss.mbui.client.aui.aim.Header;
 import org.jboss.mbui.client.aui.aim.InteractionUnit;
 import org.jboss.mbui.client.aui.mapping.EntityContext;
-import org.jboss.mbui.client.aui.mapping.Mapping;
 import org.jboss.mbui.client.aui.mapping.ResourceMapping;
 
 /**
@@ -41,10 +40,10 @@ public class DataSourceSample
 
         // form
         EntityContext datasourceContext = new EntityContext("datasource");
-        Mapping mapping = new ResourceMapping("datasource", "/profile=full/subsystem=datasources/data-source=ExampleDS");
-        mapping.addAttributes("${resource.name}", "jndi", "enabled", "driver-name", "share-prepared-statements",
-                "prepared-statements-cache-size");
-        datasourceContext.addMapping(mapping);
+        datasourceContext.addMapping(
+                new ResourceMapping("datasource", "/profile=full/subsystem=datasources/data-source=ExampleDS")
+                        .addAttributes("${resource.name}", "jndi-name", "enabled", "driver-name",
+                                "share-prepared-statements", "prepared-statements-cache-size"));
         DataInputOutput form = new DataInputOutput("datasource", "Datasource");
         form.setEntityContext(datasourceContext);
         iu.add(form);

@@ -50,7 +50,7 @@ public abstract class Mapping
         this.attributes = new ArrayList<String>();
     }
 
-    public void addAttributes(final String... attributes)
+    public Mapping addAttributes(final String... attributes)
     {
         for (String attribute : attributes)
         {
@@ -59,6 +59,7 @@ public abstract class Mapping
                 this.attributes.add(attribute);
             }
         }
+        return this;
     }
 
     @Override
