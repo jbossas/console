@@ -88,7 +88,8 @@ public class ToolsPresenter extends Presenter<ToolsPresenter.MyView, ToolsPresen
             window.setHeight(360);
 
 
-            Widget debugWidget = new DebugPanel().asWidget();
+            DebugPanel debugPanel = new DebugPanel();
+            Widget debugWidget = debugPanel.asWidget();
             window.setWidget(
                     new ScrollPanel(debugWidget)
             );

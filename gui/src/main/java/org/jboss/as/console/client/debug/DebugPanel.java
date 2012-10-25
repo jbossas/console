@@ -23,7 +23,7 @@ public class DebugPanel implements IsWidget, DebugPanelListener {
 
     private GwtStatisticsEventSystem sys;
     private DefaultDebugStatisticsDebugPanelComponent panelComponent;
-    private DelayedDebugPanelComponent xmlComponent;
+    //private DelayedDebugPanelComponent xmlComponent;
     private DefaultRawLogDebugPanelComponent logComponent;
 
     private GwtDebugStatisticsModel sm;
@@ -32,7 +32,7 @@ public class DebugPanel implements IsWidget, DebugPanelListener {
     public DebugPanel() {
         sys = new GwtStatisticsEventSystem();
         panelComponent = new DefaultDebugStatisticsDebugPanelComponent(null);
-        xmlComponent = panelComponent.xmlComponent();
+        //xmlComponent = panelComponent.xmlComponent();
         logComponent = new DefaultRawLogDebugPanelComponent(sys);
         em = new GwtExceptionModel();
     }
@@ -40,16 +40,16 @@ public class DebugPanel implements IsWidget, DebugPanelListener {
     @Override
     public Widget asWidget() {
 
-        Widget widget = new DebugPanelWidget(
+        DebugPanelWidget widget = new DebugPanelWidget(
                 this,
                 true,
                 new DebugPanelWidget.Component[] {
                         panelComponent,
                         new DefaultExceptionDebugPanelComponent(em),
                         new DefaultCookieDebugPanelComponent(),
-                        logComponent,
-                        xmlComponent
+                        logComponent
                 });
+        widget.show(true);
         return widget;
     }
 
@@ -59,9 +59,9 @@ public class DebugPanel implements IsWidget, DebugPanelListener {
                 sm = new GwtDebugStatisticsModel(
                         new DefaultStatisticsModelStartupEventHandler(),
                         new DefaultStatisticsModelRpcEventHandler()));
-        xmlComponent.reset();
+        //xmlComponent.reset();
         logComponent.reset();
-
+        logComponent.setVisible(true);
         sys.addListener(sm, false);
         sys.addListener(em, false);
         sys.enable(true);

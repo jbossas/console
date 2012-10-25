@@ -32,13 +32,13 @@ import org.jboss.as.console.client.core.BootstrapContext;
 import org.jboss.as.console.client.core.UIConstants;
 import org.jboss.as.console.client.debug.DiagnoseLogger;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
-import org.jboss.as.console.client.shared.Preferences;
 import org.jboss.as.console.client.shared.dispatch.ActionHandler;
 import org.jboss.as.console.client.shared.dispatch.DMRCache;
 import org.jboss.as.console.client.shared.dispatch.DispatchRequest;
 import org.jboss.as.console.client.shared.dispatch.InvocationMetrics;
-import org.jboss.dmr.client.ModelDescriptionConstants;
 import org.jboss.dmr.client.ModelNode;
+
+import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 
 /**
  * @author Heiko Braun
@@ -153,12 +153,7 @@ public class DMRHandler implements ActionHandler<DMRAction, DMRResponse> {
 
                     long end = System.currentTimeMillis();
 
-                    DiagnoseLogger.logEvent(
-                            "core",
-                            "dmr-invocation",
-                            operation.get(ModelDescriptionConstants.ADDRESS).asString(),
-                            (end-start), ""
-                    );
+                    trace(operation, response, start, end);
 
                     int statusCode = response.getStatusCode();
 
@@ -217,6 +212,52 @@ public class DMRHandler implements ActionHandler<DMRAction, DMRResponse> {
         }
         return requestHandle;
     }
+
+    private void trace(ModelNode operation, Response response, long start, long end) {
+
+        String eventGroup = getToken(operation);
+
+        DiagnoseLogger.logEvent(
+                "core",
+                "dmr-invocation",
+                eventGroup,
+                (end-start), "HTTP "+response.getStatusCode()
+        );
+
+    }
+
+    public static String getToken(ModelNode operation) {
+
+        StringBuffer sb = new StringBuffer();
+        if(operation.get(OP).asString().equals(COMPOSITE))
+        {
+            for(ModelNode step : operation.get(STEPS).asList())
+            {
+                sb.append("_").append(getOpToken(step));
+            }
+        }
+        else
+        {
+            sb.append(getOpToken(operation));
+        }
+        return sb.toString();
+    }
+
+    private static String getOpToken(ModelNode operation) {
+        StringBuffer sb = new StringBuffer();
+        sb.append(operation.get(ADDRESS).asString())
+                .append(":")
+                .append(operation.get(OP))
+                .append(";")
+                .append(operation.get(CHILD_TYPE).asString())
+                .append(";");
+
+        if(operation.get(NAME).isDefined())
+                sb.append(operation.get(NAME).asString());
+
+        return sb.toString();
+    }
+
 
     @Override
     public DispatchRequest undo(DMRAction action, DMRResponse result, AsyncCallback<Void> callback) {
