@@ -15,6 +15,7 @@ import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
 import com.gwtplatform.mvp.client.proxy.RevealRootPopupContentEvent;
 import org.jboss.as.console.client.core.NameTokens;
+import org.jboss.as.console.client.debug.DebugPresenter;
 import org.jboss.ballroom.client.widgets.forms.ResolveExpressionEvent;
 
 /**
@@ -26,6 +27,8 @@ public class ToolsPresenter extends Presenter<ToolsPresenter.MyView, ToolsPresen
 
     private final PlaceManager placeManager;
     private BrowserPresenter browser;
+    private DebugPresenter debug;
+
     private String requestedTool;
 
     @ProxyCodeSplit
@@ -47,6 +50,7 @@ public class ToolsPresenter extends Presenter<ToolsPresenter.MyView, ToolsPresen
             PlaceManager placeManager, BrowserPresenter browser) {
         super(eventBus, view, proxy);
         this.placeManager = placeManager;
+        //this.debug = debug;
         this.browser = browser;
     }
 
@@ -65,6 +69,10 @@ public class ToolsPresenter extends Presenter<ToolsPresenter.MyView, ToolsPresen
         else if("browser".equals(requestedTool))
         {
             RevealRootPopupContentEvent.fire(this, browser);
+        }
+        else if("debug-panel".equals(requestedTool))
+        {
+            RevealRootPopupContentEvent.fire(this, debug);
         }
     }
 }
