@@ -55,6 +55,23 @@ public class DMRHandler implements ActionHandler<DMRAction, DMRResponse> {
 
     private UIConstants constants;
 
+    private static enum Type {
+        BEGIN("begin"),
+        END("end"),
+        SEND("requestSent"),
+        RECEIVE("responseReceived");
+
+        private String classifier;
+
+        private Type(String classifier) {
+            this.classifier = classifier;
+        }
+
+        public String getClassifier() {
+            return classifier;
+        }
+    }
+
     @Inject
     public DMRHandler(BootstrapContext bootstrap, UIConstants constants) {
 
@@ -88,17 +105,15 @@ public class DMRHandler implements ActionHandler<DMRAction, DMRResponse> {
         Request requestHandle = null;
         try {
 
-
-            final long start = System.currentTimeMillis();
+            final String id = String.valueOf(operation.hashCode());
+            trace(Type.BEGIN, id, operation);
 
             requestHandle = requestBuilder.sendRequest(operation.toBase64String(), new RequestCallback() {
                 @Override
                 public void onResponseReceived(Request request, Response response) {
 
-                    long end = System.currentTimeMillis();
 
-                    if(trackInvocations)
-                        trace(operation, response, start, end);
+                    trace(Type.RECEIVE, id, operation);
 
                     int statusCode = response.getStatusCode();
 
@@ -145,29 +160,41 @@ public class DMRHandler implements ActionHandler<DMRAction, DMRResponse> {
                         sb.append(payload);
                         resultCallback.onFailure( new Exception(sb.toString()));
                     }
+
+                    trace(Type.END, id, operation);
                 }
 
                 @Override
                 public void onError(Request request, Throwable e) {
+
+                    trace(Type.RECEIVE, id, operation);
                     resultCallback.onFailure(e);
+                    trace(Type.END, id, operation);
                 }
             });
+
+
+            trace(Type.SEND, id, operation);
+
         } catch (RequestException e) {
             resultCallback.onFailure(e);
         }
         return requestHandle;
     }
 
-    private void trace(ModelNode operation, Response response, long start, long end) {
+    private void trace(Type type, String id, ModelNode operation) {
 
-        String eventGroup = getToken(operation);
+        if(!trackInvocations) return;
 
-        DiagnoseLogger.logEvent(
-                "core",
-                "dmr-invocation",
-                eventGroup,
-                (end-start), "HTTP "+response.getStatusCode()
-        );
+        //String token = getToken(operation);
+        if(Type.BEGIN.equals(type))
+        {
+            DiagnoseLogger.logRpc(type.getClassifier(), id, System.currentTimeMillis(), getToken(operation));
+        }
+        else
+        {
+            DiagnoseLogger.logRpc(type.getClassifier(), id, System.currentTimeMillis());
+        }
 
     }
 
@@ -178,7 +205,7 @@ public class DMRHandler implements ActionHandler<DMRAction, DMRResponse> {
         {
             for(ModelNode step : operation.get(STEPS).asList())
             {
-                sb.append("_").append(getOpToken(step));
+                sb.append(" _").append(getOpToken(step));
             }
         }
         else
@@ -191,11 +218,11 @@ public class DMRHandler implements ActionHandler<DMRAction, DMRResponse> {
     private static String getOpToken(ModelNode operation) {
         StringBuffer sb = new StringBuffer();
         sb.append(operation.get(ADDRESS).asString())
-                .append(":")
+                .append(": ")
                 .append(operation.get(OP))
-                .append(";")
+                .append("; ")
                 .append(operation.get(CHILD_TYPE).asString())
-                .append(";");
+                .append("; ");
 
         if(operation.get(NAME).isDefined())
                 sb.append(operation.get(NAME).asString());
