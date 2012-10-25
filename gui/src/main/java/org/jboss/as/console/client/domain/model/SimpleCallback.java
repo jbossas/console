@@ -23,7 +23,7 @@ import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.message.Message;
-import org.jboss.as.console.client.debug.DiagnoseLogger;
+import org.jboss.as.console.client.debug.Diagnostics;
 
 /**
  * @author Heiko Braun
@@ -34,7 +34,7 @@ public abstract class SimpleCallback<T> implements AsyncCallback<T> {
     @Override
     public void onFailure(Throwable caught) {
         Log.error("Unknown error", caught);
-        DiagnoseLogger.logError("dmr-invocation", System.currentTimeMillis(), caught.getMessage());
+        Diagnostics.logError("dmr-invocation", System.currentTimeMillis(), caught.getMessage());
         Console.getMessageCenter().notify(
                 new Message("Unknown error", caught.getMessage(), Message.Severity.Error)
         );

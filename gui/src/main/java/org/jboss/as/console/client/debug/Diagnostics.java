@@ -6,7 +6,7 @@ import com.google.gwt.debugpanel.common.ExceptionData;
  * @author Heiko Braun
  * @date 10/25/12
  */
-public class DiagnoseLogger {
+public class Diagnostics {
 
     private static final String RPC = "rpc";
     private static final String RPC_SERIALIZED = "requestSerialized";

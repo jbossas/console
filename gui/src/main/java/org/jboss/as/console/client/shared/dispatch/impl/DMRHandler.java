@@ -30,7 +30,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
 import org.jboss.as.console.client.core.BootstrapContext;
 import org.jboss.as.console.client.core.UIConstants;
-import org.jboss.as.console.client.debug.DiagnoseLogger;
+import org.jboss.as.console.client.debug.Diagnostics;
 import org.jboss.as.console.client.shared.dispatch.ActionHandler;
 import org.jboss.as.console.client.shared.dispatch.DispatchRequest;
 import org.jboss.dmr.client.ModelNode;
@@ -199,11 +199,11 @@ public class DMRHandler implements ActionHandler<DMRAction, DMRResponse> {
         //String token = getToken(operation);
         if(Type.BEGIN.equals(type))
         {
-            DiagnoseLogger.logRpc(type.getClassifier(), id, System.currentTimeMillis(), getToken(operation));
+            Diagnostics.logRpc(type.getClassifier(), id, System.currentTimeMillis(), getToken(operation));
         }
         else
         {
-            DiagnoseLogger.logRpc(type.getClassifier(), id, System.currentTimeMillis());
+            Diagnostics.logRpc(type.getClassifier(), id, System.currentTimeMillis());
         }
 
     }
