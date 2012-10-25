@@ -55,11 +55,15 @@ public class DMRHandler implements ActionHandler<DMRAction, DMRResponse> {
 
     private UIConstants constants;
 
+    private static long idCounter = 0;
+
     private static enum Type {
         BEGIN("begin"),
         END("end"),
         SEND("requestSent"),
-        RECEIVE("responseReceived");
+        RECEIVE("responseReceived"),
+        SERIALIZED("requestSerialized"),
+        DESERIALIZED("responseDeserialized");
 
         private String classifier;
 
@@ -102,13 +106,20 @@ public class DMRHandler implements ActionHandler<DMRAction, DMRResponse> {
     }
 
     private Request executeRequest(final AsyncCallback<DMRResponse> resultCallback, final ModelNode operation) {
+
+        if(idCounter==Long.MAX_VALUE)
+            idCounter = 0;
+
         Request requestHandle = null;
         try {
 
-            final String id = String.valueOf(operation.hashCode());
+            final String id = String.valueOf(idCounter++);
             trace(Type.BEGIN, id, operation);
 
-            requestHandle = requestBuilder.sendRequest(operation.toBase64String(), new RequestCallback() {
+            String requestData = operation.toBase64String();
+            trace(Type.SERIALIZED, id, operation);
+
+            requestHandle = requestBuilder.sendRequest(requestData, new RequestCallback() {
                 @Override
                 public void onResponseReceived(Request request, Response response) {
 
@@ -172,7 +183,6 @@ public class DMRHandler implements ActionHandler<DMRAction, DMRResponse> {
                     trace(Type.END, id, operation);
                 }
             });
-
 
             trace(Type.SEND, id, operation);
 
