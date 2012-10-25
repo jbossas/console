@@ -98,6 +98,7 @@
         <module>build</module>
         <module>build/app</module>
         <module>extension</module>
+        <module>diagnostics</module>
     </modules>
 
     <build>
