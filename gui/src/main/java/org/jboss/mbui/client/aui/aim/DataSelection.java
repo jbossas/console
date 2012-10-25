@@ -22,9 +22,9 @@ package org.jboss.mbui.client.aui.aim;
  * @author Harald Pehl
  * @date 10/25/2012
  */
-public class Selection extends Input
+public class DataSelection extends Input
 {
-    public Selection(final String id)
+    public DataSelection(final String id)
     {
         super(id);
     }
