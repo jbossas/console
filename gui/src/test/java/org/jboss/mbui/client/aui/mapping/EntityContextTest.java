@@ -21,48 +21,45 @@ package org.jboss.mbui.client.aui.mapping;
 import org.junit.Before;
 import org.junit.Test;
 
-import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 /**
  * @author Harald Pehl
  * @date 10/25/2012
  */
-public class MappingTest
+public class EntityContextTest
 {
-    Mapping cut;
+    EntityContext cut;
 
     @Before
     public void setUp() throws Exception
     {
-        cut = new TestableMapping();
+        cut = new EntityContext("test");
     }
 
     @Test
-    public void addNullAttribute()
+    public void addNullMapping() throws Exception
     {
-        cut.addAttributes((String)null);
-        assertTrue(cut.getAttributes().isEmpty());
+        cut.addMapping(null);
+        assertTrue(cut.getMappings().isEmpty());
     }
 
     @Test
-    public void addEmptyAttribute()
+    public void addMapping() throws Exception
     {
-        cut.addAttributes("");
-        assertTrue(cut.getAttributes().isEmpty());
+        TestableMapping mapping = new TestableMapping();
+        cut.addMapping(mapping);
+        assertEquals(1, cut.getMappings().size());
+        assertEquals(mapping, cut.getMappings().iterator().next());
     }
 
     @Test
-    public void addNullAndEmptyAttributes()
+    public void getNoneExistingMapping() throws Exception
     {
-        cut.addAttributes("", null, "", "", null, "");
-        assertTrue(cut.getAttributes().isEmpty());
-    }
-
-    @Test
-    public void addDefaultAttribtes()
-    {
-        cut.addAttributes("foo", "bar");
-        assertEquals(2, cut.getAttributes().size());
+        Mapping mapping = cut.getMapping("foo");
+        assertNotNull(mapping);
+        assertEquals(Mapping.EMPTY, mapping);
     }
 }

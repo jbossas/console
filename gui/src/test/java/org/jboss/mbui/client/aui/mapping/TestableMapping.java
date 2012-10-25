@@ -24,8 +24,8 @@ package org.jboss.mbui.client.aui.mapping;
  */
 public class TestableMapping extends Mapping
 {
-    TestableMapping(final String id, final String address)
+    TestableMapping()
     {
-        super(id, address);
+        super("test", "test");
     }
 }
