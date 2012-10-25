@@ -20,11 +20,15 @@ under the License.
      application's code. 
 -->
 <module>
-  <inherits name="com.google.gwt.user.User" />
-  <inherits name="com.google.gwt.xml.XML" />
-  <inherits name="com.google.gwt.debugpanel.Common" />
+    <inherits name="com.google.gwt.user.User" />
+    <inherits name="com.google.gwt.xml.XML" />
+    <inherits name="com.google.gwt.debugpanel.Common" />
 
-  <source path="client" />
-  <source path="models" />
-  <source path="widgets" />
+    <source path="client" />
+    <source path="models" />
+    <source path="widgets" />
+
+    <script src="stats.js"/>
+    <stylesheet src="debug-panel.css"/>
+
 </module>
