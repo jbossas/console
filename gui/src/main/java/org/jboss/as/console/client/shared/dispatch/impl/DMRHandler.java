@@ -51,7 +51,7 @@ public class DMRHandler implements ActionHandler<DMRAction, DMRResponse> {
 
     private final RequestBuilder requestBuilder;
 
-    private boolean trackInvocations = !GWT.isScript();
+    private boolean trackInvocations = Diagnostics.isEnabled();
 
     private UIConstants constants;
 
