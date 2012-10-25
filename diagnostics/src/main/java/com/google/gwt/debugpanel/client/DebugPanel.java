@@ -1,10 +1,5 @@
-package org.jboss.as.console.client.debug;
+package com.google.gwt.debugpanel.client;
 
-import com.google.gwt.debugpanel.client.DefaultDebugStatisticsDebugPanelComponent;
-import com.google.gwt.debugpanel.client.DefaultExceptionDebugPanelComponent;
-import com.google.gwt.debugpanel.client.DefaultRawLogDebugPanelComponent;
-import com.google.gwt.debugpanel.client.DefaultStatisticsModelRpcEventHandler;
-import com.google.gwt.debugpanel.client.DefaultStatisticsModelStartupEventHandler;
 import com.google.gwt.debugpanel.common.GwtStatisticsEventSystem;
 import com.google.gwt.debugpanel.models.GwtDebugStatisticsModel;
 import com.google.gwt.debugpanel.models.GwtExceptionModel;

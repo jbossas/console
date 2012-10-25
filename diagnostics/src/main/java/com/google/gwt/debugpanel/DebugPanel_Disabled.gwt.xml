@@ -28,7 +28,8 @@ under the License.
     <source path="models" />
     <source path="widgets" />
 
-    <script src="stats.js"/>
-    <stylesheet src="debug-panel.css"/>
+    <!-- By not including the javascript the diagnostics will be disabled -->
+    <!--script src="stats.js"/-->
+    <!--stylesheet src="debug-panel.css"/-->
 
 </module>
