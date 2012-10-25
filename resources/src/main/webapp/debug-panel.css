@@ -47,7 +47,8 @@ div.DebugPanel-panel {
 
 /* The first column (containing the tree) of the tree table. */
 .DebugPanel-tree {
-  white-space: nowrap;
+  white-space: normal;
+    font-size:10px;
 }
 
 /* The column showing the time in the tree table. */
