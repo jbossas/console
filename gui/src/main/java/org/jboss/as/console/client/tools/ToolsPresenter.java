@@ -1,5 +1,8 @@
 package org.jboss.as.console.client.tools;
 
+import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.Widget;
 import com.google.web.bindery.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.inject.Inject;
@@ -14,9 +17,17 @@ import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
 import com.gwtplatform.mvp.client.proxy.RevealRootPopupContentEvent;
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
+import org.jboss.as.console.client.debug.DebugPanel;
 import org.jboss.as.console.client.debug.DebugPresenter;
+import org.jboss.as.console.client.domain.hosts.NewServerConfigWizard;
+import org.jboss.as.console.client.domain.model.ServerGroupRecord;
+import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.ballroom.client.widgets.forms.ResolveExpressionEvent;
+import org.jboss.ballroom.client.widgets.window.DefaultWindow;
+
+import java.util.List;
 
 /**
  * @author Heiko Braun
@@ -72,7 +83,24 @@ public class ToolsPresenter extends Presenter<ToolsPresenter.MyView, ToolsPresen
         }
         else if("debug-panel".equals(requestedTool))
         {
-            RevealRootPopupContentEvent.fire(this, debug);
+            DefaultWindow window = new DefaultWindow(Console.MESSAGES.createTitle("Diagnostics"));
+            window.setWidth(480);
+            window.setHeight(360);
+
+
+            Widget debugWidget = new DebugPanel().asWidget();
+            window.setWidget(
+                    new ScrollPanel(debugWidget)
+            );
+
+            window.setModal(false);
+            //window.setGlassEnabled(true);
+            window.center();
+
+            //RevealRootPopupContentEvent.fire(this, debug);
         }
+
+
+
     }
 }

@@ -39,7 +39,7 @@
 
     <inherits name='com.google.gwt.visualization.Visualization'/>
 
-    <inherits name="com.google.gwt.debugpanel.Common" />
+    <inherits name="com.google.gwt.debugpanel.DebugPanel" />
 
     <!--
        https://issues.jboss.org/browse/AS7-3977

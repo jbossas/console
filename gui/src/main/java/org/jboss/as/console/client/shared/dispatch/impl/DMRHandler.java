@@ -30,12 +30,14 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
 import org.jboss.as.console.client.core.BootstrapContext;
 import org.jboss.as.console.client.core.UIConstants;
+import org.jboss.as.console.client.debug.DiagnoseLogger;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.shared.Preferences;
 import org.jboss.as.console.client.shared.dispatch.ActionHandler;
 import org.jboss.as.console.client.shared.dispatch.DMRCache;
 import org.jboss.as.console.client.shared.dispatch.DispatchRequest;
 import org.jboss.as.console.client.shared.dispatch.InvocationMetrics;
+import org.jboss.dmr.client.ModelDescriptionConstants;
 import org.jboss.dmr.client.ModelNode;
 
 /**
@@ -141,9 +143,22 @@ public class DMRHandler implements ActionHandler<DMRAction, DMRResponse> {
     private Request executeRequest(final AsyncCallback<DMRResponse> resultCallback, final ModelNode operation) {
         Request requestHandle = null;
         try {
+
+
+            final long start = System.currentTimeMillis();
+
             requestHandle = requestBuilder.sendRequest(operation.toBase64String(), new RequestCallback() {
                 @Override
                 public void onResponseReceived(Request request, Response response) {
+
+                    long end = System.currentTimeMillis();
+
+                    DiagnoseLogger.logEvent(
+                            "core",
+                            "dmr-invocation",
+                            operation.get(ModelDescriptionConstants.ADDRESS).asString(),
+                            (end-start), ""
+                    );
 
                     int statusCode = response.getStatusCode();
 

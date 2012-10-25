@@ -1,0 +1,209 @@
+/*
+Copyright 2009 Google Inc.
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may not
+use this file except in compliance with the License. You may obtain a copy
+of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+License for the specific language governing permissions and limitations
+under the License.
+*/
+
+/* This is the div containing the entire panel. */
+div.DebugPanel-panel {
+  padding: 5px;
+  margin-left: 20px;
+  margin-right: 20px;
+}
+
+/* All the action links like show this, hide that, etc... */
+.DebugPanel-link {
+  font-size: smaller;
+  color: gray;
+  padding-right: 1em;
+}
+
+/* The tree table showing the events. */
+.DebugPanel-TreeTable {
+  border: 1px solid black;
+  border-collapse: collapse;
+}
+
+.DebugPanel-TreeTable td {
+  border: 1px solid black;
+  padding: 3px;
+  vertical-align: top;
+}
+
+.DebugPanel-TreeTable-header {
+  background-color: #d3d3d3;
+  font-weight: bold;
+}
+
+/* The first column (containing the tree) of the tree table. */
+.DebugPanel-tree {
+  white-space: nowrap;
+}
+
+/* The column showing the time in the tree table. */
+.DebugPanel-time {
+  text-align: right;
+}
+
+/* The column showing the service in the tree table. */
+.DebugPanel-code {
+  font-family: courier, monospace;
+}
+
+/* The XML debug panel component. */
+.DebugPanel-xml {
+  width: 50em;
+  height: 10em;
+  margin-top: 5px;
+}
+
+/* The main debug panel filter div. */
+.DebugPanel-filters {
+  margin-bottom: 5px;
+}
+
+/* The "Currently filtering" label. */
+.DebugPanel-filterTrailLabel {
+  font-weight: bold;
+  margin-left: 5px;
+}
+
+/* Each item in the active filter trail. */
+.DebugPanel-filterTrail-item {
+  margin-left: 5px;
+  color: black;
+  text-decoration: none;
+}
+
+.DebugPanel-filterTrail-item:hover {
+  text-decoration: underline;
+}
+
+/* The popup shown when clicking the filter menu button. */
+.DebugPanel-filterPopup {
+  border: 1px solid #ddd;
+  border-color: #ddd #000 #000 #ddd;
+  background: #fff;
+  position: absolute;
+  padding: 5px;
+}
+
+/* An item in the filter popup drop down menu. */
+.DebugPanel-filterMenuItem {
+  padding: 3px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.DebugPanel-filterMenuItem.active {
+  font-weight: bold;
+}
+
+.DebugPanel-filterMenuItem.selected {
+  font-style: italic;
+  background-color: #e0e6f1;
+}
+
+/* The settings portion of the filter popup. */
+.DebugPanel-filterSettings {
+  background-color: #e0e6f1;
+  height: 100%;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+.DebugPanel-filterSettingsTitle {
+  font-weight: bold;
+  font-size: larger;
+  margin-bottom: 5px;
+}
+
+.DebugPanel-filterSettingsDescription {
+  font-size: smaller;
+  font-style: italic;
+  padding-bottom: 5px;
+}
+
+.DebugPanel-filterSettingsLabel {
+  font-weight: bold;
+  padding: 5px;
+}
+
+/* The div containing the buttons shown below the settings. */
+.DebugPanel-filterSettingsButtons {
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
+.DebugPanel-filterSettingsButtons td {
+  padding-right: 5px;
+}
+
+/* The table showing the raw event log. */
+.DebugPanel-log {
+  border: 1px solid black;
+  border-collapse: collapse;
+  margin-top: 5px;
+}
+
+.DebugPanel-log td {
+  border: 1px solid black;
+  padding: 3px;
+  vertical-align: top;
+}
+
+.DebugPanel-logHeader td {
+  background-color: #d3d3d3;
+  font-weight: bold;
+}
+
+/* The table showing the cookies. */
+.DebugPanel-cookies {
+  border: 1px solid black;
+  border-collapse: collapse;
+  margin-top: 5px;
+}
+
+.DebugPanel-cookies td {
+  border: 1px solid black;
+  padding: 3px;
+}
+
+.DebugPanel-cookiesHeader {
+  background-color: #d3d3d3;
+  font-weight: bold;
+}
+
+/* The table showing the exception log. */
+.DebugPanel-errors {
+  border: 1px solid black;
+  border-collapse: collapse;
+  margin-top: 5px;
+}
+
+.DebugPanel-errors td {
+  border: 1px solid black;
+  padding: 3px;
+  vertical-align: top;
+}
+
+.DebugPanel-errorsHeader {
+  background-color: #d3d3d3;
+  font-weight: bold;
+}
+
+/* The stack trace of an exception in the error view. */
+.DebugPanel-codePre {
+  font-family: courier, monospace;
+  white-space: pre;
+}

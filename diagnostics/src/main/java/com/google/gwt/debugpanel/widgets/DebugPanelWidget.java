@@ -28,11 +28,11 @@ import com.google.gwt.user.client.ui.Widget;
  */
 public class DebugPanelWidget extends Composite {
   private Component[] components;
-  private Listener listener;
+  private DebugPanelListener listener;
   private SimplePanel panel;
   private CommandLink showLink;
 
-  public DebugPanelWidget(Listener listener, final boolean showReset, Component... components) {
+  public DebugPanelWidget(DebugPanelListener listener, final boolean showReset, Component... components) {
     this.listener = listener;
     this.components = components;
 
@@ -93,14 +93,6 @@ public class DebugPanelWidget extends Composite {
      * called once, so the widget creation can be easily delayed until called.
      */
     public Widget getWidget();
-  }
-
-  /**
-   * Callback that gets notified when the panel is shown.
-   */
-  public static interface Listener {
-    public void onShow();
-    public void onReset();
   }
 
   /**

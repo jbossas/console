@@ -259,7 +259,7 @@ public class CoreUIModule extends AbstractPresenterModule {
         /*bindPresenterWidget(DebugPresenter.class,
                 DebugPresenter.MyView.class,
                 DebugPresenterView.class
-        );*/
+        ); */
 
         bindPresenter(SettingsPresenter.class,
                 SettingsPresenter.MyView.class,

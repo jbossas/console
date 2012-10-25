@@ -10,6 +10,7 @@ import com.google.gwt.debugpanel.client.DelayedDebugPanelComponent;
 import com.google.gwt.debugpanel.common.GwtStatisticsEventSystem;
 import com.google.gwt.debugpanel.models.GwtDebugStatisticsModel;
 import com.google.gwt.debugpanel.models.GwtExceptionModel;
+import com.google.gwt.debugpanel.widgets.DebugPanelListener;
 import com.google.gwt.debugpanel.widgets.DebugPanelWidget;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
@@ -18,7 +19,7 @@ import com.google.gwt.user.client.ui.Widget;
  * @author Heiko Braun
  * @date 10/25/12
  */
-public class DebugPanel implements IsWidget, DebugPanelWidget.Listener {
+public class DebugPanel implements IsWidget, DebugPanelListener {
 
     private GwtStatisticsEventSystem sys;
     private DefaultDebugStatisticsDebugPanelComponent panelComponent;
