@@ -39,8 +39,6 @@
 
     <inherits name='com.google.gwt.visualization.Visualization'/>
 
-    <inherits name="com.google.gwt.debugpanel.DebugPanel" />
-
     <!--
        https://issues.jboss.org/browse/AS7-3977
        inherits name="com.google.gwt.precompress.Precompress"/-->

@@ -39,9 +39,13 @@ import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.ProductConfig;
 import org.jboss.as.console.client.auth.CurrentUser;
+import org.jboss.as.console.client.debug.Diagnostics;
 import org.jboss.as.console.client.widgets.popups.DefaultPopup;
 import org.jboss.ballroom.client.widgets.InlineLink;
 import org.jboss.ballroom.client.widgets.window.Feedback;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Heiko Braun
@@ -69,14 +73,15 @@ public class Footer {
         final PopupPanel toolsPopup = new DefaultPopup(DefaultPopup.Arrow.BOTTOM);
 
 
-        final String[][] toolReference = new String[][]{
-            new String[]{"Management Model", "browser"},
-            new String[]{"Expression Resolver", "expressions"},
-                new String[]{"Debug Panel", "debug-panel"}
-        };
+        final List<String[]> toolReference = new ArrayList<String[]>();
+        toolReference.add(new String[]{"Management Model", "browser"});
+        toolReference.add(new String[]{"Expression Resolver", "expressions"});
+
+        if(Diagnostics.isEnabled())
+            toolReference.add(new String[]{"Debug Panel", "debug-panel"});
+
         final VerticalPanel toolsList = new VerticalPanel();
         toolsList.getElement().setAttribute("width", "160px");
-
 
         for(final String[] tool : toolReference)
         {
