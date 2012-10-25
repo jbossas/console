@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.mbui.client.aui.samples;
+package org.jboss.mbui.client.cui.samples;
 
 import org.jboss.mbui.client.aui.aim.Compound;
 import org.jboss.mbui.client.aui.aim.DataInputOutput;
@@ -33,21 +33,21 @@ public class DataSourceSample
 {
     public InteractionUnit build()
     {
-        Compound iu = new Compound("datasource");
+        Compound compound = new Compound("datasourceCompound");
 
         // header
-        iu.add(new Header("header", "JDBC Datasources", "JDBC datasource configurations"));
+        compound.add(new Header("header", "JDBC Datasources", "JDBC datasource configurations"));
 
         // form
         EntityContext datasourceContext = new EntityContext("datasource");
         datasourceContext.addMapping(
-                new ResourceMapping("datasource", "/profile=full/subsystem=datasources/data-source=ExampleDS")
+                new ResourceMapping("datasource", "/profile=${profile}/subsystem=datasources/data-source=${datasource}")
                         .addAttributes("${resource.name}", "jndi-name", "enabled", "driver-name",
                                 "share-prepared-statements", "prepared-statements-cache-size"));
         DataInputOutput form = new DataInputOutput("datasource", "Datasource");
         form.setEntityContext(datasourceContext);
-        iu.add(form);
+        compound.add(form);
 
-        return iu;
+        return compound;
     }
 }

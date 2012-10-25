@@ -21,6 +21,8 @@
 <module>
   <inherits name='com.google.gwt.user.User'/>
 
+  <entry-point class='org.jboss.mbui.client.cui.Workbench'/>
+
   <source path='client'/>
 
 </module>
