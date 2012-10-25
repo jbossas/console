@@ -16,31 +16,17 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.mbui.client.cui;
+package org.jboss.mbui.client.cui.samples;
 
-import com.google.gwt.core.client.EntryPoint;
-import com.google.gwt.user.client.ui.Widget;
 import org.jboss.mbui.client.aui.aim.InteractionUnit;
-import org.jboss.mbui.client.cui.samples.DataSourceSample;
 
 /**
  * @author Harald Pehl
  * @date 10/25/2012
  */
-public class Workbench implements EntryPoint
+public interface Sample
 {
-    @Override
-    public void onModuleLoad()
-    {
-        // could come from text input fields
-        String profile = "full";
-        String datasource = "ExampleDS";
+    String getName();
 
-        InteractionUnit interactionUnit = new DataSourceSample().build();
-        Reification reification = new ReificationFactory().get(interactionUnit);
-        Widget widget = reification
-                .create(new Context().addParameter("profile", profile).addParameter("datasource", datasource));
-
-        // TODO Add widget to some panel
-    }
+    InteractionUnit build();
 }

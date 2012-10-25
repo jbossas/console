@@ -18,11 +18,16 @@
   ~ MA  02110-1301, USA.
   -->
 
-<module>
-  <inherits name='com.google.gwt.user.User'/>
+<module rename-to="mbui">
+    <inherits name="com.google.gwt.user.User"/>
+    <inherits name="org.jboss.dmr.DMR"/>
+    <inherits name="org.jboss.ballroom.Framework"/>
 
-  <entry-point class='org.jboss.mbui.client.cui.Workbench'/>
+    <source path="client"/>
 
-  <source path='client'/>
+    <define-configuration-property name="gin.ginjector" is-multi-valued="false"/>
+    <set-configuration-property name="gin.ginjector"
+                                value="org.jboss.mbui.client.cui.workbench.gin.WorkbenchGinjector"/>
 
+    <entry-point class="org.jboss.mbui.client.cui.workbench.Workbench"/>
 </module>

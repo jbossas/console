@@ -29,8 +29,15 @@ import org.jboss.mbui.client.aui.mapping.ResourceMapping;
  * @author Harald Pehl
  * @date 10/25/2012
  */
-public class DataSourceSample
+public class DataSourceSample implements Sample
 {
+    @Override
+    public String getName()
+    {
+        return "Datasource";
+    }
+
+    @Override
     public InteractionUnit build()
     {
         Compound compound = new Compound("datasourceCompound");
