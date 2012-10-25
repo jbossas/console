@@ -41,6 +41,7 @@ public class ToolsPresenter extends Presenter<ToolsPresenter.MyView, ToolsPresen
     private DebugPresenter debug;
 
     private String requestedTool;
+    private DefaultWindow window;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.ToolsPresenter)
@@ -83,21 +84,27 @@ public class ToolsPresenter extends Presenter<ToolsPresenter.MyView, ToolsPresen
         }
         else if("debug-panel".equals(requestedTool))
         {
-            DefaultWindow window = new DefaultWindow("Diagnostics");
-            window.setWidth(480);
-            window.setHeight(360);
+            if(window==null)
+            {
+                window = new DefaultWindow("Diagnostics");
+                window.setWidth(480);
+                window.setHeight(360);
 
 
-            DebugPanel debugPanel = new DebugPanel();
-            Widget debugWidget = debugPanel.asWidget();
-            window.setWidget(
-                    new ScrollPanel(debugWidget)
-            );
+                DebugPanel debugPanel = new DebugPanel();
+                Widget debugWidget = debugPanel.asWidget();
+                window.setWidget(
+                        new ScrollPanel(debugWidget)
+                );
 
-            window.setModal(false);
-            //window.setGlassEnabled(true);
-            window.center();
-
+                window.setModal(false);
+                //window.setGlassEnabled(true);
+                window.center();
+            }
+            else
+            {
+                window.show();
+            }
             //RevealRootPopupContentEvent.fire(this, debug);
         }
 
