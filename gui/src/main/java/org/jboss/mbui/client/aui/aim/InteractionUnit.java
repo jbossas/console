@@ -34,8 +34,14 @@ public abstract class InteractionUnit
 
     protected InteractionUnit(final String id)
     {
+        this(id, null);
+    }
+
+    protected InteractionUnit(final String id, final String name)
+    {
         assert id != null : "Id must not be null";
         this.id = id;
+        this.name = name;
     }
 
     @Override

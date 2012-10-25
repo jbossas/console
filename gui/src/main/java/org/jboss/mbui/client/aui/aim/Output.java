@@ -28,4 +28,9 @@ public abstract class Output extends InteractionUnit
     {
         super(id);
     }
+
+    protected Output(final String id, final String name)
+    {
+        super(id, name);
+    }
 }

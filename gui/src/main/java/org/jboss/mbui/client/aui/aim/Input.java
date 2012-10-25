@@ -28,4 +28,9 @@ public abstract class Input extends InteractionUnit
     {
         super(id);
     }
+
+    protected Input(final String id, final String name)
+    {
+        super(id, name);
+    }
 }

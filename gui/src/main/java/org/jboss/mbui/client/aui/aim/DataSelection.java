@@ -28,4 +28,9 @@ public class DataSelection extends Input
     {
         super(id);
     }
+
+    public DataSelection(final String id, final String name)
+    {
+        super(id, name);
+    }
 }

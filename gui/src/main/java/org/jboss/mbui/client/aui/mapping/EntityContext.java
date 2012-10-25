@@ -52,6 +52,19 @@ public class EntityContext
         return mapping == null ? Mapping.EMPTY : mapping;
     }
 
+    /**
+     * If there's only one mapping, this mapping is returned. Otherwise {@link Mapping#EMPTY} is returned.
+     * @return
+     */
+    public Mapping getDefaultMapping()
+    {
+        if (mappings.size() == 1)
+        {
+            return mappings.values().iterator().next();
+        }
+        return Mapping.EMPTY;
+    }
+
     public Collection<Mapping> getMappings()
     {
         return mappings.values();

@@ -22,15 +22,46 @@ package org.jboss.mbui.client.aui.aim;
  * @author Harald Pehl
  * @date 10/25/2012
  */
-public class DataInputOutput extends InteractionUnit
+public class Header extends Output
 {
-    public DataInputOutput(final String id)
+    private String title;
+    private String subtitle;
+
+    public Header(final String id)
     {
         super(id);
     }
 
-    public DataInputOutput(final String id, final String name)
+    public Header(final String id, final String title)
     {
-        super(id, name);
+        super(id);
+        this.title = title;
+    }
+
+    public Header(final String id, final String title, final String subtitle)
+    {
+        super(id);
+        this.title = title;
+        this.subtitle = subtitle;
+    }
+
+    public String getTitle()
+    {
+        return title;
+    }
+
+    public void setTitle(final String title)
+    {
+        this.title = title;
+    }
+
+    public String getSubtitle()
+    {
+        return subtitle;
+    }
+
+    public void setSubtitle(final String subtitle)
+    {
+        this.subtitle = subtitle;
     }
 }
