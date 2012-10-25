@@ -17,13 +17,6 @@
   ~ MA  02110-1301, USA.
   -->
 
-
-<!--
-           NOTE: This is the development template.
-
-           IT SHOULD NOT BE USED IN PRODUCTION
-
-        -->
 <module rename-to="app">
 
     <inherits name="com.google.web.bindery.autobean.AutoBean"/>
@@ -38,6 +31,8 @@
     <inherits name="com.allen_sauer.gwt.log.gwt-log-ERROR" />
 
     <inherits name='com.google.gwt.visualization.Visualization'/>
+
+    <inherits name="com.google.gwt.debugpanel.DebugPanel_Disabled" />
 
     <!--
        https://issues.jboss.org/browse/AS7-3977

@@ -17,8 +17,8 @@ package com.google.gwt.debugpanel.client;
 
 import com.google.gwt.debugpanel.common.StatisticsEvent;
 import com.google.gwt.debugpanel.models.GwtDebugStatisticsModel;
-import com.google.gwt.debugpanel.models.GwtDebugStatisticsValue;
 import com.google.gwt.debugpanel.models.GwtDebugStatisticsModel.GwtNode;
+import com.google.gwt.debugpanel.models.GwtDebugStatisticsValue;
 
 import java.util.HashMap;
 import java.util.Map;

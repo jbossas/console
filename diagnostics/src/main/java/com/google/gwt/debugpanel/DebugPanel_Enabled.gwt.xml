@@ -1,0 +1,7 @@
+<module>
+    <inherits name="com.google.gwt.debugpanel.DebugPanel_Disabled" />
+
+    <script src="stats.js"/>
+    <stylesheet src="debug-panel.css"/>
+
+</module>
