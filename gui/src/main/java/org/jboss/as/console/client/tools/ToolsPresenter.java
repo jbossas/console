@@ -83,7 +83,7 @@ public class ToolsPresenter extends Presenter<ToolsPresenter.MyView, ToolsPresen
         }
         else if("debug-panel".equals(requestedTool))
         {
-            DefaultWindow window = new DefaultWindow(Console.MESSAGES.createTitle("Diagnostics"));
+            DefaultWindow window = new DefaultWindow("Diagnostics");
             window.setWidth(480);
             window.setHeight(360);
 
