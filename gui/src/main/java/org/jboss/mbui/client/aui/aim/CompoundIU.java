@@ -16,51 +16,56 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.mbui.aui;
+package org.jboss.mbui.client.aui.aim;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * @author Harald Pehl
  * @date 10/24/2012
  */
-public class UserInterfaceModel extends Model
+public class CompoundIU extends OutputIU implements Iterable<InteractionUnit>
 {
-    private DomainModel domainModel;
-    private InteractionUnit interactionUnit;
+    private final List<InteractionUnit> children;
 
-    public UserInterfaceModel(final String id)
+    public CompoundIU(final String id)
     {
         super(id);
-        this.domainModel = DomainModel.EMPTY;
+        this.children = new ArrayList<InteractionUnit>();
     }
 
-    /**
-     * Binds the specified interaction unit to this UI model. The binding is bi-directional. Therefore this
-     * method calls {@link InteractionUnit#setUserInterfaceModel(UserInterfaceModel)} with this instance as parameter.
-     *
-     * @param interactionUnit
-     */
-    public void bindInteractionUnit(final InteractionUnit interactionUnit)
+    public void add(InteractionUnit interactionUnit)
     {
-        this.interactionUnit = interactionUnit;
-        if (this.interactionUnit != null)
+        if (interactionUnit != null)
         {
-            this.interactionUnit.setUserInterfaceModel(this);
+            children.add(interactionUnit);
         }
     }
 
-    public DomainModel getDomainModel()
+    public void remove(InteractionUnit interactionUnit)
     {
-        return domainModel;
+        if (interactionUnit != null)
+        {
+            children.remove(interactionUnit);
+        }
     }
 
-    public void setDomainModel(final DomainModel domainModel)
+    @Override
+    public Iterator<InteractionUnit> iterator()
     {
-        assert domainModel != null : "DomainModel must not be null";
-        this.domainModel = domainModel;
+        return children.iterator();
     }
 
-    public InteractionUnit getInteractionUnit()
-    {
-        return interactionUnit;
-    }
+
+    // ------------------------------------------------------ delegate method
+
+    public int size() {return children.size();}
+
+    public boolean isEmpty() {return children.isEmpty();}
+
+    public void clear() {children.clear();}
+
+    public InteractionUnit get(final int i) {return children.get(i);}
 }

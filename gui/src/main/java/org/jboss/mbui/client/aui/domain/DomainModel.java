@@ -16,56 +16,56 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.mbui.aui;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+package org.jboss.mbui.client.aui.domain;
 
 /**
  * @author Harald Pehl
  * @date 10/24/2012
  */
-public class CompositeInteractionUnit extends InteractionUnit implements Iterable<InteractionUnit>
+public class DomainModel
 {
-    private final List<InteractionUnit> children;
+    private final String id;
+    private final String address;
 
-    public CompositeInteractionUnit(final String id)
+    public DomainModel(final String id, final String address)
     {
-        super(id);
-        this.children = new ArrayList<InteractionUnit>();
-    }
-
-    public void add(InteractionUnit interactionUnit)
-    {
-        if (interactionUnit != null)
-        {
-            children.add(interactionUnit);
-        }
-    }
-
-    public void remove(InteractionUnit interactionUnit)
-    {
-        if (interactionUnit != null)
-        {
-            children.remove(interactionUnit);
-        }
+        assert id != null : "Id must not be null";
+        assert address != null : "Address must not be null";
+        this.id = id;
+        this.address = address;
     }
 
     @Override
-    public Iterator<InteractionUnit> iterator()
+    public boolean equals(final Object o)
     {
-        return children.iterator();
+        if (this == o) { return true; }
+        if (!(o instanceof DomainModel)) { return false; }
+
+        DomainModel model = (DomainModel) o;
+        if (!id.equals(model.id)) { return false; }
+
+        return true;
     }
 
+    @Override
+    public int hashCode()
+    {
+        return id.hashCode();
+    }
 
-    // ------------------------------------------------------ delegate method
+    @Override
+    public String toString()
+    {
+        return "DomainModel{" + id + ", " + address + '}';
+    }
 
-    public int size() {return children.size();}
+    public String getId()
+    {
+        return id;
+    }
 
-    public boolean isEmpty() {return children.isEmpty();}
-
-    public void clear() {children.clear();}
-
-    public InteractionUnit get(final int i) {return children.get(i);}
+    public String getAddress()
+    {
+        return address;
+    }
 }

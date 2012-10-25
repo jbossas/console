@@ -16,68 +16,56 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.mbui.aui;
+package org.jboss.mbui.client.aui.mapping;
 
+import org.jboss.mbui.client.aui.domain.DomainModel;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author Harald Pehl
- * @date 10/24/2012
+ * @date 10/25/2012
  */
-public class DomainModelTest
+public class MappingTest
 {
-    DomainModel cut;
-    DomainModel.Group groupFixture = new DomainModel.Group("test");
+    Mapping cut;
+    DomainModel domainModelFixture;
 
     @Before
-    public void setUp()
+    public void setUp() throws Exception
     {
-        this.cut = new DomainModel("test", "/subsystem=test");
+        domainModelFixture = new DomainModel("test", "test");
+        cut = new Mapping(domainModelFixture);
     }
 
     @Test
     public void addNullAttribute()
     {
         cut.addAttributes((String)null);
-        assertTrue(cut.getAttributes().isEmpty());
+        assertTrue(cut.isEmpty());
     }
 
     @Test
     public void addEmptyAttribute()
     {
         cut.addAttributes("");
-        assertTrue(cut.getAttributes().isEmpty());
+        assertTrue(cut.isEmpty());
     }
 
     @Test
     public void addNullAndEmptyAttributes()
     {
         cut.addAttributes("", null, "", "", null, "");
-        assertTrue(cut.getAttributes().isEmpty());
+        assertTrue(cut.isEmpty());
     }
 
     @Test
     public void addDefaultAttribtes()
     {
         cut.addAttributes("foo", "bar");
-        assertTrue(cut.getAttributes(groupFixture).isEmpty());
-        assertEquals(2, cut.getAttributes().size());
-    }
-
-    @Test
-    public void addGroupAttribtes()
-    {
-        cut.addAttributes(groupFixture, "foo", "bar");
-        assertTrue(cut.getAttributes().isEmpty());
-        assertEquals(2, cut.getAttributes(groupFixture).size());
-    }
-
-    @Test
-    public void getUnknownGroupAttributes()
-    {
-        assertNotNull(cut.getAttributes(new DomainModel.Group("unknown")));
+        assertEquals(2, cut.size());
     }
 }
