@@ -69,7 +69,7 @@ public abstract class DebugStatisticsView<T extends DebugStatisticsValue> extend
     }
 
     VerticalPanel panel = new VerticalPanel();
-    panel.add(new DebugPanelFilterWidget(filters));
+    //panel.add(new DebugPanelFilterWidget(filters));
     panel.add(new TreeTable(this, null, new TreeTable.CellFormatter() {
           //@Override
           public String getCellStyleName(Object node, int columnIndex) {

@@ -1,6 +1,5 @@
 package org.jboss.as.console.client.debug;
 
-import com.google.gwt.debugpanel.client.DefaultCookieDebugPanelComponent;
 import com.google.gwt.debugpanel.client.DefaultDebugStatisticsDebugPanelComponent;
 import com.google.gwt.debugpanel.client.DefaultExceptionDebugPanelComponent;
 import com.google.gwt.debugpanel.client.DefaultRawLogDebugPanelComponent;
@@ -27,6 +26,7 @@ public class DebugPanel implements IsWidget, DebugPanelListener {
 
     private GwtDebugStatisticsModel sm;
     private GwtExceptionModel em;
+    private DebugPanelWidget widget;
 
     public DebugPanel() {
         sys = new GwtStatisticsEventSystem();
@@ -39,7 +39,7 @@ public class DebugPanel implements IsWidget, DebugPanelListener {
     @Override
     public Widget asWidget() {
 
-        DebugPanelWidget widget = new DebugPanelWidget(
+        widget = new DebugPanelWidget(
                 this,
                 true,
                 new DebugPanelWidget.Component[] {
@@ -72,5 +72,7 @@ public class DebugPanel implements IsWidget, DebugPanelListener {
 
         panelComponent.reset(null);
         sys.clearEventHistory();
+
+        widget.show(true);
     }
 }
