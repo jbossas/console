@@ -71,7 +71,8 @@ public class Footer {
 
         final String[][] toolReference = new String[][]{
             new String[]{"Management Model", "browser"},
-            new String[]{"Expression Resolver", "expressions"}
+            new String[]{"Expression Resolver", "expressions"},
+                new String[]{"Debug Panel", "debug-panel"}
         };
         final VerticalPanel toolsList = new VerticalPanel();
         toolsList.getElement().setAttribute("width", "160px");
