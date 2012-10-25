@@ -1,5 +1,7 @@
 package org.jboss.as.console.client.debug;
 
+import com.google.gwt.debugpanel.common.ExceptionData;
+
 /**
  * @author Heiko Braun
  * @date 10/25/12
@@ -47,13 +49,18 @@ public class DiagnoseLogger {
     });
   }-*/;
 
-    public static native void logError (String module, double millis, String errMsg) /*-{
+    public static void logError(String module, double millis, String errMsg)
+    {
+        logError(module, millis, ExceptionData.create("Error", errMsg, null, null));
+    }
+
+    private static native void logError (String module, double millis, ExceptionData errMsg) /*-{
        $wnd.__gwtStatsEvent({
          'moduleName' : module,
-         'subSystem' : 'error',
-         'evtGroup' : 'error',
+         'subSystem' : "error",
+         'evtGroup' : "error",
          'millis' : millis,
-         'type' : 'error',
+         'type' : "error",
          'error' : errMsg
        });
      }-*/;

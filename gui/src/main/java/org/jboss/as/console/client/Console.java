@@ -48,6 +48,7 @@ import org.jboss.as.console.client.core.bootstrap.RemoveLoadingPanel;
 import org.jboss.as.console.client.core.gin.Composite;
 import org.jboss.as.console.client.core.message.Message;
 import org.jboss.as.console.client.core.message.MessageCenter;
+import org.jboss.as.console.client.debug.DiagnoseLogger;
 import org.jboss.as.console.client.plugins.RuntimeExtensionRegistry;
 import org.jboss.as.console.client.plugins.SubsystemRegistry;
 import org.jboss.as.console.client.shared.Preferences;
