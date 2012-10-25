@@ -78,7 +78,7 @@ public class Footer {
         toolReference.add(new String[]{"Expression Resolver", "expressions"});
 
         if(Diagnostics.isEnabled())
-            toolReference.add(new String[]{"Debug Panel", "debug-panel"});
+            toolReference.add(new String[]{"Diagnostics", "debug-panel"});
 
         final VerticalPanel toolsList = new VerticalPanel();
         toolsList.getElement().setAttribute("width", "160px");

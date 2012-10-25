@@ -60,7 +60,9 @@ public class DebugPanelFilterWidget extends Composite {
           //@Override
           public void setPosition(int offsetWidth, int offsetHeight) {
             popup.setPopupPosition(
-                button.getAbsoluteLeft(), button.getAbsoluteTop() + button.getOffsetHeight());
+                button.getAbsoluteLeft(), button.getAbsoluteTop() + button.getOffsetHeight())
+            ;
+
           }
         });
       }
