@@ -22,7 +22,7 @@ package org.jboss.mbui.client.aui.aim;
  * @author Harald Pehl
  * @date 10/25/2012
  */
-public class Selection extends InputIU
+public class Selection extends Input
 {
     public Selection(final String id)
     {

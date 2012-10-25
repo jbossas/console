@@ -26,11 +26,11 @@ import java.util.List;
  * @author Harald Pehl
  * @date 10/24/2012
  */
-public class CompoundIU extends OutputIU implements Iterable<InteractionUnit>
+public class Compound extends Output implements Iterable<InteractionUnit>
 {
     private final List<InteractionUnit> children;
 
-    public CompoundIU(final String id)
+    public Compound(final String id)
     {
         super(id);
         this.children = new ArrayList<InteractionUnit>();

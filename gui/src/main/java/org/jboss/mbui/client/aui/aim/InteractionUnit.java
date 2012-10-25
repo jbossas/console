@@ -18,6 +18,8 @@
  */
 package org.jboss.mbui.client.aui.aim;
 
+import org.jboss.mbui.client.aui.mapping.EntityContext;
+
 /**
  * @author Harald Pehl
  * @date 10/24/2012
@@ -27,7 +29,8 @@ public abstract class InteractionUnit
     private final String id;
     private String name;
     private String role;
-    private String entityContextId;
+    private EntityContext entityContext;
+    private String mappingReference;
 
     protected InteractionUnit(final String id)
     {
@@ -84,13 +87,23 @@ public abstract class InteractionUnit
         this.role = role;
     }
 
-    public String getEntityContextId()
+    public EntityContext getEntityContext()
     {
-        return entityContextId;
+        return entityContext;
     }
 
-    public void setEntityContextId(final String entityContextId)
+    public void setEntityContext(final EntityContext entityContext)
     {
-        this.entityContextId = entityContextId;
+        this.entityContext = entityContext;
+    }
+
+    public String getMappingReference()
+    {
+        return mappingReference;
+    }
+
+    public void setMappingReference(final String mappingReference)
+    {
+        this.mappingReference = mappingReference;
     }
 }

@@ -18,28 +18,35 @@
  */
 package org.jboss.mbui.client.aui.mapping;
 
-import org.jboss.mbui.client.aui.domain.DomainModel;
-
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 
 /**
  * @author Harald Pehl
  * @date 10/25/2012
  */
-public class Mapping implements Iterable<String>
+public abstract class Mapping
 {
-    public final static Mapping EMPTY = new Mapping(new DomainModel("__invalid_id__", "__invalid_address__"));
+    private static class EmptyMapping extends Mapping
+    {
+        private EmptyMapping()
+        {
+            super("__empty_id__", "__empty_address__");
+        }
+    }
 
-    private final DomainModel domainModel;
+    public final static Mapping EMPTY = new EmptyMapping();
+
+    private final String id;
+    private final String address;
     private final List<String> attributes;
 
-    public Mapping(final DomainModel domainModel)
+    protected Mapping(final String id, final String address)
     {
-        assert domainModel != null : "DomainModel must not be null";
-        this.domainModel = domainModel;
+        assert id != null : "Id must not be null";
+        assert address != null : "Address must not be null";
+        this.id = id;
+        this.address = address;
         this.attributes = new ArrayList<String>();
     }
 
@@ -54,31 +61,42 @@ public class Mapping implements Iterable<String>
         }
     }
 
-    public DomainModel getDomainModel()
+    @Override
+    public boolean equals(final Object o)
     {
-        return domainModel;
+        if (this == o) { return true; }
+        if (!(o instanceof Mapping)) { return false; }
+
+        Mapping mapping = (Mapping) o;
+        if (!id.equals(mapping.id)) { return false; }
+
+        return true;
     }
 
     @Override
-    public Iterator<String> iterator()
+    public int hashCode()
     {
-        return attributes.iterator();
+        return id.hashCode();
     }
 
     @Override
     public String toString()
     {
-        return domainModel.getId() + " -> " + attributes.toString();
+        return "Mapping{" + id + ", " + address + " -> " + attributes.toString() + '}';
     }
 
+    public String getId()
+    {
+        return id;
+    }
 
-    // ------------------------------------------------------ delegate methods
+    public String getAddress()
+    {
+        return address;
+    }
 
-    public int size() {return attributes.size();}
-
-    public boolean isEmpty() {return attributes.isEmpty();}
-
-    public String get(final int i) {return attributes.get(i);}
-
-    public ListIterator<String> listIterator() {return attributes.listIterator();}
+    public List<String> getAttributes()
+    {
+        return attributes;
+    }
 }

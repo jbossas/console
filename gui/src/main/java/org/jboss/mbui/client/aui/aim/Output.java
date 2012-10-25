@@ -22,9 +22,9 @@ package org.jboss.mbui.client.aui.aim;
  * @author Harald Pehl
  * @date 10/25/2012
  */
-public abstract class OutputIU extends InteractionUnit
+public abstract class Output extends InteractionUnit
 {
-    protected OutputIU(final String id)
+    protected Output(final String id)
     {
         super(id);
     }

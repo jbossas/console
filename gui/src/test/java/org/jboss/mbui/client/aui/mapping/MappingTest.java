@@ -18,7 +18,6 @@
  */
 package org.jboss.mbui.client.aui.mapping;
 
-import org.jboss.mbui.client.aui.domain.DomainModel;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -32,40 +31,38 @@ import static org.junit.Assert.assertTrue;
 public class MappingTest
 {
     Mapping cut;
-    DomainModel domainModelFixture;
 
     @Before
     public void setUp() throws Exception
     {
-        domainModelFixture = new DomainModel("test", "test");
-        cut = new Mapping(domainModelFixture);
+        cut = new TestableMapping("test", "test");
     }
 
     @Test
     public void addNullAttribute()
     {
         cut.addAttributes((String)null);
-        assertTrue(cut.isEmpty());
+        assertTrue(cut.getAttributes().isEmpty());
     }
 
     @Test
     public void addEmptyAttribute()
     {
         cut.addAttributes("");
-        assertTrue(cut.isEmpty());
+        assertTrue(cut.getAttributes().isEmpty());
     }
 
     @Test
     public void addNullAndEmptyAttributes()
     {
         cut.addAttributes("", null, "", "", null, "");
-        assertTrue(cut.isEmpty());
+        assertTrue(cut.getAttributes().isEmpty());
     }
 
     @Test
     public void addDefaultAttribtes()
     {
         cut.addAttributes("foo", "bar");
-        assertEquals(2, cut.size());
+        assertEquals(2, cut.getAttributes().size());
     }
 }

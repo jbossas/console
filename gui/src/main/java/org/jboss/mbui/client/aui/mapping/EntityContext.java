@@ -18,8 +18,6 @@
  */
 package org.jboss.mbui.client.aui.mapping;
 
-import org.jboss.mbui.client.aui.domain.DomainModel;
-
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -31,7 +29,7 @@ import java.util.Map;
 public class EntityContext
 {
     private final String id;
-    private final Map<String, Mapping> mappings; // maps the domain model id to a mapping
+    private final Map<String, Mapping> mappings;
 
     public EntityContext(final String id)
     {
@@ -44,22 +42,13 @@ public class EntityContext
     {
         if (mapping != null)
         {
-            mappings.put(mapping.getDomainModel().getId(), mapping);
+            mappings.put(mapping.getId(), mapping);
         }
     }
 
-    public Mapping getMapping(DomainModel domainModel)
+    public Mapping getMapping(final String mappingId)
     {
-        if (domainModel != null)
-        {
-            return getMapping(domainModel.getId());
-        }
-        return Mapping.EMPTY;
-    }
-
-    public Mapping getMapping(final String domainModelid)
-    {
-        Mapping mapping = mappings.get(domainModelid);
+        Mapping mapping = mappings.get(mappingId);
         return mapping == null ? Mapping.EMPTY : mapping;
     }
 

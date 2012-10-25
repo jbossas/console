@@ -16,16 +16,16 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.mbui.client.aui.aim;
+package org.jboss.mbui.client.aui.mapping;
 
 /**
  * @author Harald Pehl
  * @date 10/25/2012
  */
-public class Edit extends InputIU
+public class TestableMapping extends Mapping
 {
-    public Edit(final String id)
+    TestableMapping(final String id, final String address)
     {
-        super(id);
+        super(id, address);
     }
 }
