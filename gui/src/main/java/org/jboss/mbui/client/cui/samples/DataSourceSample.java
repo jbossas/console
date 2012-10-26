@@ -24,7 +24,8 @@ import org.jboss.mbui.client.aui.aim.InteractionUnit;
 import org.jboss.mbui.client.aui.mapping.Mapping;
 import org.jboss.mbui.client.aui.mapping.ResourceMapping;
 
-import static org.jboss.mbui.client.aui.aim.CompositionRole.CHILD;
+
+import static org.jboss.mbui.client.aui.aim.InteractionRole.*;
 
 /**
  * @author Harald Pehl
@@ -42,13 +43,27 @@ public class DataSourceSample implements Sample
     public InteractionUnit build()
     {
         // Abstract UI Modelling
-        InteractionUnit composite = new InteractionUnit("datasourceOverview");
+        InteractionUnit overview = new InteractionUnit("datasourceOverview");
+        overview.setRole(Overview);
 
         DataSelection table = new DataSelection("table", "Datasources");
-        composite.addComponent(table, CHILD);
+        table.setRole(Single_Select);
+        overview.addComponent(table);
 
-        DataInputOutput form = new DataInputOutput("datasource", "Datasource");
-        composite.addComponent(form, CHILD);
+
+        InteractionUnit forms = new InteractionUnit("datasourceAttributes", "Datasource");
+        forms.setRole(Overview);
+        overview.addComponent(forms);
+
+
+        DataInputOutput basicAttributes = new DataInputOutput("basicAttributes", "Attributes");
+        basicAttributes.setRole(Edit);
+        forms.addComponent(basicAttributes);
+
+        DataInputOutput connectionAttributes = new DataInputOutput("connectionAttributes", "Connection");
+        connectionAttributes.setRole(Edit);
+        forms.addComponent(connectionAttributes);
+
 
         // Reification Steps (required)
         Mapping tableMapping = new ResourceMapping("datasourceTable",
@@ -61,9 +76,8 @@ public class DataSourceSample implements Sample
                         "share-prepared-statements", "prepared-statements-cache-size");
 
         table.getEntityContext().addMapping(tableMapping);
-        form.getEntityContext().addMapping(editMapping);
+        basicAttributes.getEntityContext().addMapping(editMapping);
 
-
-        return composite;
+        return overview;
     }
 }
