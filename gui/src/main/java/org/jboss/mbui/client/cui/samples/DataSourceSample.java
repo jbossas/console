@@ -24,7 +24,6 @@ import org.jboss.mbui.client.aui.aim.InteractionUnit;
 import org.jboss.mbui.client.aui.mapping.Mapping;
 import org.jboss.mbui.client.aui.mapping.ResourceMapping;
 
-
 import static org.jboss.mbui.client.aui.aim.InteractionRole.*;
 
 /**
@@ -42,30 +41,27 @@ public class DataSourceSample implements Sample
     @Override
     public InteractionUnit build()
     {
-        // Abstract UI Modelling
-        InteractionUnit overview = new InteractionUnit("datasourceOverview");
+        // abstract UI modelling
+        InteractionUnit overview = new InteractionUnit("datasourceOverview", "Datasources");
         overview.setRole(Overview);
 
         DataSelection table = new DataSelection("table", "Datasources");
-        table.setRole(Single_Select);
-        overview.addComponent(table);
+        table.setRole(SingleSelect);
+        overview.add(table);
 
-
-        InteractionUnit forms = new InteractionUnit("datasourceAttributes", "Datasource");
-        forms.setRole(Overview);
-        overview.addComponent(forms);
-
+        InteractionUnit tabs = new InteractionUnit("datasourceAttributes", "Datasource");
+        tabs.setRole(Overview);
+        overview.add(tabs);
 
         DataInputOutput basicAttributes = new DataInputOutput("basicAttributes", "Attributes");
         basicAttributes.setRole(Edit);
-        forms.addComponent(basicAttributes);
+        tabs.add(basicAttributes);
 
         DataInputOutput connectionAttributes = new DataInputOutput("connectionAttributes", "Connection");
         connectionAttributes.setRole(Edit);
-        forms.addComponent(connectionAttributes);
+        tabs.add(connectionAttributes);
 
-
-        // ReificationStrategies Steps (required)
+        // reificationStrategies steps (required)
         Mapping tableMapping = new ResourceMapping("datasourceTable",
                 "/profile=${profile}/subsystem=datasources/data-source=*")
                 .addAttributes("${resource.name}", "jndi-name", "enabled");

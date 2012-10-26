@@ -24,5 +24,5 @@ package org.jboss.mbui.client.aui.aim;
  */
 public enum InteractionRole
 {
-    Overview, Single_Select, Multiple_Select, Edit, Control
+    Overview, SingleSelect, MultiSelect, Edit, Control
 }
