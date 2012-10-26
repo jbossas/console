@@ -39,4 +39,14 @@ public class Context
         parameter.put(name, value);
         return this;
     }
+
+    public String getParameter(final String name)
+    {
+        Object value = parameter.get(name);
+        if (value != null)
+        {
+            return String.valueOf(value);
+        }
+        return null;
+    }
 }

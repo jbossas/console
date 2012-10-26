@@ -25,6 +25,6 @@ import com.google.gwt.user.client.ui.IsWidget;
  * @author Harald Pehl
  * @date 10/26/2012
  */
-public interface Container extends  IsWidget, HasWidgets
+public interface ContainerWidget extends IsWidget, HasWidgets
 {
 }

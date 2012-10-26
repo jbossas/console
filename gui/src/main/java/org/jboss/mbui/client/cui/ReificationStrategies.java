@@ -27,14 +27,18 @@ import java.util.Set;
  * @author Harald Pehl
  * @date 10/25/2012
  */
-public abstract class ReificationStrategies
+public class ReificationStrategies
 {
-    private Set<ReificationStrategy> strategies = new HashSet<ReificationStrategy>();
+    private final Set<ReificationStrategy> strategies;
+
+    public ReificationStrategies()
+    {
+        this.strategies = new HashSet<ReificationStrategy>();
+    }
 
     public ReificationStrategy resolve(InteractionUnit interactionUnit)
     {
         ReificationStrategy match = null;
-
         for(ReificationStrategy strategy : strategies)
         {
             if(strategy.appliesTo(interactionUnit))
@@ -43,8 +47,6 @@ public abstract class ReificationStrategies
                 break;
             }
         }
-
         return match;
     }
-
 }
