@@ -49,7 +49,7 @@ public class EntityContextTest
     @Test
     public void addMapping() throws Exception
     {
-        TestableMapping mapping = new TestableMapping();
+        SimpleMapping mapping = new SimpleMapping();
         cut.addMapping(mapping);
         assertEquals(1, cut.getMappings().size());
         assertEquals(mapping, cut.getMappings().iterator().next());
@@ -61,5 +61,14 @@ public class EntityContextTest
         Mapping mapping = cut.getMapping("foo");
         assertNotNull(mapping);
         assertEquals(Mapping.EMPTY, mapping);
+    }
+
+
+    static class SimpleMapping extends Mapping
+    {
+        SimpleMapping()
+        {
+            super("simpleMapping");
+        }
     }
 }

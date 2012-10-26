@@ -28,14 +28,14 @@ import static org.junit.Assert.assertTrue;
  * @author Harald Pehl
  * @date 10/25/2012
  */
-public class MappingTest
+public class ResourceMappingTest
 {
-    Mapping cut;
+    ResourceMapping cut;
 
     @Before
     public void setUp() throws Exception
     {
-        cut = new TestableMapping();
+        cut = new ResourceMapping("testId", "testAddress");
     }
 
     @Test
