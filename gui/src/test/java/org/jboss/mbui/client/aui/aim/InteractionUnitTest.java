@@ -21,8 +21,8 @@ package org.jboss.mbui.client.aui.aim;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.jboss.mbui.client.aui.aim.InteractionRole.Overview;
+import static org.junit.Assert.*;
 
 /**
  * @author Harald Pehl
@@ -41,7 +41,36 @@ public class InteractionUnitTest
     @Test
     public void newInstance()
     {
+        assertFalse(cut.isComposite());
+        assertEquals(Overview, cut.getRole());
         assertNotNull(cut.getEntityContext());
-        assertEquals("test" + InteractionUnit.ENTITY_CONTEXT_STRING, cut.getEntityContext().getId());
+        assertEquals("test" + InteractionUnit.ENTITY_CONTEXT_SUFFIX, cut.getEntityContext().getId());
+    }
+
+    @Test
+    public void parentChild()
+    {
+        InteractionUnit foo = new InteractionUnit("foo");
+        InteractionUnit bar = new InteractionUnit("bar");
+
+        cut.add(foo);
+        assertTrue(cut.isComposite());
+        assertEquals(foo, cut.getChildren().get(0));
+        assertEquals(cut, foo.getParent());
+
+        cut.add(bar);
+        assertTrue(cut.isComposite());
+        assertEquals(bar, cut.getChildren().get(1));
+        assertEquals(cut, bar.getParent());
+
+        cut.remove(bar);
+        assertTrue(cut.isComposite());
+        assertFalse(cut.getChildren().contains(bar));
+        assertNull(bar.getParent());
+
+        cut.remove(foo);
+        assertFalse(cut.isComposite());
+        assertFalse(cut.getChildren().contains(foo));
+        assertNull(foo.getParent());
     }
 }
