@@ -40,8 +40,6 @@ import org.jboss.as.console.client.core.settings.SettingsPresenter;
 import org.jboss.as.console.client.core.settings.SettingsPresenterViewImpl;
 import org.jboss.as.console.client.core.settings.SettingsPresenterWidget;
 import org.jboss.as.console.client.core.settings.SettingsView;
-import org.jboss.as.console.client.debug.DebugPresenter;
-import org.jboss.as.console.client.debug.DebugPresenterView;
 import org.jboss.as.console.client.domain.groups.ServerGroupMgmtPresenter;
 import org.jboss.as.console.client.domain.groups.ServerGroupMgmtView;
 import org.jboss.as.console.client.domain.groups.ServerGroupPresenter;
