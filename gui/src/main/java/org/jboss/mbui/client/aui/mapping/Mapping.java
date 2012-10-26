@@ -18,9 +18,6 @@
  */
 package org.jboss.mbui.client.aui.mapping;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * @author Harald Pehl
  * @date 10/25/2012
@@ -31,35 +28,18 @@ public abstract class Mapping
     {
         private EmptyMapping()
         {
-            super("__empty_id__", "__empty_address__");
+            super("__empty_id__");
         }
     }
 
     public final static Mapping EMPTY = new EmptyMapping();
 
     private final String id;
-    private final String address;
-    private final List<String> attributes;
 
-    protected Mapping(final String id, final String address)
+    protected Mapping(final String id)
     {
         assert id != null : "Id must not be null";
-        assert address != null : "Address must not be null";
         this.id = id;
-        this.address = address;
-        this.attributes = new ArrayList<String>();
-    }
-
-    public Mapping addAttributes(final String... attributes)
-    {
-        for (String attribute : attributes)
-        {
-            if (attribute != null && attribute.length() != 0)
-            {
-                this.attributes.add(attribute);
-            }
-        }
-        return this;
     }
 
     @Override
@@ -83,21 +63,11 @@ public abstract class Mapping
     @Override
     public String toString()
     {
-        return "Mapping{" + id + ", " + address + " -> " + attributes.toString() + '}';
+        return "Mapping{" + id + '}';
     }
 
     public String getId()
     {
         return id;
-    }
-
-    public String getAddress()
-    {
-        return address;
-    }
-
-    public List<String> getAttributes()
-    {
-        return attributes;
     }
 }

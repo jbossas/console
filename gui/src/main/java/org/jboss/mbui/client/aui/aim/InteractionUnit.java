@@ -20,28 +20,35 @@ package org.jboss.mbui.client.aui.aim;
 
 import org.jboss.mbui.client.aui.mapping.EntityContext;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * @author Harald Pehl
  * @date 10/24/2012
  */
-public abstract class InteractionUnit
+public class InteractionUnit
 {
     private final String id;
     private String name;
     private String role;
     private EntityContext entityContext;
     private String mappingReference;
+    private Map<CompositionRole, Composition> compositions;
 
-    protected InteractionUnit(final String id)
+    public InteractionUnit(final String id)
     {
         this(id, null);
+        this.compositions = new HashMap<CompositionRole, Composition>();
+        this.entityContext = new EntityContext(id+"_entity_Context");
     }
 
-    protected InteractionUnit(final String id, final String name)
+    public InteractionUnit(final String id, final String name)
     {
         assert id != null : "Id must not be null";
         this.id = id;
         this.name = name;
+        this.entityContext = new EntityContext(id+"_entity_Context");
     }
 
     @Override
@@ -66,6 +73,23 @@ public abstract class InteractionUnit
     public String toString()
     {
         return "InteractionUnit{" + id + '}';
+    }
+
+    public void addComponent(InteractionUnit interactionUnit, CompositionRole role)
+    {
+        Composition composition = compositions.get(role);
+        if (composition == null)
+        {
+            composition = new Composition(role);
+            compositions.put(role, composition);
+        }
+        composition.addTarget(interactionUnit);
+        interactionUnit.addComponent(this, role.revert());
+    }
+
+    public Iterable<InteractionUnit> getComponents(CompositionRole role)
+    {
+        return compositions.get(role);
     }
 
     public String getId()
@@ -98,11 +122,6 @@ public abstract class InteractionUnit
         return entityContext;
     }
 
-    public void setEntityContext(final EntityContext entityContext)
-    {
-        this.entityContext = entityContext;
-    }
-
     public String getMappingReference()
     {
         return mappingReference;
@@ -111,5 +130,10 @@ public abstract class InteractionUnit
     public void setMappingReference(final String mappingReference)
     {
         this.mappingReference = mappingReference;
+    }
+
+    public boolean isComposite(CompositionRole role)
+    {
+        return compositions.get(role) != null;
     }
 }

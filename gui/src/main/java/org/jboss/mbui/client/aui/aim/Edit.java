@@ -18,54 +18,19 @@
  */
 package org.jboss.mbui.client.aui.aim;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 /**
  * @author Harald Pehl
- * @date 10/24/2012
+ * @date 10/26/2012
  */
-public class Compound extends Output implements Iterable<InteractionUnit>
+public abstract class Edit extends Input
 {
-    private final List<InteractionUnit> children;
-
-    public Compound(final String id)
+    protected Edit(final String id)
     {
         super(id);
-        this.children = new ArrayList<InteractionUnit>();
     }
 
-    public void add(InteractionUnit interactionUnit)
+    protected Edit(final String id, final String name)
     {
-        if (interactionUnit != null)
-        {
-            children.add(interactionUnit);
-        }
+        super(id, name);
     }
-
-    public void remove(InteractionUnit interactionUnit)
-    {
-        if (interactionUnit != null)
-        {
-            children.remove(interactionUnit);
-        }
-    }
-
-    @Override
-    public Iterator<InteractionUnit> iterator()
-    {
-        return children.iterator();
-    }
-
-
-    // ------------------------------------------------------ delegate method
-
-    public int size() {return children.size();}
-
-    public boolean isEmpty() {return children.isEmpty();}
-
-    public void clear() {children.clear();}
-
-    public InteractionUnit get(final int i) {return children.get(i);}
 }

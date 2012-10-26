@@ -18,12 +18,13 @@
  */
 package org.jboss.mbui.client.cui.samples;
 
-import org.jboss.mbui.client.aui.aim.Compound;
 import org.jboss.mbui.client.aui.aim.DataInputOutput;
-import org.jboss.mbui.client.aui.aim.Header;
+import org.jboss.mbui.client.aui.aim.DataSelection;
 import org.jboss.mbui.client.aui.aim.InteractionUnit;
-import org.jboss.mbui.client.aui.mapping.EntityContext;
+import org.jboss.mbui.client.aui.mapping.Mapping;
 import org.jboss.mbui.client.aui.mapping.ResourceMapping;
+
+import static org.jboss.mbui.client.aui.aim.CompositionRole.CHILD;
 
 /**
  * @author Harald Pehl
@@ -40,21 +41,29 @@ public class DataSourceSample implements Sample
     @Override
     public InteractionUnit build()
     {
-        Compound compound = new Compound("datasourceCompound");
+        // Abstract UI Modelling
+        InteractionUnit composite = new InteractionUnit("datasourceOverview");
 
-        // header
-        compound.add(new Header("header", "JDBC Datasources", "JDBC datasource configurations"));
+        DataSelection table = new DataSelection("table", "Datasources");
+        composite.addComponent(table, CHILD);
 
-        // form
-        EntityContext datasourceContext = new EntityContext("datasource");
-        datasourceContext.addMapping(
-                new ResourceMapping("datasource", "/profile=${profile}/subsystem=datasources/data-source=${datasource}")
-                        .addAttributes("${resource.name}", "jndi-name", "enabled", "driver-name",
-                                "share-prepared-statements", "prepared-statements-cache-size"));
         DataInputOutput form = new DataInputOutput("datasource", "Datasource");
-        form.setEntityContext(datasourceContext);
-        compound.add(form);
+        composite.addComponent(form, CHILD);
 
-        return compound;
+        // Reification Steps (required)
+        Mapping tableMapping = new ResourceMapping("datasourceTable",
+                "/profile=${profile}/subsystem=datasources/data-source=*")
+                .addAttributes("${resource.name}", "jndi-name", "enabled");
+
+        Mapping editMapping = new ResourceMapping("datasourceForm",
+                "/profile=${profile}/subsystem=datasources/data-source=${datasource}")
+                .addAttributes("${resource.name}", "jndi-name", "enabled", "driver-name",
+                        "share-prepared-statements", "prepared-statements-cache-size");
+
+        table.getEntityContext().addMapping(tableMapping);
+        form.getEntityContext().addMapping(editMapping);
+
+
+        return composite;
     }
 }

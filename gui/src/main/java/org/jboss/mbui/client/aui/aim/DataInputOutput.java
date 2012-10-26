@@ -22,7 +22,7 @@ package org.jboss.mbui.client.aui.aim;
  * @author Harald Pehl
  * @date 10/25/2012
  */
-public class DataInputOutput extends Input
+public class DataInputOutput extends Edit
 {
     public DataInputOutput(final String id)
     {
