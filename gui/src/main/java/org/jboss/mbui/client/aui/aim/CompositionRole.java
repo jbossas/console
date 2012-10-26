@@ -20,48 +20,21 @@ package org.jboss.mbui.client.aui.aim;
 
 /**
  * @author Harald Pehl
- * @date 10/25/2012
+ * @date 10/26/2012
  */
-public class Header extends Output
+public enum CompositionRole
 {
-    private String title;
-    private String subtitle;
+    CHILD("PARENT"), PARENT("CHILD"), RELATED_TO("RELATED_FROM"), RELATED_FROM("REALTED_TO");
 
-    public Header(final String id)
+    private CompositionRole reverted;
+
+    private CompositionRole(String reverted)
     {
-        super(id);
+        this.reverted = CompositionRole.valueOf(reverted);
     }
 
-    public Header(final String id, final String title)
+    public CompositionRole revert()
     {
-        super(id);
-        this.title = title;
-    }
-
-    public Header(final String id, final String title, final String subtitle)
-    {
-        super(id);
-        this.title = title;
-        this.subtitle = subtitle;
-    }
-
-    public String getTitle()
-    {
-        return title;
-    }
-
-    public void setTitle(final String title)
-    {
-        this.title = title;
-    }
-
-    public String getSubtitle()
-    {
-        return subtitle;
-    }
-
-    public void setSubtitle(final String subtitle)
-    {
-        this.subtitle = subtitle;
+        return reverted;
     }
 }
