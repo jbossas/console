@@ -65,7 +65,7 @@ public class DataSourceSample implements Sample
         forms.addComponent(connectionAttributes);
 
 
-        // Reification Steps (required)
+        // ReificationStrategies Steps (required)
         Mapping tableMapping = new ResourceMapping("datasourceTable",
                 "/profile=${profile}/subsystem=datasources/data-source=*")
                 .addAttributes("${resource.name}", "jndi-name", "enabled");
