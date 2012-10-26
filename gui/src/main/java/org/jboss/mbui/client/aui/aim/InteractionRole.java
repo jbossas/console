@@ -16,53 +16,13 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.mbui.client.aui.mapping;
-
-import org.junit.Before;
-import org.junit.Test;
-
-import static junit.framework.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+package org.jboss.mbui.client.aui.aim;
 
 /**
  * @author Harald Pehl
- * @date 10/25/2012
+ * @date 10/26/2012
  */
-public class MappingTest
+public enum InteractionRole
 {
-    Mapping cut;
-
-    @Before
-    public void setUp() throws Exception
-    {
-        cut = new TestableMapping();
-    }
-
-    @Test
-    public void addNullAttribute()
-    {
-        cut.addAttributes((String)null);
-        assertTrue(cut.getAttributes().isEmpty());
-    }
-
-    @Test
-    public void addEmptyAttribute()
-    {
-        cut.addAttributes("");
-        assertTrue(cut.getAttributes().isEmpty());
-    }
-
-    @Test
-    public void addNullAndEmptyAttributes()
-    {
-        cut.addAttributes("", null, "", "", null, "");
-        assertTrue(cut.getAttributes().isEmpty());
-    }
-
-    @Test
-    public void addDefaultAttribtes()
-    {
-        cut.addAttributes("foo", "bar");
-        assertEquals(2, cut.getAttributes().size());
-    }
+    Overview, SingleSelect, MultiSelect, Edit, Control
 }

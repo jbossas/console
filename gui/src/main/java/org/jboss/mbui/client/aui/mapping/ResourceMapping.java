@@ -18,6 +18,9 @@
  */
 package org.jboss.mbui.client.aui.mapping;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Mapping for a concrete resource in the DMA model.
  *
@@ -26,8 +29,36 @@ package org.jboss.mbui.client.aui.mapping;
  */
 public class ResourceMapping extends Mapping
 {
+    private final String address;
+    private final List<String> attributes;
+
     public ResourceMapping(final String id, final String address)
     {
-        super(id, address);
+        super(id);
+        assert address != null : "Address must not be null";
+        this.address = address;
+        this.attributes = new ArrayList<String>();
+    }
+
+    public Mapping addAttributes(final String... attributes)
+    {
+        for (String attribute : attributes)
+        {
+            if (attribute != null && attribute.length() != 0)
+            {
+                this.attributes.add(attribute);
+            }
+        }
+        return this;
+    }
+
+    public String getAddress()
+    {
+        return address;
+    }
+
+    public List<String> getAttributes()
+    {
+        return attributes;
     }
 }

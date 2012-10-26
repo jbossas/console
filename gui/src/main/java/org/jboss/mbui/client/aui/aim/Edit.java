@@ -16,26 +16,21 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.mbui.client.cui;
-
-import com.google.gwt.user.client.ui.Widget;
-import org.jboss.mbui.client.aui.aim.InteractionUnit;
+package org.jboss.mbui.client.aui.aim;
 
 /**
  * @author Harald Pehl
- * @date 10/25/2012
+ * @date 10/26/2012
  */
-public abstract class Reification
+public abstract class Edit extends Input
 {
-    protected final InteractionUnit interactionUnit;
-
-    protected Reification(final InteractionUnit interactionUnit)
+    protected Edit(final String id)
     {
-        assert interactionUnit != null : "InteractionUnit must not be null";
-        this.interactionUnit = interactionUnit;
+        super(id);
     }
 
-    public abstract Widget create(Context context);
-
-    public abstract Widget update(Context context);
+    protected Edit(final String id, final String name)
+    {
+        super(id, name);
+    }
 }

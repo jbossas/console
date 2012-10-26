@@ -20,28 +20,38 @@ package org.jboss.mbui.client.aui.aim;
 
 import org.jboss.mbui.client.aui.mapping.EntityContext;
 
+import java.util.LinkedList;
+import java.util.List;
+
 /**
  * @author Harald Pehl
  * @date 10/24/2012
  */
-public abstract class InteractionUnit
+public class InteractionUnit
 {
-    private final String id;
-    private String name;
-    private String role;
-    private EntityContext entityContext;
-    private String mappingReference;
+    public final static String ENTITY_CONTEXT_SUFFIX = "_entityContext";
 
-    protected InteractionUnit(final String id)
+    private final String id;
+    private final EntityContext entityContext;
+    private String name;
+    private InteractionRole role;
+    private String mappingReference;
+    private InteractionUnit parent;
+    private List<InteractionUnit> children;
+
+    public InteractionUnit(final String id)
     {
         this(id, null);
     }
 
-    protected InteractionUnit(final String id, final String name)
+    public InteractionUnit(final String id, final String name)
     {
         assert id != null : "Id must not be null";
         this.id = id;
         this.name = name;
+        this.entityContext = new EntityContext(id + ENTITY_CONTEXT_SUFFIX);
+        this.children = new LinkedList<InteractionUnit>();
+        this.role = InteractionRole.Overview;
     }
 
     @Override
@@ -68,6 +78,50 @@ public abstract class InteractionUnit
         return "InteractionUnit{" + id + '}';
     }
 
+
+    // ------------------------------------------------------ parent / child relationship
+
+    public void add(InteractionUnit interactionUnit)
+    {
+        if (interactionUnit != null)
+        {
+            interactionUnit.setParent(this);
+            children.add(interactionUnit);
+        }
+    }
+
+    public void remove(InteractionUnit interactionUnit)
+    {
+        if (interactionUnit != null)
+        {
+            interactionUnit.setParent(null);
+            children.remove(interactionUnit);
+        }
+    }
+
+    public List<InteractionUnit> getChildren()
+    {
+        return children;
+    }
+
+    public boolean isComposite()
+    {
+        return !this.children.isEmpty();
+    }
+
+    private void setParent(final InteractionUnit parent)
+    {
+        this.parent = parent;
+    }
+
+    public InteractionUnit getParent()
+    {
+        return parent;
+    }
+
+
+    // ------------------------------------------------------ properties
+
     public String getId()
     {
         return id;
@@ -83,12 +137,12 @@ public abstract class InteractionUnit
         this.name = name;
     }
 
-    public String getRole()
+    public InteractionRole getRole()
     {
         return role;
     }
 
-    public void setRole(final String role)
+    public void setRole(InteractionRole role)
     {
         this.role = role;
     }
@@ -96,11 +150,6 @@ public abstract class InteractionUnit
     public EntityContext getEntityContext()
     {
         return entityContext;
-    }
-
-    public void setEntityContext(final EntityContext entityContext)
-    {
-        this.entityContext = entityContext;
     }
 
     public String getMappingReference()

@@ -16,21 +16,53 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.mbui.client.aui.aim;
+package org.jboss.mbui.client.aui.mapping;
+
+import org.junit.Before;
+import org.junit.Test;
+
+import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author Harald Pehl
  * @date 10/25/2012
  */
-public class DataInputOutput extends Edit
+public class ResourceMappingTest
 {
-    public DataInputOutput(final String id)
+    ResourceMapping cut;
+
+    @Before
+    public void setUp() throws Exception
     {
-        super(id);
+        cut = new ResourceMapping("testId", "testAddress");
     }
 
-    public DataInputOutput(final String id, final String name)
+    @Test
+    public void addNullAttribute()
     {
-        super(id, name);
+        cut.addAttributes((String)null);
+        assertTrue(cut.getAttributes().isEmpty());
+    }
+
+    @Test
+    public void addEmptyAttribute()
+    {
+        cut.addAttributes("");
+        assertTrue(cut.getAttributes().isEmpty());
+    }
+
+    @Test
+    public void addNullAndEmptyAttributes()
+    {
+        cut.addAttributes("", null, "", "", null, "");
+        assertTrue(cut.getAttributes().isEmpty());
+    }
+
+    @Test
+    public void addDefaultAttribtes()
+    {
+        cut.addAttributes("foo", "bar");
+        assertEquals(2, cut.getAttributes().size());
     }
 }

@@ -16,52 +16,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.mbui.client.aui.aim;
+package org.jboss.mbui.client.cui;
+
+import com.google.gwt.user.client.ui.HasWidgets;
+import com.google.gwt.user.client.ui.IsWidget;
 
 /**
  * @author Harald Pehl
- * @date 10/25/2012
+ * @date 10/26/2012
  */
-public class Header extends Output
+public interface ContainerWidget extends IsWidget, HasWidgets
 {
-    private String title;
-    private String subtitle;
-
-    public Header(final String id)
-    {
-        super(id);
-    }
-
-    public Header(final String id, final String title)
-    {
-        super(id);
-        this.title = title;
-    }
-
-    public Header(final String id, final String title, final String subtitle)
-    {
-        super(id);
-        this.title = title;
-        this.subtitle = subtitle;
-    }
-
-    public String getTitle()
-    {
-        return title;
-    }
-
-    public void setTitle(final String title)
-    {
-        this.title = title;
-    }
-
-    public String getSubtitle()
-    {
-        return subtitle;
-    }
-
-    public void setSubtitle(final String subtitle)
-    {
-        this.subtitle = subtitle;
-    }
 }

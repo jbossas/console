@@ -16,16 +16,37 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.mbui.client.aui.mapping;
+package org.jboss.mbui.client.cui;
+
+import org.jboss.mbui.client.aui.aim.InteractionUnit;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @author Harald Pehl
  * @date 10/25/2012
  */
-public class TestableMapping extends Mapping
+public class ReificationStrategies
 {
-    TestableMapping()
+    private final Set<ReificationStrategy> strategies;
+
+    public ReificationStrategies()
     {
-        super("test", "test");
+        this.strategies = new HashSet<ReificationStrategy>();
+    }
+
+    public ReificationStrategy resolve(InteractionUnit interactionUnit)
+    {
+        ReificationStrategy match = null;
+        for(ReificationStrategy strategy : strategies)
+        {
+            if(strategy.appliesTo(interactionUnit))
+            {
+                match = strategy;
+                break;
+            }
+        }
+        return match;
     }
 }
