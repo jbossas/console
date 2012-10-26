@@ -28,13 +28,15 @@ import java.util.LinkedList;
  */
 public class InteractionUnit
 {
+    public final static String ENTITY_CONTEXT_STRING = "_entityContext";
+
     private final String id;
     private String name;
     private InteractionRole role;
     private EntityContext entityContext;
     private String mappingReference;
-    private LinkedList<InteractionUnit> children;
     private InteractionUnit parent;
+    private LinkedList<InteractionUnit> children;
 
     public InteractionUnit(final String id)
     {
@@ -46,7 +48,7 @@ public class InteractionUnit
         assert id != null : "Id must not be null";
         this.id = id;
         this.name = name;
-        this.entityContext = new EntityContext(id+"_entity_Context");
+        this.entityContext = new EntityContext(id + ENTITY_CONTEXT_STRING);
         this.children = new LinkedList<InteractionUnit>();
         this.role = InteractionRole.Overview;
     }
