@@ -18,24 +18,13 @@
  */
 package org.jboss.mbui.client.cui;
 
-import com.google.gwt.user.client.ui.Widget;
-import org.jboss.mbui.client.aui.aim.InteractionUnit;
+import com.google.gwt.user.client.ui.HasWidgets;
+import com.google.gwt.user.client.ui.IsWidget;
 
 /**
  * @author Harald Pehl
- * @date 10/25/2012
+ * @date 10/26/2012
  */
-public abstract class Reification
+public interface Container extends  IsWidget, HasWidgets
 {
-    protected final InteractionUnit interactionUnit;
-
-    protected Reification(final InteractionUnit interactionUnit)
-    {
-        assert interactionUnit != null : "InteractionUnit must not be null";
-        this.interactionUnit = interactionUnit;
-    }
-
-    public abstract Widget create(Context context);
-
-    public abstract Widget update(Context context);
 }

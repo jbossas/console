@@ -24,11 +24,8 @@ import org.jboss.mbui.client.aui.aim.InteractionUnit;
  * @author Harald Pehl
  * @date 10/25/2012
  */
-public class ReificationFactory
+public abstract class ReificationStrategy
 {
-    public Reification get(InteractionUnit interactionUnit)
-    {
-        Reification reification = null;
-        return reification;
-    }
+    public abstract Container reify(InteractionUnit interactionUnit, Context ctx);
+    abstract boolean appliesTo(InteractionUnit interactionUnit);
 }
