@@ -20,8 +20,7 @@ package org.jboss.mbui.client.aui.aim;
 
 import org.jboss.mbui.client.aui.mapping.EntityContext;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.LinkedList;
 
 /**
  * @author Harald Pehl
@@ -31,16 +30,15 @@ public class InteractionUnit
 {
     private final String id;
     private String name;
-    private String role;
+    private InteractionRole role;
     private EntityContext entityContext;
     private String mappingReference;
-    private Map<CompositionRole, Composition> compositions;
+    private LinkedList<InteractionUnit> children;
+    private InteractionUnit parent;
 
     public InteractionUnit(final String id)
     {
         this(id, null);
-        this.compositions = new HashMap<CompositionRole, Composition>();
-        this.entityContext = new EntityContext(id+"_entity_Context");
     }
 
     public InteractionUnit(final String id, final String name)
@@ -49,6 +47,8 @@ public class InteractionUnit
         this.id = id;
         this.name = name;
         this.entityContext = new EntityContext(id+"_entity_Context");
+        this.children = new LinkedList<InteractionUnit>();
+        this.role = InteractionRole.Overview;
     }
 
     @Override
@@ -75,21 +75,15 @@ public class InteractionUnit
         return "InteractionUnit{" + id + '}';
     }
 
-    public void addComponent(InteractionUnit interactionUnit, CompositionRole role)
+    public void addComponent(InteractionUnit interactionUnit)
     {
-        Composition composition = compositions.get(role);
-        if (composition == null)
-        {
-            composition = new Composition(role);
-            compositions.put(role, composition);
-        }
-        composition.addTarget(interactionUnit);
-        interactionUnit.addComponent(this, role.revert());
+        interactionUnit.setParent(this);
+        this.children.add(interactionUnit);
     }
 
-    public Iterable<InteractionUnit> getComponents(CompositionRole role)
+    public Iterable<InteractionUnit> getComponents()
     {
-        return compositions.get(role);
+        return this.children;
     }
 
     public String getId()
@@ -107,12 +101,12 @@ public class InteractionUnit
         this.name = name;
     }
 
-    public String getRole()
+    public InteractionRole getRole()
     {
         return role;
     }
 
-    public void setRole(final String role)
+    public void setRole(InteractionRole role)
     {
         this.role = role;
     }
@@ -132,8 +126,18 @@ public class InteractionUnit
         this.mappingReference = mappingReference;
     }
 
-    public boolean isComposite(CompositionRole role)
+    public boolean isComposite()
     {
-        return compositions.get(role) != null;
+        return !this.children.isEmpty();
+    }
+
+    private void setParent(final InteractionUnit parent)
+    {
+        this.parent = parent;
+    }
+
+    public InteractionUnit getParent()
+    {
+        return parent;
     }
 }

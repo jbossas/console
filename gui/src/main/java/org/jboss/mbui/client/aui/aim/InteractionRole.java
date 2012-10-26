@@ -22,19 +22,7 @@ package org.jboss.mbui.client.aui.aim;
  * @author Harald Pehl
  * @date 10/26/2012
  */
-public enum CompositionRole
+public enum InteractionRole
 {
-    CHILD("PARENT"), PARENT("CHILD"), RELATED_TO("RELATED_FROM"), RELATED_FROM("REALTED_TO");
-
-    private CompositionRole reverted;
-
-    private CompositionRole(String reverted)
-    {
-        this.reverted = CompositionRole.valueOf(reverted);
-    }
-
-    public CompositionRole revert()
-    {
-        return reverted;
-    }
+    Overview, Single_Select, Multiple_Select, Edit, Control
 }
