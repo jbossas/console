@@ -24,7 +24,7 @@ import com.google.inject.Provider;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
-import org.jboss.mbui.client.cui.workbench.MainPresenter;
+import org.jboss.mbui.client.cui.workbench.ApplicationPresenter;
 
 /**
  * @author Harald Pehl
@@ -41,5 +41,5 @@ public interface WorkbenchGinjector extends Ginjector
 
     // ------------------------------------------------------- presenters (a-z)
 
-    Provider<MainPresenter> getWorkbenchPresenter();
+    Provider<ApplicationPresenter> getWorkbenchPresenter();
 }

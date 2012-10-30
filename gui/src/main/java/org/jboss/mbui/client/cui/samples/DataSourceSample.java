@@ -45,34 +45,39 @@ public class DataSourceSample implements Sample
         InteractionUnit overview = new InteractionUnit("datasourceOverview", "Datasources");
         overview.setRole(Overview);
 
-        DataSelection table = new DataSelection("table", "Datasources");
+        DataSelection table = new DataSelection("datasourceTable", "Datasources");
         table.setRole(SingleSelect);
         overview.add(table);
 
-        InteractionUnit tabs = new InteractionUnit("datasourceAttributes", "Datasource");
-        tabs.setRole(Overview);
-        overview.add(tabs);
+        InteractionUnit forms = new InteractionUnit("datasourceAttributes", "Datasource");
+        forms.setRole(Overview);
+        overview.add(forms);
 
         DataInputOutput basicAttributes = new DataInputOutput("basicAttributes", "Attributes");
         basicAttributes.setRole(Edit);
-        tabs.add(basicAttributes);
+        forms.add(basicAttributes);
 
         DataInputOutput connectionAttributes = new DataInputOutput("connectionAttributes", "Connection");
         connectionAttributes.setRole(Edit);
-        tabs.add(connectionAttributes);
+        forms.add(connectionAttributes);
 
-        // reificationStrategies steps (required)
+        // mappings (required)
         Mapping tableMapping = new ResourceMapping("datasourceTable",
                 "/profile=${profile}/subsystem=datasources/data-source=*")
                 .addAttributes("${resource.name}", "jndi-name", "enabled");
 
-        Mapping editMapping = new ResourceMapping("datasourceForm",
+        Mapping basicAttributesMapping = new ResourceMapping("basicAttributes",
                 "/profile=${profile}/subsystem=datasources/data-source=${datasource}")
                 .addAttributes("${resource.name}", "jndi-name", "enabled", "driver-name",
                         "share-prepared-statements", "prepared-statements-cache-size");
 
+        Mapping connectionAttributesMapping = new ResourceMapping("connectionAttributes",
+                "/profile=${profile}/subsystem=datasources/data-source=${datasource}")
+                .addAttributes("connection-url", "new-connection-sql", "jta", "use-ccm");
+
         table.getEntityContext().addMapping(tableMapping);
-        basicAttributes.getEntityContext().addMapping(editMapping);
+        basicAttributes.getEntityContext().addMapping(basicAttributesMapping);
+        connectionAttributes.getEntityContext().addMapping(connectionAttributesMapping);
 
         return overview;
     }

@@ -16,37 +16,57 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.mbui.client.cui;
+package org.jboss.mbui.client.cui.workbench.reification;
 
-import org.jboss.mbui.client.aui.aim.InteractionUnit;
+import com.google.gwt.user.client.ui.HasWidgets;
+import com.google.gwt.user.client.ui.Widget;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Iterator;
 
 /**
  * @author Harald Pehl
- * @date 10/25/2012
+ * @date 10/30/2012
  */
-public class ReificationStrategies
+public class TestableContainerWidget implements ContainerWidget
 {
-    private final Set<ReificationStrategy> strategies;
+    final Widget widget;
 
-    public ReificationStrategies()
+    public TestableContainerWidget(final Widget widget)
     {
-        this.strategies = new HashSet<ReificationStrategy>();
+        this.widget = widget;
     }
 
-    public ReificationStrategy resolve(InteractionUnit interactionUnit)
+    @Override
+    public void add(final Widget w)
     {
-        ReificationStrategy match = null;
-        for(ReificationStrategy strategy : strategies)
+        if (widget instanceof HasWidgets)
         {
-            if(strategy.appliesTo(interactionUnit))
-            {
-                match = strategy;
-                break;
-            }
+            HasWidgets hasWidgets = (HasWidgets) widget;
+            hasWidgets.add(w);
         }
-        return match;
+    }
+
+    @Override
+    public void clear()
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Iterator<Widget> iterator()
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean remove(final Widget w)
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Widget asWidget()
+    {
+        return widget;
     }
 }

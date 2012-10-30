@@ -24,9 +24,9 @@ import org.jboss.mbui.client.aui.aim.InteractionUnit;
  * @author Harald Pehl
  * @date 10/25/2012
  */
-public abstract class ReificationStrategy
+public interface ReificationStrategy<T>
 {
-    public abstract ContainerWidget reify(InteractionUnit interactionUnit, Context context);
+    T reify(InteractionUnit interactionUnit, Context context);
 
-    abstract boolean appliesTo(InteractionUnit interactionUnit);
+    boolean appliesTo(InteractionUnit interactionUnit);
 }

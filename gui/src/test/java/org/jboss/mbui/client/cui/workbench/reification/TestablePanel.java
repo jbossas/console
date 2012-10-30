@@ -16,32 +16,44 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.mbui.client.cui.workbench.gin;
+package org.jboss.mbui.client.cui.workbench.reification;
 
-import com.gwtplatform.mvp.client.gin.AbstractPresenterModule;
-import com.gwtplatform.mvp.client.gin.DefaultModule;
-import org.jboss.mbui.client.cui.workbench.ApplicationPresenter;
-import org.jboss.mbui.client.cui.workbench.ApplicationView;
-import org.jboss.mbui.client.cui.workbench.DefaultPlace;
-import org.jboss.mbui.client.cui.workbench.DefaultPlaceManager;
-import org.jboss.mbui.client.cui.workbench.NameTokens;
+import com.google.gwt.user.client.ui.HasWidgets;
+import com.google.gwt.user.client.ui.Widget;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * @author Harald Pehl
- * @date 10/25/2012
+ * @date 10/30/2012
  */
-public class WorkbenchModule extends AbstractPresenterModule
+public class TestablePanel extends Widget implements HasWidgets
 {
+    final List<Widget> widgets = new ArrayList<Widget>();
+
     @Override
-    protected void configure()
+    public void add(final Widget w)
     {
-        // GWTP stuff
-        install(new DefaultModule(DefaultPlaceManager.class));
+        widgets.add(w);
+    }
 
-        // Constants
-        bindConstant().annotatedWith(DefaultPlace.class).to(NameTokens.workbench);
+    @Override
+    public void clear()
+    {
+        widgets.clear();
+    }
 
-        // PresenterWidgets (a-z)
-        bindPresenterWidget(ApplicationPresenter.class, ApplicationPresenter.MyView.class, ApplicationView.class);
+    @Override
+    public Iterator<Widget> iterator()
+    {
+        return widgets.iterator();
+    }
+
+    @Override
+    public boolean remove(final Widget w)
+    {
+        return widgets.remove(w);
     }
 }

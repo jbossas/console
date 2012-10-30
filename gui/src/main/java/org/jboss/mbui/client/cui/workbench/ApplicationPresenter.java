@@ -32,10 +32,10 @@ import com.gwtplatform.mvp.client.proxy.RevealRootLayoutContentEvent;
  * @author Harald Pehl
  * @date 10/25/2012
  */
-public class MainPresenter extends Presenter<MainPresenter.MyView, MainPresenter.MyProxy>
+public class ApplicationPresenter extends Presenter<ApplicationPresenter.MyView, ApplicationPresenter.MyProxy>
 {
     @ProxyStandard
-    public interface MyProxy extends Proxy<MainPresenter>
+    public interface MyProxy extends Proxy<ApplicationPresenter>
     {
     }
 
@@ -47,7 +47,7 @@ public class MainPresenter extends Presenter<MainPresenter.MyView, MainPresenter
     public static final Type<RevealContentHandler<?>> TYPE_SetMainContent = new Type<RevealContentHandler<?>>();
 
 
-    public MainPresenter(final EventBus eventBus, final MyView view, final MyProxy proxy)
+    public ApplicationPresenter(final EventBus eventBus, final MyView view, final MyProxy proxy)
     {
         super(eventBus, view, proxy);
     }

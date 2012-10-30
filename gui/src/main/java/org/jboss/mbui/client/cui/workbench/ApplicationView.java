@@ -26,7 +26,7 @@ import com.gwtplatform.mvp.client.ViewImpl;
  * @author Harald Pehl
  * @date 10/25/2012
  */
-public class MainView extends ViewImpl implements MainPresenter.MyView
+public class ApplicationView extends ViewImpl implements ApplicationPresenter.MyView
 {
     @Override
     public Widget asWidget()

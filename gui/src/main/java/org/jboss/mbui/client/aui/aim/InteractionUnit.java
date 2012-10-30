@@ -81,6 +81,16 @@ public class InteractionUnit
 
     // ------------------------------------------------------ parent / child relationship
 
+    private void setParent(final InteractionUnit parent)
+    {
+        this.parent = parent;
+    }
+
+    public InteractionUnit getParent()
+    {
+        return parent;
+    }
+
     public void add(InteractionUnit interactionUnit)
     {
         if (interactionUnit != null)
@@ -107,16 +117,6 @@ public class InteractionUnit
     public boolean isComposite()
     {
         return !this.children.isEmpty();
-    }
-
-    private void setParent(final InteractionUnit parent)
-    {
-        this.parent = parent;
-    }
-
-    public InteractionUnit getParent()
-    {
-        return parent;
     }
 
 
