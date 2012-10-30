@@ -18,8 +18,12 @@
  */
 package org.jboss.mbui.client.cui.workbench;
 
-import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.HasWidgets;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.ViewImpl;
 
 /**
@@ -28,9 +32,47 @@ import com.gwtplatform.mvp.client.ViewImpl;
  */
 public class ApplicationView extends ViewImpl implements ApplicationPresenter.MyView
 {
+    public interface Binder extends UiBinder<Widget, ApplicationView>
+    {
+    }
+
+
+    private final Widget widget;
+    @UiField SimplePanel mainPanel;
+    @UiField SimplePanel repositoryPanel;
+    @UiField SimplePanel contextPanel;
+
+    @Inject
+    public ApplicationView(final Binder binder)
+    {
+        this.widget = binder.createAndBindUi(this);
+    }
+
     @Override
     public Widget asWidget()
     {
-        return new Label("Not yet implemented!");
+        return widget;
+    }
+
+
+    @Override
+    public void setInSlot(Object slot, Widget widget)
+    {
+        if (slot == ApplicationPresenter.TYPE_SetMainContent)
+        {
+            mainPanel.setWidget(widget);
+        }
+        else if (slot == ApplicationPresenter.Repository_Slot)
+        {
+            repositoryPanel.setWidget(widget);
+        }
+        else if (slot == ApplicationPresenter.Context_Slot)
+        {
+            contextPanel.setWidget(widget);
+        }
+        else
+        {
+            super.setInSlot(slot, widget);
+        }
     }
 }

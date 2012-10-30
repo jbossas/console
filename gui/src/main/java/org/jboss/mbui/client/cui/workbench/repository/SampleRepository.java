@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.mbui.client.cui.samples;
+package org.jboss.mbui.client.cui.workbench.repository;
 
 import java.util.ArrayList;
 import java.util.List;

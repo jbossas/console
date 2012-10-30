@@ -22,9 +22,15 @@ import com.gwtplatform.mvp.client.gin.AbstractPresenterModule;
 import com.gwtplatform.mvp.client.gin.DefaultModule;
 import org.jboss.mbui.client.cui.workbench.ApplicationPresenter;
 import org.jboss.mbui.client.cui.workbench.ApplicationView;
+import org.jboss.mbui.client.cui.workbench.context.ContextPresenter;
+import org.jboss.mbui.client.cui.workbench.context.ContextView;
 import org.jboss.mbui.client.cui.workbench.DefaultPlace;
 import org.jboss.mbui.client.cui.workbench.DefaultPlaceManager;
 import org.jboss.mbui.client.cui.workbench.NameTokens;
+import org.jboss.mbui.client.cui.workbench.editor.PreviewPresenter;
+import org.jboss.mbui.client.cui.workbench.editor.PreviewView;
+import org.jboss.mbui.client.cui.workbench.repository.RepositoryPresenter;
+import org.jboss.mbui.client.cui.workbench.repository.RepositoryView;
 
 /**
  * @author Harald Pehl
@@ -39,9 +45,13 @@ public class WorkbenchModule extends AbstractPresenterModule
         install(new DefaultModule(DefaultPlaceManager.class));
 
         // Constants
-        bindConstant().annotatedWith(DefaultPlace.class).to(NameTokens.workbench);
+        bindConstant().annotatedWith(DefaultPlace.class).to(NameTokens.preview);
 
-        // PresenterWidgets (a-z)
-        bindPresenterWidget(ApplicationPresenter.class, ApplicationPresenter.MyView.class, ApplicationView.class);
+        // Presenters (a-z)
+        bindPresenter(ApplicationPresenter.class, ApplicationPresenter.MyView.class, ApplicationView.class,
+                ApplicationPresenter.MyProxy.class);
+        bindPresenterWidget(ContextPresenter.class, ContextPresenter.MyView.class, ContextView.class);
+        bindPresenterWidget(PreviewPresenter.class, PreviewPresenter.MyView.class, PreviewView.class);
+        bindPresenterWidget(RepositoryPresenter.class, RepositoryPresenter.MyView.class, RepositoryView.class);
     }
 }

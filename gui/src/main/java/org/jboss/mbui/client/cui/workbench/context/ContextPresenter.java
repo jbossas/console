@@ -16,13 +16,27 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.mbui.client.cui.workbench;
+package org.jboss.mbui.client.cui.workbench.context;
+
+import com.google.inject.Inject;
+import com.google.web.bindery.event.shared.EventBus;
+import com.gwtplatform.mvp.client.PresenterWidget;
+import com.gwtplatform.mvp.client.View;
 
 /**
  * @author Harald Pehl
- * @date 10/25/2012
+ * @date 10/30/2012
  */
-public class NameTokens
+public class ContextPresenter extends PresenterWidget<ContextPresenter.MyView>
 {
-    public static final String preview = "preview";
+    public interface MyView extends View
+    {
+
+    }
+
+    @Inject
+    public ContextPresenter(final EventBus eventBus, final MyView view)
+    {
+        super(eventBus, view);
+    }
 }

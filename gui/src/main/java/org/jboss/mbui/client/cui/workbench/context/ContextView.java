@@ -16,13 +16,21 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.mbui.client.cui.workbench;
+package org.jboss.mbui.client.cui.workbench.context;
+
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.Widget;
+import com.gwtplatform.mvp.client.ViewImpl;
 
 /**
  * @author Harald Pehl
- * @date 10/25/2012
+ * @date 10/30/2012
  */
-public class NameTokens
+public class ContextView extends ViewImpl implements ContextPresenter.MyView
 {
-    public static final String preview = "preview";
+    @Override
+    public Widget asWidget()
+    {
+        return new Label("ContextView not yet implemented!");
+    }
 }

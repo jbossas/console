@@ -20,7 +20,7 @@ public class ToolsView extends SuspendableViewImpl implements ToolsPresenter.MyV
     @Override
     public Widget createWidget() {
 
-        //setContent(new HTML("<center>This is the workbench. No tool selected.</center>"));
+        //setContent(new HTML("<center>This is the preview. No tool selected.</center>"));
         return contentCanvas;
     }
 

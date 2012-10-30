@@ -27,6 +27,8 @@ import com.gwtplatform.mvp.client.annotations.ProxyStandard;
 import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
 import com.gwtplatform.mvp.client.proxy.RevealRootLayoutContentEvent;
+import org.jboss.mbui.client.cui.workbench.context.ContextPresenter;
+import org.jboss.mbui.client.cui.workbench.repository.RepositoryPresenter;
 
 /**
  * @author Harald Pehl
@@ -34,27 +36,52 @@ import com.gwtplatform.mvp.client.proxy.RevealRootLayoutContentEvent;
  */
 public class ApplicationPresenter extends Presenter<ApplicationPresenter.MyView, ApplicationPresenter.MyProxy>
 {
-    @ProxyStandard
-    public interface MyProxy extends Proxy<ApplicationPresenter>
+    public interface MyView extends View
     {
     }
 
-    public interface MyView extends View
+    @ProxyStandard
+    public interface MyProxy extends Proxy<ApplicationPresenter>
     {
     }
 
     @ContentSlot
     public static final Type<RevealContentHandler<?>> TYPE_SetMainContent = new Type<RevealContentHandler<?>>();
 
+    public final static Object Repository_Slot = new Object();
+    public final static Object Context_Slot = new Object();
 
-    public ApplicationPresenter(final EventBus eventBus, final MyView view, final MyProxy proxy)
+    final RepositoryPresenter repositoryPresenter;
+    final ContextPresenter contextPresenter;
+
+
+    public ApplicationPresenter(final EventBus eventBus, final MyView view, final MyProxy proxy,
+            final RepositoryPresenter repositoryPresenter, final ContextPresenter contextPresenter)
     {
         super(eventBus, view, proxy);
+        this.repositoryPresenter = repositoryPresenter;
+        this.contextPresenter = contextPresenter;
     }
 
     @Override
     protected void revealInParent()
     {
         RevealRootLayoutContentEvent.fire(this, this);
+    }
+
+    @Override
+    protected void onReveal()
+    {
+        super.onReveal();
+        setInSlot(Repository_Slot, repositoryPresenter);
+        setInSlot(Context_Slot, contextPresenter);
+    }
+
+    @Override
+    protected void onHide()
+    {
+        super.onHide();
+        removeFromSlot(Context_Slot, contextPresenter);
+        removeFromSlot(Repository_Slot, repositoryPresenter);
     }
 }
