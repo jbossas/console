@@ -316,6 +316,7 @@
                         <artifactId>gwt-maven-plugin</artifactId>
                         <configuration>
                             <module>org.jboss.mbui.MBUI</module>
+                            <runTarget>mbui.html</runTarget>
                         </configuration>
                     </plugin>
                     <plugin>

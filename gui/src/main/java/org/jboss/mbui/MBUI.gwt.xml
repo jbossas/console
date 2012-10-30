@@ -22,6 +22,7 @@
     <inherits name="com.google.gwt.user.User"/>
     <inherits name="org.jboss.dmr.DMR"/>
     <inherits name="org.jboss.ballroom.Framework"/>
+    <inherits name="com.gwtplatform.mvp.Mvp" />
 
     <source path="client"/>
 

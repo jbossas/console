@@ -18,6 +18,7 @@
  */
 package org.jboss.mbui.client.cui.workbench;
 
+import com.google.gwt.core.client.GWT;
 import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.proxy.PlaceManagerImpl;
@@ -43,6 +44,12 @@ public class DefaultPlaceManager extends PlaceManagerImpl
     @Override
     public void revealDefaultPlace()
     {
-        revealPlace(defaultPlaceRequest, false);
+        revealPlace(defaultPlaceRequest);
+    }
+
+    @Override
+    public void revealErrorPlace(final String invalidHistoryToken)
+    {
+        GWT.log("Invalid token: " + invalidHistoryToken);
     }
 }

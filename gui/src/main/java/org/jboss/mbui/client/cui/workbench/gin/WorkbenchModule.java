@@ -51,7 +51,8 @@ public class WorkbenchModule extends AbstractPresenterModule
         bindPresenter(ApplicationPresenter.class, ApplicationPresenter.MyView.class, ApplicationView.class,
                 ApplicationPresenter.MyProxy.class);
         bindPresenterWidget(ContextPresenter.class, ContextPresenter.MyView.class, ContextView.class);
-        bindPresenterWidget(PreviewPresenter.class, PreviewPresenter.MyView.class, PreviewView.class);
+        bindPresenter(PreviewPresenter.class, PreviewPresenter.MyView.class, PreviewView.class,
+                PreviewPresenter.MyProxy.class);
         bindPresenterWidget(RepositoryPresenter.class, RepositoryPresenter.MyView.class, RepositoryView.class);
     }
 }

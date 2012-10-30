@@ -3,9 +3,9 @@
              xmlns:g="urn:import:com.google.gwt.user.client.ui">
 
     <g:DockLayoutPanel unit="PX">
-        <g:east size="250">
+        <g:west size="250">
             <g:SimplePanel ui:field="repositoryPanel"/>
-        </g:east>
+        </g:west>
         <g:south size="100">
             <g:SimplePanel ui:field="contextPanel"/>
         </g:south>

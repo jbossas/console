@@ -22,10 +22,13 @@ import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.View;
+import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyStandard;
-import com.gwtplatform.mvp.client.proxy.Proxy;
+import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import org.jboss.mbui.client.cui.workbench.ApplicationPresenter;
+
+import static org.jboss.mbui.client.cui.workbench.NameTokens.preview;
 
 /**
  * @author Harald Pehl
@@ -38,7 +41,8 @@ public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, Preview
     }
 
     @ProxyStandard
-    public interface MyProxy extends Proxy<PreviewPresenter>
+    @NameToken(preview)
+    public interface MyProxy extends ProxyPlace<PreviewPresenter>
     {
     }
 
