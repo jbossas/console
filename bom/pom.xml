@@ -3,12 +3,12 @@
     <groupId>org.jboss.as</groupId>
     <artifactId>jboss-as-console-bom</artifactId>
     <packaging>pom</packaging>
-    <version>1.5.0-SNAPSHOT</version>
+    <version>1.6.0-SNAPSHOT</version>
 
     <parent>
         <groupId>org.jboss.as</groupId>
         <artifactId>jboss-as-console-parent</artifactId>
-        <version>1.5.0-SNAPSHOT</version>
+        <version>1.6.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -22,7 +22,7 @@
     </description>
 
     <properties>
-        <ballroom.version>1.5.1-SNAPSHOT</ballroom.version>
+        <ballroom.version>1.5.1.Final</ballroom.version>
         <gwt.version>2.5.0-rc2</gwt.version>
         <gwtp.version>0.7</gwtp.version>
         <gwt.maven>2.5.0-rc2</gwt.maven>
