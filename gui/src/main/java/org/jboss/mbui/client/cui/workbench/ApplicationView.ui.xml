@@ -12,7 +12,7 @@
         <g:west size="250">
             <g:SimplePanel ui:field="repositoryPanel"/>
         </g:west>
-        <g:south size="100">
+        <g:south size="150">
             <g:SimplePanel ui:field="contextPanel"/>
         </g:south>
         <g:center>

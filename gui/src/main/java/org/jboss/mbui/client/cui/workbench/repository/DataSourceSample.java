@@ -18,13 +18,15 @@
  */
 package org.jboss.mbui.client.cui.workbench.repository;
 
-import org.jboss.mbui.client.aui.aim.DataInputOutput;
-import org.jboss.mbui.client.aui.aim.DataSelection;
+import org.jboss.mbui.client.aui.aim.Container;
+import org.jboss.mbui.client.aui.aim.Input;
 import org.jboss.mbui.client.aui.aim.InteractionUnit;
+import org.jboss.mbui.client.aui.aim.Select;
 import org.jboss.mbui.client.aui.mapping.Mapping;
 import org.jboss.mbui.client.aui.mapping.ResourceMapping;
 
-import static org.jboss.mbui.client.aui.aim.InteractionRole.*;
+import static org.jboss.mbui.client.aui.aim.TemporalOperator.Choice;
+import static org.jboss.mbui.client.aui.aim.TemporalOperator.OrderIndependance;
 
 /**
  * @author Harald Pehl
@@ -42,23 +44,18 @@ public class DataSourceSample implements Sample
     public InteractionUnit build()
     {
         // abstract UI modelling
-        InteractionUnit overview = new InteractionUnit("datasourceOverview", "Datasources");
-        overview.setRole(Overview);
+        Container overview = new Container("datasourceOverview", "Datasources", OrderIndependance);
 
-        DataSelection table = new DataSelection("datasourceTable", "Datasources");
-        table.setRole(SingleSelect);
+        Select table = new Select("datasourceTable", "Datasources");
         overview.add(table);
 
-        InteractionUnit forms = new InteractionUnit("datasourceAttributes", "Datasource");
-        forms.setRole(Overview);
+        Container forms = new Container("datasourceAttributes", "Datasource", Choice);
         overview.add(forms);
 
-        DataInputOutput basicAttributes = new DataInputOutput("basicAttributes", "Attributes");
-        basicAttributes.setRole(Edit);
+        Input basicAttributes = new Input("basicAttributes", "Attributes");
         forms.add(basicAttributes);
 
-        DataInputOutput connectionAttributes = new DataInputOutput("connectionAttributes", "Connection");
-        connectionAttributes.setRole(Edit);
+        Input connectionAttributes = new Input("connectionAttributes", "Connection");
         forms.add(connectionAttributes);
 
         // mappings (required)

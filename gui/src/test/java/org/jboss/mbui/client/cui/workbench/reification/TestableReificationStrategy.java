@@ -19,16 +19,10 @@
 package org.jboss.mbui.client.cui.workbench.reification;
 
 import com.google.gwt.user.client.ui.Widget;
-import org.jboss.mbui.client.aui.aim.InteractionRole;
+import org.jboss.mbui.client.aui.aim.Container;
 import org.jboss.mbui.client.aui.aim.InteractionUnit;
 import org.jboss.mbui.client.cui.Context;
 import org.jboss.mbui.client.cui.ReificationStrategy;
-
-import java.util.HashSet;
-import java.util.Set;
-
-import static java.util.Arrays.asList;
-import static org.jboss.mbui.client.aui.aim.InteractionRole.Overview;
 
 /**
  * @author Harald Pehl
@@ -36,21 +30,14 @@ import static org.jboss.mbui.client.aui.aim.InteractionRole.Overview;
  */
 public class TestableReificationStrategy implements ReificationStrategy<ContainerWidget>
 {
-    final Set<InteractionRole> roles;
-
-    public TestableReificationStrategy(InteractionRole... roles)
+    public TestableReificationStrategy()
     {
-        this.roles = new HashSet<InteractionRole>();
-        if (roles != null)
-        {
-            this.roles.addAll(asList(roles));
-        }
     }
 
     @Override
     public ContainerWidget reify(final InteractionUnit interactionUnit, final Context context)
     {
-        Widget w = roles.contains(Overview) ? new TestablePanel() : new Widget();
+        Widget w = interactionUnit instanceof Container ? new TestablePanel() : new Widget();
         // layout data is the only property which does not require the DOM to be present
         w.setLayoutData(interactionUnit.getId());
         return new TestableContainerWidget(w);
@@ -59,6 +46,6 @@ public class TestableReificationStrategy implements ReificationStrategy<Containe
     @Override
     public boolean appliesTo(final InteractionUnit interactionUnit)
     {
-        return (interactionUnit != null) && roles.contains(interactionUnit.getRole());
+        return true;
     }
 }

@@ -20,38 +20,30 @@ package org.jboss.mbui.client.aui.aim;
 
 import org.jboss.mbui.client.aui.mapping.EntityContext;
 
-import java.util.LinkedList;
-import java.util.List;
-
 /**
  * @author Harald Pehl
  * @date 10/24/2012
  */
-public class InteractionUnit
+public abstract class InteractionUnit
 {
     public final static String ENTITY_CONTEXT_SUFFIX = "_entityContext";
 
     private final String id;
     private final EntityContext entityContext;
     private String name;
-    private InteractionRole role;
     private String mappingReference;
-    private InteractionUnit parent;
-    private List<InteractionUnit> children;
 
-    public InteractionUnit(final String id)
+    protected InteractionUnit(final String id)
     {
         this(id, null);
     }
 
-    public InteractionUnit(final String id, final String name)
+    protected InteractionUnit(final String id, final String name)
     {
         assert id != null : "Id must not be null";
         this.id = id;
         this.name = name;
         this.entityContext = new EntityContext(id + ENTITY_CONTEXT_SUFFIX);
-        this.children = new LinkedList<InteractionUnit>();
-        this.role = InteractionRole.Overview;
     }
 
     @Override
@@ -79,47 +71,6 @@ public class InteractionUnit
     }
 
 
-    // ------------------------------------------------------ parent / child relationship
-
-    private void setParent(final InteractionUnit parent)
-    {
-        this.parent = parent;
-    }
-
-    public InteractionUnit getParent()
-    {
-        return parent;
-    }
-
-    public void add(InteractionUnit interactionUnit)
-    {
-        if (interactionUnit != null)
-        {
-            interactionUnit.setParent(this);
-            children.add(interactionUnit);
-        }
-    }
-
-    public void remove(InteractionUnit interactionUnit)
-    {
-        if (interactionUnit != null)
-        {
-            interactionUnit.setParent(null);
-            children.remove(interactionUnit);
-        }
-    }
-
-    public List<InteractionUnit> getChildren()
-    {
-        return children;
-    }
-
-    public boolean isComposite()
-    {
-        return !this.children.isEmpty();
-    }
-
-
     // ------------------------------------------------------ properties
 
     public String getId()
@@ -135,16 +86,6 @@ public class InteractionUnit
     public void setName(final String name)
     {
         this.name = name;
-    }
-
-    public InteractionRole getRole()
-    {
-        return role;
-    }
-
-    public void setRole(InteractionRole role)
-    {
-        this.role = role;
     }
 
     public EntityContext getEntityContext()

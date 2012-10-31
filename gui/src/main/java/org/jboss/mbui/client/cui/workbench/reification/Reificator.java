@@ -18,12 +18,12 @@
  */
 package org.jboss.mbui.client.cui.workbench.reification;
 
+import org.jboss.mbui.client.aui.aim.Container;
 import org.jboss.mbui.client.aui.aim.InteractionUnit;
 import org.jboss.mbui.client.cui.Context;
 import org.jboss.mbui.client.cui.ReificationStrategy;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -58,13 +58,16 @@ public class Reificator
             containerWidget = strategy.reify(interactionUnit, context);
             if (containerWidget != null)
             {
-                List<InteractionUnit> children = interactionUnit.getChildren();
-                for (InteractionUnit child : children)
+                if (interactionUnit instanceof Container)
                 {
-                    ContainerWidget childContainerWidget = startReification(child, context);
-                    if (childContainerWidget != null)
+                    Container container = (Container) interactionUnit;
+                    for (InteractionUnit child : container.getChildren())
                     {
-                        containerWidget.add(childContainerWidget.asWidget());
+                        ContainerWidget childContainerWidget = startReification(child, context);
+                        if (childContainerWidget != null)
+                        {
+                            containerWidget.add(childContainerWidget.asWidget());
+                        }
                     }
                 }
             }

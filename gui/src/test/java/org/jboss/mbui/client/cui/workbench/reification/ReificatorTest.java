@@ -21,9 +21,9 @@ package org.jboss.mbui.client.cui.workbench.reification;
 import com.google.gwt.junit.GWTMockUtilities;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.Widget;
-import org.jboss.mbui.client.aui.aim.DataInputOutput;
-import org.jboss.mbui.client.aui.aim.DataSelection;
-import org.jboss.mbui.client.aui.aim.InteractionUnit;
+import org.jboss.mbui.client.aui.aim.Container;
+import org.jboss.mbui.client.aui.aim.Input;
+import org.jboss.mbui.client.aui.aim.Select;
 import org.jboss.mbui.client.cui.Context;
 import org.junit.After;
 import org.junit.Before;
@@ -31,10 +31,9 @@ import org.junit.Test;
 
 import java.util.Iterator;
 
-import static org.jboss.mbui.client.aui.aim.InteractionRole.*;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.jboss.mbui.client.aui.aim.TemporalOperator.Choice;
+import static org.jboss.mbui.client.aui.aim.TemporalOperator.OrderIndependance;
+import static org.junit.Assert.*;
 
 /**
  * @author Harald Pehl
@@ -43,29 +42,23 @@ import static org.junit.Assert.assertTrue;
 public class ReificatorTest
 {
     Reificator cut;
-    InteractionUnit iuFixture;
+    Container iuFixture;
 
     @Before
     public void setUp() throws Exception
     {
         GWTMockUtilities.disarm();
         cut = new Reificator();
-        cut.strategies.add(new TestableReificationStrategy(Overview));
-        cut.strategies.add(new TestableReificationStrategy(SingleSelect, MultiSelect, Edit, Control));
+        cut.strategies.add(new TestableReificationStrategy());
 
-        iuFixture = new InteractionUnit("root");
-        iuFixture.setRole(Overview);
-        DataSelection table = new DataSelection("table");
-        table.setRole(SingleSelect);
+        iuFixture = new Container("root", OrderIndependance);
+        Select table = new Select("table");
         iuFixture.add(table);
-        InteractionUnit forms = new InteractionUnit("forms");
-        forms.setRole(Overview);
+        Container forms = new Container("forms", Choice);
         iuFixture.add(forms);
-        DataInputOutput basicAttributes = new DataInputOutput("basicAttributes");
-        basicAttributes.setRole(Edit);
+        Input basicAttributes = new Input("basicAttributes");
         forms.add(basicAttributes);
-        DataInputOutput extendedAttributes = new DataInputOutput("extendedAttributes");
-        extendedAttributes.setRole(Edit);
+        Input extendedAttributes = new Input("extendedAttributes");
         forms.add(extendedAttributes);
     }
 

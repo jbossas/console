@@ -18,19 +18,52 @@
  */
 package org.jboss.mbui.client.aui.aim;
 
+import java.util.LinkedList;
+import java.util.List;
+
 /**
  * @author Harald Pehl
- * @date 10/25/2012
+ * @date 10/31/2012
  */
-public class DataInputOutput extends Edit
+public class Container extends InteractionUnit
 {
-    public DataInputOutput(final String id)
+    private final List<InteractionUnit> children;
+    private final TemporalOperator temporalOperator;
+
+
+    public Container(final String id, final TemporalOperator temporalOperator)
     {
-        super(id);
+        this(id, null, temporalOperator);
     }
 
-    public DataInputOutput(final String id, final String name)
+    public Container(final String id, final String name, final TemporalOperator temporalOperator)
     {
         super(id, name);
+        this.temporalOperator = temporalOperator;
+        this.children = new LinkedList<InteractionUnit>();
+    }
+
+
+    // ------------------------------------------------------ parent / child relationship
+
+    public void add(InteractionUnit interactionUnit)
+    {
+        if (interactionUnit != null)
+        {
+            children.add(interactionUnit);
+        }
+    }
+
+    public void remove(InteractionUnit interactionUnit)
+    {
+        if (interactionUnit != null)
+        {
+            children.remove(interactionUnit);
+        }
+    }
+
+    public List<InteractionUnit> getChildren()
+    {
+        return children;
     }
 }

@@ -18,19 +18,42 @@
  */
 package org.jboss.mbui.client.aui.aim;
 
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+
 /**
  * @author Harald Pehl
- * @date 10/25/2012
+ * @date 10/26/2012
  */
-public class Input extends InteractionUnit
+public class ContainerTest
 {
-    public Input(final String id)
+    Container cut;
+
+    @Before
+    public void setUp() throws Exception
     {
-        super(id);
+        this.cut = new Container("test", TemporalOperator.Choice);
     }
 
-    public Input(final String id, final String name)
+    @Test
+    public void parentChild()
     {
-        super(id, name);
+        InteractionUnit foo = new TestableInteractionUnit("foo");
+        InteractionUnit bar = new TestableInteractionUnit("bar");
+
+        cut.add(foo);
+        assertEquals(foo, cut.getChildren().get(0));
+
+        cut.add(bar);
+        assertEquals(bar, cut.getChildren().get(1));
+
+        cut.remove(bar);
+        assertFalse(cut.getChildren().contains(bar));
+
+        cut.remove(foo);
+        assertFalse(cut.getChildren().contains(foo));
     }
 }

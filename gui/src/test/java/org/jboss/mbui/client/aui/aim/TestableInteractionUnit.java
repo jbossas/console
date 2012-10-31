@@ -20,9 +20,17 @@ package org.jboss.mbui.client.aui.aim;
 
 /**
  * @author Harald Pehl
- * @date 10/26/2012
+ * @date 10/31/2012
  */
-public enum InteractionRole
+public class TestableInteractionUnit extends InteractionUnit
 {
-    Overview, SingleSelect, MultiSelect, Edit, Control
+    public TestableInteractionUnit(final String id)
+    {
+        super(id);
+    }
+
+    public TestableInteractionUnit(final String id, final String name)
+    {
+        super(id, name);
+    }
 }

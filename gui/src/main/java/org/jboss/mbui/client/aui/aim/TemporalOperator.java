@@ -20,17 +20,9 @@ package org.jboss.mbui.client.aui.aim;
 
 /**
  * @author Harald Pehl
- * @date 10/26/2012
+ * @date 10/31/2012
  */
-public abstract class Edit extends Input
+public enum TemporalOperator
 {
-    protected Edit(final String id)
-    {
-        super(id);
-    }
-
-    protected Edit(final String id, final String name)
-    {
-        super(id, name);
-    }
+    Choice, Sequence, OrderIndependance, Concurrency, Deactivation
 }
