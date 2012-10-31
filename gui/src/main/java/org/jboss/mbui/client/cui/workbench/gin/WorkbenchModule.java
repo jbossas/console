@@ -18,6 +18,7 @@
  */
 package org.jboss.mbui.client.cui.workbench.gin;
 
+import com.google.inject.Singleton;
 import com.gwtplatform.mvp.client.gin.AbstractPresenterModule;
 import com.gwtplatform.mvp.client.gin.DefaultModule;
 import org.jboss.mbui.client.cui.workbench.ApplicationPresenter;
@@ -35,6 +36,7 @@ import org.jboss.mbui.client.cui.workbench.editor.PreviewPresenter;
 import org.jboss.mbui.client.cui.workbench.editor.PreviewView;
 import org.jboss.mbui.client.cui.workbench.repository.RepositoryPresenter;
 import org.jboss.mbui.client.cui.workbench.repository.RepositoryView;
+import org.jboss.mbui.client.cui.workbench.repository.SampleRepository;
 
 /**
  * @author Harald Pehl
@@ -60,5 +62,8 @@ public class WorkbenchModule extends AbstractPresenterModule
         bindPresenter(PreviewPresenter.class, PreviewPresenter.MyView.class, PreviewView.class,
                 PreviewPresenter.MyProxy.class);
         bindPresenterWidget(RepositoryPresenter.class, RepositoryPresenter.MyView.class, RepositoryView.class);
+
+        // Application
+        bind(SampleRepository.class).in(Singleton.class);
     }
 }

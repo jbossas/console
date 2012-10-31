@@ -18,8 +18,16 @@
  */
 package org.jboss.mbui.client.cui.workbench.repository;
 
+import com.google.gwt.cell.client.AbstractCell;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.cellview.client.CellList;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.view.client.ProvidesKey;
+import com.google.gwt.view.client.SelectionChangeEvent;
+import com.google.gwt.view.client.SelectionModel;
+import com.google.gwt.view.client.SingleSelectionModel;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.ViewImpl;
 
@@ -33,11 +41,46 @@ public class RepositoryView extends ViewImpl implements RepositoryPresenter.MyVi
     {
     }
 
+    class SampleCell extends AbstractCell<Sample>
+    {
+        @Override
+        public void render(final Context context, final Sample sample, final SafeHtmlBuilder sb)
+        {
+            sb.appendEscaped(sample.getName());
+        }
+    }
+
+    class KeyProvider implements ProvidesKey<Sample>
+    {
+        @Override
+        public Object getKey(final Sample ample)
+        {
+            return ample == null ? null : ample.getName();
+        }
+    }
+
     private final Widget widget;
+    @UiField(provided = true) CellList<Sample> table;
 
     @Inject
-    public RepositoryView(final Binder binder)
+    public RepositoryView(final Binder binder, final SampleRepository sampleRepository)
     {
+        KeyProvider keyProvider = new KeyProvider();
+        this.table = new CellList<Sample>(new SampleCell(), keyProvider);
+        this.table.setRowCount(sampleRepository.getSamples().size());
+        this.table.setRowData(sampleRepository.getSamples());
+
+        SelectionModel<Sample> selectionModel = new SingleSelectionModel<Sample>(keyProvider);
+        selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler()
+        {
+            @Override
+            public void onSelectionChange(final SelectionChangeEvent event)
+            {
+                // enable "reify" button
+            }
+        });
+        this.table.setSelectionModel(selectionModel);
+
         this.widget = binder.createAndBindUi(this);
     }
 
