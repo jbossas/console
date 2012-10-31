@@ -4,13 +4,14 @@ package org.jboss.mbui.client.aui.aim;
  * @author Heiko Braun
  * @date 10/31/12
  */
-public class Event<T extends EventType> {
+public class Event<T extends Enum<T>> {
 
     private String id;
     private T type;
 
-    public Event(String id) {
+    public Event(String id, T type) {
         this.id = id;
+        this.type = type;
     }
 
     public T getType()

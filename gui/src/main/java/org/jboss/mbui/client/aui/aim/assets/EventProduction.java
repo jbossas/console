@@ -12,9 +12,14 @@ import java.util.List;
  * @author Heiko Braun
  * @date 10/31/12
  */
-public class EventProduction<T extends EventType> implements EventProducer<T> {
+public class EventProduction<T extends Enum<T>> implements EventProducer<T> {
 
     private List<Event<T>> eventsProduced = Collections.EMPTY_LIST;
+    private EventType type;
+
+    public EventProduction(EventType type) {
+        this.type = type;
+    }
 
     @Override
     public boolean doesProduceEvents() {

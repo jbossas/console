@@ -34,7 +34,7 @@ public abstract class InteractionUnit implements EventConsumer
     private String name;
     private String mappingReference;
 
-    private EventConsumption eventConsumption = new EventConsumption(new EventType.TypeSystem());
+    private EventConsumption eventConsumption = new EventConsumption(EventType.System);
 
     protected InteractionUnit(final String id)
     {

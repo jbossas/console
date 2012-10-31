@@ -58,21 +58,21 @@ public class InteractionUnitTest
 
         assertFalse("Should not produce events by default", submit.doesProduceEvents());
 
-        Event<TypeInteraction> submitEvent = new Event<TypeInteraction>("submitNameEvent");
+        Event<EventType> submitEvent = new Event<EventType>("submitNameEvent", Interaction);
         submit.setProducedEvents(submitEvent);
 
         assertTrue("submit should produce events", submit.doesProduceEvents());
 
         assertFalse("submit should not consume interaction events",
-                container.consumes(new Event<TypeInteraction>("pressCancel"))
+                container.consumes(new Event<EventType>("pressCancel", Interaction))
         );
 
     }
 
     @Test
     public void testBehaviourResolution() {
-        Event<TypeInteraction> submitEvent = new Event<TypeInteraction>("submitNameEvent");
-        Event<TypeSystem> deviceRotation= new Event<TypeSystem>("deviceRotation");
+        Event<EventType> submitEvent = new Event<EventType>("submitNameEvent", Interaction);
+        Event<EventType> deviceRotation= new Event<EventType>("deviceRotation", System);
 
         Behaviour behaviour = new Behaviour(submitEvent, "onSubmitName");
 
