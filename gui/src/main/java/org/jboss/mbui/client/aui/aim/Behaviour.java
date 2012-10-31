@@ -24,7 +24,7 @@ public class Behaviour implements EventConsumer {
     };
 
     private EventConsumption eventConsumption = new EventConsumption(
-            EventType.System, EventType.Interaction
+            EventType.System, EventType.Interaction, EventType.Transition
     );
 
     public Behaviour(Event triggeredBy, String id) {

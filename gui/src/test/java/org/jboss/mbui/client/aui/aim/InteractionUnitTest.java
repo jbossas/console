@@ -58,7 +58,7 @@ public class InteractionUnitTest
 
         assertFalse("Should not produce events by default", submit.doesProduceEvents());
 
-        Event<EventType> submitEvent = new Event<EventType>("submitNameEvent", Interaction);
+        Event<EventType> submitEvent = new Event<EventType>("submitName", Interaction);
         submit.setProducedEvents(submitEvent);
 
         assertTrue("submit should produce events", submit.doesProduceEvents());
@@ -71,11 +71,14 @@ public class InteractionUnitTest
 
     @Test
     public void testBehaviourResolution() {
-        Event<EventType> submitEvent = new Event<EventType>("submitNameEvent", Interaction);
+        Event<EventType> submitEvent = new Event<EventType>("submitName", Interaction);
         Event<EventType> deviceRotation= new Event<EventType>("deviceRotation", System);
+        Event<EventType> loadData = new Event<EventType>("loadData", Transition);
 
         Behaviour behaviour = new Behaviour(submitEvent, "onSubmitName");
 
-        assertTrue("Behaviour should not be triggered by deviceRotation", behaviour.consumes(deviceRotation));
+        assertTrue("Behaviour can be triggered by deviceRotation", behaviour.consumes(deviceRotation));
+        assertTrue("Behaviour can be triggered by submitEvent", behaviour.consumes(deviceRotation));
+        assertTrue("Behaviour can be triggered by loadData", behaviour.consumes(loadData));
     }
 }
