@@ -45,6 +45,7 @@ public class ApplicationView extends ViewImpl implements ApplicationPresenter.My
     @UiField SimplePanel headerPanel;
     @UiField SimplePanel repositoryPanel;
     @UiField SimplePanel contextPanel;
+    @UiField SimplePanel footerPanel;
 
     @Inject
     public ApplicationView(final Binder binder)
@@ -78,6 +79,10 @@ public class ApplicationView extends ViewImpl implements ApplicationPresenter.My
         else if (slot == Context_Slot)
         {
             contextPanel.setWidget(widget);
+        }
+        else if (slot == Footer_Slot)
+        {
+            footerPanel.setWidget(widget);
         }
         else
         {

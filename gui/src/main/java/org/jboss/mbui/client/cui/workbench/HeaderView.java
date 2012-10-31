@@ -16,26 +16,34 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.mbui.client.cui.workbench.header;
+package org.jboss.mbui.client.cui.workbench;
 
+import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
-import com.google.web.bindery.event.shared.EventBus;
-import com.gwtplatform.mvp.client.PresenterWidget;
-import com.gwtplatform.mvp.client.View;
+import com.gwtplatform.mvp.client.ViewImpl;
 
 /**
  * @author Harald Pehl
  * @date 10/31/2012
  */
-public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView>
+public class HeaderView extends ViewImpl implements HeaderPresenter.MyView
 {
-    public interface MyView extends View
+    public interface Binder extends UiBinder<Widget, HeaderView>
     {
     }
 
+    private final Widget widget;
+
     @Inject
-    public HeaderPresenter(final EventBus eventBus, final MyView view)
+    public HeaderView(final Binder binder)
     {
-        super(eventBus, view);
+        this.widget = binder.createAndBindUi(this);
+    }
+
+    @Override
+    public Widget asWidget()
+    {
+        return widget;
     }
 }

@@ -1,0 +1,27 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+             xmlns:g="urn:import:com.google.gwt.user.client.ui">
+
+    <ui:style>
+        .header {
+            background-color: rgb(59, 77, 100);
+        }
+
+        .header h1 {
+            color: #fff;
+            font-size: 150%;
+            font-weight: bold;
+            font-style: italic;
+            margin: 0;
+            padding: 0 10px;
+            line-height: 60px; /* height of g:north in ApplicationView.ui.xml  */
+        }
+    </ui:style>
+
+    <g:HTMLPanel addStyleNames="{style.header}">
+        <header>
+            <h1>MBUI Workbench</h1>
+        </header>
+    </g:HTMLPanel>
+
+</ui:UiBinder>

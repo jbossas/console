@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.mbui.client.cui.workbench.context;
+package org.jboss.mbui.client.cui.workbench;
 
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.user.client.ui.Widget;
@@ -25,18 +25,18 @@ import com.gwtplatform.mvp.client.ViewImpl;
 
 /**
  * @author Harald Pehl
- * @date 10/30/2012
+ * @date 10/31/2012
  */
-public class ContextView extends ViewImpl implements ContextPresenter.MyView
+public class FooterView extends ViewImpl implements FooterPresenter.MyView
 {
-    public interface Binder extends UiBinder<Widget, ContextView>
+    public interface Binder extends UiBinder<Widget, FooterView>
     {
     }
 
     private final Widget widget;
 
     @Inject
-    public ContextView(final Binder binder)
+    public FooterView(final Binder binder)
     {
         this.widget = binder.createAndBindUi(this);
     }

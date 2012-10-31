@@ -6,6 +6,9 @@
         <g:north size="60">
             <g:SimplePanel ui:field="headerPanel"/>
         </g:north>
+        <g:south size="25">
+            <g:SimplePanel ui:field="footerPanel"/>
+        </g:south>
         <g:west size="250">
             <g:SimplePanel ui:field="repositoryPanel"/>
         </g:west>

@@ -22,15 +22,17 @@ import com.gwtplatform.mvp.client.gin.AbstractPresenterModule;
 import com.gwtplatform.mvp.client.gin.DefaultModule;
 import org.jboss.mbui.client.cui.workbench.ApplicationPresenter;
 import org.jboss.mbui.client.cui.workbench.ApplicationView;
-import org.jboss.mbui.client.cui.workbench.context.ContextPresenter;
-import org.jboss.mbui.client.cui.workbench.context.ContextView;
 import org.jboss.mbui.client.cui.workbench.DefaultPlace;
 import org.jboss.mbui.client.cui.workbench.DefaultPlaceManager;
+import org.jboss.mbui.client.cui.workbench.FooterPresenter;
+import org.jboss.mbui.client.cui.workbench.FooterView;
+import org.jboss.mbui.client.cui.workbench.HeaderPresenter;
+import org.jboss.mbui.client.cui.workbench.HeaderView;
 import org.jboss.mbui.client.cui.workbench.NameTokens;
+import org.jboss.mbui.client.cui.workbench.context.ContextPresenter;
+import org.jboss.mbui.client.cui.workbench.context.ContextView;
 import org.jboss.mbui.client.cui.workbench.editor.PreviewPresenter;
 import org.jboss.mbui.client.cui.workbench.editor.PreviewView;
-import org.jboss.mbui.client.cui.workbench.header.HeaderPresenter;
-import org.jboss.mbui.client.cui.workbench.header.HeaderView;
 import org.jboss.mbui.client.cui.workbench.repository.RepositoryPresenter;
 import org.jboss.mbui.client.cui.workbench.repository.RepositoryView;
 
@@ -53,6 +55,7 @@ public class WorkbenchModule extends AbstractPresenterModule
         bindPresenter(ApplicationPresenter.class, ApplicationPresenter.MyView.class, ApplicationView.class,
                 ApplicationPresenter.MyProxy.class);
         bindPresenterWidget(ContextPresenter.class, ContextPresenter.MyView.class, ContextView.class);
+        bindPresenterWidget(FooterPresenter.class, FooterPresenter.MyView.class, FooterView.class);
         bindPresenterWidget(HeaderPresenter.class, HeaderPresenter.MyView.class, HeaderView.class);
         bindPresenter(PreviewPresenter.class, PreviewPresenter.MyView.class, PreviewView.class,
                 PreviewPresenter.MyProxy.class);

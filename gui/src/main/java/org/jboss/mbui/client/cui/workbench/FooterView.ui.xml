@@ -3,23 +3,22 @@
              xmlns:g="urn:import:com.google.gwt.user.client.ui">
 
     <ui:style>
-        .header {
-            background-color: rgb(59, 77, 100);
-            line-height: 60px; /* height of g:north in ApplicationView.ui.xml  */
+        .footer {
+            background-color: rgb(190, 190, 190);
         }
 
-        .header h1 {
+        .footer p {
             color: #fff;
-            font-size: 150%;
-            font-weight: bold;
-            font-style: italic;
             margin: 0;
             padding: 0 10px;
+            line-height: 25px; /* height of g:south in ApplicationView.ui.xml  */
         }
     </ui:style>
 
-    <g:HTMLPanel addStyleNames="{style.header}">
-        <h1>MBUI Workbench</h1>
+    <g:HTMLPanel addStyleNames="{style.footer}">
+        <footer>
+            <p>Version x.y</p>
+        </footer>
     </g:HTMLPanel>
 
 </ui:UiBinder>

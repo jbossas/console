@@ -18,8 +18,9 @@
  */
 package org.jboss.mbui.client.cui.workbench.editor;
 
-import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.ViewImpl;
 
 /**
@@ -28,9 +29,21 @@ import com.gwtplatform.mvp.client.ViewImpl;
  */
 public class PreviewView extends ViewImpl implements PreviewPresenter.MyView
 {
+    public interface Binder extends UiBinder<Widget, PreviewView>
+    {
+    }
+
+    private final Widget widget;
+
+    @Inject
+    public PreviewView(final Binder binder)
+    {
+        this.widget = binder.createAndBindUi(this);
+    }
+
     @Override
     public Widget asWidget()
     {
-        return new Label("Select a interaction unit from the repository and press 'reify'");
+        return widget;
     }
 }
