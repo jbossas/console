@@ -21,27 +21,61 @@ package org.jboss.mbui.client.aui.aim;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
+import static org.jboss.mbui.client.aui.aim.EventType.*;
 
 /**
  * @author Harald Pehl
+ * @author Heiko Braun
  * @date 10/26/2012
  */
 public class InteractionUnitTest
 {
-    InteractionUnit cut;
+    InteractionUnit unit;
 
     @Before
     public void setUp() throws Exception
     {
-        this.cut = new TestableInteractionUnit("test");
+        this.unit = new TestableInteractionUnit("test");
     }
 
     @Test
     public void newInstance()
     {
-        assertNotNull(cut.getEntityContext());
-        assertEquals("test" + InteractionUnit.ENTITY_CONTEXT_SUFFIX, cut.getEntityContext().getId());
+        assertNotNull(unit.getEntityContext());
+        assertEquals("test" + InteractionUnit.ENTITY_CONTEXT_SUFFIX, unit.getEntityContext().getId());
+    }
+
+    @Test
+    public void testVerifyEventTypeConstraints() {
+        Container container = new Container("parent", TemporalOperator.OrderIndependance);
+
+        Input textInput = new Input("firstName");
+        Input submit = new Input("submit");
+
+        container.add(textInput);
+        container.add(submit);
+
+        assertFalse("Should not produce events by default", submit.doesProduceEvents());
+
+        Event<TypeInteraction> submitEvent = new Event<TypeInteraction>("submitNameEvent");
+        submit.setProducedEvents(submitEvent);
+
+        assertTrue("submit should produce events", submit.doesProduceEvents());
+
+        assertFalse("submit should not consume interaction events",
+                container.consumes(new Event<TypeInteraction>("pressCancel"))
+        );
+
+    }
+
+    @Test
+    public void testBehaviourResolution() {
+        Event<TypeInteraction> submitEvent = new Event<TypeInteraction>("submitNameEvent");
+        Event<TypeSystem> deviceRotation= new Event<TypeSystem>("deviceRotation");
+
+        Behaviour behaviour = new Behaviour(submitEvent, "onSubmitName");
+
+        assertTrue("Behaviour should not be triggered by deviceRotation", behaviour.consumes(deviceRotation));
     }
 }

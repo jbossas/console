@@ -18,13 +18,14 @@
  */
 package org.jboss.mbui.client.aui.aim;
 
+import org.jboss.mbui.client.aui.aim.assets.EventConsumption;
 import org.jboss.mbui.client.aui.mapping.EntityContext;
 
 /**
  * @author Harald Pehl
  * @date 10/24/2012
  */
-public abstract class InteractionUnit
+public abstract class InteractionUnit implements EventConsumer
 {
     public final static String ENTITY_CONTEXT_SUFFIX = "_entityContext";
 
@@ -32,6 +33,8 @@ public abstract class InteractionUnit
     private final EntityContext entityContext;
     private String name;
     private String mappingReference;
+
+    private EventConsumption eventConsumption = new EventConsumption(new EventType.TypeSystem());
 
     protected InteractionUnit(final String id)
     {
@@ -70,6 +73,15 @@ public abstract class InteractionUnit
         return "InteractionUnit{" + id + '}';
     }
 
+    @Override
+    public EventType[] getConsumedTypes() {
+        return eventConsumption.getConsumedTypes();
+    }
+
+    @Override
+    public boolean consumes(Event event) {
+        return eventConsumption.consumes(event);
+    }
 
     // ------------------------------------------------------ properties
 
