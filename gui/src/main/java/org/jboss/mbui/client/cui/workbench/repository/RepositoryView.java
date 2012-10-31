@@ -23,6 +23,7 @@ import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.CellList;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ProvidesKey;
 import com.google.gwt.view.client.SelectionChangeEvent;
@@ -30,6 +31,8 @@ import com.google.gwt.view.client.SelectionModel;
 import com.google.gwt.view.client.SingleSelectionModel;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.ViewImpl;
+
+import static com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy.BOUND_TO_SELECTION;
 
 /**
  * @author Harald Pehl
@@ -60,15 +63,16 @@ public class RepositoryView extends ViewImpl implements RepositoryPresenter.MyVi
     }
 
     private final Widget widget;
-    @UiField(provided = true) CellList<Sample> table;
+    @UiField Button reify;
+    @UiField(provided = true) CellList<Sample> list;
 
     @Inject
     public RepositoryView(final Binder binder, final SampleRepository sampleRepository)
     {
         KeyProvider keyProvider = new KeyProvider();
-        this.table = new CellList<Sample>(new SampleCell(), keyProvider);
-        this.table.setRowCount(sampleRepository.getSamples().size());
-        this.table.setRowData(sampleRepository.getSamples());
+        this.list = new CellList<Sample>(new SampleCell(), keyProvider);
+        this.list.setRowCount(sampleRepository.getSamples().size());
+        this.list.setRowData(sampleRepository.getSamples());
 
         SelectionModel<Sample> selectionModel = new SingleSelectionModel<Sample>(keyProvider);
         selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler()
@@ -76,12 +80,15 @@ public class RepositoryView extends ViewImpl implements RepositoryPresenter.MyVi
             @Override
             public void onSelectionChange(final SelectionChangeEvent event)
             {
-                // enable "reify" button
+                reify.setEnabled(true);
             }
         });
-        this.table.setSelectionModel(selectionModel);
+        this.list.setSelectionModel(selectionModel);
+        this.list.setKeyboardSelectionPolicy(BOUND_TO_SELECTION);
 
         this.widget = binder.createAndBindUi(this);
+        this.reify.setEnabled(false);
+
     }
 
     @Override

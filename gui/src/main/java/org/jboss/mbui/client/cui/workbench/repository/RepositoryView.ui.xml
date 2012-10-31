@@ -9,10 +9,23 @@
             border: 1px solid rgb(167, 171, 180);
             padding: 10px;
         }
+        .list {
+            margin: 10px;
+        }
+        .button {
+            margin: 0 10px 10px 10px;
+        }
     </ui:style>
 
-    <g:ScrollPanel addStyleNames="{style.repository}">
-        <c:CellList ui:field="table" />
-    </g:ScrollPanel>
+    <g:DockLayoutPanel unit="PX" addStyleNames="{style.repository}">
+        <g:south size="30">
+            <g:Button ui:field="reify" addStyleNames="{style.button}">Reify</g:Button>
+        </g:south>
+        <g:center>
+            <g:ScrollPanel addStyleNames="{style.list}">
+                <c:CellList ui:field="list" />
+            </g:ScrollPanel>
+        </g:center>
+    </g:DockLayoutPanel>
 
 </ui:UiBinder>

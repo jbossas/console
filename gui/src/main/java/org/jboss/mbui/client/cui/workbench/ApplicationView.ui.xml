@@ -10,7 +10,7 @@
             <g:SimplePanel ui:field="footerPanel"/>
         </g:south>
         <g:west size="250">
-            <g:SimplePanel ui:field="repositoryPanel"/>
+            <g:SimpleLayoutPanel ui:field="repositoryPanel"/>
         </g:west>
         <g:south size="150">
             <g:SimplePanel ui:field="contextPanel"/>

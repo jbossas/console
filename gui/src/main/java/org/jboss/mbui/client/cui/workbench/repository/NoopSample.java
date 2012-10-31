@@ -18,29 +18,27 @@
  */
 package org.jboss.mbui.client.cui.workbench.repository;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.jboss.mbui.client.aui.aim.InteractionUnit;
 
 /**
  * @author Harald Pehl
- * @date 10/25/2012
+ * @date 10/31/2012
  */
-public class SampleRepository
+public class NoopSample implements Sample
 {
-    public List<Sample> getSamples()
+    private final String name;
+
+    public NoopSample(final String name) {this.name = name;}
+
+    @Override
+    public String getName()
     {
-        List<Sample> samples = new ArrayList<Sample>();
+        return name;
+    }
 
-        samples.add(new DataSourceSample());
-        samples.add(new NoopSample("Lorem"));
-        samples.add(new NoopSample("ipsum"));
-        samples.add(new NoopSample("dolor"));
-        samples.add(new NoopSample("sit"));
-        samples.add(new NoopSample("amet"));
-        samples.add(new NoopSample("consetetur"));
-        samples.add(new NoopSample("sadipscing"));
-        samples.add(new NoopSample("elitr"));
-
-        return samples;
+    @Override
+    public InteractionUnit build()
+    {
+        return null;
     }
 }
