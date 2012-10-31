@@ -75,10 +75,35 @@ public class InteractionUnitTest
         Event<EventType> deviceRotation= new Event<EventType>("deviceRotation", System);
         Event<EventType> loadData = new Event<EventType>("loadData", Transition);
 
-        Behaviour behaviour = new Behaviour(submitEvent, "onSubmitName");
+        Behaviour behaviour = new Behaviour("onSubmitName", submitEvent);
 
         assertTrue("Behaviour can be triggered by deviceRotation", behaviour.consumes(deviceRotation));
         assertTrue("Behaviour can be triggered by submitEvent", behaviour.consumes(deviceRotation));
         assertTrue("Behaviour can be triggered by loadData", behaviour.consumes(loadData));
+
+        final StringBuffer sharedState = new StringBuffer("");
+
+        behaviour.setCondition(new Condition() {
+            @Override
+            public boolean isMet() {
+                return true;
+            }
+        });
+
+        behaviour.addTransition(
+                new FunctionCall() {
+                    @Override
+                    public void perform() {
+                        sharedState.append("updated");
+                    }
+                }
+        );
+
+        if(behaviour.consumes(loadData))
+        {
+            behaviour.execute();
+            assertTrue("sharedState should be updated", sharedState.toString().equals("updated"));
+        }
+
     }
 }

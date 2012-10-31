@@ -14,7 +14,7 @@ public class Behaviour implements EventConsumer {
 
     private Event triggeredBy;
     private Condition condition;
-    private LinkedList<Transition> actions = new LinkedList<Transition>();
+    private LinkedList<Transition> transitions = new LinkedList<Transition>();
 
     private static final Condition CONDITION_NONE = new Condition() {
         @Override
@@ -27,25 +27,33 @@ public class Behaviour implements EventConsumer {
             EventType.System, EventType.Interaction, EventType.Transition
     );
 
-    public Behaviour(Event triggeredBy, String id) {
-        this.triggeredBy = triggeredBy;
+    public Behaviour(String id, Event trigger) {
+        this.triggeredBy = trigger;
         this.id = id;
         this.condition = CONDITION_NONE;
     }
 
-    public Behaviour(String id, Event triggeredBy, Condition condition) {
+    public Behaviour(String id, Event trigger, Condition condition) {
         this.id = id;
-        this.triggeredBy = triggeredBy;
+        this.triggeredBy = trigger;
+        this.condition = condition;
+    }
+
+    public void setCondition(Condition condition) {
         this.condition = condition;
     }
 
     public void execute() {
-        for(Transition action : actions)
-            action.perform();
+
+        if(condition.isMet())
+        {
+            for(Transition action : transitions)
+                action.perform();
+        }
     }
 
-    public void addAction(Transition action) {
-        actions.add(action);
+    public void addTransition(Transition transition) {
+        transitions.add(transition);
     }
 
     @Override
