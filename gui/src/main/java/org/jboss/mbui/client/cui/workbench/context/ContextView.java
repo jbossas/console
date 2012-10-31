@@ -16,21 +16,34 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.mbui.client.aui.aim;
+package org.jboss.mbui.client.cui.workbench.context;
+
+import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.user.client.ui.Widget;
+import com.google.inject.Inject;
+import com.gwtplatform.mvp.client.ViewImpl;
 
 /**
  * @author Harald Pehl
- * @date 10/25/2012
+ * @date 10/30/2012
  */
-public class DataInputOutput extends Edit
+public class ContextView extends ViewImpl implements ContextPresenter.MyView
 {
-    public DataInputOutput(final String id)
+    public interface Binder extends UiBinder<Widget, ContextView>
     {
-        super(id);
     }
 
-    public DataInputOutput(final String id, final String name)
+    private final Widget widget;
+
+    @Inject
+    public ContextView(final Binder binder)
     {
-        super(id, name);
+        this.widget = binder.createAndBindUi(this);
+    }
+
+    @Override
+    public Widget asWidget()
+    {
+        return widget;
     }
 }

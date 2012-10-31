@@ -16,21 +16,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.mbui.client.cui.workbench;
+package org.jboss.mbui.client.cui.workbench.reification;
 
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.Widget;
-import com.gwtplatform.mvp.client.ViewImpl;
+import com.google.gwt.user.client.ui.HasWidgets;
+import com.google.gwt.user.client.ui.IsWidget;
 
 /**
  * @author Harald Pehl
- * @date 10/25/2012
+ * @date 10/26/2012
  */
-public class MainView extends ViewImpl implements MainPresenter.MyView
+public interface ContainerWidget extends IsWidget, HasWidgets
 {
-    @Override
-    public Widget asWidget()
-    {
-        return new Label("Not yet implemented!");
-    }
 }

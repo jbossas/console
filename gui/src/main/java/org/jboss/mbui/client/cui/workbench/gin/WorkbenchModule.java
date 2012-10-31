@@ -18,13 +18,25 @@
  */
 package org.jboss.mbui.client.cui.workbench.gin;
 
+import com.google.inject.Singleton;
 import com.gwtplatform.mvp.client.gin.AbstractPresenterModule;
 import com.gwtplatform.mvp.client.gin.DefaultModule;
+import org.jboss.mbui.client.cui.workbench.ApplicationPresenter;
+import org.jboss.mbui.client.cui.workbench.ApplicationView;
 import org.jboss.mbui.client.cui.workbench.DefaultPlace;
 import org.jboss.mbui.client.cui.workbench.DefaultPlaceManager;
-import org.jboss.mbui.client.cui.workbench.MainPresenter;
-import org.jboss.mbui.client.cui.workbench.MainView;
+import org.jboss.mbui.client.cui.workbench.FooterPresenter;
+import org.jboss.mbui.client.cui.workbench.FooterView;
+import org.jboss.mbui.client.cui.workbench.HeaderPresenter;
+import org.jboss.mbui.client.cui.workbench.HeaderView;
 import org.jboss.mbui.client.cui.workbench.NameTokens;
+import org.jboss.mbui.client.cui.workbench.context.ContextPresenter;
+import org.jboss.mbui.client.cui.workbench.context.ContextView;
+import org.jboss.mbui.client.cui.workbench.editor.PreviewPresenter;
+import org.jboss.mbui.client.cui.workbench.editor.PreviewView;
+import org.jboss.mbui.client.cui.workbench.repository.RepositoryPresenter;
+import org.jboss.mbui.client.cui.workbench.repository.RepositoryView;
+import org.jboss.mbui.client.cui.workbench.repository.SampleRepository;
 
 /**
  * @author Harald Pehl
@@ -39,9 +51,19 @@ public class WorkbenchModule extends AbstractPresenterModule
         install(new DefaultModule(DefaultPlaceManager.class));
 
         // Constants
-        bindConstant().annotatedWith(DefaultPlace.class).to(NameTokens.workbench);
+        bindConstant().annotatedWith(DefaultPlace.class).to(NameTokens.preview);
 
-        // PresenterWidgets (a-z)
-        bindPresenterWidget(MainPresenter.class, MainPresenter.MyView.class, MainView.class);
+        // Presenters (a-z)
+        bindPresenter(ApplicationPresenter.class, ApplicationPresenter.MyView.class, ApplicationView.class,
+                ApplicationPresenter.MyProxy.class);
+        bindPresenterWidget(ContextPresenter.class, ContextPresenter.MyView.class, ContextView.class);
+        bindPresenterWidget(FooterPresenter.class, FooterPresenter.MyView.class, FooterView.class);
+        bindPresenterWidget(HeaderPresenter.class, HeaderPresenter.MyView.class, HeaderView.class);
+        bindPresenter(PreviewPresenter.class, PreviewPresenter.MyView.class, PreviewView.class,
+                PreviewPresenter.MyProxy.class);
+        bindPresenterWidget(RepositoryPresenter.class, RepositoryPresenter.MyView.class, RepositoryView.class);
+
+        // Application
+        bind(SampleRepository.class).in(Singleton.class);
     }
 }

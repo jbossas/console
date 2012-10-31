@@ -16,30 +16,27 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.mbui.client.cui.workbench.gin;
+package org.jboss.mbui.client.cui.workbench.context;
 
-import com.google.gwt.inject.client.GinModules;
-import com.google.gwt.inject.client.Ginjector;
-import com.google.inject.Provider;
+import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
-import com.gwtplatform.mvp.client.proxy.PlaceManager;
-import org.jboss.mbui.client.cui.workbench.ApplicationPresenter;
-import org.jboss.mbui.client.cui.workbench.editor.PreviewPresenter;
+import com.gwtplatform.mvp.client.PresenterWidget;
+import com.gwtplatform.mvp.client.View;
 
 /**
  * @author Harald Pehl
- * @date 10/25/2012
+ * @date 10/30/2012
  */
-@GinModules(WorkbenchModule.class)
-public interface WorkbenchGinjector extends Ginjector
+public class ContextPresenter extends PresenterWidget<ContextPresenter.MyView>
 {
-    // ------------------------------------------------------------- singletons
+    public interface MyView extends View
+    {
 
-    EventBus getEventBus();
-    PlaceManager getPlaceManager();
+    }
 
-    // ------------------------------------------------------- presenters (a-z)
-
-    Provider<ApplicationPresenter> getWorkbenchPresenter();
-    Provider<PreviewPresenter> getPreviewPresenter();
+    @Inject
+    public ContextPresenter(final EventBus eventBus, final MyView view)
+    {
+        super(eventBus, view);
+    }
 }

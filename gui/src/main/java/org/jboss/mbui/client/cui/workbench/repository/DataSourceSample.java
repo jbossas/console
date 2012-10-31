@@ -16,15 +16,17 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.mbui.client.cui.samples;
+package org.jboss.mbui.client.cui.workbench.repository;
 
-import org.jboss.mbui.client.aui.aim.DataInputOutput;
-import org.jboss.mbui.client.aui.aim.DataSelection;
+import org.jboss.mbui.client.aui.aim.Container;
+import org.jboss.mbui.client.aui.aim.Input;
 import org.jboss.mbui.client.aui.aim.InteractionUnit;
+import org.jboss.mbui.client.aui.aim.Select;
 import org.jboss.mbui.client.aui.mapping.Mapping;
 import org.jboss.mbui.client.aui.mapping.ResourceMapping;
 
-import static org.jboss.mbui.client.aui.aim.InteractionRole.*;
+import static org.jboss.mbui.client.aui.aim.TemporalOperator.Choice;
+import static org.jboss.mbui.client.aui.aim.TemporalOperator.OrderIndependance;
 
 /**
  * @author Harald Pehl
@@ -42,37 +44,37 @@ public class DataSourceSample implements Sample
     public InteractionUnit build()
     {
         // abstract UI modelling
-        InteractionUnit overview = new InteractionUnit("datasourceOverview", "Datasources");
-        overview.setRole(Overview);
+        Container overview = new Container("datasourceOverview", "Datasources", OrderIndependance);
 
-        DataSelection table = new DataSelection("table", "Datasources");
-        table.setRole(SingleSelect);
+        Select table = new Select("datasourceTable", "Datasources");
         overview.add(table);
 
-        InteractionUnit tabs = new InteractionUnit("datasourceAttributes", "Datasource");
-        tabs.setRole(Overview);
-        overview.add(tabs);
+        Container forms = new Container("datasourceAttributes", "Datasource", Choice);
+        overview.add(forms);
 
-        DataInputOutput basicAttributes = new DataInputOutput("basicAttributes", "Attributes");
-        basicAttributes.setRole(Edit);
-        tabs.add(basicAttributes);
+        Input basicAttributes = new Input("basicAttributes", "Attributes");
+        forms.add(basicAttributes);
 
-        DataInputOutput connectionAttributes = new DataInputOutput("connectionAttributes", "Connection");
-        connectionAttributes.setRole(Edit);
-        tabs.add(connectionAttributes);
+        Input connectionAttributes = new Input("connectionAttributes", "Connection");
+        forms.add(connectionAttributes);
 
-        // reificationStrategies steps (required)
+        // mappings (required)
         Mapping tableMapping = new ResourceMapping("datasourceTable",
                 "/profile=${profile}/subsystem=datasources/data-source=*")
                 .addAttributes("${resource.name}", "jndi-name", "enabled");
 
-        Mapping editMapping = new ResourceMapping("datasourceForm",
+        Mapping basicAttributesMapping = new ResourceMapping("basicAttributes",
                 "/profile=${profile}/subsystem=datasources/data-source=${datasource}")
                 .addAttributes("${resource.name}", "jndi-name", "enabled", "driver-name",
                         "share-prepared-statements", "prepared-statements-cache-size");
 
+        Mapping connectionAttributesMapping = new ResourceMapping("connectionAttributes",
+                "/profile=${profile}/subsystem=datasources/data-source=${datasource}")
+                .addAttributes("connection-url", "new-connection-sql", "jta", "use-ccm");
+
         table.getEntityContext().addMapping(tableMapping);
-        basicAttributes.getEntityContext().addMapping(editMapping);
+        basicAttributes.getEntityContext().addMapping(basicAttributesMapping);
+        connectionAttributes.getEntityContext().addMapping(connectionAttributesMapping);
 
         return overview;
     }

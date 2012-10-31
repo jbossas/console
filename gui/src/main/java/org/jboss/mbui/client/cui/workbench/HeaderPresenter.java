@@ -16,21 +16,26 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.mbui.client.cui.samples;
+package org.jboss.mbui.client.cui.workbench;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.google.inject.Inject;
+import com.google.web.bindery.event.shared.EventBus;
+import com.gwtplatform.mvp.client.PresenterWidget;
+import com.gwtplatform.mvp.client.View;
 
 /**
  * @author Harald Pehl
- * @date 10/25/2012
+ * @date 10/31/2012
  */
-public class SampleRepository
+public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView>
 {
-    public List<Sample> getSamples()
+    public interface MyView extends View
     {
-        List<Sample> samples = new ArrayList<Sample>();
-        samples.add(new DataSourceSample());
-        return samples;
+    }
+
+    @Inject
+    public HeaderPresenter(final EventBus eventBus, final MyView view)
+    {
+        super(eventBus, view);
     }
 }

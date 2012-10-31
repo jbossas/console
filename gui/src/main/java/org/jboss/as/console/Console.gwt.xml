@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <!--
   ~ JBoss, Home of Professional Open Source
   ~ Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
@@ -18,14 +17,19 @@
   ~ MA  02110-1301, USA.
   -->
 
-<module rename-to="mbui">
-    <inherits name="org.jboss.as.console.Console"/>
+<!--
+    Module without application specific settings like entry point or GIN settings.
+    Use this module to import console code into application modules.
+-->
+<module>
+    <inherits name="com.google.gwt.debugpanel.DebugPanel_Disabled" />
+    <inherits name="com.google.gwt.i18n.I18N"/>
+    <inherits name="com.google.gwt.json.JSON"/>
+    <inherits name='com.google.gwt.visualization.Visualization'/>
+    <inherits name="com.google.web.bindery.autobean.AutoBean"/>
 
-    <source path="client"/>
+    <inherits name="org.jboss.ballroom.Framework"/>
+    <inherits name="org.jboss.dmr.DMR"/>
 
-    <define-configuration-property name="gin.ginjector" is-multi-valued="false"/>
-    <set-configuration-property name="gin.ginjector"
-                                value="org.jboss.mbui.client.cui.workbench.gin.WorkbenchGinjector"/>
-
-    <entry-point class="org.jboss.mbui.client.cui.workbench.Workbench"/>
+    <inherits name="com.allen_sauer.gwt.log.gwt-log-ERROR" />
 </module>

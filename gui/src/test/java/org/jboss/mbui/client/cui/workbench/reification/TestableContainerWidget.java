@@ -16,40 +16,57 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.mbui.client.cui.workbench;
+package org.jboss.mbui.client.cui.workbench.reification;
 
-import com.google.gwt.core.client.GWT;
-import com.google.inject.Inject;
-import com.google.web.bindery.event.shared.EventBus;
-import com.gwtplatform.mvp.client.proxy.PlaceManagerImpl;
-import com.gwtplatform.mvp.client.proxy.PlaceRequest;
-import com.gwtplatform.mvp.client.proxy.TokenFormatter;
+import com.google.gwt.user.client.ui.HasWidgets;
+import com.google.gwt.user.client.ui.Widget;
+
+import java.util.Iterator;
 
 /**
  * @author Harald Pehl
- * @date 10/25/2012
+ * @date 10/30/2012
  */
-public class DefaultPlaceManager extends PlaceManagerImpl
+public class TestableContainerWidget implements ContainerWidget
 {
-    private final PlaceRequest defaultPlaceRequest;
+    final Widget widget;
 
-    @Inject
-    public DefaultPlaceManager(EventBus eventBus, TokenFormatter tokenFormatter, @DefaultPlace String defaultNameToken)
+    public TestableContainerWidget(final Widget widget)
     {
-        super(eventBus, tokenFormatter);
-        this.defaultPlaceRequest = new PlaceRequest(defaultNameToken);
-    }
-
-
-    @Override
-    public void revealDefaultPlace()
-    {
-        revealPlace(defaultPlaceRequest);
+        this.widget = widget;
     }
 
     @Override
-    public void revealErrorPlace(final String invalidHistoryToken)
+    public void add(final Widget w)
     {
-        GWT.log("Invalid token: " + invalidHistoryToken);
+        if (widget instanceof HasWidgets)
+        {
+            HasWidgets hasWidgets = (HasWidgets) widget;
+            hasWidgets.add(w);
+        }
+    }
+
+    @Override
+    public void clear()
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Iterator<Widget> iterator()
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean remove(final Widget w)
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Widget asWidget()
+    {
+        return widget;
     }
 }

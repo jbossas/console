@@ -35,6 +35,6 @@ public class Workbench implements EntryPoint
     public void onModuleLoad()
     {
         DelayedBindRegistry.bind(ginjector);
-        ginjector.getPlaceManager().revealCurrentPlace();
+        ginjector.getPlaceManager().revealDefaultPlace();
     }
 }

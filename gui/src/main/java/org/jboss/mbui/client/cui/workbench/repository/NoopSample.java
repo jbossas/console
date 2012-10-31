@@ -16,13 +16,29 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.mbui.client.aui.aim;
+package org.jboss.mbui.client.cui.workbench.repository;
+
+import org.jboss.mbui.client.aui.aim.InteractionUnit;
 
 /**
  * @author Harald Pehl
- * @date 10/26/2012
+ * @date 10/31/2012
  */
-public enum InteractionRole
+public class NoopSample implements Sample
 {
-    Overview, SingleSelect, MultiSelect, Edit, Control
+    private final String name;
+
+    public NoopSample(final String name) {this.name = name;}
+
+    @Override
+    public String getName()
+    {
+        return name;
+    }
+
+    @Override
+    public InteractionUnit build()
+    {
+        return null;
+    }
 }

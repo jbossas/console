@@ -24,5 +24,5 @@ package org.jboss.mbui.client.cui.workbench;
  */
 public class NameTokens
 {
-    public static final String workbench = "workbench";
+    public static final String preview = "preview";
 }

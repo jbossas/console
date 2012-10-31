@@ -16,30 +16,44 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.mbui.client.cui.workbench.gin;
+package org.jboss.mbui.client.aui.aim;
 
-import com.google.gwt.inject.client.GinModules;
-import com.google.gwt.inject.client.Ginjector;
-import com.google.inject.Provider;
-import com.google.web.bindery.event.shared.EventBus;
-import com.gwtplatform.mvp.client.proxy.PlaceManager;
-import org.jboss.mbui.client.cui.workbench.ApplicationPresenter;
-import org.jboss.mbui.client.cui.workbench.editor.PreviewPresenter;
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 /**
  * @author Harald Pehl
- * @date 10/25/2012
+ * @date 10/26/2012
  */
-@GinModules(WorkbenchModule.class)
-public interface WorkbenchGinjector extends Ginjector
+public class ContainerTest
 {
-    // ------------------------------------------------------------- singletons
+    Container cut;
 
-    EventBus getEventBus();
-    PlaceManager getPlaceManager();
+    @Before
+    public void setUp() throws Exception
+    {
+        this.cut = new Container("test", TemporalOperator.Choice);
+    }
 
-    // ------------------------------------------------------- presenters (a-z)
+    @Test
+    public void parentChild()
+    {
+        InteractionUnit foo = new TestableInteractionUnit("foo");
+        InteractionUnit bar = new TestableInteractionUnit("bar");
 
-    Provider<ApplicationPresenter> getWorkbenchPresenter();
-    Provider<PreviewPresenter> getPreviewPresenter();
+        cut.add(foo);
+        assertEquals(foo, cut.getChildren().get(0));
+
+        cut.add(bar);
+        assertEquals(bar, cut.getChildren().get(1));
+
+        cut.remove(bar);
+        assertFalse(cut.getChildren().contains(bar));
+
+        cut.remove(foo);
+        assertFalse(cut.getChildren().contains(foo));
+    }
 }

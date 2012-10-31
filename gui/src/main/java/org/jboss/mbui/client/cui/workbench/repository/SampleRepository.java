@@ -16,37 +16,31 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.mbui.client.cui;
+package org.jboss.mbui.client.cui.workbench.repository;
 
-import org.jboss.mbui.client.aui.aim.InteractionUnit;
-
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Harald Pehl
  * @date 10/25/2012
  */
-public class ReificationStrategies
+public class SampleRepository
 {
-    private final Set<ReificationStrategy> strategies;
-
-    public ReificationStrategies()
+    public List<Sample> getSamples()
     {
-        this.strategies = new HashSet<ReificationStrategy>();
-    }
+        List<Sample> samples = new ArrayList<Sample>();
 
-    public ReificationStrategy resolve(InteractionUnit interactionUnit)
-    {
-        ReificationStrategy match = null;
-        for(ReificationStrategy strategy : strategies)
-        {
-            if(strategy.appliesTo(interactionUnit))
-            {
-                match = strategy;
-                break;
-            }
-        }
-        return match;
+        samples.add(new DataSourceSample());
+        samples.add(new NoopSample("Lorem"));
+        samples.add(new NoopSample("ipsum"));
+        samples.add(new NoopSample("dolor"));
+        samples.add(new NoopSample("sit"));
+        samples.add(new NoopSample("amet"));
+        samples.add(new NoopSample("consetetur"));
+        samples.add(new NoopSample("sadipscing"));
+        samples.add(new NoopSample("elitr"));
+
+        return samples;
     }
 }

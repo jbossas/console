@@ -16,30 +16,36 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.mbui.client.cui.workbench.gin;
+package org.jboss.mbui.client.cui.workbench.reification;
 
-import com.google.gwt.inject.client.GinModules;
-import com.google.gwt.inject.client.Ginjector;
-import com.google.inject.Provider;
-import com.google.web.bindery.event.shared.EventBus;
-import com.gwtplatform.mvp.client.proxy.PlaceManager;
-import org.jboss.mbui.client.cui.workbench.ApplicationPresenter;
-import org.jboss.mbui.client.cui.workbench.editor.PreviewPresenter;
+import com.google.gwt.user.client.ui.Widget;
+import org.jboss.mbui.client.aui.aim.Container;
+import org.jboss.mbui.client.aui.aim.InteractionUnit;
+import org.jboss.mbui.client.cui.Context;
+import org.jboss.mbui.client.cui.ReificationStrategy;
 
 /**
  * @author Harald Pehl
- * @date 10/25/2012
+ * @date 10/30/2012
  */
-@GinModules(WorkbenchModule.class)
-public interface WorkbenchGinjector extends Ginjector
+public class TestableReificationStrategy implements ReificationStrategy<ContainerWidget>
 {
-    // ------------------------------------------------------------- singletons
+    public TestableReificationStrategy()
+    {
+    }
 
-    EventBus getEventBus();
-    PlaceManager getPlaceManager();
+    @Override
+    public ContainerWidget reify(final InteractionUnit interactionUnit, final Context context)
+    {
+        Widget w = interactionUnit instanceof Container ? new TestablePanel() : new Widget();
+        // layout data is the only property which does not require the DOM to be present
+        w.setLayoutData(interactionUnit.getId());
+        return new TestableContainerWidget(w);
+    }
 
-    // ------------------------------------------------------- presenters (a-z)
-
-    Provider<ApplicationPresenter> getWorkbenchPresenter();
-    Provider<PreviewPresenter> getPreviewPresenter();
+    @Override
+    public boolean appliesTo(final InteractionUnit interactionUnit)
+    {
+        return true;
+    }
 }

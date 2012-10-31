@@ -16,30 +16,21 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.mbui.client.cui.workbench.gin;
-
-import com.google.gwt.inject.client.GinModules;
-import com.google.gwt.inject.client.Ginjector;
-import com.google.inject.Provider;
-import com.google.web.bindery.event.shared.EventBus;
-import com.gwtplatform.mvp.client.proxy.PlaceManager;
-import org.jboss.mbui.client.cui.workbench.ApplicationPresenter;
-import org.jboss.mbui.client.cui.workbench.editor.PreviewPresenter;
+package org.jboss.mbui.client.aui.aim;
 
 /**
  * @author Harald Pehl
  * @date 10/25/2012
  */
-@GinModules(WorkbenchModule.class)
-public interface WorkbenchGinjector extends Ginjector
+public class Select extends InteractionUnit
 {
-    // ------------------------------------------------------------- singletons
+    public Select(final String id)
+    {
+        super(id);
+    }
 
-    EventBus getEventBus();
-    PlaceManager getPlaceManager();
-
-    // ------------------------------------------------------- presenters (a-z)
-
-    Provider<ApplicationPresenter> getWorkbenchPresenter();
-    Provider<PreviewPresenter> getPreviewPresenter();
+    public Select(final String id, final String name)
+    {
+        super(id, name);
+    }
 }

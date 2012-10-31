@@ -16,38 +16,38 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.mbui.client.cui.workbench;
+package org.jboss.mbui.client.cui.workbench.editor;
 
-import com.google.gwt.event.shared.GwtEvent.Type;
+import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.View;
-import com.gwtplatform.mvp.client.annotations.ContentSlot;
+import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyStandard;
-import com.gwtplatform.mvp.client.proxy.Proxy;
-import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
-import com.gwtplatform.mvp.client.proxy.RevealRootLayoutContentEvent;
+import com.gwtplatform.mvp.client.proxy.ProxyPlace;
+import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
+import org.jboss.mbui.client.cui.workbench.ApplicationPresenter;
+
+import static org.jboss.mbui.client.cui.workbench.NameTokens.preview;
 
 /**
  * @author Harald Pehl
- * @date 10/25/2012
+ * @date 10/30/2012
  */
-public class MainPresenter extends Presenter<MainPresenter.MyView, MainPresenter.MyProxy>
+public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, PreviewPresenter.MyProxy>
 {
-    @ProxyStandard
-    public interface MyProxy extends Proxy<MainPresenter>
-    {
-    }
-
     public interface MyView extends View
     {
     }
 
-    @ContentSlot
-    public static final Type<RevealContentHandler<?>> TYPE_SetMainContent = new Type<RevealContentHandler<?>>();
+    @ProxyStandard
+    @NameToken(preview)
+    public interface MyProxy extends ProxyPlace<PreviewPresenter>
+    {
+    }
 
-
-    public MainPresenter(final EventBus eventBus, final MyView view, final MyProxy proxy)
+    @Inject
+    public PreviewPresenter(final EventBus eventBus, final MyView view, final MyProxy proxy)
     {
         super(eventBus, view, proxy);
     }
@@ -55,6 +55,6 @@ public class MainPresenter extends Presenter<MainPresenter.MyView, MainPresenter
     @Override
     protected void revealInParent()
     {
-        RevealRootLayoutContentEvent.fire(this, this);
+        RevealContentEvent.fire(this, ApplicationPresenter.TYPE_SetMainContent, this);
     }
 }

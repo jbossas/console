@@ -16,30 +16,34 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.mbui.client.cui.workbench.gin;
+package org.jboss.mbui.client.cui.workbench;
 
-import com.google.gwt.inject.client.GinModules;
-import com.google.gwt.inject.client.Ginjector;
-import com.google.inject.Provider;
-import com.google.web.bindery.event.shared.EventBus;
-import com.gwtplatform.mvp.client.proxy.PlaceManager;
-import org.jboss.mbui.client.cui.workbench.ApplicationPresenter;
-import org.jboss.mbui.client.cui.workbench.editor.PreviewPresenter;
+import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.user.client.ui.Widget;
+import com.google.inject.Inject;
+import com.gwtplatform.mvp.client.ViewImpl;
 
 /**
  * @author Harald Pehl
- * @date 10/25/2012
+ * @date 10/31/2012
  */
-@GinModules(WorkbenchModule.class)
-public interface WorkbenchGinjector extends Ginjector
+public class HeaderView extends ViewImpl implements HeaderPresenter.MyView
 {
-    // ------------------------------------------------------------- singletons
+    public interface Binder extends UiBinder<Widget, HeaderView>
+    {
+    }
 
-    EventBus getEventBus();
-    PlaceManager getPlaceManager();
+    private final Widget widget;
 
-    // ------------------------------------------------------- presenters (a-z)
+    @Inject
+    public HeaderView(final Binder binder)
+    {
+        this.widget = binder.createAndBindUi(this);
+    }
 
-    Provider<ApplicationPresenter> getWorkbenchPresenter();
-    Provider<PreviewPresenter> getPreviewPresenter();
+    @Override
+    public Widget asWidget()
+    {
+        return widget;
+    }
 }

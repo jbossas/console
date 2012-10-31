@@ -20,16 +20,16 @@ package org.jboss.mbui.client.aui.aim;
 
 /**
  * @author Harald Pehl
- * @date 10/25/2012
+ * @date 10/31/2012
  */
-public class DataSelection extends Input
+public class TestableInteractionUnit extends InteractionUnit
 {
-    public DataSelection(final String id)
+    public TestableInteractionUnit(final String id)
     {
         super(id);
     }
 
-    public DataSelection(final String id, final String name)
+    public TestableInteractionUnit(final String id, final String name)
     {
         super(id, name);
     }

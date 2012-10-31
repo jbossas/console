@@ -16,15 +16,13 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.mbui.client.cui;
-
-import com.google.gwt.user.client.ui.HasWidgets;
-import com.google.gwt.user.client.ui.IsWidget;
+package org.jboss.mbui.client.aui.aim;
 
 /**
  * @author Harald Pehl
- * @date 10/26/2012
+ * @date 10/31/2012
  */
-public interface ContainerWidget extends IsWidget, HasWidgets
+public enum TemporalOperator
 {
+    Choice, Sequence, OrderIndependance, Concurrency, Deactivation
 }

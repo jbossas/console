@@ -16,30 +16,44 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.mbui.client.cui.workbench.gin;
+package org.jboss.mbui.client.cui.workbench.reification;
 
-import com.google.gwt.inject.client.GinModules;
-import com.google.gwt.inject.client.Ginjector;
-import com.google.inject.Provider;
-import com.google.web.bindery.event.shared.EventBus;
-import com.gwtplatform.mvp.client.proxy.PlaceManager;
-import org.jboss.mbui.client.cui.workbench.ApplicationPresenter;
-import org.jboss.mbui.client.cui.workbench.editor.PreviewPresenter;
+import com.google.gwt.user.client.ui.HasWidgets;
+import com.google.gwt.user.client.ui.Widget;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * @author Harald Pehl
- * @date 10/25/2012
+ * @date 10/30/2012
  */
-@GinModules(WorkbenchModule.class)
-public interface WorkbenchGinjector extends Ginjector
+public class TestablePanel extends Widget implements HasWidgets
 {
-    // ------------------------------------------------------------- singletons
+    final List<Widget> widgets = new ArrayList<Widget>();
 
-    EventBus getEventBus();
-    PlaceManager getPlaceManager();
+    @Override
+    public void add(final Widget w)
+    {
+        widgets.add(w);
+    }
 
-    // ------------------------------------------------------- presenters (a-z)
+    @Override
+    public void clear()
+    {
+        widgets.clear();
+    }
 
-    Provider<ApplicationPresenter> getWorkbenchPresenter();
-    Provider<PreviewPresenter> getPreviewPresenter();
+    @Override
+    public Iterator<Widget> iterator()
+    {
+        return widgets.iterator();
+    }
+
+    @Override
+    public boolean remove(final Widget w)
+    {
+        return widgets.remove(w);
+    }
 }
