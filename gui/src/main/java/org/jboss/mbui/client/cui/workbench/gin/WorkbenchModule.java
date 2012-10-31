@@ -29,6 +29,8 @@ import org.jboss.mbui.client.cui.workbench.DefaultPlaceManager;
 import org.jboss.mbui.client.cui.workbench.NameTokens;
 import org.jboss.mbui.client.cui.workbench.editor.PreviewPresenter;
 import org.jboss.mbui.client.cui.workbench.editor.PreviewView;
+import org.jboss.mbui.client.cui.workbench.header.HeaderPresenter;
+import org.jboss.mbui.client.cui.workbench.header.HeaderView;
 import org.jboss.mbui.client.cui.workbench.repository.RepositoryPresenter;
 import org.jboss.mbui.client.cui.workbench.repository.RepositoryView;
 
@@ -51,6 +53,7 @@ public class WorkbenchModule extends AbstractPresenterModule
         bindPresenter(ApplicationPresenter.class, ApplicationPresenter.MyView.class, ApplicationView.class,
                 ApplicationPresenter.MyProxy.class);
         bindPresenterWidget(ContextPresenter.class, ContextPresenter.MyView.class, ContextView.class);
+        bindPresenterWidget(HeaderPresenter.class, HeaderPresenter.MyView.class, HeaderView.class);
         bindPresenter(PreviewPresenter.class, PreviewPresenter.MyView.class, PreviewView.class,
                 PreviewPresenter.MyProxy.class);
         bindPresenterWidget(RepositoryPresenter.class, RepositoryPresenter.MyView.class, RepositoryView.class);

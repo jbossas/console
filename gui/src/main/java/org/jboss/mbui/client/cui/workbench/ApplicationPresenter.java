@@ -29,6 +29,7 @@ import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
 import com.gwtplatform.mvp.client.proxy.RevealRootLayoutContentEvent;
 import org.jboss.mbui.client.cui.workbench.context.ContextPresenter;
+import org.jboss.mbui.client.cui.workbench.header.HeaderPresenter;
 import org.jboss.mbui.client.cui.workbench.repository.RepositoryPresenter;
 
 /**
@@ -49,17 +50,21 @@ public class ApplicationPresenter extends Presenter<ApplicationPresenter.MyView,
     @ContentSlot
     public static final Type<RevealContentHandler<?>> TYPE_SetMainContent = new Type<RevealContentHandler<?>>();
 
+    public final static Object Header_Slot = new Object();
     public final static Object Repository_Slot = new Object();
     public final static Object Context_Slot = new Object();
 
+    final HeaderPresenter headerPresenter;
     final RepositoryPresenter repositoryPresenter;
     final ContextPresenter contextPresenter;
 
     @Inject
     public ApplicationPresenter(final EventBus eventBus, final MyView view, final MyProxy proxy,
-            final RepositoryPresenter repositoryPresenter, final ContextPresenter contextPresenter)
+            final HeaderPresenter headerPresenter, final RepositoryPresenter repositoryPresenter,
+            final ContextPresenter contextPresenter)
     {
         super(eventBus, view, proxy);
+        this.headerPresenter = headerPresenter;
         this.repositoryPresenter = repositoryPresenter;
         this.contextPresenter = contextPresenter;
     }
@@ -74,6 +79,7 @@ public class ApplicationPresenter extends Presenter<ApplicationPresenter.MyView,
     protected void onReveal()
     {
         super.onReveal();
+        setInSlot(Header_Slot, headerPresenter);
         setInSlot(Repository_Slot, repositoryPresenter);
         setInSlot(Context_Slot, contextPresenter);
     }
@@ -84,5 +90,6 @@ public class ApplicationPresenter extends Presenter<ApplicationPresenter.MyView,
         super.onHide();
         removeFromSlot(Context_Slot, contextPresenter);
         removeFromSlot(Repository_Slot, repositoryPresenter);
+        removeFromSlot(Header_Slot, headerPresenter);
     }
 }
