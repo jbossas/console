@@ -18,10 +18,15 @@
  */
 package org.jboss.mbui.client.cui.workbench.reification;
 
+import com.google.gwt.user.client.ui.Widget;
+import org.jboss.as.console.client.shared.viewframework.builder.SimpleLayout;
 import org.jboss.mbui.client.aui.aim.Container;
 import org.jboss.mbui.client.aui.aim.InteractionUnit;
 import org.jboss.mbui.client.cui.Context;
 import org.jboss.mbui.client.cui.ReificationStrategy;
+
+import java.util.Collections;
+import java.util.Iterator;
 
 import static org.jboss.mbui.client.aui.aim.TemporalOperator.OrderIndependance;
 
@@ -33,10 +38,19 @@ import static org.jboss.mbui.client.aui.aim.TemporalOperator.OrderIndependance;
  */
 public class OrderIndependanceStrategy implements ReificationStrategy<ContainerWidget>
 {
+    static int counter = 0;
+
     @Override
     public ContainerWidget reify(final InteractionUnit interactionUnit, final Context context)
     {
-        return null;
+        SimpleLayoutAdapter adapter = null;
+        if (interactionUnit != null)
+        {
+            adapter = new SimpleLayoutAdapter();
+            adapter.layout.setTitle(interactionUnit.getName());
+            adapter.layout.setHeadline(interactionUnit.getName());
+        }
+        return adapter;
     }
 
     @Override
@@ -44,5 +58,49 @@ public class OrderIndependanceStrategy implements ReificationStrategy<ContainerW
     {
         return (interactionUnit instanceof Container) && (((Container) interactionUnit)
                 .getTemporalOperator() == OrderIndependance);
+    }
+
+
+    class SimpleLayoutAdapter implements ContainerWidget
+    {
+        final SimpleLayout layout;
+
+        SimpleLayoutAdapter()
+        {
+            this.layout = new SimpleLayout();
+        }
+
+        @Override
+        public void add(final Widget w)
+        {
+            if (w != null)
+            {
+                layout.addContent("child-" + counter, w);
+                counter++;
+            }
+        }
+
+        @Override
+        public void clear()
+        {
+        }
+
+        @Override
+        public Iterator<Widget> iterator()
+        {
+            return Collections.<Widget>emptyList().iterator();
+        }
+
+        @Override
+        public boolean remove(final Widget w)
+        {
+            return false;
+        }
+
+        @Override
+        public Widget asWidget()
+        {
+            return layout.build();
+        }
     }
 }

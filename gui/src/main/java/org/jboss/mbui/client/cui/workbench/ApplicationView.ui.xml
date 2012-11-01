@@ -26,7 +26,7 @@
             <g:SimpleLayoutPanel ui:field="contextPanel" addStyleNames="{style.border-top}"/>
         </g:south>
         <g:center>
-            <g:ScrollPanel ui:field="mainPanel"/>
+            <g:SimpleLayoutPanel ui:field="mainPanel"/>
         </g:center>
     </g:DockLayoutPanel>
 

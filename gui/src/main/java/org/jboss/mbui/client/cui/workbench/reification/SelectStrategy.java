@@ -18,10 +18,19 @@
  */
 package org.jboss.mbui.client.cui.workbench.reification;
 
+import com.google.gwt.cell.client.TextCell;
+import com.google.gwt.user.cellview.client.Column;
+import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.view.client.ListDataProvider;
+import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
+import org.jboss.ballroom.client.widgets.tables.DefaultPager;
 import org.jboss.mbui.client.aui.aim.InteractionUnit;
 import org.jboss.mbui.client.aui.aim.Select;
 import org.jboss.mbui.client.cui.Context;
 import org.jboss.mbui.client.cui.ReificationStrategy;
+
+import java.util.Iterator;
 
 /**
  * @author Harald Pehl
@@ -32,12 +41,79 @@ public class SelectStrategy implements ReificationStrategy<ContainerWidget>
     @Override
     public ContainerWidget reify(final InteractionUnit interactionUnit, final Context context)
     {
-        return null;
+        DefaultCellTableAdapter adapter = null;
+        if (interactionUnit != null)
+        {
+            adapter = new DefaultCellTableAdapter();
+        }
+        return adapter;
     }
 
     @Override
     public boolean appliesTo(final InteractionUnit interactionUnit)
     {
         return interactionUnit instanceof Select;
+    }
+
+
+    class DefaultCellTableAdapter implements ContainerWidget
+    {
+        final VerticalPanel panel;
+        final DefaultCellTable<?> table;
+
+        DefaultCellTableAdapter()
+        {
+            panel = new VerticalPanel();
+            table = new DefaultCellTable<Object>(4);
+            table.addColumn(new Column<String, String>(new TextCell())
+            {
+                @Override
+                public String getValue(String object)
+                {
+                    return object;
+                }
+            }, "Name");
+
+            ListDataProvider<String> dataProvider = new ListDataProvider<String>();
+            dataProvider.addDataDisplay(table);
+
+            DefaultPager pager = new DefaultPager();
+            pager.setDisplay(table);
+
+            panel.setStyleName("fill-layout-width");
+            panel.getElement().setAttribute("style", "padding-top:15px;");
+            panel.add(table);
+            panel.add(pager);
+        }
+
+        @Override
+        public void add(final Widget w)
+        {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void clear()
+        {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Iterator<Widget> iterator()
+        {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public boolean remove(final Widget w)
+        {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Widget asWidget()
+        {
+            return panel;
+        }
     }
 }

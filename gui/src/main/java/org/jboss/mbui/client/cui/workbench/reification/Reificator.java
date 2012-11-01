@@ -37,6 +37,8 @@ public class Reificator
     public Reificator()
     {
         this.strategies = new HashSet<ReificationStrategy<ContainerWidget>>();
+        this.strategies.add(new OrderIndependanceStrategy());
+        this.strategies.add(new SelectStrategy());
     }
 
     public ContainerWidget reify(final InteractionUnit interactionUnit, final Context context)

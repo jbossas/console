@@ -2,6 +2,8 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
              xmlns:g="urn:import:com.google.gwt.user.client.ui">
 
-    <g:SimplePanel/>
+    <g:SimpleLayoutPanel>
+        <g:SimplePanel ui:field="container"/>
+    </g:SimpleLayoutPanel>
 
 </ui:UiBinder>
