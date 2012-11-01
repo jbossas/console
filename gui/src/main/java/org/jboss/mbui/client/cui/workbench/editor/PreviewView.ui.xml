@@ -2,7 +2,14 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
              xmlns:g="urn:import:com.google.gwt.user.client.ui">
 
-    <g:HTMLPanel>
-    </g:HTMLPanel>
+    <ui:style>
+        .preview {
+            background-color: white;
+        }
+    </ui:style>
+
+    <g:SimpleLayoutPanel addStyleNames="{style.preview}">
+        <g:SimplePanel ui:field="container"/>
+    </g:SimpleLayoutPanel>
 
 </ui:UiBinder>

@@ -18,55 +18,14 @@
  */
 package org.jboss.mbui.client.cui.workbench.reification;
 
-import com.google.gwt.user.client.ui.HasWidgets;
-import com.google.gwt.user.client.ui.Widget;
-
-import java.util.Iterator;
+import com.google.gwt.user.client.ui.IsWidget;
+import org.jboss.mbui.client.aui.aim.InteractionUnit;
 
 /**
  * @author Harald Pehl
- * @date 10/30/2012
+ * @date 10/26/2012
  */
-public class TestableContainerWidget implements ContainerWidget
+public interface ReificationWidget extends IsWidget
 {
-    final Widget widget;
-
-    public TestableContainerWidget(final Widget widget)
-    {
-        this.widget = widget;
-    }
-
-    @Override
-    public void add(final Widget w)
-    {
-        if (widget instanceof HasWidgets)
-        {
-            HasWidgets hasWidgets = (HasWidgets) widget;
-            hasWidgets.add(w);
-        }
-    }
-
-    @Override
-    public void clear()
-    {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public Iterator<Widget> iterator()
-    {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public boolean remove(final Widget w)
-    {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public Widget asWidget()
-    {
-        return widget;
-    }
+    public void add(ReificationWidget widget, InteractionUnit interactionUnit, InteractionUnit parent);
 }

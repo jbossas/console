@@ -23,6 +23,7 @@ import org.jboss.mbui.client.aui.aim.Input;
 import org.jboss.mbui.client.aui.aim.InteractionUnit;
 import org.jboss.mbui.client.aui.aim.Select;
 import org.jboss.mbui.client.aui.mapping.Mapping;
+import org.jboss.mbui.client.aui.mapping.ResourceAttribute;
 import org.jboss.mbui.client.aui.mapping.ResourceMapping;
 
 import static org.jboss.mbui.client.aui.aim.TemporalOperator.Choice;
@@ -61,12 +62,14 @@ public class DataSourceSample implements Sample
         // mappings (required)
         Mapping tableMapping = new ResourceMapping("datasourceTable",
                 "/profile=${profile}/subsystem=datasources/data-source=*")
-                .addAttributes("${resource.name}", "jndi-name", "enabled");
+                .addAttribute(new ResourceAttribute("${resource.name}", "Name"))
+                .addAttributes("jndi-name", "enabled");
 
         Mapping basicAttributesMapping = new ResourceMapping("basicAttributes",
                 "/profile=${profile}/subsystem=datasources/data-source=${datasource}")
-                .addAttributes("${resource.name}", "jndi-name", "enabled", "driver-name",
-                        "share-prepared-statements", "prepared-statements-cache-size");
+                .addAttribute(new ResourceAttribute("${resource.name}", "Name"))
+                .addAttributes("jndi-name", "enabled", "driver-name", "share-prepared-statements",
+                        "prepared-statements-cache-size");
 
         Mapping connectionAttributesMapping = new ResourceMapping("connectionAttributes",
                 "/profile=${profile}/subsystem=datasources/data-source=${datasource}")

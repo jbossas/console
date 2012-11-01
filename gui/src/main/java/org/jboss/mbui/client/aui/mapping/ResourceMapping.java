@@ -30,24 +30,33 @@ import java.util.List;
 public class ResourceMapping extends Mapping
 {
     private final String address;
-    private final List<String> attributes;
+    private final List<ResourceAttribute> attributes;
 
     public ResourceMapping(final String id, final String address)
     {
         super(id);
         assert address != null : "Address must not be null";
         this.address = address;
-        this.attributes = new ArrayList<String>();
+        this.attributes = new ArrayList<ResourceAttribute>();
     }
 
-    public Mapping addAttributes(final String... attributes)
+    public ResourceMapping addAttributes(final String... attributes)
     {
         for (String attribute : attributes)
         {
             if (attribute != null && attribute.length() != 0)
             {
-                this.attributes.add(attribute);
+                this.attributes.add(new ResourceAttribute(attribute));
             }
+        }
+        return this;
+    }
+
+    public ResourceMapping addAttribute(final ResourceAttribute attribute)
+    {
+        if (attribute != null)
+        {
+            this.attributes.add(attribute);
         }
         return this;
     }
@@ -57,7 +66,7 @@ public class ResourceMapping extends Mapping
         return address;
     }
 
-    public List<String> getAttributes()
+    public List<ResourceAttribute> getAttributes()
     {
         return attributes;
     }

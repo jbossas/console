@@ -18,29 +18,67 @@
  */
 package org.jboss.mbui.client.cui.workbench.reification;
 
+import com.google.gwt.user.client.ui.TabPanel;
+import com.google.gwt.user.client.ui.Widget;
+import org.jboss.mbui.client.aui.aim.Container;
 import org.jboss.mbui.client.aui.aim.InteractionUnit;
 import org.jboss.mbui.client.cui.Context;
 import org.jboss.mbui.client.cui.ReificationStrategy;
 
-/**
- * @author Harald Pehl
- * @date 10/30/2012
- */
-public class TestableReificationStrategy implements ReificationStrategy<ReificationWidget>
-{
-    public TestableReificationStrategy()
-    {
-    }
+import static org.jboss.mbui.client.aui.aim.TemporalOperator.Choice;
 
+/**
+ * Strategy for a container with temporal operator == Choice.
+ *
+ * @author Harald Pehl
+ * @date 11/01/2012
+ */
+public class ChoiceStrategy implements ReificationStrategy<ReificationWidget>
+{
     @Override
     public ReificationWidget reify(final InteractionUnit interactionUnit, final Context context)
     {
-        return new TestableReificationWidget(interactionUnit);
+        TabPanelAdapter adapter = null;
+        if (interactionUnit != null)
+        {
+            adapter = new TabPanelAdapter();
+        }
+        return adapter;
     }
 
     @Override
     public boolean appliesTo(final InteractionUnit interactionUnit)
     {
-        return true;
+        return (interactionUnit instanceof Container) && (((Container) interactionUnit)
+                .getTemporalOperator() == Choice);
+    }
+
+
+    class TabPanelAdapter  implements ReificationWidget
+    {
+        final TabPanel tabPanel;
+
+        TabPanelAdapter()
+        {
+            tabPanel = new TabPanel();
+            tabPanel.setStyleName("fill-layout-width");
+            tabPanel.getElement().setAttribute("style", "padding-top:15px;");
+        }
+
+        @Override
+        public void add(final ReificationWidget widget, final InteractionUnit interactionUnit,
+                final InteractionUnit parent)
+        {
+            if (widget != null)
+            {
+                tabPanel.add(widget, interactionUnit.getName());
+            }
+        }
+
+        @Override
+        public Widget asWidget()
+        {
+            return tabPanel;
+        }
     }
 }

@@ -29,12 +29,12 @@ import org.jboss.mbui.client.cui.workbench.gin.WorkbenchGinjector;
  */
 public class Workbench implements EntryPoint
 {
-    public final WorkbenchGinjector ginjector = GWT.create(WorkbenchGinjector.class);
+    public static final WorkbenchGinjector GINJECTOR = GWT.create(WorkbenchGinjector.class);
 
     @Override
     public void onModuleLoad()
     {
-        DelayedBindRegistry.bind(ginjector);
-        ginjector.getPlaceManager().revealDefaultPlace();
+        DelayedBindRegistry.bind(GINJECTOR);
+        GINJECTOR.getPlaceManager().revealDefaultPlace();
     }
 }

@@ -34,6 +34,7 @@ import org.jboss.mbui.client.cui.workbench.context.ContextPresenter;
 import org.jboss.mbui.client.cui.workbench.context.ContextView;
 import org.jboss.mbui.client.cui.workbench.editor.PreviewPresenter;
 import org.jboss.mbui.client.cui.workbench.editor.PreviewView;
+import org.jboss.mbui.client.cui.workbench.reification.Reificator;
 import org.jboss.mbui.client.cui.workbench.repository.RepositoryPresenter;
 import org.jboss.mbui.client.cui.workbench.repository.RepositoryView;
 import org.jboss.mbui.client.cui.workbench.repository.SampleRepository;
@@ -64,6 +65,7 @@ public class WorkbenchModule extends AbstractPresenterModule
         bindPresenterWidget(RepositoryPresenter.class, RepositoryPresenter.MyView.class, RepositoryView.class);
 
         // Application
+        bind(Reificator.class).in(Singleton.class);
         bind(SampleRepository.class).in(Singleton.class);
     }
 }

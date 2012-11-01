@@ -27,5 +27,9 @@
     <set-configuration-property name="gin.ginjector"
                                 value="org.jboss.mbui.client.cui.workbench.gin.WorkbenchGinjector"/>
 
+    <replace-with class="org.jboss.mbui.client.cui.workbench.WorkbenchFramework">
+        <when-type-is class="org.jboss.ballroom.client.spi.Framework"/>
+    </replace-with>
+
     <entry-point class="org.jboss.mbui.client.cui.workbench.Workbench"/>
 </module>

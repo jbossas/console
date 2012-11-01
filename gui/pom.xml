@@ -111,6 +111,11 @@
         </dependency>
 
         <dependency>
+            <groupId>com.gwtplatform</groupId>
+            <artifactId>gwtp-processors</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>com.google.inject</groupId>
             <artifactId>guice</artifactId>
         </dependency>
@@ -179,7 +184,6 @@
                             </sourceRoot>
                         </configuration>
                     </execution>
-
                 </executions>
             </plugin>
 
@@ -189,7 +193,7 @@
                 <version>2.0.7.1-redhat</version>
                 <executions>
                     <execution>
-                        <id>process</id>
+                        <id>process-spi</id>
                         <goals>
                             <goal>process</goal>
                         </goals>
@@ -203,7 +207,28 @@
                             <sourceClassifier>export</sourceClassifier>
                         </configuration>
                     </execution>
+                    <execution>
+                        <id>process-gwtp</id>
+                        <goals>
+                            <goal>process</goal>
+                        </goals>
+                        <phase>generate-sources</phase>
+                        <configuration>
+                            <processors>
+                                <processor>com.gwtplatform.dispatch.annotation.processor.GenEventProcessor</processor>
+                            </processors>
+                            <appendSourceArtifacts>true</appendSourceArtifacts>
+                            <sourceClassifier>export</sourceClassifier>
+                        </configuration>
+                    </execution>
                 </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.gwtplatform</groupId>
+                        <artifactId>gwtp-processors</artifactId>
+                        <version>0.7</version>
+                    </dependency>
+                </dependencies>
             </plugin>
 
             <plugin>

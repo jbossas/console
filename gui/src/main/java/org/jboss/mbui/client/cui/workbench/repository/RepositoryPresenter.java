@@ -22,9 +22,15 @@ import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.PresenterWidget;
 import com.gwtplatform.mvp.client.View;
+import org.jboss.mbui.client.cui.workbench.reification.ReifyEvent;
 
 /**
  * Lists the available interaction units and let the user create new interaction units.
+ *
+ * Events fired:
+ * <ul>
+ *     <li>Reify</li>
+ * </ul>
  *
  * @author Harald Pehl
  * @date 10/30/2012
@@ -33,12 +39,25 @@ public class RepositoryPresenter extends PresenterWidget<RepositoryPresenter.MyV
 {
     public interface MyView extends View
     {
-
+        void setPresenter(RepositoryPresenter presenter);
     }
+
 
     @Inject
     public RepositoryPresenter(final EventBus eventBus, final MyView view)
     {
         super(eventBus, view);
+    }
+
+    @Override
+    protected void onBind()
+    {
+        super.onBind();
+        getView().setPresenter(this);
+    }
+
+    public void reify(final Sample sample)
+    {
+        ReifyEvent.fire(this, new ReifyEvent(sample));
     }
 }

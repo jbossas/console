@@ -16,27 +16,19 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.mbui.client.aui.aim;
+package org.jboss.mbui.client.cui.workbench.reification;
+
+import com.gwtplatform.dispatch.annotation.GenEvent;
+import com.gwtplatform.dispatch.annotation.Order;
+import org.jboss.mbui.client.cui.workbench.repository.Sample;
 
 /**
  * @author Harald Pehl
- * @date 10/25/2012
+ * @date 10/31/2012
  */
-public class Output extends InteractionUnit
+@GenEvent
+public class Reify
 {
-    public Output(final String id)
-    {
-        super(id);
-    }
-
-    public Output(final String id, final String name)
-    {
-        super(id, name);
-    }
-
-    @Override
-    public String toString()
-    {
-        return "Output{" + getId() + '}';
-    }
+    @Order(1)
+    Sample sample;
 }

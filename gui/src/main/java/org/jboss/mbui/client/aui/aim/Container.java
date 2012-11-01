@@ -43,6 +43,12 @@ public class Container extends InteractionUnit
         this.children = new LinkedList<InteractionUnit>();
     }
 
+    @Override
+    public String toString()
+    {
+        return "Container{" + getId() + ", " + temporalOperator + '}';
+    }
+
 
     // ------------------------------------------------------ parent / child relationship
 
@@ -65,5 +71,13 @@ public class Container extends InteractionUnit
     public List<InteractionUnit> getChildren()
     {
         return children;
+    }
+
+
+    // ------------------------------------------------------ properties
+
+    public TemporalOperator getTemporalOperator()
+    {
+        return temporalOperator;
     }
 }

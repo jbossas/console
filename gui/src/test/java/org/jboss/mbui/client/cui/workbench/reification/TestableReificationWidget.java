@@ -18,42 +18,36 @@
  */
 package org.jboss.mbui.client.cui.workbench.reification;
 
-import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.Widget;
+import org.jboss.mbui.client.aui.aim.InteractionUnit;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 /**
  * @author Harald Pehl
  * @date 10/30/2012
  */
-public class TestablePanel extends Widget implements HasWidgets
+public class TestableReificationWidget implements ReificationWidget
 {
-    final List<Widget> widgets = new ArrayList<Widget>();
+    final InteractionUnit interactionUnit;
+    final List<ReificationWidget> children;
 
-    @Override
-    public void add(final Widget w)
+    public TestableReificationWidget(final InteractionUnit interactionUnit)
     {
-        widgets.add(w);
+        this.interactionUnit = interactionUnit;
+        this.children = new ArrayList<ReificationWidget>();
     }
 
     @Override
-    public void clear()
+    public void add(final ReificationWidget widget, final InteractionUnit interactionUnit, final InteractionUnit parent)
     {
-        widgets.clear();
+        children.add(widget);
     }
 
     @Override
-    public Iterator<Widget> iterator()
+    public Widget asWidget()
     {
-        return widgets.iterator();
-    }
-
-    @Override
-    public boolean remove(final Widget w)
-    {
-        return widgets.remove(w);
+        return null;
     }
 }

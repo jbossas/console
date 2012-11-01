@@ -35,6 +35,7 @@ public class HeaderView extends ViewImpl implements HeaderPresenter.MyView
 
     private final Widget widget;
 
+
     @Inject
     public HeaderView(final Binder binder)
     {

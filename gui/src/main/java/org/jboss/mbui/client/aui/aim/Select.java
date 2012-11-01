@@ -33,4 +33,10 @@ public class Select extends InteractionUnit
     {
         super(id, name);
     }
+
+    @Override
+    public String toString()
+    {
+        return "Select{" + getId() + '}';
+    }
 }
