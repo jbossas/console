@@ -22,7 +22,6 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
-import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.ViewImpl;
@@ -43,10 +42,10 @@ public class ApplicationView extends ViewImpl implements ApplicationPresenter.My
 
     private final Widget widget;
     @UiField ScrollPanel mainPanel;
-    @UiField SimplePanel headerPanel;
+    @UiField SimpleLayoutPanel headerPanel;
     @UiField SimpleLayoutPanel repositoryPanel;
-    @UiField SimplePanel contextPanel;
-    @UiField SimplePanel footerPanel;
+    @UiField SimpleLayoutPanel contextPanel;
+    @UiField SimpleLayoutPanel footerPanel;
 
     @Inject
     public ApplicationView(final Binder binder)

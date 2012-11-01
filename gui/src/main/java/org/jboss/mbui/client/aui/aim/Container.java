@@ -66,4 +66,12 @@ public class Container extends InteractionUnit
     {
         return children;
     }
+
+
+    // ------------------------------------------------------ properties
+
+    public TemporalOperator getTemporalOperator()
+    {
+        return temporalOperator;
+    }
 }

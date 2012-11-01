@@ -6,8 +6,6 @@
     <ui:style>
         .repository {
             background-color: white;
-            border: 1px solid rgb(167, 171, 180);
-            padding: 10px;
         }
         .list {
             margin: 10px;

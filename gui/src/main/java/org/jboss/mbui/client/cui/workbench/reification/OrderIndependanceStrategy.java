@@ -16,35 +16,33 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.mbui.client.cui.workbench;
+package org.jboss.mbui.client.cui.workbench.reification;
 
-import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.user.client.ui.Widget;
-import com.google.inject.Inject;
-import com.gwtplatform.mvp.client.ViewImpl;
+import org.jboss.mbui.client.aui.aim.Container;
+import org.jboss.mbui.client.aui.aim.InteractionUnit;
+import org.jboss.mbui.client.cui.Context;
+import org.jboss.mbui.client.cui.ReificationStrategy;
+
+import static org.jboss.mbui.client.aui.aim.TemporalOperator.OrderIndependance;
 
 /**
+ * Strategy for a container with temporal operator == OrderIndependance.
+ *
  * @author Harald Pehl
- * @date 10/31/2012
+ * @date 11/01/2012
  */
-public class HeaderView extends ViewImpl implements HeaderPresenter.MyView
+public class OrderIndependanceStrategy implements ReificationStrategy<ContainerWidget>
 {
-    public interface Binder extends UiBinder<Widget, HeaderView>
+    @Override
+    public ContainerWidget reify(final InteractionUnit interactionUnit, final Context context)
     {
-    }
-
-    private final Widget widget;
-
-
-    @Inject
-    public HeaderView(final Binder binder)
-    {
-        this.widget = binder.createAndBindUi(this);
+        return null;
     }
 
     @Override
-    public Widget asWidget()
+    public boolean appliesTo(final InteractionUnit interactionUnit)
     {
-        return widget;
+        return (interactionUnit instanceof Container) && (((Container) interactionUnit)
+                .getTemporalOperator() == OrderIndependance);
     }
 }
