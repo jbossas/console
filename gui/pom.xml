@@ -111,6 +111,11 @@
         </dependency>
 
         <dependency>
+            <groupId>com.gwtplatform</groupId>
+            <artifactId>gwtp-processors</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>com.google.inject</groupId>
             <artifactId>guice</artifactId>
         </dependency>
@@ -198,6 +203,7 @@
                             <outputDiagnostics>false</outputDiagnostics>
                             <processors>
                                 <processor>org.jboss.as.console.spi.SPIProcessor</processor>
+                                <processor>com.gwtplatform.dispatch.annotation.processor.GenEventProcessor</processor>
                             </processors>
                             <appendSourceArtifacts>true</appendSourceArtifacts>
                             <sourceClassifier>export</sourceClassifier>

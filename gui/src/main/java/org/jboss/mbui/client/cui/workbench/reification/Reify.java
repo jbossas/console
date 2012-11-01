@@ -16,42 +16,19 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.mbui.client.cui.workbench.editor;
+package org.jboss.mbui.client.cui.workbench.reification;
 
-import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.user.client.ui.SimplePanel;
-import com.google.gwt.user.client.ui.Widget;
-import com.google.inject.Inject;
-import com.gwtplatform.mvp.client.ViewImpl;
-import org.jboss.mbui.client.cui.workbench.reification.ContainerWidget;
+import com.gwtplatform.dispatch.annotation.GenEvent;
+import com.gwtplatform.dispatch.annotation.Order;
+import org.jboss.mbui.client.cui.workbench.repository.Sample;
 
 /**
  * @author Harald Pehl
- * @date 10/30/2012
+ * @date 10/31/2012
  */
-public class PreviewView extends ViewImpl implements PreviewPresenter.MyView
+@GenEvent
+public class Reify
 {
-    public interface Binder extends UiBinder<SimplePanel, PreviewView>
-    {
-    }
-
-    private final SimplePanel panel;
-
-    @Inject
-    public PreviewView(final Binder binder)
-    {
-        this.panel = binder.createAndBindUi(this);
-    }
-
-    @Override
-    public Widget asWidget()
-    {
-        return panel;
-    }
-
-    @Override
-    public void show(final ContainerWidget interactionUnit)
-    {
-        panel.setWidget(interactionUnit);
-    }
+    @Order(1)
+    Sample sample;
 }

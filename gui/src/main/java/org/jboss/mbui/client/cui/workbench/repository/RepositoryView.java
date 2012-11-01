@@ -19,18 +19,20 @@
 package org.jboss.mbui.client.cui.workbench.repository;
 
 import com.google.gwt.cell.client.AbstractCell;
+import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.cellview.client.CellList;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ProvidesKey;
 import com.google.gwt.view.client.SelectionChangeEvent;
-import com.google.gwt.view.client.SelectionModel;
 import com.google.gwt.view.client.SingleSelectionModel;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.ViewImpl;
+import org.jboss.mbui.client.aui.aim.InteractionUnit;
 
 import static com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy.BOUND_TO_SELECTION;
 
@@ -63,6 +65,9 @@ public class RepositoryView extends ViewImpl implements RepositoryPresenter.MyVi
     }
 
     private final Widget widget;
+    private final SingleSelectionModel<Sample> selectionModel;
+    private RepositoryPresenter presenter;
+
     @UiField Button reify;
     @UiField(provided = true) CellList<Sample> list;
 
@@ -74,8 +79,8 @@ public class RepositoryView extends ViewImpl implements RepositoryPresenter.MyVi
         this.list.setRowCount(sampleRepository.getSamples().size());
         this.list.setRowData(sampleRepository.getSamples());
 
-        SelectionModel<Sample> selectionModel = new SingleSelectionModel<Sample>(keyProvider);
-        selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler()
+        this.selectionModel = new SingleSelectionModel<Sample>(keyProvider);
+        this.selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler()
         {
             @Override
             public void onSelectionChange(final SelectionChangeEvent event)
@@ -88,12 +93,23 @@ public class RepositoryView extends ViewImpl implements RepositoryPresenter.MyVi
 
         this.widget = binder.createAndBindUi(this);
         this.reify.setEnabled(false);
-
     }
 
     @Override
     public Widget asWidget()
     {
         return widget;
+    }
+
+    @UiHandler("reify")
+    public void onReify(ClickEvent event)
+    {
+        presenter.reify(selectionModel.getSelectedObject());
+    }
+
+    @Override
+    public void setPresenter(final RepositoryPresenter presenter)
+    {
+        this.presenter = presenter;
     }
 }

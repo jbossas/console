@@ -26,18 +26,30 @@ import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyStandard;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
+import org.jboss.mbui.client.aui.aim.InteractionUnit;
+import org.jboss.mbui.client.cui.Context;
 import org.jboss.mbui.client.cui.workbench.ApplicationPresenter;
+import org.jboss.mbui.client.cui.workbench.reification.ContainerWidget;
+import org.jboss.mbui.client.cui.workbench.reification.Reificator;
+import org.jboss.mbui.client.cui.workbench.reification.ReifyEvent;
+import org.jboss.mbui.client.cui.workbench.repository.Sample;
 
 import static org.jboss.mbui.client.cui.workbench.NameTokens.preview;
 
 /**
+ * Listens for
+ * <ul>
+ *     <li>Reify</li>
+ * </ul>
+ *
  * @author Harald Pehl
  * @date 10/30/2012
  */
-public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, PreviewPresenter.MyProxy>
+public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, PreviewPresenter.MyProxy> implements ReifyEvent.ReifyHandler
 {
     public interface MyView extends View
     {
+        void show(ContainerWidget interactionUnit);
     }
 
     @ProxyStandard
@@ -46,15 +58,37 @@ public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, Preview
     {
     }
 
+    private final Reificator reificator;
+
     @Inject
-    public PreviewPresenter(final EventBus eventBus, final MyView view, final MyProxy proxy)
+    public PreviewPresenter(final EventBus eventBus, final MyView view, final MyProxy proxy, final Reificator reificator)
     {
         super(eventBus, view, proxy);
+        this.reificator = reificator;
+        getEventBus().addHandler(ReifyEvent.getType(), this);
     }
 
     @Override
     protected void revealInParent()
     {
         RevealContentEvent.fire(this, ApplicationPresenter.TYPE_SetMainContent, this);
+    }
+
+    @Override
+    public void onReify(final ReifyEvent event)
+    {
+        Sample sample = event.getSample();
+        if (sample != null)
+        {
+            InteractionUnit interactionUnit = sample.build();
+            if (interactionUnit != null)
+            {
+                ContainerWidget containerWidget = reificator.reify(interactionUnit, new Context());
+                if (containerWidget != null)
+                {
+                    getView().show(containerWidget);
+                }
+            }
+        }
     }
 }
