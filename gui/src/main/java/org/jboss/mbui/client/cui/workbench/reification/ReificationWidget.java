@@ -18,13 +18,14 @@
  */
 package org.jboss.mbui.client.cui.workbench.reification;
 
-import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.IsWidget;
+import org.jboss.mbui.client.aui.aim.InteractionUnit;
 
 /**
  * @author Harald Pehl
  * @date 10/26/2012
  */
-public interface ContainerWidget extends IsWidget, HasWidgets
+public interface ReificationWidget extends IsWidget
 {
+    public void add(ReificationWidget widget, InteractionUnit interactionUnit, InteractionUnit parent);
 }

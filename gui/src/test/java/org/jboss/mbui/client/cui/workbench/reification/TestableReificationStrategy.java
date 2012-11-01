@@ -18,8 +18,6 @@
  */
 package org.jboss.mbui.client.cui.workbench.reification;
 
-import com.google.gwt.user.client.ui.Widget;
-import org.jboss.mbui.client.aui.aim.Container;
 import org.jboss.mbui.client.aui.aim.InteractionUnit;
 import org.jboss.mbui.client.cui.Context;
 import org.jboss.mbui.client.cui.ReificationStrategy;
@@ -28,19 +26,16 @@ import org.jboss.mbui.client.cui.ReificationStrategy;
  * @author Harald Pehl
  * @date 10/30/2012
  */
-public class TestableReificationStrategy implements ReificationStrategy<ContainerWidget>
+public class TestableReificationStrategy implements ReificationStrategy<ReificationWidget>
 {
     public TestableReificationStrategy()
     {
     }
 
     @Override
-    public ContainerWidget reify(final InteractionUnit interactionUnit, final Context context)
+    public ReificationWidget reify(final InteractionUnit interactionUnit, final Context context)
     {
-        Widget w = interactionUnit instanceof Container ? new TestablePanel() : new Widget();
-        // layout data is the only property which does not require the DOM to be present
-        w.setLayoutData(interactionUnit.getId());
-        return new TestableContainerWidget(w);
+        return new TestableReificationWidget(interactionUnit);
     }
 
     @Override

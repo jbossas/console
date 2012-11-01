@@ -18,6 +18,8 @@
  */
 package org.jboss.mbui.client.cui.workbench.reification;
 
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.Widget;
 import org.jboss.mbui.client.aui.aim.Input;
 import org.jboss.mbui.client.aui.aim.InteractionUnit;
 import org.jboss.mbui.client.cui.Context;
@@ -27,17 +29,39 @@ import org.jboss.mbui.client.cui.ReificationStrategy;
  * @author Harald Pehl
  * @date 11/01/2012
  */
-public class InputStrategy implements ReificationStrategy<ContainerWidget>
+public class InputStrategy implements ReificationStrategy<ReificationWidget>
 {
     @Override
-    public ContainerWidget reify(final InteractionUnit interactionUnit, final Context context)
+    public ReificationWidget reify(final InteractionUnit interactionUnit, final Context context)
     {
-        return null;
+        FormAdapter adapter = null;
+        if (interactionUnit != null)
+        {
+            adapter = new FormAdapter();
+        }
+        return adapter;
     }
 
     @Override
     public boolean appliesTo(final InteractionUnit interactionUnit)
     {
         return interactionUnit instanceof Input;
+    }
+
+
+    class FormAdapter implements ReificationWidget
+    {
+        @Override
+        public void add(final ReificationWidget widget, final InteractionUnit interactionUnit,
+                final InteractionUnit parent)
+        {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Widget asWidget()
+        {
+            return new Label("Not yet implemented");
+        }
     }
 }

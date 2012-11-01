@@ -32,18 +32,20 @@ import java.util.Set;
  */
 public class Reificator
 {
-    final Set<ReificationStrategy<ContainerWidget>> strategies;
+    final Set<ReificationStrategy<ReificationWidget>> strategies;
 
     public Reificator()
     {
-        this.strategies = new HashSet<ReificationStrategy<ContainerWidget>>();
+        this.strategies = new HashSet<ReificationStrategy<ReificationWidget>>();
         this.strategies.add(new OrderIndependanceStrategy());
+        this.strategies.add(new ChoiceStrategy());
         this.strategies.add(new SelectStrategy());
+        this.strategies.add(new InputStrategy());
     }
 
-    public ContainerWidget reify(final InteractionUnit interactionUnit, final Context context)
+    public ReificationWidget reify(final InteractionUnit interactionUnit, final Context context)
     {
-        ContainerWidget result = null;
+        ReificationWidget result = null;
         if (interactionUnit != null)
         {
             result = startReification(interactionUnit, context);
@@ -51,36 +53,36 @@ public class Reificator
         return result;
     }
 
-    private ContainerWidget startReification(final InteractionUnit interactionUnit, final Context context)
+    private ReificationWidget startReification(final InteractionUnit interactionUnit, final Context context)
     {
-        ContainerWidget containerWidget = null;
-        ReificationStrategy<ContainerWidget> strategy = resolve(interactionUnit);
+        ReificationWidget reificationWidget = null;
+        ReificationStrategy<ReificationWidget> strategy = resolve(interactionUnit);
         if (strategy != null)
         {
-            containerWidget = strategy.reify(interactionUnit, context);
-            if (containerWidget != null)
+            reificationWidget = strategy.reify(interactionUnit, context);
+            if (reificationWidget != null)
             {
                 if (interactionUnit instanceof Container)
                 {
                     Container container = (Container) interactionUnit;
                     for (InteractionUnit child : container.getChildren())
                     {
-                        ContainerWidget childContainerWidget = startReification(child, context);
-                        if (childContainerWidget != null)
+                        ReificationWidget childReificationWidget = startReification(child, context);
+                        if (childReificationWidget != null)
                         {
-                            containerWidget.add(childContainerWidget.asWidget());
+                            reificationWidget.add(childReificationWidget, child, container);
                         }
                     }
                 }
             }
         }
-        return containerWidget;
+        return reificationWidget;
     }
 
-    private ReificationStrategy<ContainerWidget> resolve(InteractionUnit interactionUnit)
+    private ReificationStrategy<ReificationWidget> resolve(InteractionUnit interactionUnit)
     {
-        ReificationStrategy<ContainerWidget> match = null;
-        for (ReificationStrategy<ContainerWidget> strategy : strategies)
+        ReificationStrategy<ReificationWidget> match = null;
+        for (ReificationStrategy<ReificationWidget> strategy : strategies)
         {
             if(strategy.appliesTo(interactionUnit))
             {

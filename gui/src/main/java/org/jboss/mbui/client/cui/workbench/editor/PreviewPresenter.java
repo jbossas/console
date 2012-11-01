@@ -29,7 +29,7 @@ import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import org.jboss.mbui.client.aui.aim.InteractionUnit;
 import org.jboss.mbui.client.cui.Context;
 import org.jboss.mbui.client.cui.workbench.ApplicationPresenter;
-import org.jboss.mbui.client.cui.workbench.reification.ContainerWidget;
+import org.jboss.mbui.client.cui.workbench.reification.ReificationWidget;
 import org.jboss.mbui.client.cui.workbench.reification.Reificator;
 import org.jboss.mbui.client.cui.workbench.reification.ReifyEvent;
 import org.jboss.mbui.client.cui.workbench.repository.Sample;
@@ -49,7 +49,7 @@ public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, Preview
 {
     public interface MyView extends View
     {
-        void show(ContainerWidget interactionUnit);
+        void show(ReificationWidget interactionUnit);
     }
 
     @ProxyStandard
@@ -83,10 +83,10 @@ public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, Preview
             InteractionUnit interactionUnit = sample.build();
             if (interactionUnit != null)
             {
-                ContainerWidget containerWidget = reificator.reify(interactionUnit, new Context());
-                if (containerWidget != null)
+                ReificationWidget reificationWidget = reificator.reify(interactionUnit, new Context());
+                if (reificationWidget != null)
                 {
-                    getView().show(containerWidget);
+                    getView().show(reificationWidget);
                 }
             }
         }

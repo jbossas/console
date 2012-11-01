@@ -30,16 +30,14 @@ import org.jboss.mbui.client.aui.aim.Select;
 import org.jboss.mbui.client.cui.Context;
 import org.jboss.mbui.client.cui.ReificationStrategy;
 
-import java.util.Iterator;
-
 /**
  * @author Harald Pehl
  * @date 11/01/2012
  */
-public class SelectStrategy implements ReificationStrategy<ContainerWidget>
+public class SelectStrategy implements ReificationStrategy<ReificationWidget>
 {
     @Override
-    public ContainerWidget reify(final InteractionUnit interactionUnit, final Context context)
+    public ReificationWidget reify(final InteractionUnit interactionUnit, final Context context)
     {
         DefaultCellTableAdapter adapter = null;
         if (interactionUnit != null)
@@ -56,7 +54,7 @@ public class SelectStrategy implements ReificationStrategy<ContainerWidget>
     }
 
 
-    class DefaultCellTableAdapter implements ContainerWidget
+    class DefaultCellTableAdapter implements ReificationWidget
     {
         final VerticalPanel panel;
         final DefaultCellTable<?> table;
@@ -87,25 +85,8 @@ public class SelectStrategy implements ReificationStrategy<ContainerWidget>
         }
 
         @Override
-        public void add(final Widget w)
-        {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public void clear()
-        {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public Iterator<Widget> iterator()
-        {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public boolean remove(final Widget w)
+        public void add(final ReificationWidget widget, final InteractionUnit interactionUnit,
+                final InteractionUnit parent)
         {
             throw new UnsupportedOperationException();
         }

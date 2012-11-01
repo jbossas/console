@@ -25,9 +25,6 @@ import org.jboss.mbui.client.aui.aim.InteractionUnit;
 import org.jboss.mbui.client.cui.Context;
 import org.jboss.mbui.client.cui.ReificationStrategy;
 
-import java.util.Collections;
-import java.util.Iterator;
-
 import static org.jboss.mbui.client.aui.aim.TemporalOperator.OrderIndependance;
 
 /**
@@ -36,12 +33,10 @@ import static org.jboss.mbui.client.aui.aim.TemporalOperator.OrderIndependance;
  * @author Harald Pehl
  * @date 11/01/2012
  */
-public class OrderIndependanceStrategy implements ReificationStrategy<ContainerWidget>
+public class OrderIndependanceStrategy implements ReificationStrategy<ReificationWidget>
 {
-    static int counter = 0;
-
     @Override
-    public ContainerWidget reify(final InteractionUnit interactionUnit, final Context context)
+    public ReificationWidget reify(final InteractionUnit interactionUnit, final Context context)
     {
         SimpleLayoutAdapter adapter = null;
         if (interactionUnit != null)
@@ -61,7 +56,7 @@ public class OrderIndependanceStrategy implements ReificationStrategy<ContainerW
     }
 
 
-    class SimpleLayoutAdapter implements ContainerWidget
+    class SimpleLayoutAdapter implements ReificationWidget
     {
         final SimpleLayout layout;
 
@@ -71,30 +66,13 @@ public class OrderIndependanceStrategy implements ReificationStrategy<ContainerW
         }
 
         @Override
-        public void add(final Widget w)
+        public void add(final ReificationWidget widget, final InteractionUnit interactionUnit,
+                final InteractionUnit parent)
         {
-            if (w != null)
+            if (widget != null)
             {
-                layout.addContent("child-" + counter, w);
-                counter++;
+                layout.addContent(interactionUnit.getId(), widget.asWidget());
             }
-        }
-
-        @Override
-        public void clear()
-        {
-        }
-
-        @Override
-        public Iterator<Widget> iterator()
-        {
-            return Collections.<Widget>emptyList().iterator();
-        }
-
-        @Override
-        public boolean remove(final Widget w)
-        {
-            return false;
         }
 
         @Override

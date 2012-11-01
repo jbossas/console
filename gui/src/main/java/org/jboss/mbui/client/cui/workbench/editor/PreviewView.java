@@ -24,7 +24,7 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.ViewImpl;
-import org.jboss.mbui.client.cui.workbench.reification.ContainerWidget;
+import org.jboss.mbui.client.cui.workbench.reification.ReificationWidget;
 
 /**
  * @author Harald Pehl
@@ -52,7 +52,7 @@ public class PreviewView extends ViewImpl implements PreviewPresenter.MyView
     }
 
     @Override
-    public void show(final ContainerWidget interactionUnit)
+    public void show(final ReificationWidget interactionUnit)
     {
         container.setWidget(interactionUnit);
     }

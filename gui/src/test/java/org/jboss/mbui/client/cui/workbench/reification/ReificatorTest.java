@@ -18,22 +18,17 @@
  */
 package org.jboss.mbui.client.cui.workbench.reification;
 
-import com.google.gwt.junit.GWTMockUtilities;
-import com.google.gwt.user.client.ui.HasWidgets;
-import com.google.gwt.user.client.ui.Widget;
 import org.jboss.mbui.client.aui.aim.Container;
 import org.jboss.mbui.client.aui.aim.Input;
 import org.jboss.mbui.client.aui.aim.Select;
 import org.jboss.mbui.client.cui.Context;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.Iterator;
-
 import static org.jboss.mbui.client.aui.aim.TemporalOperator.Choice;
 import static org.jboss.mbui.client.aui.aim.TemporalOperator.OrderIndependance;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author Harald Pehl
@@ -47,8 +42,8 @@ public class ReificatorTest
     @Before
     public void setUp() throws Exception
     {
-        GWTMockUtilities.disarm();
         cut = new Reificator();
+        cut.strategies.clear();
         cut.strategies.add(new TestableReificationStrategy());
 
         iuFixture = new Container("root", OrderIndependance);
@@ -62,41 +57,26 @@ public class ReificatorTest
         forms.add(extendedAttributes);
     }
 
-    @After
-    public void tearDown()
-    {
-        GWTMockUtilities.restore();
-    }
-
     @Test
     public void testReify() throws Exception
     {
-        ContainerWidget cw = cut.reify(iuFixture, new Context());
-        assertNotNull(cw);
+        ReificationWidget rw = cut.reify(iuFixture, new Context());
+        assertTrue(rw instanceof TestableReificationWidget);
+        TestableReificationWidget trw = (TestableReificationWidget) rw;
 
         // root
-        assertEquals("root", cw.asWidget().getLayoutData());
-        assertTrue(cw.asWidget() instanceof HasWidgets);
-        HasWidgets container = (HasWidgets) cw.asWidget();
-        Iterator<Widget> iterator = container.iterator();
+        assertEquals("root", trw.interactionUnit.getId());
+        assertEquals(2, trw.children.size());
 
         // table
-        Widget widget = iterator.next();
-        assertEquals("table", widget.getLayoutData());
+        rw = trw.children.get(0);
+        assertTrue(rw instanceof TestableReificationWidget);
+        TestableReificationWidget child = (TestableReificationWidget) rw;
 
         // forms
-        widget = iterator.next();
-        assertEquals("forms", widget.getLayoutData());
-        assertTrue(widget instanceof HasWidgets);
-        container = (HasWidgets) widget;
-        iterator = container.iterator();
 
         // basicAttributes
-        widget = iterator.next();
-        assertEquals("basicAttributes", widget.getLayoutData());
 
         // extendedAttributes
-        widget = iterator.next();
-        assertEquals("extendedAttributes", widget.getLayoutData());
     }
 }

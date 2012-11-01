@@ -18,55 +18,36 @@
  */
 package org.jboss.mbui.client.cui.workbench.reification;
 
-import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.Widget;
+import org.jboss.mbui.client.aui.aim.InteractionUnit;
 
-import java.util.Iterator;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Harald Pehl
  * @date 10/30/2012
  */
-public class TestableContainerWidget implements ContainerWidget
+public class TestableReificationWidget implements ReificationWidget
 {
-    final Widget widget;
+    final InteractionUnit interactionUnit;
+    final List<ReificationWidget> children;
 
-    public TestableContainerWidget(final Widget widget)
+    public TestableReificationWidget(final InteractionUnit interactionUnit)
     {
-        this.widget = widget;
+        this.interactionUnit = interactionUnit;
+        this.children = new ArrayList<ReificationWidget>();
     }
 
     @Override
-    public void add(final Widget w)
+    public void add(final ReificationWidget widget, final InteractionUnit interactionUnit, final InteractionUnit parent)
     {
-        if (widget instanceof HasWidgets)
-        {
-            HasWidgets hasWidgets = (HasWidgets) widget;
-            hasWidgets.add(w);
-        }
-    }
-
-    @Override
-    public void clear()
-    {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public Iterator<Widget> iterator()
-    {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public boolean remove(final Widget w)
-    {
-        throw new UnsupportedOperationException();
+        children.add(new TestableReificationWidget(interactionUnit));
     }
 
     @Override
     public Widget asWidget()
     {
-        return widget;
+        return null;
     }
 }

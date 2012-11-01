@@ -18,6 +18,8 @@
  */
 package org.jboss.mbui.client.cui.workbench.reification;
 
+import com.google.gwt.user.client.ui.TabPanel;
+import com.google.gwt.user.client.ui.Widget;
 import org.jboss.mbui.client.aui.aim.Container;
 import org.jboss.mbui.client.aui.aim.InteractionUnit;
 import org.jboss.mbui.client.cui.Context;
@@ -31,12 +33,17 @@ import static org.jboss.mbui.client.aui.aim.TemporalOperator.Choice;
  * @author Harald Pehl
  * @date 11/01/2012
  */
-public class ChoiceStrategy implements ReificationStrategy<ContainerWidget>
+public class ChoiceStrategy implements ReificationStrategy<ReificationWidget>
 {
     @Override
-    public ContainerWidget reify(final InteractionUnit interactionUnit, final Context context)
+    public ReificationWidget reify(final InteractionUnit interactionUnit, final Context context)
     {
-        return null;
+        TabPanelAdapter adapter = null;
+        if (interactionUnit != null)
+        {
+            adapter = new TabPanelAdapter();
+        }
+        return adapter;
     }
 
     @Override
@@ -44,5 +51,34 @@ public class ChoiceStrategy implements ReificationStrategy<ContainerWidget>
     {
         return (interactionUnit instanceof Container) && (((Container) interactionUnit)
                 .getTemporalOperator() == Choice);
+    }
+
+
+    class TabPanelAdapter  implements ReificationWidget
+    {
+        final TabPanel tabPanel;
+
+        TabPanelAdapter()
+        {
+            tabPanel = new TabPanel();
+            tabPanel.setStyleName("fill-layout-width");
+            tabPanel.getElement().setAttribute("style", "padding-top:15px;");
+        }
+
+        @Override
+        public void add(final ReificationWidget widget, final InteractionUnit interactionUnit,
+                final InteractionUnit parent)
+        {
+            if (widget != null)
+            {
+                tabPanel.add(widget, interactionUnit.getName());
+            }
+        }
+
+        @Override
+        public Widget asWidget()
+        {
+            return tabPanel;
+        }
     }
 }
