@@ -28,7 +28,6 @@ import org.junit.Test;
 import static org.jboss.mbui.client.aui.aim.TemporalOperator.Choice;
 import static org.jboss.mbui.client.aui.aim.TemporalOperator.OrderIndependance;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 /**
  * @author Harald Pehl
@@ -60,23 +59,27 @@ public class ReificatorTest
     @Test
     public void testReify() throws Exception
     {
-        ReificationWidget rw = cut.reify(iuFixture, new Context());
-        assertTrue(rw instanceof TestableReificationWidget);
-        TestableReificationWidget trw = (TestableReificationWidget) rw;
+        TestableReificationWidget root = (TestableReificationWidget) cut.reify(iuFixture, new Context());
 
         // root
-        assertEquals("root", trw.interactionUnit.getId());
-        assertEquals(2, trw.children.size());
+        assertEquals("root", root.interactionUnit.getId());
+        assertEquals(2, root.children.size());
 
         // table
-        rw = trw.children.get(0);
-        assertTrue(rw instanceof TestableReificationWidget);
-        TestableReificationWidget child = (TestableReificationWidget) rw;
+        TestableReificationWidget table = (TestableReificationWidget) root.children.get(0);
+        assertEquals("table", table.interactionUnit.getId());
 
         // forms
+        TestableReificationWidget forms = (TestableReificationWidget) root.children.get(1);
+        assertEquals("forms", forms.interactionUnit.getId());
+        assertEquals(2, forms.children.size());
 
         // basicAttributes
+        TestableReificationWidget ba = (TestableReificationWidget) forms.children.get(0);
+        assertEquals("basicAttributes", ba.interactionUnit.getId());
 
         // extendedAttributes
+        TestableReificationWidget ea = (TestableReificationWidget) forms.children.get(1);
+        assertEquals("extendedAttributes", ea.interactionUnit.getId());
     }
 }

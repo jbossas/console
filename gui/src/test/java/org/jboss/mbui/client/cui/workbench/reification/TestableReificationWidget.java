@@ -42,7 +42,7 @@ public class TestableReificationWidget implements ReificationWidget
     @Override
     public void add(final ReificationWidget widget, final InteractionUnit interactionUnit, final InteractionUnit parent)
     {
-        children.add(new TestableReificationWidget(interactionUnit));
+        children.add(widget);
     }
 
     @Override

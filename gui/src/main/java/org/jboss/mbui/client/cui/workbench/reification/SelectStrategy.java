@@ -27,8 +27,12 @@ import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 import org.jboss.ballroom.client.widgets.tables.DefaultPager;
 import org.jboss.mbui.client.aui.aim.InteractionUnit;
 import org.jboss.mbui.client.aui.aim.Select;
+import org.jboss.mbui.client.aui.mapping.ResourceAttribute;
+import org.jboss.mbui.client.aui.mapping.ResourceMapping;
 import org.jboss.mbui.client.cui.Context;
 import org.jboss.mbui.client.cui.ReificationStrategy;
+
+import java.util.List;
 
 /**
  * @author Harald Pehl
@@ -42,7 +46,7 @@ public class SelectStrategy implements ReificationStrategy<ReificationWidget>
         DefaultCellTableAdapter adapter = null;
         if (interactionUnit != null)
         {
-            adapter = new DefaultCellTableAdapter();
+            adapter = new DefaultCellTableAdapter(interactionUnit);
         }
         return adapter;
     }
@@ -57,20 +61,31 @@ public class SelectStrategy implements ReificationStrategy<ReificationWidget>
     class DefaultCellTableAdapter implements ReificationWidget
     {
         final VerticalPanel panel;
-        final DefaultCellTable<?> table;
+        final DefaultCellTable<?> table; // TODO Find the right type argument
+        final InteractionUnit interactionUnit;
 
-        DefaultCellTableAdapter()
+        DefaultCellTableAdapter(final InteractionUnit interactionUnit)
         {
-            panel = new VerticalPanel();
-            table = new DefaultCellTable<Object>(4);
-            table.addColumn(new Column<String, String>(new TextCell())
+            this.panel = new VerticalPanel();
+            this.table = new DefaultCellTable<Object>(5);
+            this.interactionUnit = interactionUnit;
+
+            // TODO There can be many mappings. How do we know the ID for the resource mapping?
+            ResourceMapping resourceMapping = (ResourceMapping) this.interactionUnit.getEntityContext()
+                    .getMapping(interactionUnit.getId()); // Assumption: mapping id == id of interaction unit
+            List<ResourceAttribute> attributes = resourceMapping.getAttributes();
+            for (ResourceAttribute attribute : attributes)
             {
-                @Override
-                public String getValue(String object)
+                final String label = attribute.getLabel() != null ? attribute.getLabel() : attribute.getName();
+                table.addColumn(new Column<String, String>(new TextCell())
                 {
-                    return object;
-                }
-            }, "Name");
+                    @Override
+                    public String getValue(String object)
+                    {
+                        return object;
+                    }
+                }, label);
+            }
 
             ListDataProvider<String> dataProvider = new ListDataProvider<String>();
             dataProvider.addDataDisplay(table);

@@ -18,12 +18,19 @@
  */
 package org.jboss.mbui.client.cui.workbench.reification;
 
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
+import org.jboss.ballroom.client.widgets.forms.Form;
+import org.jboss.ballroom.client.widgets.forms.FormItem;
+import org.jboss.ballroom.client.widgets.forms.TextItem;
 import org.jboss.mbui.client.aui.aim.Input;
 import org.jboss.mbui.client.aui.aim.InteractionUnit;
+import org.jboss.mbui.client.aui.mapping.ResourceAttribute;
+import org.jboss.mbui.client.aui.mapping.ResourceMapping;
 import org.jboss.mbui.client.cui.Context;
 import org.jboss.mbui.client.cui.ReificationStrategy;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Harald Pehl
@@ -37,7 +44,7 @@ public class InputStrategy implements ReificationStrategy<ReificationWidget>
         FormAdapter adapter = null;
         if (interactionUnit != null)
         {
-            adapter = new FormAdapter();
+            adapter = new FormAdapter(interactionUnit);
         }
         return adapter;
     }
@@ -51,6 +58,30 @@ public class InputStrategy implements ReificationStrategy<ReificationWidget>
 
     class FormAdapter implements ReificationWidget
     {
+        final Form<?> form; // TODO Find the right type argument
+        final InteractionUnit interactionUnit;
+
+        FormAdapter(final InteractionUnit interactionUnit)
+        {
+            this.interactionUnit = interactionUnit;
+            this.form = new Form<Object>(Object.class);
+            this.form.setNumColumns(2);
+            this.form.setEnabled(false);
+
+            // TODO There can be many mappings. How do we know the ID for the resource mapping?
+            ResourceMapping resourceMapping = (ResourceMapping) this.interactionUnit.getEntityContext()
+                    .getMapping(interactionUnit.getId()); // Assumption: mapping id == id of interaction unit
+            List<ResourceAttribute> attributes = resourceMapping.getAttributes();
+            List<FormItem> items = new ArrayList<FormItem>(attributes.size());
+            for (ResourceAttribute attribute : attributes)
+            {
+                String label = attribute.getLabel() != null ? attribute.getLabel() : attribute.getName();
+                TextItem ti = new TextItem(attribute.getName(), label);
+                items.add(ti);
+            }
+            form.setFields(items.toArray(new FormItem[]{}));
+        }
+
         @Override
         public void add(final ReificationWidget widget, final InteractionUnit interactionUnit,
                 final InteractionUnit parent)
@@ -61,7 +92,7 @@ public class InputStrategy implements ReificationStrategy<ReificationWidget>
         @Override
         public Widget asWidget()
         {
-            return new Label("Not yet implemented");
+            return form.asWidget();
         }
     }
 }

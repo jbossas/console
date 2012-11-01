@@ -33,4 +33,10 @@ public class Input extends InteractionUnit
     {
         super(id, name);
     }
+
+    @Override
+    public String toString()
+    {
+        return "Input{" + getId() + '}';
+    }
 }

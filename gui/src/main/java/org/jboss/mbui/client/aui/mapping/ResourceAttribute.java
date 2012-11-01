@@ -16,27 +16,64 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.mbui.client.aui.aim;
+package org.jboss.mbui.client.aui.mapping;
 
 /**
  * @author Harald Pehl
- * @date 10/25/2012
+ * @date 11/01/2012
  */
-public class Output extends InteractionUnit
+public class ResourceAttribute
 {
-    public Output(final String id)
+    private final String name;
+    private String label;
+
+    public ResourceAttribute(final String name)
     {
-        super(id);
+        this.name = name;
     }
 
-    public Output(final String id, final String name)
+    public ResourceAttribute(final String name, final String label)
     {
-        super(id, name);
+        this.name = name;
+        this.label = label;
+    }
+
+    @Override
+    public boolean equals(final Object o)
+    {
+        if (this == o) { return true; }
+        if (!(o instanceof ResourceAttribute)) { return false; }
+
+        ResourceAttribute that = (ResourceAttribute) o;
+        if (!name.equals(that.name)) { return false; }
+
+        return true;
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return name.hashCode();
     }
 
     @Override
     public String toString()
     {
-        return "Output{" + getId() + '}';
+        return "ResourceAttribute{" + name + '}';
+    }
+
+    public String getName()
+    {
+        return name;
+    }
+
+    public String getLabel()
+    {
+        return label;
+    }
+
+    public void setLabel(final String label)
+    {
+        this.label = label;
     }
 }

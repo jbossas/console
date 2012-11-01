@@ -41,9 +41,7 @@ public class OrderIndependanceStrategy implements ReificationStrategy<Reificatio
         SimpleLayoutAdapter adapter = null;
         if (interactionUnit != null)
         {
-            adapter = new SimpleLayoutAdapter();
-            adapter.layout.setTitle(interactionUnit.getName());
-            adapter.layout.setHeadline(interactionUnit.getName());
+            adapter = new SimpleLayoutAdapter(interactionUnit);
         }
         return adapter;
     }
@@ -59,10 +57,12 @@ public class OrderIndependanceStrategy implements ReificationStrategy<Reificatio
     class SimpleLayoutAdapter implements ReificationWidget
     {
         final SimpleLayout layout;
+        final InteractionUnit interactionUnit;
 
-        SimpleLayoutAdapter()
+        SimpleLayoutAdapter(final  InteractionUnit interactionUnit)
         {
-            this.layout = new SimpleLayout();
+            this.interactionUnit = interactionUnit;
+            this.layout = new SimpleLayout().setTitle(interactionUnit.getName()).setHeadline(interactionUnit.getName());
         }
 
         @Override

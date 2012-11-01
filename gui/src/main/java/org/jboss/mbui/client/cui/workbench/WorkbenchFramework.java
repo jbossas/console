@@ -16,27 +16,38 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.mbui.client.aui.aim;
+package org.jboss.mbui.client.cui.workbench;
+
+import com.google.gwt.core.client.GWT;
+import com.google.web.bindery.autobean.shared.AutoBeanFactory;
+import com.google.web.bindery.event.shared.EventBus;
+import com.gwtplatform.mvp.client.proxy.PlaceManager;
+import org.jboss.as.console.client.shared.BeanFactory;
+import org.jboss.ballroom.client.spi.Framework;
 
 /**
  * @author Harald Pehl
- * @date 10/25/2012
+ * @date 11/01/2012
  */
-public class Output extends InteractionUnit
+public class WorkbenchFramework implements Framework
 {
-    public Output(final String id)
-    {
-        super(id);
-    }
+    private final static BeanFactory factory = GWT.create(BeanFactory.class);
 
-    public Output(final String id, final String name)
+    @Override
+    public EventBus getEventBus()
     {
-        super(id, name);
+        return Workbench.GINJECTOR.getEventBus();
     }
 
     @Override
-    public String toString()
+    public PlaceManager getPlaceManager()
     {
-        return "Output{" + getId() + '}';
+        return Workbench.GINJECTOR.getPlaceManager();
+    }
+
+    @Override
+    public AutoBeanFactory getBeanFactory()
+    {
+        return factory;
     }
 }
