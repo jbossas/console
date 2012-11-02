@@ -58,6 +58,7 @@ public class InputStrategy implements ReificationStrategy<ReificationWidget>
 
     class FormAdapter implements ReificationWidget
     {
+        // This would become a different form implementation that does not depend on Autobeans
         final Form<?> form; // TODO Find the right type argument
         final InteractionUnit interactionUnit;
 
