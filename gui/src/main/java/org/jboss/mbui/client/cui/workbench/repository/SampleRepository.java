@@ -32,14 +32,6 @@ public class SampleRepository
         List<Sample> samples = new ArrayList<Sample>();
 
         samples.add(new DataSourceSample());
-        samples.add(new NoopSample("Lorem"));
-        samples.add(new NoopSample("ipsum"));
-        samples.add(new NoopSample("dolor"));
-        samples.add(new NoopSample("sit"));
-        samples.add(new NoopSample("amet"));
-        samples.add(new NoopSample("consetetur"));
-        samples.add(new NoopSample("sadipscing"));
-        samples.add(new NoopSample("elitr"));
 
         return samples;
     }
