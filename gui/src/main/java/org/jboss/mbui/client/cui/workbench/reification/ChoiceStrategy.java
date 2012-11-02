@@ -18,6 +18,7 @@
  */
 package org.jboss.mbui.client.cui.workbench.reification;
 
+import com.google.gwt.event.logical.shared.AttachEvent;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.mbui.client.aui.aim.Container;
@@ -61,8 +62,15 @@ public class ChoiceStrategy implements ReificationStrategy<ReificationWidget>
         TabPanelAdapter()
         {
             tabPanel = new TabPanel();
-            tabPanel.setStyleName("fill-layout-width");
-            tabPanel.getElement().setAttribute("style", "padding-top:15px;");
+            tabPanel.setStyleName("default-tabpanel");
+
+            tabPanel.addAttachHandler(new AttachEvent.Handler() {
+                @Override
+                public void onAttachOrDetach(AttachEvent attachEvent) {
+                    if(tabPanel.getWidgetCount()>0)
+                        tabPanel.selectTab(0);
+                }
+            });
         }
 
         @Override
