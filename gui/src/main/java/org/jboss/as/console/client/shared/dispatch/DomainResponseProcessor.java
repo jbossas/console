@@ -50,15 +50,17 @@ public class DomainResponseProcessor implements ResponseProcessor {
                 //System.out.println("server-group: "+serverGroup.getName());
 
                 //  -- Server Group --
-
-                List<Property> hosts = serverGroupValue.get("host").asPropertyList();
-                for(Property host : hosts)
+                if(serverGroupValue.hasDefined("host"))
                 {
-                    // -- Host  --
+                    List<Property> hosts = serverGroupValue.get("host").asPropertyList();
+                    for(Property host : hosts)
+                    {
+                        // -- Host  --
 
-                    ModelNode hostValue = host.getValue();
-                    //System.out.println("host: "+host.getName());
-                    parseHost(host.getName(), hostValue, reloadState);
+                        ModelNode hostValue = host.getValue();
+                        //System.out.println("host: "+host.getName());
+                        parseHost(host.getName(), hostValue, reloadState);
+                    }
                 }
             }
         }
