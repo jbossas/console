@@ -327,9 +327,9 @@ public class JPAMetricPresenter extends Presenter<JPAMetricPresenter.MyView, JPA
 
 
                         Metric connectionMetric = new Metric(
-                                payload.get("connect-count").asLong(),
                                 payload.get("session-open-count").asLong(),
-                                payload.get("session-close-count").asLong()
+                                payload.get("session-close-count").asLong(),
+                                payload.get("connect-count").asLong()
                         );
 
                         getView().updateMetric(
