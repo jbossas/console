@@ -8,7 +8,10 @@ import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.jpa.model.JpaSubsystem;
 import org.jboss.as.console.client.shared.viewframework.builder.FormLayout;
 import org.jboss.as.console.client.shared.viewframework.builder.OneToOneLayout;
+import org.jboss.as.console.client.widgets.forms.BlankItem;
 import org.jboss.as.console.client.widgets.forms.FormToolStrip;
+import org.jboss.ballroom.client.widgets.forms.CheckBoxItem;
+import org.jboss.ballroom.client.widgets.forms.ComboBoxItem;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
 import org.jboss.dmr.client.ModelNode;
@@ -28,9 +31,22 @@ public class JpaView extends DisposableViewImpl implements JpaPresenter.MyView {
     public Widget createWidget() {
 
         form = new Form<JpaSubsystem>(JpaSubsystem.class);
+        form.setNumColumns(2);
 
         TextBoxItem defaultDs = new TextBoxItem("defaultDataSource", "Default Datasource", false);
-        form.setFields(defaultDs);
+        ComboBoxItem inheritance = new ComboBoxItem("inheritance", "Persistence Inheritance")
+        {
+            @Override
+            public boolean isRequired() {
+                return false;
+            }
+        };
+
+        inheritance.setValueMap(new String[] {"DEEP", "SHALLOW"});
+
+        CheckBoxItem vfs = new CheckBoxItem("defaultVfs", "Enable VFS?");
+
+        form.setFields(defaultDs, BlankItem.INSTANCE, inheritance, vfs);
         form.setEnabled(false);
 
         FormToolStrip<JpaSubsystem> formToolStrip = new FormToolStrip<JpaSubsystem>(

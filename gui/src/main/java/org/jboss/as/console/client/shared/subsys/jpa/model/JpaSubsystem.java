@@ -13,4 +13,13 @@ public interface JpaSubsystem {
     @Binding(detypedName = "default-datasource")
     String getDefaultDataSource();
     void setDefaultDataSource(String name);
+
+    @Binding(detypedName = "default-extended-persistence-inheritance")
+    String getInheritance();
+    void setInheritance(String name);
+
+    @Binding(detypedName = "default-vfs")
+    boolean isDefaultVfs();
+    void setDefaultVfs(boolean isDefault);
+
 }
