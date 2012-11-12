@@ -20,7 +20,7 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
 /**
- * A {@link DebugPanelWidget.Component} that has the widget initialization
+ * A {@link DebugPanelWidget.Component} that has the widgets initialization
  * delayed until first shown.
  */
 public abstract class DelayedDebugPanelComponent 

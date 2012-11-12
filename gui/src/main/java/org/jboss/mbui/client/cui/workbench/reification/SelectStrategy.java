@@ -27,8 +27,8 @@ import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 import org.jboss.ballroom.client.widgets.tables.DefaultPager;
 import org.jboss.mbui.client.aui.aim.InteractionUnit;
 import org.jboss.mbui.client.aui.aim.Select;
-import org.jboss.mbui.client.aui.mapping.ResourceAttribute;
-import org.jboss.mbui.client.aui.mapping.ResourceMapping;
+import org.jboss.mbui.client.aui.mapping.as7.ResourceAttribute;
+import org.jboss.mbui.client.aui.mapping.as7.ResourceMapping;
 import org.jboss.mbui.client.cui.Context;
 import org.jboss.mbui.client.cui.ReificationStrategy;
 

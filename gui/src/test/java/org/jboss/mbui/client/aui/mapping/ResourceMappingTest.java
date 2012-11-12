@@ -18,6 +18,7 @@
  */
 package org.jboss.mbui.client.aui.mapping;
 
+import org.jboss.mbui.client.aui.mapping.as7.ResourceMapping;
 import org.junit.Before;
 import org.junit.Test;
 

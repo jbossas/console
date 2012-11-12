@@ -172,7 +172,7 @@ public abstract class AbstractEntityView<T> extends SuspendableViewImpl
     }
 
     /**
-     * Creates a default widget without the top most tab.
+     * Creates a default widgets without the top most tab.
      * It can be easily embedded into a TablayoutPanel for instance.
      *
      * @return

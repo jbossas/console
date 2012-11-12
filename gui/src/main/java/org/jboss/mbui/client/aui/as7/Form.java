@@ -16,27 +16,25 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
+package org.jboss.mbui.client.aui.as7;
 
-package org.jboss.as.console.client.core;
+import org.jboss.mbui.client.aui.aim.Container;
 
-import com.google.gwt.user.client.ui.Widget;
-import com.gwtplatform.mvp.client.View;
+import static org.jboss.mbui.client.aui.aim.TemporalOperator.OrderIndependance;
 
 /**
- * A disposable view will create a widgets instance every time
- * the view is going to be revealed.
- *
- * @see SuspendableView
- *
- * @author Heiko Braun
- * @date 2/10/11
+ * @author Harald Pehl
+ * @date 11/12/2012
  */
-public interface DisposableView extends View {
+public class Form extends Container
+{
+    public Form(final String id)
+    {
+        super(id, OrderIndependance);
+    }
 
-    /**
-     * Called when the view is  going to be revealed.
-     *
-     * @return a widgets instance
-     */
-    Widget createWidget();
+    public Form(final String id, final String name)
+    {
+        super(id, name, OrderIndependance);
+    }
 }

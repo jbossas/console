@@ -33,7 +33,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * A widget displaying a {@link TreeTableModel}. This will display a table,
+ * A widgets displaying a {@link TreeTableModel}. This will display a table,
  * where the first column is a tree and each node in the tree is a table row.
  */
 public class TreeTable extends Composite {
@@ -402,7 +402,7 @@ public class TreeTable extends Composite {
   }
 
   /**
-   * The widget displayed in the first column containing the label and tree image.
+   * The widgets displayed in the first column containing the label and tree image.
    */
   public static class ItemWidget extends Widget {
     protected final Element image;
