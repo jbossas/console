@@ -16,25 +16,18 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.mbui.client.aui.as7;
+package org.jboss.mbui.client.cui.workbench.repository;
 
-import org.jboss.mbui.client.aui.aim.Container;
-
-import static org.jboss.mbui.client.aui.aim.TemporalOperator.OrderIndependance;
+import com.gwtplatform.dispatch.annotation.GenEvent;
+import com.gwtplatform.dispatch.annotation.Order;
 
 /**
  * @author Harald Pehl
- * @date 11/12/2012
+ * @date 10/31/2012
  */
-public class Form extends Container
+@GenEvent
+public class Reify
 {
-    public Form(final String id)
-    {
-        super(id, OrderIndependance);
-    }
-
-    public Form(final String id, final String name)
-    {
-        super(id, name, OrderIndependance);
-    }
+    @Order(1)
+    Sample sample;
 }

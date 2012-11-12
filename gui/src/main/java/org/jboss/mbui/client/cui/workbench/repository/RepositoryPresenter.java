@@ -22,7 +22,6 @@ import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.PresenterWidget;
 import com.gwtplatform.mvp.client.View;
-import org.jboss.mbui.client.cui.workbench.reification.ReifyEvent;
 
 /**
  * Lists the available interaction units and let the user create new interaction units.

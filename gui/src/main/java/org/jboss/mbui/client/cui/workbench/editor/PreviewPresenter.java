@@ -29,9 +29,9 @@ import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import org.jboss.mbui.client.aui.aim.InteractionUnit;
 import org.jboss.mbui.client.cui.Context;
 import org.jboss.mbui.client.cui.workbench.ApplicationPresenter;
-import org.jboss.mbui.client.cui.workbench.reification.ReificationWidget;
-import org.jboss.mbui.client.cui.workbench.reification.Reificator;
-import org.jboss.mbui.client.cui.workbench.reification.ReifyEvent;
+import org.jboss.mbui.client.cui.reification.ReificationWidget;
+import org.jboss.mbui.client.cui.reification.Reificator;
+import org.jboss.mbui.client.cui.workbench.repository.ReifyEvent;
 import org.jboss.mbui.client.cui.workbench.repository.Sample;
 
 import static org.jboss.mbui.client.cui.workbench.NameTokens.preview;

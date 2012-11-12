@@ -21,7 +21,7 @@ package org.jboss.mbui.client.cui.workbench.repository;
 import org.jboss.mbui.client.aui.aim.Container;
 import org.jboss.mbui.client.aui.aim.InteractionUnit;
 import org.jboss.mbui.client.aui.aim.Select;
-import org.jboss.mbui.client.aui.as7.Form;
+import org.jboss.mbui.client.aui.aim.as7.Form;
 import org.jboss.mbui.client.aui.mapping.Mapping;
 import org.jboss.mbui.client.aui.mapping.as7.ResourceAttribute;
 import org.jboss.mbui.client.aui.mapping.as7.ResourceMapping;
