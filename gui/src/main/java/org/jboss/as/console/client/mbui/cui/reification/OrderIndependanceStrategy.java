@@ -18,12 +18,13 @@
  */
 package org.jboss.as.console.client.mbui.cui.reification;
 
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import org.jboss.as.console.client.shared.viewframework.builder.SimpleLayout;
 import org.jboss.as.console.client.mbui.aui.aim.Container;
 import org.jboss.as.console.client.mbui.aui.aim.InteractionUnit;
 import org.jboss.as.console.client.mbui.cui.Context;
 import org.jboss.as.console.client.mbui.cui.ReificationStrategy;
+import org.jboss.as.console.client.shared.viewframework.builder.SimpleLayout;
 
 import static org.jboss.as.console.client.mbui.aui.aim.TemporalOperator.OrderIndependance;
 
@@ -41,7 +42,8 @@ public class OrderIndependanceStrategy implements ReificationStrategy<Reificatio
         SimpleLayoutAdapter adapter = null;
         if (interactionUnit != null)
         {
-            adapter = new SimpleLayoutAdapter(interactionUnit);
+            System.out.println(context+": hasParent="+context.has("hasParent"));
+            adapter = new SimpleLayoutAdapter(interactionUnit, context);
         }
         return adapter;
     }
@@ -54,31 +56,72 @@ public class OrderIndependanceStrategy implements ReificationStrategy<Reificatio
     }
 
 
+    interface WidgetStrategy {
+        void add(Widget widget);
+        Widget as();
+    }
+
     class SimpleLayoutAdapter implements ReificationWidget
     {
-        final SimpleLayout layout;
+        final WidgetStrategy delegate;
         final InteractionUnit interactionUnit;
 
-        SimpleLayoutAdapter(final  InteractionUnit interactionUnit)
+        SimpleLayoutAdapter(final InteractionUnit interactionUnit, Context context)
         {
             this.interactionUnit = interactionUnit;
-            this.layout = new SimpleLayout().setTitle(interactionUnit.getName()).setHeadline(interactionUnit.getName());
+
+            if(context.has("hasParent"))
+            {
+                final VerticalPanel panel = new VerticalPanel();
+                panel.setStyleName("fill-layout-width");
+                this.delegate = new WidgetStrategy() {
+                    @Override
+                    public void add(Widget widget) {
+                        panel.add(widget);
+                    }
+
+                    @Override
+                    public Widget as() {
+                        return panel;
+                    }
+                };
+            }
+            else
+            {
+                final SimpleLayout builder = new SimpleLayout()
+                        .setTitle(interactionUnit.getName()
+                        );
+
+                this.delegate = new WidgetStrategy() {
+                    @Override
+                    public void add(Widget widget) {
+                        builder.addContent("TODO: NAME", widget);
+                    }
+
+                    @Override
+                    public Widget as() {
+                        return builder.build();
+                    }
+                };
+            }
+
         }
 
         @Override
         public void add(final ReificationWidget widget, final InteractionUnit interactionUnit,
-                final InteractionUnit parent)
+                        final InteractionUnit parent)
         {
-            if (widget != null)
+
+            if (widget!= null)
             {
-                layout.addContent(interactionUnit.getId(), widget.asWidget());
+                delegate.add(widget.asWidget());
             }
         }
 
         @Override
         public Widget asWidget()
         {
-            return layout.build();
+            return delegate.as();
         }
     }
 }

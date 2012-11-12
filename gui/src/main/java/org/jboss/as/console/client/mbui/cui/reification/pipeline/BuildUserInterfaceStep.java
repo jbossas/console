@@ -64,30 +64,36 @@ public class BuildUserInterfaceStep extends ReificationStep
         callback.onSuccess(TRUE);
     }
 
-    private ReificationWidget startReification(final InteractionUnit interactionUnit, final Context context)
+    private ReificationWidget startReification(final InteractionUnit parentUnit, final Context context)
     {
-        ReificationWidget reificationWidget = null;
-        ReificationStrategy<ReificationWidget> strategy = resolve(interactionUnit);
+        ReificationWidget parentWidget = null;
+        ReificationStrategy<ReificationWidget> strategy = resolve(parentUnit);
         if (strategy != null)
         {
-            reificationWidget = strategy.reify(interactionUnit, context);
-            if (reificationWidget != null)
+            parentWidget = strategy.reify(parentUnit, context);
+            if (parentWidget != null)
             {
-                if (interactionUnit instanceof Container)
+                if (parentUnit instanceof Container)
                 {
-                    Container container = (Container) interactionUnit;
-                    for (InteractionUnit child : container.getChildren())
+                    Container container = (Container) parentUnit;
+                    for (InteractionUnit childUnit : container.getChildren())
                     {
-                        ReificationWidget childReificationWidget = startReification(child, context);
-                        if (childReificationWidget != null)
-                        {
-                            reificationWidget.add(childReificationWidget, child, container);
+                        try {
+                            context.push();
+                            context.set("hasParent", "true");    // TODO: type safe context possible?
+                            ReificationWidget childWidget = startReification(childUnit, context);
+                            if (childWidget != null)
+                            {
+                                parentWidget.add(childWidget, childUnit, container);
+                            }
+                        } catch (Exception e) {
+                            context.pop();
                         }
                     }
                 }
             }
         }
-        return reificationWidget;
+        return parentWidget;
     }
 
     private ReificationStrategy<ReificationWidget> resolve(InteractionUnit interactionUnit)
