@@ -22,7 +22,9 @@ import org.jboss.mbui.client.aui.aim.Container;
 import org.jboss.mbui.client.aui.aim.InteractionUnit;
 import org.jboss.mbui.client.cui.Context;
 import org.jboss.mbui.client.cui.ReificationStrategy;
+import org.jboss.mbui.client.cui.reification.pipeline.ReificationPipeline;
 
+import javax.inject.Inject;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -32,10 +34,13 @@ import java.util.Set;
  */
 public class Reificator
 {
+    final ReificationPipeline pipeline;
     final Set<ReificationStrategy<ReificationWidget>> strategies;
 
-    public Reificator()
+    @Inject
+    public Reificator(final ReificationPipeline pipeline)
     {
+        this.pipeline = pipeline;
         this.strategies = new HashSet<ReificationStrategy<ReificationWidget>>();
         this.strategies.add(new OrderIndependanceStrategy());
         this.strategies.add(new ChoiceStrategy());
