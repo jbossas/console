@@ -38,6 +38,7 @@ import java.util.List;
 
 /**
  * @author Harald Pehl
+ * @author Heiko Braun
  * @date 11/01/2012
  */
 public class FormStrategy implements ReificationStrategy<ReificationWidget>
@@ -59,10 +60,8 @@ public class FormStrategy implements ReificationStrategy<ReificationWidget>
         return interactionUnit instanceof org.jboss.as.console.client.mbui.aui.aim.as7.Form;
     }
 
-
     class FormAdapter implements ReificationWidget
     {
-        // This would become a different form implementation that does not depend on Autobeans
         final ModelNodeForm form;
         final InteractionUnit interactionUnit;
 
@@ -71,13 +70,11 @@ public class FormStrategy implements ReificationStrategy<ReificationWidget>
             this.interactionUnit = interactionUnit;
             this.form = new ModelNodeForm();
             this.form.setNumColumns(2);
-            this.form.setEnabled(false);
+            this.form.setEnabled(true);
 
             ModelNode modelNode = ModelNode.fromBase64(base64);
             ModelNode description = modelNode.get("result").get("step-1").get("result");
-            ModelNode attributeDescription = description.get("attributes");
-
-            System.out.println(attributeDescription);
+            List<Property> attributeDescriptions = description.get("attributes").asPropertyList();
 
             // TODO There can be many mappings. How do we know the ID for the resource mapping?
             ResourceMapping resourceMapping = (ResourceMapping)
@@ -89,10 +86,12 @@ public class FormStrategy implements ReificationStrategy<ReificationWidget>
 
             for (ResourceAttribute attribute : attributes)
             {
-                if(modelNode.hasDefined(attribute.getName()))
+                for(Property attr : attributeDescriptions)
                 {
-                    Property attr = modelNode.get(attribute.getName()).asProperty();
-                    ModelType type = attr.getValue().getType();
+                    if(!attr.getName().equals(attribute.getName()))
+                        continue;
+
+                    ModelType type = ModelType.valueOf(attr.getValue().get("type").asString());
 
                     switch(type)
                     {
