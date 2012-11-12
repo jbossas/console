@@ -46,11 +46,9 @@ public class TransactionSample implements Sample
     {
         // abstract UI modelling
         Container overview = new Container("transactionManager", "TransactionManager", OrderIndependance);
-        Container forms = new Container("mainConfig", "Main Config", Choice);
-        overview.add(forms);
 
         Form basicAttributes = new Form("basicAttributes", "Attributes");
-        forms.add(basicAttributes);
+        overview.add(basicAttributes);
 
         Mapping basicAttributesMapping = new ResourceMapping("basicAttributes",
                 "/profile=${profile}/subsystem=transactions")

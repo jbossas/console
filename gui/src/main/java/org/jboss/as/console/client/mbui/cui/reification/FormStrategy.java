@@ -18,6 +18,7 @@
  */
 package org.jboss.as.console.client.mbui.cui.reification;
 
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.mbui.aui.aim.InteractionUnit;
 import org.jboss.as.console.client.mbui.aui.mapping.as7.ResourceAttribute;
@@ -25,6 +26,8 @@ import org.jboss.as.console.client.mbui.aui.mapping.as7.ResourceMapping;
 import org.jboss.as.console.client.mbui.cui.Context;
 import org.jboss.as.console.client.mbui.cui.ReificationStrategy;
 import org.jboss.as.console.client.mbui.cui.widgets.ModelNodeForm;
+import org.jboss.as.console.client.shared.help.FormHelpPanel;
+import org.jboss.as.console.client.widgets.forms.FormToolStrip;
 import org.jboss.ballroom.client.widgets.forms.CheckBoxItem;
 import org.jboss.ballroom.client.widgets.forms.FormItem;
 import org.jboss.ballroom.client.widgets.forms.NumberBoxItem;
@@ -35,6 +38,7 @@ import org.jboss.dmr.client.Property;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Harald Pehl
@@ -70,7 +74,7 @@ public class FormStrategy implements ReificationStrategy<ReificationWidget>
             this.interactionUnit = interactionUnit;
             this.form = new ModelNodeForm();
             this.form.setNumColumns(2);
-            this.form.setEnabled(true);
+            this.form.setEnabled(false);
 
             ModelNode modelNode = ModelNode.fromBase64(base64);
             ModelNode description = modelNode.get("result").get("step-1").get("result");
@@ -96,8 +100,7 @@ public class FormStrategy implements ReificationStrategy<ReificationWidget>
                     switch(type)
                     {
                         case BOOLEAN:
-                            CheckBoxItem checkBoxItem =
-                                    new CheckBoxItem(attr.getName(), attr.getName().toUpperCase());
+                            CheckBoxItem checkBoxItem = new CheckBoxItem(attr.getName(), attr.getName().toUpperCase());
                             items.add(checkBoxItem);
                             break;
                         case DOUBLE:
@@ -112,10 +115,12 @@ public class FormStrategy implements ReificationStrategy<ReificationWidget>
                             NumberBoxItem num3 = new NumberBoxItem(attr.getName(), attr.getName().toUpperCase());
                             items.add(num3);
                             break;
-                        default:
+                        case STRING:
                             TextBoxItem tb = new TextBoxItem(attr.getName(), attr.getName().toUpperCase());
                             items.add(tb);
                             break;
+                        default:
+                            throw new RuntimeException("Unsupported ModelType "+type);
                     }
                 }
             }
@@ -125,7 +130,7 @@ public class FormStrategy implements ReificationStrategy<ReificationWidget>
 
         @Override
         public void add(final ReificationWidget widget, final InteractionUnit interactionUnit,
-                final InteractionUnit parent)
+                        final InteractionUnit parent)
         {
             throw new UnsupportedOperationException();
         }
@@ -133,7 +138,37 @@ public class FormStrategy implements ReificationStrategy<ReificationWidget>
         @Override
         public Widget asWidget()
         {
-            return form.asWidget();
+
+            VerticalPanel layout = new VerticalPanel();
+            layout.setStyleName("fill-layout-width");
+            layout.getElement().setAttribute("style", "margin-top:15px;");
+
+            FormToolStrip<ModelNode> tools = new FormToolStrip<ModelNode>(
+                    form,
+                    new FormToolStrip.FormCallback<ModelNode>() {
+                        @Override
+                        public void onSave(Map<String, Object> changeset) {
+                            // TODO: what's happening here ?
+                        }
+
+                        @Override
+                        public void onDelete(ModelNode entity) {
+                            // unsupported
+                        }
+                    });
+
+            FormHelpPanel help = new FormHelpPanel(new FormHelpPanel.AddressCallback() {
+                @Override
+                public ModelNode getAddress() {
+                    return new ModelNode();// TODO: how to get to the address ?
+                }
+            }, form);
+
+            layout.add(tools.asWidget());
+            layout.add(help.asWidget());
+            layout.add(form.asWidget());
+
+            return layout;
         }
     }
 

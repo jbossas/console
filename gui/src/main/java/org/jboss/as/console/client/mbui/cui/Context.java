@@ -20,6 +20,7 @@ package org.jboss.as.console.client.mbui.cui;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Stack;
 
 /**
  * @author Harald Pehl
@@ -27,26 +28,45 @@ import java.util.Map;
  */
 public class Context
 {
-    private final Map<String, Object> parameter;
+    private Stack<Map<String, Object>> subcontexts = new Stack<Map<String, Object>>();
 
     public Context()
     {
-        this.parameter = new HashMap<String, Object>();
+        push();
     }
 
-    public Context addParameter(final String name, final String value)
+    public void push() {
+        subcontexts.push(new HashMap<String, Object>());
+    }
+
+    public void pop() {
+        subcontexts.pop();
+    }
+
+    public Context set(final String name, final String value)
     {
-        parameter.put(name, value);
+        subcontexts.peek().put(name, value);
         return this;
     }
 
-    public String getParameter(final String name)
+    public String get(final String name)
     {
-        Object value = parameter.get(name);
+        Object value = subcontexts.peek().get(name);
         if (value != null)
         {
             return String.valueOf(value);
         }
         return null;
+    }
+
+    public boolean has(final String name)
+    {
+        Object value = subcontexts.peek().get(name);
+        return value != null;
+    }
+
+    @Override
+    public String toString() {
+        return "Context {sub="+subcontexts.size()+"}";
     }
 }
