@@ -89,8 +89,8 @@ public class DebugPanelWidget extends Composite {
     public boolean isVisibleOnStartup();
 
     /**
-     * Construct the widget to be shown when called. Note, this will only be
-     * called once, so the widget creation can be easily delayed until called.
+     * Construct the widgets to be shown when called. Note, this will only be
+     * called once, so the widgets creation can be easily delayed until called.
      */
     public Widget getWidget();
   }

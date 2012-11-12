@@ -40,7 +40,7 @@ public class Reificator
         this.strategies.add(new OrderIndependanceStrategy());
         this.strategies.add(new ChoiceStrategy());
         this.strategies.add(new SelectStrategy());
-        this.strategies.add(new InputStrategy());
+        this.strategies.add(new FormStrategy());
     }
 
     public ReificationWidget reify(final InteractionUnit interactionUnit, final Context context)

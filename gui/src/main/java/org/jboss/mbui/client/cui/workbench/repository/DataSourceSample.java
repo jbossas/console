@@ -19,12 +19,12 @@
 package org.jboss.mbui.client.cui.workbench.repository;
 
 import org.jboss.mbui.client.aui.aim.Container;
-import org.jboss.mbui.client.aui.aim.Input;
 import org.jboss.mbui.client.aui.aim.InteractionUnit;
 import org.jboss.mbui.client.aui.aim.Select;
+import org.jboss.mbui.client.aui.as7.Form;
 import org.jboss.mbui.client.aui.mapping.Mapping;
-import org.jboss.mbui.client.aui.mapping.ResourceAttribute;
-import org.jboss.mbui.client.aui.mapping.ResourceMapping;
+import org.jboss.mbui.client.aui.mapping.as7.ResourceAttribute;
+import org.jboss.mbui.client.aui.mapping.as7.ResourceMapping;
 
 import static org.jboss.mbui.client.aui.aim.TemporalOperator.Choice;
 import static org.jboss.mbui.client.aui.aim.TemporalOperator.OrderIndependance;
@@ -53,10 +53,10 @@ public class DataSourceSample implements Sample
         Container forms = new Container("datasourceAttributes", "Datasource", Choice);
         overview.add(forms);
 
-        Input basicAttributes = new Input("basicAttributes", "Attributes");
+        Form basicAttributes = new Form("basicAttributes", "Attributes");
         forms.add(basicAttributes);
 
-        Input connectionAttributes = new Input("connectionAttributes", "Connection");
+        Form connectionAttributes = new Form("connectionAttributes", "Connection");
         forms.add(connectionAttributes);
 
         // mappings (required)

@@ -22,10 +22,9 @@ import com.google.gwt.user.client.ui.Widget;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.FormItem;
 import org.jboss.ballroom.client.widgets.forms.TextItem;
-import org.jboss.mbui.client.aui.aim.Input;
 import org.jboss.mbui.client.aui.aim.InteractionUnit;
-import org.jboss.mbui.client.aui.mapping.ResourceAttribute;
-import org.jboss.mbui.client.aui.mapping.ResourceMapping;
+import org.jboss.mbui.client.aui.mapping.as7.ResourceAttribute;
+import org.jboss.mbui.client.aui.mapping.as7.ResourceMapping;
 import org.jboss.mbui.client.cui.Context;
 import org.jboss.mbui.client.cui.ReificationStrategy;
 
@@ -36,7 +35,7 @@ import java.util.List;
  * @author Harald Pehl
  * @date 11/01/2012
  */
-public class InputStrategy implements ReificationStrategy<ReificationWidget>
+public class FormStrategy implements ReificationStrategy<ReificationWidget>
 {
     @Override
     public ReificationWidget reify(final InteractionUnit interactionUnit, final Context context)
@@ -52,7 +51,7 @@ public class InputStrategy implements ReificationStrategy<ReificationWidget>
     @Override
     public boolean appliesTo(final InteractionUnit interactionUnit)
     {
-        return interactionUnit instanceof Input;
+        return interactionUnit instanceof org.jboss.mbui.client.aui.as7.Form;
     }
 
 

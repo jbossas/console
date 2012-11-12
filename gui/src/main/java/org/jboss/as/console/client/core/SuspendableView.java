@@ -23,7 +23,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.gwtplatform.mvp.client.View;
 
 /**
- * A suspendable view retains a specific widget instance
+ * A suspendable view retains a specific widgets instance
  * when the view is hidden and notify the view through {@link #onResume()}
  * when it's going to be revealed again.
  *
@@ -35,7 +35,7 @@ import com.gwtplatform.mvp.client.View;
 public interface SuspendableView extends View {
 
     /**
-     * Called upon first creation of the widget
+     * Called upon first creation of the widgets
      * @return
      */
     Widget createWidget();
