@@ -41,7 +41,7 @@ public class ReificatorTest
     @Before
     public void setUp() throws Exception
     {
-        cut = new Reificator();
+        cut = new Reificator(null);
         cut.strategies.clear();
         cut.strategies.add(new TestableReificationStrategy());
 

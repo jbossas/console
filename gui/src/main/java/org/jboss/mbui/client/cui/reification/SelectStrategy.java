@@ -23,7 +23,6 @@ import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
-import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 import org.jboss.ballroom.client.widgets.tables.DefaultPager;
 import org.jboss.mbui.client.aui.aim.InteractionUnit;
 import org.jboss.mbui.client.aui.aim.Select;
@@ -31,6 +30,7 @@ import org.jboss.mbui.client.aui.mapping.as7.ResourceAttribute;
 import org.jboss.mbui.client.aui.mapping.as7.ResourceMapping;
 import org.jboss.mbui.client.cui.Context;
 import org.jboss.mbui.client.cui.ReificationStrategy;
+import org.jboss.mbui.client.cui.widgets.ModelNodeCellTable;
 
 import java.util.List;
 
@@ -43,10 +43,10 @@ public class SelectStrategy implements ReificationStrategy<ReificationWidget>
     @Override
     public ReificationWidget reify(final InteractionUnit interactionUnit, final Context context)
     {
-        DefaultCellTableAdapter adapter = null;
+        ModelNodeCellTableAdapter adapter = null;
         if (interactionUnit != null)
         {
-            adapter = new DefaultCellTableAdapter(interactionUnit);
+            adapter = new ModelNodeCellTableAdapter(interactionUnit);
         }
         return adapter;
     }
@@ -58,16 +58,16 @@ public class SelectStrategy implements ReificationStrategy<ReificationWidget>
     }
 
 
-    class DefaultCellTableAdapter implements ReificationWidget
+    class ModelNodeCellTableAdapter implements ReificationWidget
     {
         final VerticalPanel panel;
-        final DefaultCellTable<?> table; // TODO Find the right type argument
+        final ModelNodeCellTable table;
         final InteractionUnit interactionUnit;
 
-        DefaultCellTableAdapter(final InteractionUnit interactionUnit)
+        ModelNodeCellTableAdapter(final InteractionUnit interactionUnit)
         {
             this.panel = new VerticalPanel();
-            this.table = new DefaultCellTable<Object>(5);
+            this.table = new ModelNodeCellTable(5);
             this.interactionUnit = interactionUnit;
 
             // TODO There can be many mappings. How do we know the ID for the resource mapping?

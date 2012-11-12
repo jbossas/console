@@ -16,26 +16,39 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.mbui.client.cui.widgets;
+package org.jboss.mbui.client.cui.reification.pipeline;
 
-import com.google.gwt.view.client.ProvidesKey;
-import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
-import org.jboss.dmr.client.ModelNode;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.inject.Inject;
+import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
+import org.jboss.mbui.client.aui.aim.InteractionUnit;
+import org.jboss.mbui.client.cui.Context;
 
 /**
  * @author Harald Pehl
  * @date 11/12/2012
  */
-public class ModelNodeCellTable extends DefaultCellTable<ModelNode>
+public class ReadResourceDescription extends ReificationStep
 {
-    public ModelNodeCellTable(final int pageSize)
+    final DispatchAsync dispatcher;
+
+    @Inject
+    public ReadResourceDescription(final DispatchAsync dispatcher)
     {
-        super(pageSize);
+        super("read resource descriptions");
+        this.dispatcher = dispatcher;
     }
 
-    public ModelNodeCellTable(final int pageSize,
-            final ProvidesKey<ModelNode> keyProvider)
+
+    @Override
+    public void execute(final InteractionUnit interactionUnit, final Context context, final Callback callback)
     {
-        super(pageSize, keyProvider);
+
+    }
+
+    @Override
+    public void execute(final AsyncCallback<Boolean> callback)
+    {
+
     }
 }
