@@ -16,19 +16,31 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.mbui.client.cui.workbench.reification;
+package org.jboss.mbui.client.cui.reification;
 
-import com.gwtplatform.dispatch.annotation.GenEvent;
-import com.gwtplatform.dispatch.annotation.Order;
-import org.jboss.mbui.client.cui.workbench.repository.Sample;
+import org.jboss.mbui.client.aui.aim.InteractionUnit;
+import org.jboss.mbui.client.cui.Context;
+import org.jboss.mbui.client.cui.ReificationStrategy;
 
 /**
  * @author Harald Pehl
- * @date 10/31/2012
+ * @date 10/30/2012
  */
-@GenEvent
-public class Reify
+public class TestableReificationStrategy implements ReificationStrategy<ReificationWidget>
 {
-    @Order(1)
-    Sample sample;
+    public TestableReificationStrategy()
+    {
+    }
+
+    @Override
+    public ReificationWidget reify(final InteractionUnit interactionUnit, final Context context)
+    {
+        return new TestableReificationWidget(interactionUnit);
+    }
+
+    @Override
+    public boolean appliesTo(final InteractionUnit interactionUnit)
+    {
+        return true;
+    }
 }

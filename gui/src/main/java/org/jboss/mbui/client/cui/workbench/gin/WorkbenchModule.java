@@ -34,7 +34,7 @@ import org.jboss.mbui.client.cui.workbench.context.ContextPresenter;
 import org.jboss.mbui.client.cui.workbench.context.ContextView;
 import org.jboss.mbui.client.cui.workbench.editor.PreviewPresenter;
 import org.jboss.mbui.client.cui.workbench.editor.PreviewView;
-import org.jboss.mbui.client.cui.workbench.reification.Reificator;
+import org.jboss.mbui.client.cui.reification.Reificator;
 import org.jboss.mbui.client.cui.workbench.repository.RepositoryPresenter;
 import org.jboss.mbui.client.cui.workbench.repository.RepositoryView;
 import org.jboss.mbui.client.cui.workbench.repository.SampleRepository;

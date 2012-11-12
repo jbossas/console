@@ -16,38 +16,25 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.mbui.client.cui.workbench.reification;
+package org.jboss.mbui.client.aui.aim.as7;
 
-import com.google.gwt.user.client.ui.Widget;
-import org.jboss.mbui.client.aui.aim.InteractionUnit;
+import org.jboss.mbui.client.aui.aim.Container;
 
-import java.util.ArrayList;
-import java.util.List;
+import static org.jboss.mbui.client.aui.aim.TemporalOperator.OrderIndependance;
 
 /**
  * @author Harald Pehl
- * @date 10/30/2012
+ * @date 11/12/2012
  */
-public class TestableReificationWidget implements ReificationWidget
+public class Form extends Container
 {
-    final InteractionUnit interactionUnit;
-    final List<ReificationWidget> children;
-
-    public TestableReificationWidget(final InteractionUnit interactionUnit)
+    public Form(final String id)
     {
-        this.interactionUnit = interactionUnit;
-        this.children = new ArrayList<ReificationWidget>();
+        super(id, OrderIndependance);
     }
 
-    @Override
-    public void add(final ReificationWidget widget, final InteractionUnit interactionUnit, final InteractionUnit parent)
+    public Form(final String id, final String name)
     {
-        children.add(widget);
-    }
-
-    @Override
-    public Widget asWidget()
-    {
-        return null;
+        super(id, name, OrderIndependance);
     }
 }

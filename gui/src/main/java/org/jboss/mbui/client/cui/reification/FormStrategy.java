@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.mbui.client.cui.workbench.reification;
+package org.jboss.mbui.client.cui.reification;
 
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.ballroom.client.widgets.forms.Form;
@@ -51,7 +51,7 @@ public class FormStrategy implements ReificationStrategy<ReificationWidget>
     @Override
     public boolean appliesTo(final InteractionUnit interactionUnit)
     {
-        return interactionUnit instanceof org.jboss.mbui.client.aui.as7.Form;
+        return interactionUnit instanceof org.jboss.mbui.client.aui.aim.as7.Form;
     }
 
 

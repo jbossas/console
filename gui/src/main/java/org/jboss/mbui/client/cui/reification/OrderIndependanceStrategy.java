@@ -16,33 +16,32 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.mbui.client.cui.workbench.reification;
+package org.jboss.mbui.client.cui.reification;
 
-import com.google.gwt.event.logical.shared.AttachEvent;
-import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.Widget;
+import org.jboss.as.console.client.shared.viewframework.builder.SimpleLayout;
 import org.jboss.mbui.client.aui.aim.Container;
 import org.jboss.mbui.client.aui.aim.InteractionUnit;
 import org.jboss.mbui.client.cui.Context;
 import org.jboss.mbui.client.cui.ReificationStrategy;
 
-import static org.jboss.mbui.client.aui.aim.TemporalOperator.Choice;
+import static org.jboss.mbui.client.aui.aim.TemporalOperator.OrderIndependance;
 
 /**
- * Strategy for a container with temporal operator == Choice.
+ * Strategy for a container with temporal operator == OrderIndependance.
  *
  * @author Harald Pehl
  * @date 11/01/2012
  */
-public class ChoiceStrategy implements ReificationStrategy<ReificationWidget>
+public class OrderIndependanceStrategy implements ReificationStrategy<ReificationWidget>
 {
     @Override
     public ReificationWidget reify(final InteractionUnit interactionUnit, final Context context)
     {
-        TabPanelAdapter adapter = null;
+        SimpleLayoutAdapter adapter = null;
         if (interactionUnit != null)
         {
-            adapter = new TabPanelAdapter();
+            adapter = new SimpleLayoutAdapter(interactionUnit);
         }
         return adapter;
     }
@@ -51,26 +50,19 @@ public class ChoiceStrategy implements ReificationStrategy<ReificationWidget>
     public boolean appliesTo(final InteractionUnit interactionUnit)
     {
         return (interactionUnit instanceof Container) && (((Container) interactionUnit)
-                .getTemporalOperator() == Choice);
+                .getTemporalOperator() == OrderIndependance);
     }
 
 
-    class TabPanelAdapter  implements ReificationWidget
+    class SimpleLayoutAdapter implements ReificationWidget
     {
-        final TabPanel tabPanel;
+        final SimpleLayout layout;
+        final InteractionUnit interactionUnit;
 
-        TabPanelAdapter()
+        SimpleLayoutAdapter(final  InteractionUnit interactionUnit)
         {
-            tabPanel = new TabPanel();
-            tabPanel.setStyleName("default-tabpanel");
-
-            tabPanel.addAttachHandler(new AttachEvent.Handler() {
-                @Override
-                public void onAttachOrDetach(AttachEvent attachEvent) {
-                    if(tabPanel.getWidgetCount()>0)
-                        tabPanel.selectTab(0);
-                }
-            });
+            this.interactionUnit = interactionUnit;
+            this.layout = new SimpleLayout().setTitle(interactionUnit.getName()).setHeadline(interactionUnit.getName());
         }
 
         @Override
@@ -79,14 +71,14 @@ public class ChoiceStrategy implements ReificationStrategy<ReificationWidget>
         {
             if (widget != null)
             {
-                tabPanel.add(widget, interactionUnit.getName());
+                layout.addContent(interactionUnit.getId(), widget.asWidget());
             }
         }
 
         @Override
         public Widget asWidget()
         {
-            return tabPanel;
+            return layout.build();
         }
     }
 }

@@ -16,31 +16,38 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.mbui.client.cui.workbench.reification;
+package org.jboss.mbui.client.cui.reification;
 
+import com.google.gwt.user.client.ui.Widget;
 import org.jboss.mbui.client.aui.aim.InteractionUnit;
-import org.jboss.mbui.client.cui.Context;
-import org.jboss.mbui.client.cui.ReificationStrategy;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Harald Pehl
  * @date 10/30/2012
  */
-public class TestableReificationStrategy implements ReificationStrategy<ReificationWidget>
+public class TestableReificationWidget implements ReificationWidget
 {
-    public TestableReificationStrategy()
+    final InteractionUnit interactionUnit;
+    final List<ReificationWidget> children;
+
+    public TestableReificationWidget(final InteractionUnit interactionUnit)
     {
+        this.interactionUnit = interactionUnit;
+        this.children = new ArrayList<ReificationWidget>();
     }
 
     @Override
-    public ReificationWidget reify(final InteractionUnit interactionUnit, final Context context)
+    public void add(final ReificationWidget widget, final InteractionUnit interactionUnit, final InteractionUnit parent)
     {
-        return new TestableReificationWidget(interactionUnit);
+        children.add(widget);
     }
 
     @Override
-    public boolean appliesTo(final InteractionUnit interactionUnit)
+    public Widget asWidget()
     {
-        return true;
+        return null;
     }
 }

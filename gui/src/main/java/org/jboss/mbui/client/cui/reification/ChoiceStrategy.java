@@ -16,32 +16,33 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.mbui.client.cui.workbench.reification;
+package org.jboss.mbui.client.cui.reification;
 
+import com.google.gwt.event.logical.shared.AttachEvent;
+import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.Widget;
-import org.jboss.as.console.client.shared.viewframework.builder.SimpleLayout;
 import org.jboss.mbui.client.aui.aim.Container;
 import org.jboss.mbui.client.aui.aim.InteractionUnit;
 import org.jboss.mbui.client.cui.Context;
 import org.jboss.mbui.client.cui.ReificationStrategy;
 
-import static org.jboss.mbui.client.aui.aim.TemporalOperator.OrderIndependance;
+import static org.jboss.mbui.client.aui.aim.TemporalOperator.Choice;
 
 /**
- * Strategy for a container with temporal operator == OrderIndependance.
+ * Strategy for a container with temporal operator == Choice.
  *
  * @author Harald Pehl
  * @date 11/01/2012
  */
-public class OrderIndependanceStrategy implements ReificationStrategy<ReificationWidget>
+public class ChoiceStrategy implements ReificationStrategy<ReificationWidget>
 {
     @Override
     public ReificationWidget reify(final InteractionUnit interactionUnit, final Context context)
     {
-        SimpleLayoutAdapter adapter = null;
+        TabPanelAdapter adapter = null;
         if (interactionUnit != null)
         {
-            adapter = new SimpleLayoutAdapter(interactionUnit);
+            adapter = new TabPanelAdapter();
         }
         return adapter;
     }
@@ -50,19 +51,26 @@ public class OrderIndependanceStrategy implements ReificationStrategy<Reificatio
     public boolean appliesTo(final InteractionUnit interactionUnit)
     {
         return (interactionUnit instanceof Container) && (((Container) interactionUnit)
-                .getTemporalOperator() == OrderIndependance);
+                .getTemporalOperator() == Choice);
     }
 
 
-    class SimpleLayoutAdapter implements ReificationWidget
+    class TabPanelAdapter  implements ReificationWidget
     {
-        final SimpleLayout layout;
-        final InteractionUnit interactionUnit;
+        final TabPanel tabPanel;
 
-        SimpleLayoutAdapter(final  InteractionUnit interactionUnit)
+        TabPanelAdapter()
         {
-            this.interactionUnit = interactionUnit;
-            this.layout = new SimpleLayout().setTitle(interactionUnit.getName()).setHeadline(interactionUnit.getName());
+            tabPanel = new TabPanel();
+            tabPanel.setStyleName("default-tabpanel");
+
+            tabPanel.addAttachHandler(new AttachEvent.Handler() {
+                @Override
+                public void onAttachOrDetach(AttachEvent attachEvent) {
+                    if(tabPanel.getWidgetCount()>0)
+                        tabPanel.selectTab(0);
+                }
+            });
         }
 
         @Override
@@ -71,14 +79,14 @@ public class OrderIndependanceStrategy implements ReificationStrategy<Reificatio
         {
             if (widget != null)
             {
-                layout.addContent(interactionUnit.getId(), widget.asWidget());
+                tabPanel.add(widget, interactionUnit.getName());
             }
         }
 
         @Override
         public Widget asWidget()
         {
-            return layout.build();
+            return tabPanel;
         }
     }
 }
