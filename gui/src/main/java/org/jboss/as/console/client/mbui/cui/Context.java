@@ -28,10 +28,12 @@ import java.util.Map;
 public class Context
 {
     private final Map<String, Object> parameter;
+    private final Map<String, Object> attributes;
 
     public Context()
     {
         this.parameter = new HashMap<String, Object>();
+        this.attributes = new HashMap<String, Object>();
     }
 
     public Context addParameter(final String name, final String value)
@@ -48,5 +50,15 @@ public class Context
             return String.valueOf(value);
         }
         return null;
+    }
+
+    public <T> void setAttribute(final String key, final T value)
+    {
+        attributes.put(key, value);
+    }
+
+    public <T> T getAttribute(String value)
+    {
+        return (T) attributes.get(value);
     }
 }

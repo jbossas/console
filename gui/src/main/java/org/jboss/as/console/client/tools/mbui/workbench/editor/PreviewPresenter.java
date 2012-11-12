@@ -28,6 +28,8 @@ import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import org.jboss.as.console.client.mbui.aui.aim.InteractionUnit;
 import org.jboss.as.console.client.mbui.cui.Context;
+import org.jboss.as.console.client.mbui.cui.reification.pipeline.ReificationCallback;
+import org.jboss.as.console.client.mbui.cui.reification.pipeline.ReificationPipeline;
 import org.jboss.as.console.client.tools.mbui.workbench.ApplicationPresenter;
 import org.jboss.as.console.client.mbui.cui.reification.ReificationWidget;
 import org.jboss.as.console.client.mbui.cui.reification.Reificator;
@@ -58,13 +60,13 @@ public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, Preview
     {
     }
 
-    private final Reificator reificator;
+    private final ReificationPipeline reificationPipeline;
 
     @Inject
-    public PreviewPresenter(final EventBus eventBus, final MyView view, final MyProxy proxy, final Reificator reificator)
+    public PreviewPresenter(final EventBus eventBus, final MyView view, final MyProxy proxy, final ReificationPipeline reificationPipeline)
     {
         super(eventBus, view, proxy);
-        this.reificator = reificator;
+        this.reificationPipeline = reificationPipeline;
         getEventBus().addHandler(ReifyEvent.getType(), this);
     }
 
@@ -83,11 +85,22 @@ public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, Preview
             InteractionUnit interactionUnit = sample.build();
             if (interactionUnit != null)
             {
-                ReificationWidget reificationWidget = reificator.reify(interactionUnit, new Context());
-                if (reificationWidget != null)
+                final Context context = new Context();
+                reificationPipeline.execute(interactionUnit, context, new ReificationCallback()
                 {
-                    getView().show(reificationWidget);
-                }
+                    @Override
+                    public void onSuccess(final Boolean result)
+                    {
+                        if (result != null && result.booleanValue())
+                        {
+                            ReificationWidget widget = context.getAttribute("reificationWidget");
+                            if (widget != null)
+                            {
+                                getView().show(widget);
+                            }
+                        }
+                    }
+                });
             }
         }
     }

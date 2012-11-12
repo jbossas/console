@@ -18,37 +18,18 @@
  */
 package org.jboss.as.console.client.mbui.cui.reification.pipeline;
 
+import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.inject.Inject;
-import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
-import org.jboss.as.console.client.mbui.aui.aim.InteractionUnit;
-import org.jboss.as.console.client.mbui.cui.Context;
 
 /**
- * @author Harald Pehl
- * @date 11/12/2012
- */
-public class ReadResourceDescription extends ReificationStep
+* @author Harald Pehl
+* @date 11/12/2012
+*/
+public abstract class ReificationCallback implements AsyncCallback<Boolean>
 {
-    final DispatchAsync dispatcher;
-
-    @Inject
-    public ReadResourceDescription(final DispatchAsync dispatcher)
-    {
-        super("read resource descriptions");
-        this.dispatcher = dispatcher;
-    }
-
-
     @Override
-    public void execute(final InteractionUnit interactionUnit, final Context context, final Callback callback)
+    public void onFailure(final Throwable caught)
     {
-
-    }
-
-    @Override
-    public void execute(final AsyncCallback<Boolean> callback)
-    {
-
+        Log.error("Reification failed: " + caught.getMessage(), caught);
     }
 }

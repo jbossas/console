@@ -18,38 +18,31 @@
  */
 package org.jboss.as.console.client.mbui.cui.reification.pipeline;
 
-import org.jboss.as.console.client.mbui.aui.aim.InteractionUnit;
-import org.jboss.as.console.client.mbui.cui.Context;
-import org.jboss.as.console.client.shared.dispatch.AsyncCommand;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.inject.Inject;
+import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
+
+import static java.lang.Boolean.TRUE;
 
 /**
  * @author Harald Pehl
  * @date 11/12/2012
  */
-public abstract class ReificationStep implements AsyncCommand<Boolean>
+public class ReadResourceDescriptionStep extends ReificationStep
 {
-    private final String name;
-    protected InteractionUnit interactionUnit;
-    protected Context context;
+    final DispatchAsync dispatcher;
 
-    protected ReificationStep(final String name)
+    @Inject
+    public ReadResourceDescriptionStep(final DispatchAsync dispatcher)
     {
-        this.name = name;
+        super("read resource descriptions");
+        this.dispatcher = dispatcher;
     }
 
-    public void init(final InteractionUnit interactionUnit, final Context context)
-    {
-        this.interactionUnit = interactionUnit;
-        this.context = context;
-    }
 
-    public boolean isValid()
+    @Override
+    public void execute(final AsyncCallback<Boolean> callback)
     {
-        return interactionUnit != null && context != null;
-    }
-
-    public String getName()
-    {
-        return name;
+        callback.onSuccess(TRUE);
     }
 }
