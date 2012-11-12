@@ -78,7 +78,12 @@ public class Footer {
         toolReference.add(new String[]{"Expression Resolver", "expressions"});
 
         if(Diagnostics.isEnabled())
+        {
             toolReference.add(new String[]{"Diagnostics", "debug-panel"});
+        }
+
+        // TODO: exclude from prod build
+        toolReference.add(new String[] {"MBUI Workbench", "mbui-workbench"});
 
         final VerticalPanel toolsList = new VerticalPanel();
         toolsList.getElement().setAttribute("width", "160px");
