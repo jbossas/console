@@ -32,6 +32,7 @@ public class SampleRepository
         List<Sample> samples = new ArrayList<Sample>();
 
         samples.add(new DataSourceSample());
+        samples.add(new TransactionSample());
 
         return samples;
     }
