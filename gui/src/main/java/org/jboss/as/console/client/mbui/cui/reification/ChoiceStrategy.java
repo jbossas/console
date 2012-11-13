@@ -18,13 +18,16 @@
  */
 package org.jboss.as.console.client.mbui.cui.reification;
 
+import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.logical.shared.AttachEvent;
 import com.google.gwt.user.client.ui.TabPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.mbui.aui.aim.Container;
 import org.jboss.as.console.client.mbui.aui.aim.InteractionUnit;
 import org.jboss.as.console.client.mbui.cui.Context;
 import org.jboss.as.console.client.mbui.cui.ReificationStrategy;
+import org.jboss.as.console.client.widgets.tabs.DefaultTabLayoutPanel;
 
 import static org.jboss.as.console.client.mbui.aui.aim.TemporalOperator.Choice;
 
@@ -42,7 +45,7 @@ public class ChoiceStrategy implements ReificationStrategy<ReificationWidget>
         TabPanelAdapter adapter = null;
         if (interactionUnit != null)
         {
-            adapter = new TabPanelAdapter();
+            adapter = new TabPanelAdapter(interactionUnit);
         }
         return adapter;
     }
@@ -57,20 +60,57 @@ public class ChoiceStrategy implements ReificationStrategy<ReificationWidget>
 
     class TabPanelAdapter  implements ReificationWidget
     {
-        final TabPanel tabPanel;
+        final WidgetStrategy delegate;
 
-        TabPanelAdapter()
+        TabPanelAdapter(final InteractionUnit interactionUnit)
         {
-            tabPanel = new TabPanel();
-            tabPanel.setStyleName("default-tabpanel");
 
-            tabPanel.addAttachHandler(new AttachEvent.Handler() {
-                @Override
-                public void onAttachOrDetach(AttachEvent attachEvent) {
-                    if(tabPanel.getWidgetCount()>0)
-                        tabPanel.selectTab(0);
-                }
-            });
+            if(interactionUnit.hasParent())
+            {
+                final TabPanel tabPanel = new TabPanel();
+                tabPanel.setStyleName("default-tabpanel");
+
+                tabPanel.addAttachHandler(new AttachEvent.Handler() {
+                    @Override
+                    public void onAttachOrDetach(AttachEvent attachEvent) {
+                        if(tabPanel.getWidgetCount()>0)
+                            tabPanel.selectTab(0);
+                    }
+                });
+
+                this.delegate = new WidgetStrategy() {
+                    @Override
+                    public void add(Widget widget) {
+                        tabPanel.add(widget, "InnerTab-"+tabPanel.getWidgetCount());
+                    }
+
+                    @Override
+                    public Widget as() {
+                        return tabPanel;
+                    }
+                };
+            }
+            else
+            {
+                final DefaultTabLayoutPanel tabLayoutpanel = new DefaultTabLayoutPanel(40, Style.Unit.PX);
+                tabLayoutpanel.addStyleName("default-tabpanel");
+
+                this.delegate = new WidgetStrategy() {
+                    @Override
+                    public void add(Widget widget) {
+                        final VerticalPanel vpanel = new VerticalPanel();
+                        vpanel.setStyleName("rhs-content-panel");
+                        vpanel.add(widget);
+                        tabLayoutpanel.add(vpanel, "OuterTab-" + tabLayoutpanel.getWidgetCount());
+                    }
+
+                    @Override
+                    public Widget as() {
+                        return tabLayoutpanel;
+                    }
+                };
+            }
+
         }
 
         @Override
@@ -79,14 +119,14 @@ public class ChoiceStrategy implements ReificationStrategy<ReificationWidget>
         {
             if (widget != null)
             {
-                tabPanel.add(widget, interactionUnit.getName());
+                delegate.add(widget.asWidget());
             }
         }
 
         @Override
         public Widget asWidget()
         {
-            return tabPanel;
+            return delegate.as();
         }
     }
 }

@@ -57,11 +57,6 @@ public class OrderIndependanceStrategy implements ReificationStrategy<Reificatio
     }
 
 
-    interface WidgetStrategy {
-        void add(Widget widget);
-        Widget as();
-    }
-
     class SimpleLayoutAdapter implements ReificationWidget
     {
         final WidgetStrategy delegate;

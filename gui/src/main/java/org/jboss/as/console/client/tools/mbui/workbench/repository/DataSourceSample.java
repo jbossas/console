@@ -45,13 +45,19 @@ public class DataSourceSample implements Sample
     public InteractionUnit build()
     {
         // abstract UI modelling
-        Container overview = new Container("datasourceOverview", "Datasources", OrderIndependance);
+
+        Container container = new Container("datasources", "Datasources", Choice);
+        Container dsOverview = new Container("datasourceOverview", "Datasources", OrderIndependance);
+        Container xaOverview = new Container("xaOverview", "XA Datasources", OrderIndependance);
+
+        container.add(dsOverview);
+        container.add(xaOverview);
 
         Select table = new Select("datasourceTable", "Datasources");
-        overview.add(table);
+        dsOverview.add(table);
 
         Container forms = new Container("datasourceAttributes", "Datasource", Choice);
-        overview.add(forms);
+        dsOverview.add(forms);
 
         Form basicAttributes = new Form("basicAttributes", "Attributes");
         forms.add(basicAttributes);
@@ -79,6 +85,6 @@ public class DataSourceSample implements Sample
         basicAttributes.getEntityContext().addMapping(basicAttributesMapping);
         connectionAttributes.getEntityContext().addMapping(connectionAttributesMapping);
 
-        return overview;
+        return container;
     }
 }
