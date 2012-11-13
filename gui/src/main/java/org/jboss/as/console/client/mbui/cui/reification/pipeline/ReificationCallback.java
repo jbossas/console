@@ -16,31 +16,20 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.as.console.client.mbui.cui.reification;
+package org.jboss.as.console.client.mbui.cui.reification.pipeline;
 
-import org.jboss.as.console.client.mbui.aui.aim.InteractionUnit;
-import org.jboss.as.console.client.mbui.cui.Context;
-import org.jboss.as.console.client.mbui.cui.ReificationStrategy;
+import com.allen_sauer.gwt.log.client.Log;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 
 /**
- * @author Harald Pehl
- * @date 10/30/2012
- */
-public class TestableReificationStrategy implements ReificationStrategy<ReificationWidget>
+* @author Harald Pehl
+* @date 11/12/2012
+*/
+public abstract class ReificationCallback implements AsyncCallback<Boolean>
 {
-    public TestableReificationStrategy()
-    {
-    }
-
     @Override
-    public ReificationWidget reify(final InteractionUnit interactionUnit, final Context context)
+    public void onFailure(final Throwable caught)
     {
-        return new TestableReificationWidget(interactionUnit);
-    }
-
-    @Override
-    public boolean appliesTo(final InteractionUnit interactionUnit)
-    {
-        return true;
+        Log.error("Reification failed: " + caught.getMessage(), caught);
     }
 }

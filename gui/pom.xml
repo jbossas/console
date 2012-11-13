@@ -217,6 +217,7 @@
                             <processors>
                                 <processor>com.gwtplatform.dispatch.annotation.processor.GenEventProcessor</processor>
                             </processors>
+                            <outputClassDirectory></outputClassDirectory>
                             <appendSourceArtifacts>true</appendSourceArtifacts>
                             <sourceClassifier>export</sourceClassifier>
                         </configuration>

@@ -18,37 +18,37 @@
  */
 package org.jboss.as.console.client.mbui.cui.reification.pipeline;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.inject.Inject;
-import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
+import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.mbui.aui.aim.InteractionUnit;
-import org.jboss.as.console.client.mbui.cui.Context;
+import org.jboss.as.console.client.mbui.cui.reification.ReificationWidget;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Harald Pehl
- * @date 11/12/2012
+ * @date 10/30/2012
  */
-public class ReadResourceDescription extends ReificationStep
+public class TestableReificationWidget implements ReificationWidget
 {
-    final DispatchAsync dispatcher;
+    final InteractionUnit interactionUnit;
+    final List<ReificationWidget> children;
 
-    @Inject
-    public ReadResourceDescription(final DispatchAsync dispatcher)
+    public TestableReificationWidget(final InteractionUnit interactionUnit)
     {
-        super("read resource descriptions");
-        this.dispatcher = dispatcher;
-    }
-
-
-    @Override
-    public void execute(final InteractionUnit interactionUnit, final Context context, final Callback callback)
-    {
-
+        this.interactionUnit = interactionUnit;
+        this.children = new ArrayList<ReificationWidget>();
     }
 
     @Override
-    public void execute(final AsyncCallback<Boolean> callback)
+    public void add(final ReificationWidget widget, final InteractionUnit interactionUnit, final InteractionUnit parent)
     {
+        children.add(widget);
+    }
 
+    @Override
+    public Widget asWidget()
+    {
+        return null;
     }
 }

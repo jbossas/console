@@ -18,8 +18,8 @@
  */
 package org.jboss.as.console.client.mbui.cui.reification.pipeline;
 
+import com.allen_sauer.gwt.log.client.Log;
 import com.google.inject.Inject;
-import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.mbui.aui.aim.InteractionUnit;
 import org.jboss.as.console.client.mbui.cui.Context;
 
@@ -34,37 +34,53 @@ import static java.lang.Boolean.TRUE;
  */
 public class ReificationPipeline
 {
-    private final DispatchAsync dispatcher;
     private final List<ReificationStep> steps;
     private int index;
 
-
     @Inject
-    public ReificationPipeline(final DispatchAsync dispatcher)
+    public ReificationPipeline(ReadResourceDescriptionStep readResourceDescriptionStep, BuildUserInterfaceStep buildUserInterfaceStep)
     {
-        this.dispatcher = dispatcher;
         this.steps = new LinkedList<ReificationStep>();
+        this.steps.add(readResourceDescriptionStep);
+        this.steps.add(buildUserInterfaceStep);
     }
 
-    public void execute(final InteractionUnit interactionUnit, final Context context, final ReificationStep.Callback outcome)
+    public void execute(final InteractionUnit interactionUnit, final Context context, final ReificationCallback outcome)
     {
         this.index = 0;
-        executeNext(interactionUnit, context, outcome);
+        for (ReificationStep step : steps)
+        {
+            step.init(interactionUnit, context);
+        }
+        executeNext(outcome);
     }
 
-    private void executeNext(final InteractionUnit interactionUnit, final Context context, final ReificationStep.Callback outcome)
+    private void executeNext(final ReificationCallback outcome)
     {
         if (index < steps.size())
         {
             final ReificationStep nextStep = steps.get(index);
             index++;
 
-            nextStep.execute(nextStep.new Callback()
+            nextStep.execute(new ReificationCallback()
             {
                 @Override
-                public void onSuccess()
+                public void onFailure(final Throwable caught)
                 {
-                    executeNext(interactionUnit, context, outcome);
+                    Log.error("Failed to execute reification step " + nextStep.getName(), caught);
+                }
+
+                @Override
+                public void onSuccess(final Boolean result)
+                {
+                    if (result != null && result.booleanValue())
+                    {
+                        executeNext(outcome);
+                    }
+                    else
+                    {
+                        Log.error("Reification step " + nextStep.getName() + " returned false");
+                    }
                 }
             });
         }

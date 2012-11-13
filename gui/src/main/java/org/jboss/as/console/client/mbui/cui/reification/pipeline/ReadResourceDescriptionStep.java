@@ -16,38 +16,35 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.as.console.client.mbui.cui.reification;
+package org.jboss.as.console.client.mbui.cui.reification.pipeline;
 
-import com.google.gwt.user.client.ui.Widget;
-import org.jboss.as.console.client.mbui.aui.aim.InteractionUnit;
+import com.allen_sauer.gwt.log.client.Log;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.inject.Inject;
+import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 
-import java.util.ArrayList;
-import java.util.List;
+import static java.lang.Boolean.TRUE;
 
 /**
  * @author Harald Pehl
- * @date 10/30/2012
+ * @date 11/12/2012
  */
-public class TestableReificationWidget implements ReificationWidget
+public class ReadResourceDescriptionStep extends ReificationStep
 {
-    final InteractionUnit interactionUnit;
-    final List<ReificationWidget> children;
+    final DispatchAsync dispatcher;
 
-    public TestableReificationWidget(final InteractionUnit interactionUnit)
+    @Inject
+    public ReadResourceDescriptionStep(final DispatchAsync dispatcher)
     {
-        this.interactionUnit = interactionUnit;
-        this.children = new ArrayList<ReificationWidget>();
+        super("read resource descriptions");
+        this.dispatcher = dispatcher;
     }
 
-    @Override
-    public void add(final ReificationWidget widget, final InteractionUnit interactionUnit, final InteractionUnit parent)
-    {
-        children.add(widget);
-    }
 
     @Override
-    public Widget asWidget()
+    public void execute(final AsyncCallback<Boolean> callback)
     {
-        return null;
+        Log.warn("Not yet implemented");
+        callback.onSuccess(TRUE);
     }
 }

@@ -19,7 +19,16 @@
 
 <module rename-to="app">
 
-    <inherits name="org.jboss.as.console.Console"/>
+    <inherits name="com.google.gwt.debugpanel.DebugPanel_Disabled" />
+    <inherits name="com.google.gwt.i18n.I18N"/>
+    <inherits name="com.google.gwt.json.JSON"/>
+    <inherits name='com.google.gwt.visualization.Visualization'/>
+    <inherits name="com.google.web.bindery.autobean.AutoBean"/>
+
+    <inherits name="org.jboss.ballroom.Framework"/>
+    <inherits name="org.jboss.dmr.DMR"/>
+
+    <inherits name="com.allen_sauer.gwt.log.gwt-log-ERROR" />
 
     <!--
        https://issues.jboss.org/browse/AS7-3977

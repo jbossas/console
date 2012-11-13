@@ -20,21 +20,19 @@ package org.jboss.as.console.client.tools.mbui.workbench.gin;
 
 import com.google.inject.Singleton;
 import com.gwtplatform.mvp.client.gin.AbstractPresenterModule;
-import com.gwtplatform.mvp.client.gin.DefaultModule;
+import org.jboss.as.console.client.mbui.cui.reification.pipeline.BuildUserInterfaceStep;
+import org.jboss.as.console.client.mbui.cui.reification.pipeline.ReadResourceDescriptionStep;
+import org.jboss.as.console.client.mbui.cui.reification.pipeline.ReificationPipeline;
 import org.jboss.as.console.client.tools.mbui.workbench.ApplicationPresenter;
 import org.jboss.as.console.client.tools.mbui.workbench.ApplicationView;
-import org.jboss.as.console.client.tools.mbui.workbench.DefaultPlace;
-import org.jboss.as.console.client.tools.mbui.workbench.DefaultPlaceManager;
 import org.jboss.as.console.client.tools.mbui.workbench.FooterPresenter;
 import org.jboss.as.console.client.tools.mbui.workbench.FooterView;
 import org.jboss.as.console.client.tools.mbui.workbench.HeaderPresenter;
 import org.jboss.as.console.client.tools.mbui.workbench.HeaderView;
-import org.jboss.as.console.client.tools.mbui.workbench.NameTokens;
 import org.jboss.as.console.client.tools.mbui.workbench.context.ContextPresenter;
 import org.jboss.as.console.client.tools.mbui.workbench.context.ContextView;
 import org.jboss.as.console.client.tools.mbui.workbench.editor.PreviewPresenter;
 import org.jboss.as.console.client.tools.mbui.workbench.editor.PreviewView;
-import org.jboss.as.console.client.mbui.cui.reification.Reificator;
 import org.jboss.as.console.client.tools.mbui.workbench.repository.RepositoryPresenter;
 import org.jboss.as.console.client.tools.mbui.workbench.repository.RepositoryView;
 import org.jboss.as.console.client.tools.mbui.workbench.repository.SampleRepository;
@@ -61,7 +59,9 @@ public class WorkbenchModule extends AbstractPresenterModule
         bindPresenterWidget(RepositoryPresenter.class, RepositoryPresenter.MyView.class, RepositoryView.class);
 
         // Application
-        bind(Reificator.class).in(Singleton.class);
+        bind(ReificationPipeline.class).in(Singleton.class);
+        bind(BuildUserInterfaceStep.class).in(Singleton.class);
+        bind(ReadResourceDescriptionStep.class).in(Singleton.class);
         bind(SampleRepository.class).in(Singleton.class);
     }
 }

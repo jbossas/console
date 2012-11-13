@@ -16,57 +16,32 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.as.console.client.mbui.cui;
+package org.jboss.as.console.client.mbui.cui.reification.pipeline;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Stack;
+import org.jboss.as.console.client.mbui.aui.aim.InteractionUnit;
+import org.jboss.as.console.client.mbui.cui.Context;
+import org.jboss.as.console.client.mbui.cui.ReificationStrategy;
+import org.jboss.as.console.client.mbui.cui.reification.ReificationWidget;
 
 /**
  * @author Harald Pehl
- * @date 10/25/2012
+ * @date 10/30/2012
  */
-public class Context
+public class TestableReificationStrategy implements ReificationStrategy<ReificationWidget>
 {
-    private Stack<Map<String, Object>> subcontexts = new Stack<Map<String, Object>>();
-
-    public Context()
+    public TestableReificationStrategy()
     {
-        push();
-    }
-
-    public void push() {
-        subcontexts.push(new HashMap<String, Object>());
-    }
-
-    public void pop() {
-        subcontexts.pop();
-    }
-
-    public <T> Context set(final String name, final T value)
-    {
-        subcontexts.peek().put(name, value);
-        return this;
-    }
-
-    public <T> T get(final String name)
-    {
-        Object value = subcontexts.peek().get(name);
-        if (value != null)
-        {
-            return (T)value;
-        }
-        return null;
-    }
-
-    public boolean has(final String name)
-    {
-        Object value = subcontexts.peek().get(name);
-        return value != null;
     }
 
     @Override
-    public String toString() {
-        return "Context {sub="+subcontexts.size()+"}";
+    public ReificationWidget reify(final InteractionUnit interactionUnit, final Context context)
+    {
+        return new TestableReificationWidget(interactionUnit);
+    }
+
+    @Override
+    public boolean appliesTo(final InteractionUnit interactionUnit)
+    {
+        return true;
     }
 }
