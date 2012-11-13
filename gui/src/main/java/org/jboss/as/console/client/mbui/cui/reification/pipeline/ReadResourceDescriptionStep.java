@@ -18,6 +18,7 @@
  */
 package org.jboss.as.console.client.mbui.cui.reification.pipeline;
 
+import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
@@ -43,6 +44,7 @@ public class ReadResourceDescriptionStep extends ReificationStep
     @Override
     public void execute(final AsyncCallback<Boolean> callback)
     {
+        Log.warn("Not yet implemented");
         callback.onSuccess(TRUE);
     }
 }

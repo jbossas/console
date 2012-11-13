@@ -16,10 +16,11 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.as.console.client.mbui.cui.reification;
+package org.jboss.as.console.client.mbui.cui.reification.pipeline;
 
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.mbui.aui.aim.InteractionUnit;
+import org.jboss.as.console.client.mbui.cui.reification.ReificationWidget;
 
 import java.util.ArrayList;
 import java.util.List;

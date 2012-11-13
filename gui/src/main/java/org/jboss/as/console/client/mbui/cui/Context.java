@@ -43,18 +43,18 @@ public class Context
         subcontexts.pop();
     }
 
-    public Context set(final String name, final String value)
+    public <T> Context set(final String name, final T value)
     {
         subcontexts.peek().put(name, value);
         return this;
     }
 
-    public String get(final String name)
+    public <T> T get(final String name)
     {
         Object value = subcontexts.peek().get(name);
         if (value != null)
         {
-            return String.valueOf(value);
+            return (T)value;
         }
         return null;
     }
@@ -66,7 +66,8 @@ public class Context
     }
 
     @Override
-    public String toString() {
+    public String toString() 
+    {
         return "Context {sub="+subcontexts.size()+"}";
     }
 }

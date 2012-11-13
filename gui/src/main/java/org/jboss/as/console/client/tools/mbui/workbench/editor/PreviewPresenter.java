@@ -32,8 +32,11 @@ import org.jboss.as.console.client.mbui.cui.reification.pipeline.ReificationCall
 import org.jboss.as.console.client.mbui.cui.reification.pipeline.ReificationPipeline;
 import org.jboss.as.console.client.tools.mbui.workbench.ApplicationPresenter;
 import org.jboss.as.console.client.mbui.cui.reification.ReificationWidget;
-import org.jboss.as.console.client.mbui.cui.reification.Reificator;
-import org.jboss.as.console.client.tools.mbui.workbench.repository.ReifyEvent;
+import org.jboss.as.console.client.mbui.cui.reification.pipeline.BuildUserInterfaceStep;
+import org.jboss.as.console.client.mbui.cui.reification.pipeline.ReificationCallback;
+import org.jboss.as.console.client.mbui.cui.reification.pipeline.ReificationPipeline;
+import org.jboss.as.console.client.tools.mbui.workbench.ApplicationPresenter;
+import org.jboss.as.console.client.tools.mbui.workbench.ReifyEvent;
 import org.jboss.as.console.client.tools.mbui.workbench.repository.Sample;
 
 import static org.jboss.as.console.client.tools.mbui.workbench.NameTokens.preview;
@@ -93,7 +96,7 @@ public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, Preview
                     {
                         if (result != null && result.booleanValue())
                         {
-                            ReificationWidget widget = context.getAttribute("reificationWidget");
+                            ReificationWidget widget = context.get(BuildUserInterfaceStep.WIDGET);
                             if (widget != null)
                             {
                                 getView().show(widget);

@@ -40,6 +40,7 @@ import static java.lang.Boolean.TRUE;
  */
 public class BuildUserInterfaceStep extends ReificationStep
 {
+    public static final String WIDGET = "widget";
     final Set<ReificationStrategy<ReificationWidget>> strategies;
 
     public BuildUserInterfaceStep()
@@ -60,7 +61,7 @@ public class BuildUserInterfaceStep extends ReificationStep
         {
             widget = startReification(interactionUnit, context);
         }
-        context.setAttribute("reificationWidget", widget);
+        context.set(WIDGET, widget);
         callback.onSuccess(TRUE);
     }
 
@@ -78,15 +79,18 @@ public class BuildUserInterfaceStep extends ReificationStep
                     Container container = (Container) parentUnit;
                     for (InteractionUnit childUnit : container.getChildren())
                     {
-                        try {
+                        try
+                        {
                             context.push();
-                            context.set("hasParent", "true");    // TODO: type safe context possible?
+                            context.set("hasParent", true);
                             ReificationWidget childWidget = startReification(childUnit, context);
                             if (childWidget != null)
                             {
                                 parentWidget.add(childWidget, childUnit, container);
                             }
-                        } catch (Exception e) {
+                        }
+                        catch (Exception e)
+                        {
                             context.pop();
                         }
                     }
@@ -101,7 +105,7 @@ public class BuildUserInterfaceStep extends ReificationStep
         ReificationStrategy<ReificationWidget> match = null;
         for (ReificationStrategy<ReificationWidget> strategy : strategies)
         {
-            if(strategy.appliesTo(interactionUnit))
+            if (strategy.appliesTo(interactionUnit))
             {
                 match = strategy;
                 break;
