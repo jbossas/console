@@ -30,7 +30,6 @@ public class Container extends InteractionUnit
     private final List<InteractionUnit> children;
     private final TemporalOperator temporalOperator;
 
-
     public Container(final String id, final TemporalOperator temporalOperator)
     {
         this(id, null, temporalOperator);
@@ -56,6 +55,7 @@ public class Container extends InteractionUnit
     {
         if (interactionUnit != null)
         {
+            interactionUnit.setParent(this);
             children.add(interactionUnit);
         }
     }
@@ -64,6 +64,7 @@ public class Container extends InteractionUnit
     {
         if (interactionUnit != null)
         {
+            interactionUnit.setParent(null);
             children.remove(interactionUnit);
         }
     }

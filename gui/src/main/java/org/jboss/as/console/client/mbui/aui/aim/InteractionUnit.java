@@ -33,6 +33,7 @@ public abstract class InteractionUnit implements EventConsumer
     private final EntityContext entityContext;
     private String name;
     private String mappingReference;
+    private InteractionUnit parent = null;
 
     private EventConsumption eventConsumption = new EventConsumption(EventType.System);
 
@@ -47,6 +48,20 @@ public abstract class InteractionUnit implements EventConsumer
         this.id = id;
         this.name = name;
         this.entityContext = new EntityContext(id + ENTITY_CONTEXT_SUFFIX);
+    }
+
+    void setParent(InteractionUnit parent)
+    {
+        this.parent = parent;
+    }
+
+    public InteractionUnit getParent() {
+        return parent;
+    }
+
+    public boolean hasParent()
+    {
+        return parent!=null;
     }
 
     @Override

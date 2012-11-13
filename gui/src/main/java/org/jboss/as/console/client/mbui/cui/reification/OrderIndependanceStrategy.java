@@ -32,6 +32,7 @@ import static org.jboss.as.console.client.mbui.aui.aim.TemporalOperator.OrderInd
  * Strategy for a container with temporal operator == OrderIndependance.
  *
  * @author Harald Pehl
+ * @author Heiko Braun
  * @date 11/01/2012
  */
 public class OrderIndependanceStrategy implements ReificationStrategy<ReificationWidget>
@@ -42,7 +43,7 @@ public class OrderIndependanceStrategy implements ReificationStrategy<Reificatio
         SimpleLayoutAdapter adapter = null;
         if (interactionUnit != null)
         {
-            System.out.println(context+": hasParent="+context.has("hasParent"));
+            System.out.println(context+": hasParent="+interactionUnit.hasParent());
             adapter = new SimpleLayoutAdapter(interactionUnit, context);
         }
         return adapter;
@@ -70,7 +71,7 @@ public class OrderIndependanceStrategy implements ReificationStrategy<Reificatio
         {
             this.interactionUnit = interactionUnit;
 
-            if(context.has("hasParent"))
+            if(interactionUnit.hasParent())
             {
                 final VerticalPanel panel = new VerticalPanel();
                 panel.setStyleName("fill-layout-width");

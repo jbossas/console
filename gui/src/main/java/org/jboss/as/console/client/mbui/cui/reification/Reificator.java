@@ -53,6 +53,8 @@ public class Reificator
         ReificationWidget result = null;
         if (interactionUnit != null)
         {
+            assert !interactionUnit.hasParent() : "Entry point interaction units are not expected to have parents";
+
             result = startReification(interactionUnit, context);
         }
         return result;
@@ -74,7 +76,6 @@ public class Reificator
                     {
                         try {
                             context.push();
-                            context.set("hasParent", "true");    // TODO: type safe context possible?
                             ReificationWidget childWidget = startReification(childUnit, context);
                             if (childWidget != null)
                             {
