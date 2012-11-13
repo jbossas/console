@@ -19,11 +19,13 @@
 
 package org.jboss.dmr.client;
 
+import javax.servlet.jsp.tagext.TagSupport;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
@@ -51,6 +53,8 @@ public class ModelNode implements Cloneable {
 
     private boolean protect = false;
     private ModelValue value = ModelValue.UNDEFINED;
+
+    private HashMap<String, Object> tags;
 
     public ModelNode() {
     }
@@ -1357,5 +1361,20 @@ public class ModelNode implements Cloneable {
     public String getFailureDescription() {
         String desc = hasDefined(FAILURE_DESCRIPTION) ? get(FAILURE_DESCRIPTION).asString() : "No failure-description provided";
         return desc;
+    }
+
+    public void setTag(String name, Object value)
+    {
+        if(null==tags)
+            tags = new HashMap<String, Object>(2);
+        tags.put(name, value);
+    }
+
+    public Object getTag(String name)
+    {
+        if(null==tags)
+            return null;
+        else
+            return tags.get(name);
     }
 }
