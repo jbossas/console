@@ -22,9 +22,9 @@
         <g:west size="250">
             <g:SimpleLayoutPanel ui:field="repositoryPanel" addStyleNames="{style.border-right}"/>
         </g:west>
-        <g:south size="150">
+        <!--g:south size="150">
             <g:SimpleLayoutPanel ui:field="contextPanel" addStyleNames="{style.border-top}"/>
-        </g:south>
+        </g:south-->
         <g:center>
             <g:SimpleLayoutPanel ui:field="mainPanel"/>
         </g:center>

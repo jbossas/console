@@ -43,7 +43,7 @@ public class ApplicationView extends ViewImpl implements ApplicationPresenter.My
     @UiField SimpleLayoutPanel mainPanel;
     @UiField SimpleLayoutPanel headerPanel;
     @UiField SimpleLayoutPanel repositoryPanel;
-    @UiField SimpleLayoutPanel contextPanel;
+    //@UiField SimpleLayoutPanel contextPanel;
     @UiField SimpleLayoutPanel footerPanel;
 
     @Inject
@@ -75,10 +75,10 @@ public class ApplicationView extends ViewImpl implements ApplicationPresenter.My
         {
             repositoryPanel.setWidget(widget);
         }
-        else if (slot == Context_Slot)
+        /*else if (slot == Context_Slot)
         {
             contextPanel.setWidget(widget);
-        }
+        } */
         else if (slot == Footer_Slot)
         {
             footerPanel.setWidget(widget);
