@@ -5,6 +5,7 @@ import org.jboss.ballroom.client.widgets.forms.EditListener;
 import org.jboss.ballroom.client.widgets.forms.FormItem;
 import org.jboss.dmr.client.ModelNode;
 
+import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -128,9 +129,15 @@ public class ModelNodeForm extends AbstractForm<ModelNode> {
         }
     }
 
-    // TODO: Fix me...
     private Map<String, String> getExpressions(ModelNode bean) {
-        return new HashMap<String,String>();
+        Map<String, String> exprMap = (Map<String,String>)bean.getTag(EXPR_TAG);
+        if(null==exprMap)
+        {
+            exprMap = new HashMap<String,String>();
+            bean.setTag(EXPR_TAG, exprMap);
+        }
+
+        return exprMap;
     }
 
     @Override
@@ -141,12 +148,70 @@ public class ModelNodeForm extends AbstractForm<ModelNode> {
 
     @Override
     public Map<String, Object> getChangedValues() {
-        return null;
+
+        final Map<String,Object> changedValues = new HashMap<String, Object>();
+
+        ModelNodeInspector inspector = new ModelNodeInspector(this.getUpdatedEntity());
+        inspector.accept(new ModelNodeVisitor()
+        {
+            @Override
+            public boolean visitValueProperty(String propertyName, ModelNode value, PropertyContext ctx) {
+                ModelNode src = ModelNodeForm.this.editedEntity;
+                ModelNode dest = getUpdatedEntity();
+
+                if(src.hasDefined(propertyName))
+                {
+                    if(!src.get(propertyName).equals(dest.get(propertyName)))
+                        changedValues.put(propertyName, dest.get(propertyName));
+                }
+                return true;
+            }
+        }
+        );
+
+        return changedValues;
     }
 
     @Override
     public ModelNode getUpdatedEntity() {
-        return null;
+
+        final ModelNode updatedModel = getEditedEntity().clone();
+
+        for(Map<String, FormItem> groupItems : formItems.values())
+        {
+            for(String key : groupItems.keySet())
+            {
+                visitItem(key, new FormItemVisitor() {
+                    @Override
+                    public void visit(FormItem item) {
+
+                        ModelNode node = updatedModel.get(item.getName());
+                        Object obj = item.getValue();
+                        Class baseType = obj.getClass();
+
+                        if (baseType == String.class) {
+                            node.add((String)obj);
+                        } else if (baseType == Long.class) {
+                            node.add((Long)obj);
+                        } else if (baseType == Integer.class) {
+                            node.add((Integer)obj);
+                        } else if (baseType == Boolean.class) {
+                            node.add((Boolean)obj);
+                        } else if (baseType == Double.class) {
+                            node.add((Double)obj);
+                        } else if (baseType == BigDecimal.class) {
+                            node.add((BigDecimal)obj);
+                        } else if (baseType == byte[].class) {
+                            node.add((byte[])obj);
+                        } else {
+                            throw new IllegalArgumentException("Can not convert. This value is not of a recognized base type. Value =" + obj.toString());
+                        }
+                    }
+                });
+            }
+        }
+
+        return updatedModel;
     }
 
     @Override
@@ -156,7 +221,18 @@ public class ModelNodeForm extends AbstractForm<ModelNode> {
 
     @Override
     public void clearValues() {
-
+        for(Map<String, FormItem> groupItems : formItems.values())
+        {
+            for(String key : groupItems.keySet())
+            {
+                visitItem(key, new FormItemVisitor() {
+                    @Override
+                    public void visit(FormItem item) {
+                        item.clearValue();
+                    }
+                });
+            }
+        }
     }
 
     interface FormItemVisitor {
