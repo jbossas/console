@@ -52,10 +52,29 @@ public class TransactionSample implements Sample
 
         Mapping basicAttributesMapping =
                 new ResourceMapping("/profile=${profile}/subsystem=transactions")
-                .addAttributes("enable-statistics", "enable-tsm-status", "jts", "default-timeout",
-                        "node-identifier", "use-hornetq-store");
+                        .addAttributes("enable-statistics", "enable-tsm-status", "jts", "default-timeout",
+                                "node-identifier", "use-hornetq-store");
 
         basicAttributes.getEntityContext().addMapping(basicAttributesMapping);
+
+        Container details = new Container("configGroups", "Details", Choice);
+        Form processAttributes = new Form("process", "Process ID");
+        details.add(processAttributes);
+
+        Mapping processMapping =
+                new ResourceMapping("/profile=${profile}/subsystem=transactions")
+                        .addAttributes("process-id-uuid", "process-id-socket-binding");
+        processAttributes.getEntityContext().addMapping(processMapping);
+
+        Form recoveryAttributes = new Form("recovery", "Recovery");
+        details.add(recoveryAttributes);
+
+        Mapping recoveryMapping =
+                new ResourceMapping("/profile=${profile}/subsystem=transactions")
+                        .addAttributes("recovery-listener", "socket-binding");
+        recoveryAttributes.getEntityContext().addMapping(recoveryMapping);
+
+        overview.add(details);
 
         return overview;
     }
