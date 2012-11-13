@@ -50,8 +50,8 @@ public class TransactionSample implements Sample
         Form basicAttributes = new Form("basicAttributes", "Attributes");
         overview.add(basicAttributes);
 
-        Mapping basicAttributesMapping = new ResourceMapping("basicAttributes",
-                "/profile=${profile}/subsystem=transactions")
+        Mapping basicAttributesMapping =
+                new ResourceMapping("/profile=${profile}/subsystem=transactions")
                 .addAttributes("enable-statistics", "enable-tsm-status", "jts", "default-timeout",
                         "node-identifier", "use-hornetq-store");
 

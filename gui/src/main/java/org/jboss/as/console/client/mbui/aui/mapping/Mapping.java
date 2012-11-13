@@ -18,28 +18,33 @@
  */
 package org.jboss.as.console.client.mbui.aui.mapping;
 
+import org.jboss.as.console.client.mbui.aui.mapping.as7.MappingType;
+
 /**
  * @author Harald Pehl
  * @date 10/25/2012
  */
 public abstract class Mapping
 {
+    protected MappingType type;
+
+    public MappingType getType() {
+        return type;
+    }
+
     private static class EmptyMapping extends Mapping
     {
         private EmptyMapping()
         {
-            super("__empty_id__");
+            super(null);
         }
     }
 
     public final static Mapping EMPTY = new EmptyMapping();
 
-    private final String id;
-
-    protected Mapping(final String id)
+    protected Mapping(MappingType type)
     {
-        assert id != null : "Id must not be null";
-        this.id = id;
+        this.type = type;
     }
 
     @Override
@@ -49,25 +54,14 @@ public abstract class Mapping
         if (!(o instanceof Mapping)) { return false; }
 
         Mapping mapping = (Mapping) o;
-        if (!id.equals(mapping.id)) { return false; }
+        if (!type.equals(mapping.type)) { return false; }
 
         return true;
     }
 
     @Override
-    public int hashCode()
-    {
-        return id.hashCode();
-    }
-
-    @Override
     public String toString()
     {
-        return "Mapping{" + id + '}';
-    }
-
-    public String getId()
-    {
-        return id;
+        return "Mapping{type="+type+'}';
     }
 }

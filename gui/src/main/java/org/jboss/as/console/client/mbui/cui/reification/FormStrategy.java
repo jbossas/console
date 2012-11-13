@@ -21,6 +21,7 @@ package org.jboss.as.console.client.mbui.cui.reification;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.mbui.aui.aim.InteractionUnit;
+import org.jboss.as.console.client.mbui.aui.mapping.as7.MappingType;
 import org.jboss.as.console.client.mbui.aui.mapping.as7.ResourceAttribute;
 import org.jboss.as.console.client.mbui.aui.mapping.as7.ResourceMapping;
 import org.jboss.as.console.client.mbui.cui.Context;
@@ -80,10 +81,9 @@ public class FormStrategy implements ReificationStrategy<ReificationWidget>
             ModelNode description = modelNode.get("result").get("step-1").get("result");
             List<Property> attributeDescriptions = description.get("attributes").asPropertyList();
 
-            // TODO There can be many mappings. How do we know the ID for the resource mapping?
             ResourceMapping resourceMapping = (ResourceMapping)
                     this.interactionUnit.getEntityContext()
-                            .getMapping(interactionUnit.getId());
+                            .getMapping(MappingType.RESOURCE);
 
             List<ResourceAttribute> attributes = resourceMapping.getAttributes();
             List<FormItem> items = new ArrayList<FormItem>(attributes.size());

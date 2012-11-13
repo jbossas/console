@@ -18,6 +18,7 @@
  */
 package org.jboss.as.console.client.mbui.aui.mapping;
 
+import org.jboss.as.console.client.mbui.aui.mapping.as7.ResourceMapping;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -49,7 +50,7 @@ public class EntityContextTest
     @Test
     public void addMapping() throws Exception
     {
-        SimpleMapping mapping = new SimpleMapping();
+        ResourceMapping mapping = new ResourceMapping("/foo=bar");
         cut.addMapping(mapping);
         assertEquals(1, cut.getMappings().size());
         assertEquals(mapping, cut.getMappings().iterator().next());
@@ -63,12 +64,4 @@ public class EntityContextTest
         assertEquals(Mapping.EMPTY, mapping);
     }
 
-
-    static class SimpleMapping extends Mapping
-    {
-        SimpleMapping()
-        {
-            super("simpleMapping");
-        }
-    }
 }

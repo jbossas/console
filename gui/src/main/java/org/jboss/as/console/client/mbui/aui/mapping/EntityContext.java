@@ -18,7 +18,10 @@
  */
 package org.jboss.as.console.client.mbui.aui.mapping;
 
+import org.jboss.as.console.client.mbui.aui.mapping.as7.MappingType;
+
 import java.util.Collection;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,26 +32,26 @@ import java.util.Map;
 public class EntityContext
 {
     private final String id;
-    private final Map<String, Mapping> mappings;
+    private final Map<MappingType, Mapping> mappings;
 
     public EntityContext(final String id)
     {
         assert id != null : "Id must not be null";
         this.id = id;
-        this.mappings = new HashMap<String, Mapping>();
+        this.mappings = new EnumMap<MappingType,Mapping>(MappingType.class);
     }
 
     public void addMapping(Mapping mapping)
     {
         if (mapping != null)
         {
-            mappings.put(mapping.getId(), mapping);
+            mappings.put(mapping.getType(), mapping);
         }
     }
 
-    public Mapping getMapping(final String mappingId)
+    public Mapping getMapping(final MappingType type)
     {
-        Mapping mapping = mappings.get(mappingId);
+        Mapping mapping = mappings.get(type);
         return mapping == null ? Mapping.EMPTY : mapping;
     }
 

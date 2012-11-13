@@ -36,7 +36,7 @@ public class ResourceMappingTest
     @Before
     public void setUp() throws Exception
     {
-        cut = new ResourceMapping("testId", "testAddress");
+        cut = new ResourceMapping("testAddress");
     }
 
     @Test

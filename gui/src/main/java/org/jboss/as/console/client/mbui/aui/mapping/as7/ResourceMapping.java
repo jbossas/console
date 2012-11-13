@@ -37,9 +37,9 @@ public class ResourceMapping extends Mapping
     private ModelNode resourceDescription;
 
 
-    public ResourceMapping(final String id, final String address)
+    public ResourceMapping(final String address)
     {
-        super(id);
+        super(MappingType.RESOURCE);
         assert address != null : "Address must not be null";
         this.address = address;
         this.attributes = new ArrayList<ResourceAttribute>();

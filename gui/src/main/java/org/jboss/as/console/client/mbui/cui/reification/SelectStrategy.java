@@ -23,6 +23,7 @@ import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
+import org.jboss.as.console.client.mbui.aui.mapping.as7.MappingType;
 import org.jboss.ballroom.client.widgets.tables.DefaultPager;
 import org.jboss.as.console.client.mbui.aui.aim.InteractionUnit;
 import org.jboss.as.console.client.mbui.aui.aim.Select;
@@ -70,9 +71,10 @@ public class SelectStrategy implements ReificationStrategy<ReificationWidget>
             this.table = new ModelNodeCellTable(5);
             this.interactionUnit = interactionUnit;
 
-            // TODO There can be many mappings. How do we know the ID for the resource mapping?
-            ResourceMapping resourceMapping = (ResourceMapping) this.interactionUnit.getEntityContext()
-                    .getMapping(interactionUnit.getId()); // Assumption: mapping id == id of interaction unit
+            ResourceMapping resourceMapping = (ResourceMapping)
+                    this.interactionUnit.getEntityContext()
+                        .getMapping(MappingType.RESOURCE);
+
             List<ResourceAttribute> attributes = resourceMapping.getAttributes();
             for (ResourceAttribute attribute : attributes)
             {

@@ -60,18 +60,18 @@ public class DataSourceSample implements Sample
         forms.add(connectionAttributes);
 
         // mappings (required)
-        Mapping tableMapping = new ResourceMapping("datasourceTable",
+        Mapping tableMapping = new ResourceMapping(
                 "/profile=${profile}/subsystem=datasources/data-source=*")
                 .addAttribute(new ResourceAttribute("${resource.name}", "Name"))
                 .addAttributes("jndi-name", "enabled");
 
-        Mapping basicAttributesMapping = new ResourceMapping("basicAttributes",
+        Mapping basicAttributesMapping = new ResourceMapping(
                 "/profile=${profile}/subsystem=datasources/data-source=${datasource}")
                 .addAttribute(new ResourceAttribute("${resource.name}", "Name"))
                 .addAttributes("jndi-name", "enabled", "driver-name", "share-prepared-statements",
                         "prepared-statements-cache-size");
 
-        Mapping connectionAttributesMapping = new ResourceMapping("connectionAttributes",
+        Mapping connectionAttributesMapping = new ResourceMapping(
                 "/profile=${profile}/subsystem=datasources/data-source=${datasource}")
                 .addAttributes("connection-url", "new-connection-sql", "jta", "use-ccm");
 
