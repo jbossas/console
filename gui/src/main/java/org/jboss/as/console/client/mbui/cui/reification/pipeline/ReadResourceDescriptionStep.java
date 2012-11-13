@@ -45,6 +45,8 @@ public class ReadResourceDescriptionStep extends ReificationStep
     public void execute(final AsyncCallback<Boolean> callback)
     {
         Log.warn("Not yet implemented");
+        // TODO Read resource metadata for *all* interaction units and set them by calling
+        // ResourceMapping.setResourceDescription(ModelNode);
         callback.onSuccess(TRUE);
     }
 }

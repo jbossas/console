@@ -30,16 +30,19 @@ public class Context
 {
     private Stack<Map<String, Object>> subcontexts = new Stack<Map<String, Object>>();
 
+
     public Context()
     {
         push();
     }
 
-    public void push() {
+    public void push()
+    {
         subcontexts.push(new HashMap<String, Object>());
     }
 
-    public void pop() {
+    public void pop()
+    {
         subcontexts.pop();
     }
 
@@ -54,7 +57,7 @@ public class Context
         Object value = subcontexts.peek().get(name);
         if (value != null)
         {
-            return (T)value;
+            return (T) value;
         }
         return null;
     }
@@ -66,8 +69,8 @@ public class Context
     }
 
     @Override
-    public String toString() 
+    public String toString()
     {
-        return "Context {sub="+subcontexts.size()+"}";
+        return "Context {sub=" + subcontexts.size() + "}";
     }
 }

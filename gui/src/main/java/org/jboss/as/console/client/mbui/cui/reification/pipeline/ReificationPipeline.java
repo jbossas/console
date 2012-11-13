@@ -40,6 +40,7 @@ public class ReificationPipeline
     @Inject
     public ReificationPipeline(ReadResourceDescriptionStep readResourceDescriptionStep, BuildUserInterfaceStep buildUserInterfaceStep)
     {
+        // order is important!
         this.steps = new LinkedList<ReificationStep>();
         this.steps.add(readResourceDescriptionStep);
         this.steps.add(buildUserInterfaceStep);
