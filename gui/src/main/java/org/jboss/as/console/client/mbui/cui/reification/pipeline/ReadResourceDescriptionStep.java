@@ -18,22 +18,23 @@
  */
 package org.jboss.as.console.client.mbui.cui.reification.pipeline;
 
+import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
-import org.jboss.as.console.client.mbui.aui.aim.InteractionUnit;
-import org.jboss.as.console.client.mbui.cui.Context;
+
+import static java.lang.Boolean.TRUE;
 
 /**
  * @author Harald Pehl
  * @date 11/12/2012
  */
-public class ReadResourceDescription extends ReificationStep
+public class ReadResourceDescriptionStep extends ReificationStep
 {
     final DispatchAsync dispatcher;
 
     @Inject
-    public ReadResourceDescription(final DispatchAsync dispatcher)
+    public ReadResourceDescriptionStep(final DispatchAsync dispatcher)
     {
         super("read resource descriptions");
         this.dispatcher = dispatcher;
@@ -41,14 +42,11 @@ public class ReadResourceDescription extends ReificationStep
 
 
     @Override
-    public void execute(final InteractionUnit interactionUnit, final Context context, final Callback callback)
-    {
-
-    }
-
-    @Override
     public void execute(final AsyncCallback<Boolean> callback)
     {
-
+        Log.warn("Not yet implemented");
+        // TODO Read resource metadata for *all* interaction units and set them by calling
+        // ResourceMapping.setResourceDescription(ModelNode);
+        callback.onSuccess(TRUE);
     }
 }

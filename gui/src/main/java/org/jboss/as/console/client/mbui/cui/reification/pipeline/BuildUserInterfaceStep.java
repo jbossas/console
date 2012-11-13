@@ -16,31 +16,36 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.as.console.client.mbui.cui.reification;
+package org.jboss.as.console.client.mbui.cui.reification.pipeline;
 
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import org.jboss.as.console.client.mbui.aui.aim.Container;
 import org.jboss.as.console.client.mbui.aui.aim.InteractionUnit;
 import org.jboss.as.console.client.mbui.cui.Context;
 import org.jboss.as.console.client.mbui.cui.ReificationStrategy;
-import org.jboss.as.console.client.mbui.cui.reification.pipeline.ReificationPipeline;
+import org.jboss.as.console.client.mbui.cui.reification.ChoiceStrategy;
+import org.jboss.as.console.client.mbui.cui.reification.FormStrategy;
+import org.jboss.as.console.client.mbui.cui.reification.OrderIndependanceStrategy;
+import org.jboss.as.console.client.mbui.cui.reification.ReificationWidget;
+import org.jboss.as.console.client.mbui.cui.reification.SelectStrategy;
 
-import javax.inject.Inject;
 import java.util.HashSet;
 import java.util.Set;
 
+import static java.lang.Boolean.TRUE;
+
 /**
  * @author Harald Pehl
- * @date 10/25/2012
+ * @date 11/12/2012
  */
-public class Reificator
+public class BuildUserInterfaceStep extends ReificationStep
 {
-    final ReificationPipeline pipeline;
+    public static final String WIDGET = "widget";
     final Set<ReificationStrategy<ReificationWidget>> strategies;
 
-    @Inject
-    public Reificator(final ReificationPipeline pipeline)
+    public BuildUserInterfaceStep()
     {
-        this.pipeline = pipeline;
+        super("build ui");
         this.strategies = new HashSet<ReificationStrategy<ReificationWidget>>();
         this.strategies.add(new OrderIndependanceStrategy());
         this.strategies.add(new ChoiceStrategy());
@@ -48,16 +53,17 @@ public class Reificator
         this.strategies.add(new FormStrategy());
     }
 
-    public ReificationWidget reify(final InteractionUnit interactionUnit, final Context context)
+    @Override
+    public void execute(final AsyncCallback<Boolean> callback)
     {
-        ReificationWidget result = null;
-        if (interactionUnit != null)
+        ReificationWidget widget = null;
+        if (isValid())
         {
             assert !interactionUnit.hasParent() : "Entry point interaction units are not expected to have parents";
-
-            result = startReification(interactionUnit, context);
+            widget = startReification(interactionUnit, context);
         }
-        return result;
+        context.set(WIDGET, widget);
+        callback.onSuccess(TRUE);
     }
 
     private ReificationWidget startReification(final InteractionUnit parentUnit, final Context context)
@@ -74,14 +80,17 @@ public class Reificator
                     Container container = (Container) parentUnit;
                     for (InteractionUnit childUnit : container.getChildren())
                     {
-                        try {
+                        try
+                        {
                             context.push();
                             ReificationWidget childWidget = startReification(childUnit, context);
                             if (childWidget != null)
                             {
                                 parentWidget.add(childWidget, childUnit, container);
                             }
-                        } catch (Exception e) {
+                        }
+                        catch (Exception e)
+                        {
                             context.pop();
                         }
                     }
@@ -96,7 +105,7 @@ public class Reificator
         ReificationStrategy<ReificationWidget> match = null;
         for (ReificationStrategy<ReificationWidget> strategy : strategies)
         {
-            if(strategy.appliesTo(interactionUnit))
+            if (strategy.appliesTo(interactionUnit))
             {
                 match = strategy;
                 break;

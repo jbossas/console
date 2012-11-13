@@ -18,11 +18,9 @@
  */
 package org.jboss.as.console.client.mbui.cui.reification.pipeline;
 
-import com.allen_sauer.gwt.log.client.Log;
-import com.google.gwt.user.client.rpc.AsyncCallback;
-import org.jboss.as.console.client.shared.dispatch.AsyncCommand;
 import org.jboss.as.console.client.mbui.aui.aim.InteractionUnit;
 import org.jboss.as.console.client.mbui.cui.Context;
+import org.jboss.as.console.client.shared.dispatch.AsyncCommand;
 
 /**
  * @author Harald Pehl
@@ -31,41 +29,27 @@ import org.jboss.as.console.client.mbui.cui.Context;
 public abstract class ReificationStep implements AsyncCommand<Boolean>
 {
     private final String name;
+    protected InteractionUnit interactionUnit;
+    protected Context context;
 
     protected ReificationStep(final String name)
     {
         this.name = name;
     }
 
-    public abstract void execute(final InteractionUnit interactionUnit, final Context context, Callback callback);
-
-
-    public abstract class Callback implements AsyncCallback<Boolean>
+    public void init(final InteractionUnit interactionUnit, final Context context)
     {
-        @Override
-        public void onFailure(final Throwable caught)
-        {
-            onError(caught);
-        }
+        this.interactionUnit = interactionUnit;
+        this.context = context;
+    }
 
-        @Override
-        public void onSuccess(final Boolean result)
-        {
-            if (result != null && result.booleanValue())
-            {
-                onSuccess();
-            }
-            else
-            {
-                onError(null);
-            }
-        }
+    public boolean isValid()
+    {
+        return interactionUnit != null && context != null;
+    }
 
-        public void onError(Throwable caught)
-        {
-            Log.error("Reification step " + name + " returned with an error", caught);
-        }
-
-        public abstract void onSuccess();
+    public String getName()
+    {
+        return name;
     }
 }

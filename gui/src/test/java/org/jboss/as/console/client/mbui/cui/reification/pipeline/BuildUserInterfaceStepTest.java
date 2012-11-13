@@ -16,8 +16,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.as.console.client.mbui.cui.reification;
+package org.jboss.as.console.client.mbui.cui.reification.pipeline;
 
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import org.jboss.as.console.client.mbui.aui.aim.Container;
 import org.jboss.as.console.client.mbui.aui.aim.Input;
 import org.jboss.as.console.client.mbui.aui.aim.Select;
@@ -28,20 +29,22 @@ import org.junit.Test;
 import static org.jboss.as.console.client.mbui.aui.aim.TemporalOperator.Choice;
 import static org.jboss.as.console.client.mbui.aui.aim.TemporalOperator.OrderIndependance;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 /**
  * @author Harald Pehl
  * @date 10/30/2012
  */
-public class ReificatorTest
+public class BuildUserInterfaceStepTest
 {
-    Reificator cut;
+    BuildUserInterfaceStep cut;
     Container iuFixture;
+    Context contextFixture;
 
     @Before
     public void setUp() throws Exception
     {
-        cut = new Reificator(null);
+        cut = new BuildUserInterfaceStep();
         cut.strategies.clear();
         cut.strategies.add(new TestableReificationStrategy());
 
@@ -54,32 +57,47 @@ public class ReificatorTest
         forms.add(basicAttributes);
         Input extendedAttributes = new Input("extendedAttributes");
         forms.add(extendedAttributes);
+
+        contextFixture = new Context();
+        cut.init(iuFixture, contextFixture);
     }
 
     @Test
     public void testReify() throws Exception
     {
-        TestableReificationWidget root = (TestableReificationWidget) cut.reify(iuFixture, new Context());
+        cut.execute(new AsyncCallback<Boolean>() {
+            @Override
+            public void onFailure(final Throwable caught)
+            {
+                fail("onFailure(): " + caught);
+            }
 
-        // root
-        assertEquals("root", root.interactionUnit.getId());
-        assertEquals(2, root.children.size());
+            @Override
+            public void onSuccess(final Boolean result)
+            {
+                TestableReificationWidget root = contextFixture.get("widget");
 
-        // table
-        TestableReificationWidget table = (TestableReificationWidget) root.children.get(0);
-        assertEquals("table", table.interactionUnit.getId());
+                // root
+                assertEquals("root", root.interactionUnit.getId());
+                assertEquals(2, root.children.size());
 
-        // forms
-        TestableReificationWidget forms = (TestableReificationWidget) root.children.get(1);
-        assertEquals("forms", forms.interactionUnit.getId());
-        assertEquals(2, forms.children.size());
+                // table
+                TestableReificationWidget table = (TestableReificationWidget) root.children.get(0);
+                assertEquals("table", table.interactionUnit.getId());
 
-        // basicAttributes
-        TestableReificationWidget ba = (TestableReificationWidget) forms.children.get(0);
-        assertEquals("basicAttributes", ba.interactionUnit.getId());
+                // forms
+                TestableReificationWidget forms = (TestableReificationWidget) root.children.get(1);
+                assertEquals("forms", forms.interactionUnit.getId());
+                assertEquals(2, forms.children.size());
 
-        // extendedAttributes
-        TestableReificationWidget ea = (TestableReificationWidget) forms.children.get(1);
-        assertEquals("extendedAttributes", ea.interactionUnit.getId());
+                // basicAttributes
+                TestableReificationWidget ba = (TestableReificationWidget) forms.children.get(0);
+                assertEquals("basicAttributes", ba.interactionUnit.getId());
+
+                // extendedAttributes
+                TestableReificationWidget ea = (TestableReificationWidget) forms.children.get(1);
+                assertEquals("extendedAttributes", ea.interactionUnit.getId());
+            }
+        });
     }
 }
