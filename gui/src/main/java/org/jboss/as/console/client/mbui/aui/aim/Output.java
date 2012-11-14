@@ -24,14 +24,14 @@ package org.jboss.as.console.client.mbui.aui.aim;
  */
 public class Output extends InteractionUnit
 {
-    public Output(final String id)
+    public Output(String ns, String id)
     {
-        super(id);
+        super(ns, id);
     }
 
-    public Output(final String id, final String name)
+    public Output(String ns, final String id, final String name)
     {
-        super(id, name);
+        super(ns, id, name);
     }
 
     @Override

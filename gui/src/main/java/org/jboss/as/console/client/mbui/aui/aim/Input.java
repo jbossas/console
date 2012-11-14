@@ -31,14 +31,14 @@ public class Input extends InteractionUnit implements EventProducer<EventType>
     private EventProduction<EventType> eventProduction =
             new EventProduction<EventType>(EventType.Interaction);
 
-    public Input(final String id)
+    public Input(String ns, String id)
     {
-        super(id);
+        super(ns, id);
     }
 
-    public Input(final String id, final String name)
+    public Input(String ns, final String id, final String name)
     {
-        super(id, name);
+        super(ns, id, name);
     }
 
     @Override
