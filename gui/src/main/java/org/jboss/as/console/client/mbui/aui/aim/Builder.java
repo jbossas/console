@@ -36,15 +36,14 @@ public final class Builder
         this.container = new Stack<Container>();
     }
 
-    public Builder start(final String namespace, final String id, final String name,
-            final TemporalOperator temporalOperator)
+    public Builder start(Container container)
     {
-        current = new Container(namespace, id, name, temporalOperator);
-        if (!container.isEmpty())
+        current = container;
+        if (!this.container.isEmpty())
         {
-            container.peek().add(current);
+            this.container.peek().add(current);
         }
-        container.push((Container) current);
+        this.container.push(container);
         return this;
     }
 

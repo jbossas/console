@@ -19,6 +19,7 @@
 package org.jboss.as.console.client.tools.mbui.workbench.repository;
 
 import org.jboss.as.console.client.mbui.aui.aim.Builder;
+import org.jboss.as.console.client.mbui.aui.aim.Container;
 import org.jboss.as.console.client.mbui.aui.aim.InteractionUnit;
 import org.jboss.as.console.client.mbui.aui.aim.Select;
 import org.jboss.as.console.client.mbui.aui.aim.as7.Form;
@@ -64,12 +65,12 @@ public class DataSourceSample implements Sample
 
         // UI
         InteractionUnit root = new Builder()
-            .start(namespace, "datasources", "Datasources", Choice)
+            .start(new Container(namespace, "datasources", "Datasources", Choice))
             .addMapping(global)
-                .start(namespace, "datasourceOverview", "Datasources", OrderIndependance)
+                .start(new Container(namespace, "datasourceOverview", "Datasources", OrderIndependance))
                     .add(new Select(namespace, "datasourceTable", "Datasources"))
                     .addMapping(tableMapping)
-                    .start(namespace, "datasourceAttributes", "Datasource", Choice)
+                    .start(new Container(namespace, "datasourceAttributes", "Datasource", Choice))
                         .add(new Form(namespace, "basicAttributes", "Attributes"))
                         .addMapping(basicAttributesMapping)
                         .add(new Form(namespace, "connectionAttributes", "Connection"))

@@ -68,16 +68,16 @@ public class BuilderTest
     @Test(expected = IllegalStateException.class)
     public void startEndMismatch()
     {
-        cut.start(NAMESPACE, "root", "Root", Choice).add(iuFixture).build();
+        cut.start(new Container(NAMESPACE, "root", "Root", Choice)).add(iuFixture).build();
     }
 
     @Test
     public void build()
     {
         InteractionUnit interactionUnit = cut
-            .start(NAMESPACE, "root", "Root", OrderIndependance)
+            .start(new Container(NAMESPACE, "root", "Root", OrderIndependance))
                 .add(new Select(NAMESPACE, "table", "Table"))
-                .start(NAMESPACE, "forms", "Forms", Choice)
+                .start(new Container(NAMESPACE, "forms", "Forms", Choice))
                     .add(new Form(NAMESPACE, "basicAttributes", "Basic Attributes"))
                     .add(new Form(NAMESPACE, "extendedAttributes", "Extended Attributes"))
                 .end()

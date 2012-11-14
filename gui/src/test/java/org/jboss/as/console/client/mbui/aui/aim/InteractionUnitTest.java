@@ -117,10 +117,10 @@ public class InteractionUnitTest
     {
         Form basicAttributes = new Form(NAMESPACE, "basicAttributes", "Basic Attributes");
         InteractionUnit root = new Builder()
-            .start(NAMESPACE, "root", "Root", OrderIndependance)
+            .start(new Container(NAMESPACE, "root", "Root", OrderIndependance))
             .addMapping(new ResourceMapping(NAMESPACE).setAddress("root"))
                 .add(new Select(NAMESPACE, "table", "Table"))
-                .start(NAMESPACE, "forms", "Forms", Choice)
+                .start(new Container(NAMESPACE, "forms", "Forms", Choice))
                     .add(basicAttributes)
                     .addMapping(new ResourceMapping(NAMESPACE).setAddress("basicAttributes"))
                     .add(new Form(NAMESPACE, "extendedAttributes", "Basic Attributes"))
