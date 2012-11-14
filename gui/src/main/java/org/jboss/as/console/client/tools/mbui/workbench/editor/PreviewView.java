@@ -54,9 +54,6 @@ public class PreviewView extends ViewImpl implements PreviewPresenter.MyView
     @Override
     public void show(final ReificationWidget interactionUnit)
     {
-        System.out.println("show");
-
-        //new RuntimeException("here").printStackTrace();
         container.setWidget(interactionUnit);
     }
 }

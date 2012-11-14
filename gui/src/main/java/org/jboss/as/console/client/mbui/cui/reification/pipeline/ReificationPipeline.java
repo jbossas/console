@@ -57,7 +57,7 @@ public class ReificationPipeline
         Iterator<ReificationStep> iterator = steps.iterator();
         ReificationStep first = iterator.next();
 
-        System.out.println("First would be " + first.getName());
+        System.out.println("First " + first.getName());
 
         first.execute(iterator, new ReificationCallback() {
 

@@ -43,7 +43,6 @@ public class OrderIndependanceStrategy implements ReificationStrategy<Reificatio
         SimpleLayoutAdapter adapter = null;
         if (interactionUnit != null)
         {
-            System.out.println(context+": hasParent="+interactionUnit.hasParent());
             adapter = new SimpleLayoutAdapter(interactionUnit, context);
         }
         return adapter;
@@ -60,12 +59,9 @@ public class OrderIndependanceStrategy implements ReificationStrategy<Reificatio
     class SimpleLayoutAdapter implements ReificationWidget
     {
         final WidgetStrategy delegate;
-        final InteractionUnit interactionUnit;
 
         SimpleLayoutAdapter(final InteractionUnit interactionUnit, Context context)
         {
-            this.interactionUnit = interactionUnit;
-
             if(interactionUnit.hasParent())
             {
                 final VerticalPanel panel = new VerticalPanel();

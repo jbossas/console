@@ -66,7 +66,7 @@ public abstract class ReificationStep
         if (iterator.hasNext())
         {
             ReificationStep nextAction = iterator.next();
-            System.out.println("Next would be " + nextAction.getName());
+            System.out.println("Next " + nextAction.getName());
             nextAction.execute(iterator, outcome);
         }
     }

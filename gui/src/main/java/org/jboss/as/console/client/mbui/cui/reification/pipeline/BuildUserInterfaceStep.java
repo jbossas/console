@@ -32,27 +32,33 @@ import org.jboss.as.console.client.mbui.cui.reification.SelectStrategy;
 
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.Set;
 
 /**
  * @author Harald Pehl
+ * @author Heiko Braun
  * @date 11/12/2012
  */
 public class BuildUserInterfaceStep extends ReificationStep
 {
 
-    final Set<ReificationStrategy<ReificationWidget>> strategies;
+    final LinkedList<ReificationStrategy<ReificationWidget>> strategies;
     private StringBuffer log = new StringBuffer();
     private int tabCount = 0;
 
     public BuildUserInterfaceStep()
     {
         super("BuildUserInterfaceStep");
-        this.strategies = new HashSet<ReificationStrategy<ReificationWidget>>();
+
+        this.strategies = new LinkedList<ReificationStrategy<ReificationWidget>>();
+
+        // setup order matters (precendence)
+
+        this.strategies.add(new FormStrategy());
         this.strategies.add(new OrderIndependanceStrategy());
         this.strategies.add(new ChoiceStrategy());
         this.strategies.add(new SelectStrategy());
-        this.strategies.add(new FormStrategy());
     }
 
     @Override
@@ -79,6 +85,7 @@ public class BuildUserInterfaceStep extends ReificationStep
     private ReificationWidget startReification(final InteractionUnit parentUnit, final Context context)
     {
         start(parentUnit);
+
         ReificationStrategy<ReificationWidget> strategy = resolve(parentUnit);
         ReificationWidget parentWidget = strategy.reify(parentUnit, context);
 
@@ -88,16 +95,13 @@ public class BuildUserInterfaceStep extends ReificationStep
             Container container = (Container) parentUnit;
             for (InteractionUnit childUnit : container.getChildren())
             {
-
                 ReificationWidget childWidget = startReification(childUnit, context);
-                if (childWidget != null)
-                {
-                    parentWidget.add(childWidget, childUnit, container);
-                }
-
+                parentWidget.add(childWidget, childUnit, container);
             }
         }
+
         end(parentUnit);
+
         return parentWidget;
     }
 
