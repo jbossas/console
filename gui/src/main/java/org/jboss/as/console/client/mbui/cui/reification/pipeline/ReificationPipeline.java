@@ -18,15 +18,14 @@
  */
 package org.jboss.as.console.client.mbui.cui.reification.pipeline;
 
-import com.allen_sauer.gwt.log.client.Log;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
 import org.jboss.as.console.client.mbui.aui.aim.InteractionUnit;
 import org.jboss.as.console.client.mbui.cui.Context;
 
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-
-import static java.lang.Boolean.TRUE;
 
 /**
  * @author Harald Pehl
@@ -35,7 +34,6 @@ import static java.lang.Boolean.TRUE;
 public class ReificationPipeline
 {
     private final List<ReificationStep> steps;
-    private int index;
 
     @Inject
     public ReificationPipeline(ReadResourceDescriptionStep readResourceDescriptionStep, BuildUserInterfaceStep buildUserInterfaceStep)
@@ -46,45 +44,33 @@ public class ReificationPipeline
         this.steps.add(buildUserInterfaceStep);
     }
 
-    public void execute(final InteractionUnit interactionUnit, final Context context, final ReificationCallback outcome)
+    public void execute(
+            final InteractionUnit interactionUnit,
+            final Context context,
+            final AsyncCallback<Boolean> outcome)
     {
-        this.index = 0;
         for (ReificationStep step : steps)
         {
             step.init(interactionUnit, context);
         }
-        executeNext(outcome);
+
+        Iterator<ReificationStep> iterator = steps.iterator();
+        iterator.next().execute(iterator, new ReificationCallback() {
+
+            int numResponses;
+            boolean overallResult;
+
+            @Override
+            public void onSuccess(Boolean successful) {
+                numResponses++;
+                overallResult = successful;
+
+                if(numResponses==steps.size())
+                {
+                    outcome.onSuccess(overallResult);
+                }
+            }
+        });
     }
 
-    private void executeNext(final ReificationCallback outcome)
-    {
-        if (index < steps.size())
-        {
-            final ReificationStep nextStep = steps.get(index);
-            index++;
-
-            nextStep.execute(new ReificationCallback()
-            {
-                @Override
-                public void onFailure(final Throwable caught)
-                {
-                    Log.error("Failed to execute reification step " + nextStep.getName(), caught);
-                }
-
-                @Override
-                public void onSuccess(final Boolean result)
-                {
-                    if (result != null && result.booleanValue())
-                    {
-                        executeNext(outcome);
-                    }
-                    else
-                    {
-                        Log.error("Reification step " + nextStep.getName() + " returned false");
-                    }
-                }
-            });
-        }
-        outcome.onSuccess(TRUE);
-    }
 }

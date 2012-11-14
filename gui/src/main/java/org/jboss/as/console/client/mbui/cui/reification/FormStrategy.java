@@ -100,7 +100,7 @@ public class FormStrategy implements ReificationStrategy<ReificationWidget>
                         continue;
 
                     ModelType type = ModelType.valueOf(attr.getValue().get("type").asString());
-                    System.out.println(attr.getName()+">"+type);
+                    //System.out.println(attr.getName()+">"+type);
                     switch(type)
                     {
                         case BOOLEAN:

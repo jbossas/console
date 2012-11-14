@@ -18,15 +18,18 @@
  */
 package org.jboss.as.console.client.mbui.cui.reification.pipeline;
 
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import org.jboss.as.console.client.mbui.aui.aim.InteractionUnit;
 import org.jboss.as.console.client.mbui.cui.Context;
 import org.jboss.as.console.client.shared.dispatch.AsyncCommand;
+
+import java.util.Iterator;
 
 /**
  * @author Harald Pehl
  * @date 11/12/2012
  */
-public abstract class ReificationStep implements AsyncCommand<Boolean>
+public abstract class ReificationStep
 {
     private final String name;
     protected InteractionUnit toplevelUnit;
@@ -54,4 +57,17 @@ public abstract class ReificationStep implements AsyncCommand<Boolean>
     {
         return name;
     }
+
+    public abstract void execute(Iterator<ReificationStep> iterator, AsyncCallback<Boolean> outcome);
+
+    protected final void next(
+            final Iterator<ReificationStep> iterator, AsyncCallback<Boolean> outcome)
+    {
+        if (iterator.hasNext())
+        {
+            ReificationStep nextAction = iterator.next();
+            nextAction.execute(iterator, outcome);
+        }
+    }
+
 }

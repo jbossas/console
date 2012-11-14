@@ -31,9 +31,8 @@ import org.jboss.as.console.client.mbui.cui.reification.ReificationWidget;
 import org.jboss.as.console.client.mbui.cui.reification.SelectStrategy;
 
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
-
-import static java.lang.Boolean.TRUE;
 
 /**
  * @author Harald Pehl
@@ -55,8 +54,8 @@ public class BuildUserInterfaceStep extends ReificationStep
     }
 
     @Override
-    public void execute(final AsyncCallback<Boolean> callback)
-    {
+    public void execute(Iterator<ReificationStep> iterator, AsyncCallback<Boolean> outcome) {
+
         ReificationWidget widget = null;
         if (isValid())
         {
@@ -64,7 +63,10 @@ public class BuildUserInterfaceStep extends ReificationStep
             widget = startReification(toplevelUnit, context);
         }
         context.set(ContextKey.WIDGET, widget);
-        callback.onSuccess(TRUE);
+
+        outcome.onSuccess(Boolean.TRUE);
+
+        next(iterator, outcome);
     }
 
     private ReificationWidget startReification(final InteractionUnit parentUnit, final Context context)

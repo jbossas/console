@@ -18,6 +18,8 @@
  */
 package org.jboss.as.console.client.tools.mbui.workbench.editor;
 
+import com.allen_sauer.gwt.log.client.Log;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.Presenter;
@@ -26,6 +28,8 @@ import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyStandard;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
+import org.jboss.as.console.client.Console;
+import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.mbui.aui.aim.InteractionUnit;
 import org.jboss.as.console.client.mbui.cui.Context;
 import org.jboss.as.console.client.mbui.cui.reification.ContextKey;
@@ -80,28 +84,28 @@ public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, Preview
     public void onReify(final ReifyEvent event)
     {
         Sample sample = event.getSample();
-        if (sample != null)
+        InteractionUnit interactionUnit = sample.build();
+
+        final Context context = new Context();
+        reificationPipeline.execute(interactionUnit, context, new SimpleCallback<Boolean>()
         {
-            InteractionUnit interactionUnit = sample.build();
-            if (interactionUnit != null)
+            @Override
+            public void onSuccess(final Boolean successful)
             {
-                final Context context = new Context();
-                reificationPipeline.execute(interactionUnit, context, new ReificationCallback()
+                if (successful)
                 {
-                    @Override
-                    public void onSuccess(final Boolean result)
+                    ReificationWidget widget = context.get(ContextKey.WIDGET);
+                    if (widget != null)
                     {
-                        if (result != null && result.booleanValue())
-                        {
-                            ReificationWidget widget = context.get(ContextKey.WIDGET);
-                            if (widget != null)
-                            {
-                                getView().show(widget);
-                            }
-                        }
+                        getView().show(widget);
                     }
-                });
+                }
+                else
+                {
+                    Log.error("Reification failed");
+                }
             }
-        }
+        });
+
     }
 }

@@ -36,11 +36,11 @@ import org.jboss.dmr.client.ModelNode;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static java.lang.Boolean.TRUE;
 import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 
 /**
@@ -59,8 +59,8 @@ public class ReadResourceDescriptionStep extends ReificationStep
     }
 
     @Override
-    public void execute(final AsyncCallback<Boolean> callback)
-    {
+    public void execute(final Iterator<ReificationStep> iterator, final AsyncCallback<Boolean> outcome) {
+
         final Map<String, InteractionUnit> stepReference = new HashMap<String, InteractionUnit>();
         final Set<String> resolvedOperations = new HashSet<String>();
 
@@ -80,7 +80,7 @@ public class ReadResourceDescriptionStep extends ReificationStep
             @Override
             public void onFailure(final Throwable caught)
             {
-                throw new RuntimeException("Failed to execute " + getName(), caught);
+                outcome.onSuccess(Boolean.FALSE);
             }
 
             @Override
@@ -112,7 +112,11 @@ public class ReadResourceDescriptionStep extends ReificationStep
 
                 }
 
-                callback.onSuccess(TRUE);
+
+                outcome.onSuccess(Boolean.TRUE);
+
+                next(iterator, outcome);
+
             }
         });
     }
