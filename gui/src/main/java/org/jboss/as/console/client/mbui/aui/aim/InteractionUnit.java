@@ -19,10 +19,13 @@
 package org.jboss.as.console.client.mbui.aui.aim;
 
 import org.jboss.as.console.client.mbui.aui.aim.assets.EventConsumption;
-import org.jboss.as.console.client.mbui.aui.mapping.EntityContext;
 import org.jboss.as.console.client.mbui.aui.mapping.Mapping;
 import org.jboss.as.console.client.mbui.aui.mapping.MappingType;
 import org.jboss.as.console.client.mbui.aui.mapping.Predicate;
+
+import java.util.Collection;
+import java.util.EnumMap;
+import java.util.Map;
 
 /**
  * @author Harald Pehl
@@ -31,10 +34,9 @@ import org.jboss.as.console.client.mbui.aui.mapping.Predicate;
 public abstract class InteractionUnit implements EventConsumer
 {
     public final static String ENTITY_CONTEXT_SUFFIX = "_entityContext";
-
     private final QName id;
+    private final Map<MappingType, Mapping> mappings;
     private String name;
-    private final EntityContext entityContext;
     private EventConsumption eventConsumption;
     private InteractionUnit parent;
 
@@ -57,7 +59,7 @@ public abstract class InteractionUnit implements EventConsumer
         assert !id.getNamespaceURI().isEmpty() : "Units require qualified namespace";
         this.id = id;
         this.name = name;
-        this.entityContext = new EntityContext(id + ENTITY_CONTEXT_SUFFIX);
+        this.mappings = new EnumMap<MappingType, Mapping>(MappingType.class);
         this.eventConsumption = new EventConsumption(EventType.System);
     }
 
@@ -88,14 +90,56 @@ public abstract class InteractionUnit implements EventConsumer
 
     // ------------------------------------------------------ mappings
 
+    public void addMapping(Mapping mapping)
+    {
+        if (mapping != null)
+        {
+            mappings.put(mapping.getType(), mapping);
+        }
+    }
+
+    public boolean hasMapping(MappingType type)
+    {
+        return mappings.get(type) != null;
+    }
+
+    public <T extends Mapping> T getMapping(final MappingType type)
+    {
+        return (T) mappings.get(type);
+    }
+
+    public Collection<Mapping> getMappings()
+    {
+        return mappings.values();
+    }
+
+    /**
+     * Finds a specific mapping over a hirarchy of interaction units following a bottom up approach.
+     *
+     * @param type
+     * @param <T>
+     *
+     * @return
+     */
     public <T extends Mapping> T findMapping(MappingType type)
     {
         return findMapping(type, null);
     }
 
+    /**
+     * Finds a specific mapping over a hirarchy of interaction units following a bottom up approach.
+     * <p/>
+     * The mapping is only returned if the predicate matches.
+     *
+     * @param type
+     * @param predicate Use {@code null} to ignore
+     * @param <T>
+     *
+     * @return
+     */
     public <T extends Mapping> T findMapping(MappingType type, Predicate<T> predicate)
     {
-        T mapping = entityContext.getMapping(type);
+        T mapping = getMapping(type);
         if (mapping != null)
         {
             // check predicate
@@ -155,10 +199,5 @@ public abstract class InteractionUnit implements EventConsumer
     public void setName(final String name)
     {
         this.name = name;
-    }
-
-    public EntityContext getEntityContext()
-    {
-        return entityContext;
     }
 }

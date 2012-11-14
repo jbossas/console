@@ -23,7 +23,6 @@ import com.google.inject.Inject;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.mbui.aui.aim.Container;
 import org.jboss.as.console.client.mbui.aui.aim.InteractionUnit;
-import org.jboss.as.console.client.mbui.aui.mapping.EntityContext;
 import org.jboss.as.console.client.mbui.aui.mapping.MappingType;
 import org.jboss.as.console.client.mbui.aui.mapping.as7.ResourceMapping;
 import org.jboss.as.console.client.mbui.cui.reification.ContextKey;
@@ -106,8 +105,7 @@ public class ReadResourceDescriptionStep extends ReificationStep
                     }
 
                     Map<String, ModelNode> descriptionMap = context.get(ContextKey.MODEL_DESCRIPTIONS);
-                    ResourceMapping mapping = stepReference.get(step).getEntityContext()
-                            .getMapping(MappingType.RESOURCE);
+                    ResourceMapping mapping = stepReference.get(step).getMapping(MappingType.RESOURCE);
                     descriptionMap.put(mapping.getNamespace(), description);
 
                 }
@@ -125,10 +123,9 @@ public class ReadResourceDescriptionStep extends ReificationStep
             final List<ModelNode> steps, final Map<String, InteractionUnit> stepReference,
             final Set<String> resolvedOperations)
     {
-        EntityContext entityContext = interactionUnit.getEntityContext();
-        if (entityContext.hasMapping(MappingType.RESOURCE))
+        if (interactionUnit.hasMapping(MappingType.RESOURCE))
         {
-            ResourceMapping mapping = entityContext.getMapping(MappingType.RESOURCE);
+            ResourceMapping mapping = interactionUnit.getMapping(MappingType.RESOURCE);
             String resolvedAddress = resolveAddress(interactionUnit, mapping);
 
             if(!resolvedOperations.contains(resolvedAddress))
@@ -175,9 +172,9 @@ public class ReadResourceDescriptionStep extends ReificationStep
         InteractionUnit parent = interactionUnit.getParent();
         if(parent!=null)
         {
-            if(parent.getEntityContext().hasMapping(MappingType.RESOURCE))
+            if(parent.hasMapping(MappingType.RESOURCE))
             {
-                ResourceMapping parentMapping = parent.getEntityContext().getMapping(MappingType.RESOURCE);
+                ResourceMapping parentMapping = parent.getMapping(MappingType.RESOURCE);
                 parentAddress = parentMapping.getAddress();
             }
 

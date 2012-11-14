@@ -23,6 +23,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static junit.framework.Assert.assertEquals;
+import static org.jboss.as.console.client.mbui.TestNamespace.NAMESPACE;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -34,9 +35,9 @@ public class ResourceMappingTest
     ResourceMapping cut;
 
     @Before
-    public void setUp() throws Exception
+    public void setUp()
     {
-        cut = new ResourceMapping("testAddress");
+        cut = new ResourceMapping(NAMESPACE);
     }
 
     @Test

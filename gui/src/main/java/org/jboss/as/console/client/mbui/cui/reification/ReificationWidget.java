@@ -19,7 +19,6 @@
 package org.jboss.as.console.client.mbui.cui.reification;
 
 import com.google.gwt.user.client.ui.IsWidget;
-import org.jboss.as.console.client.mbui.aui.aim.InteractionUnit;
 
 /**
  * @author Harald Pehl
@@ -27,5 +26,5 @@ import org.jboss.as.console.client.mbui.aui.aim.InteractionUnit;
  */
 public interface ReificationWidget extends IsWidget
 {
-    public void add(ReificationWidget widget, InteractionUnit interactionUnit, InteractionUnit parent);
+    public void add(ReificationWidget widget);
 }

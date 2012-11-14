@@ -23,7 +23,6 @@ import org.jboss.as.console.client.mbui.aui.aim.assets.EventProduction;
 /**
  * @author Harald Pehl
  * @author Heiko Braun
- *
  * @date 10/25/2012
  */
 public class Input extends InteractionUnit implements EventProducer<EventType>
@@ -31,10 +30,6 @@ public class Input extends InteractionUnit implements EventProducer<EventType>
     private EventProduction<EventType> eventProduction =
             new EventProduction<EventType>(EventType.Interaction);
 
-    public Input(String ns, String id)
-    {
-        super(ns, id);
-    }
 
     public Input(String ns, final String id, final String name)
     {
@@ -47,12 +42,14 @@ public class Input extends InteractionUnit implements EventProducer<EventType>
         return "Input{" + getId() + '}';
     }
 
-    public boolean doesProduceEvents() {
+    public boolean doesProduceEvents()
+    {
         return eventProduction.doesProduceEvents();
     }
 
     @Override
-    public void setProducedEvents(Event<EventType>... events) {
+    public void setProducedEvents(Event<EventType>... events)
+    {
         eventProduction.setProducedEvents(events);
     }
 }

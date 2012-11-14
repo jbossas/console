@@ -22,8 +22,8 @@ import org.jboss.as.console.client.mbui.aui.mapping.as7.ResourceMapping;
 import org.junit.Before;
 import org.junit.Test;
 
+import static org.jboss.as.console.client.mbui.TestNamespace.NAMESPACE;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -35,33 +35,24 @@ public class EntityContextTest
     EntityContext cut;
 
     @Before
-    public void setUp() throws Exception
+    public void setUp()
     {
         cut = new EntityContext("test");
     }
 
     @Test
-    public void addNullMapping() throws Exception
+    public void addNullMapping()
     {
         cut.addMapping(null);
         assertTrue(cut.getMappings().isEmpty());
     }
 
     @Test
-    public void addMapping() throws Exception
+    public void addMapping()
     {
-        ResourceMapping mapping = new ResourceMapping("/foo=bar");
+        ResourceMapping mapping = new ResourceMapping(NAMESPACE).setAddress("/foo=bar");
         cut.addMapping(mapping);
         assertEquals(1, cut.getMappings().size());
         assertEquals(mapping, cut.getMappings().iterator().next());
     }
-
-    @Test
-    public void getNoneExistingMapping() throws Exception
-    {
-        Mapping mapping = cut.getMapping("foo");
-        assertNotNull(mapping);
-        assertEquals(Mapping.EMPTY, mapping);
-    }
-
 }

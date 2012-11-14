@@ -86,8 +86,7 @@ public class FormStrategy implements ReificationStrategy<ReificationWidget>
             List<Property> attributeDescriptions = modelDescription.get("attributes").asPropertyList();
 
             ResourceMapping resourceMapping = (ResourceMapping)
-                    this.interactionUnit.getEntityContext()
-                            .getMapping(MappingType.RESOURCE);
+                    this.interactionUnit.getMapping(MappingType.RESOURCE);
 
             List<ResourceAttribute> attributes = resourceMapping.getAttributes();
             List<FormItem> items = new ArrayList<FormItem>(attributes.size());
@@ -133,8 +132,7 @@ public class FormStrategy implements ReificationStrategy<ReificationWidget>
         }
 
         @Override
-        public void add(final ReificationWidget widget, final InteractionUnit interactionUnit,
-                        final InteractionUnit parent)
+        public void add(final ReificationWidget widget)
         {
             throw new UnsupportedOperationException();
         }

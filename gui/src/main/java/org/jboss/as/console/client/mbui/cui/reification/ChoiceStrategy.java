@@ -114,8 +114,7 @@ public class ChoiceStrategy implements ReificationStrategy<ReificationWidget>
         }
 
         @Override
-        public void add(final ReificationWidget widget, final InteractionUnit interactionUnit,
-                final InteractionUnit parent)
+        public void add(final ReificationWidget widget)
         {
             if (widget != null)
             {

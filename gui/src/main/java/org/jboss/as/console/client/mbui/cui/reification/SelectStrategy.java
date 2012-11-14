@@ -72,8 +72,7 @@ public class SelectStrategy implements ReificationStrategy<ReificationWidget>
             this.interactionUnit = interactionUnit;
 
             ResourceMapping resourceMapping = (ResourceMapping)
-                    this.interactionUnit.getEntityContext()
-                        .getMapping(MappingType.RESOURCE);
+                    this.interactionUnit.getMapping(MappingType.RESOURCE);
 
             List<ResourceAttribute> attributes = resourceMapping.getAttributes();
             for (ResourceAttribute attribute : attributes)
@@ -102,8 +101,7 @@ public class SelectStrategy implements ReificationStrategy<ReificationWidget>
         }
 
         @Override
-        public void add(final ReificationWidget widget, final InteractionUnit interactionUnit,
-                final InteractionUnit parent)
+        public void add(final ReificationWidget widget)
         {
             throw new UnsupportedOperationException();
         }

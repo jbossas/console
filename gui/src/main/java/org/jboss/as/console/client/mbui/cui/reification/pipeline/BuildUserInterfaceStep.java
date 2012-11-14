@@ -90,7 +90,7 @@ public class BuildUserInterfaceStep extends ReificationStep
                             ReificationWidget childWidget = startReification(childUnit, context);
                             if (childWidget != null)
                             {
-                                parentWidget.add(childWidget, childUnit, container);
+                                parentWidget.add(childWidget);
                             }
 
                     }
