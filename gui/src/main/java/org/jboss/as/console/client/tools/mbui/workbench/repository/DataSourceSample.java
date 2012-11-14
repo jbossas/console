@@ -55,13 +55,13 @@ public class DataSourceSample implements Sample
         Container container = new Container(namespace, "datasources", "Datasources", Choice);
         container.getEntityContext().addMapping(global);
 
-        Container dsOverview = new Container(namespace, "datasourceOverview", "Datasources", OrderIndependance);
-        Container xaOverview = new Container(namespace, "xaOverview", "XA Datasources", OrderIndependance);
+        Container dsOverview = new Container(namespace, "datasourceOverview", "Regular", OrderIndependance);
+        Container xaOverview = new Container(namespace, "xaOverview", "XA", OrderIndependance);
 
         container.add(dsOverview);
         container.add(xaOverview);
 
-        Select table = new Select(namespace, "datasourceTable", "Datasources");
+        Select table = new Select(namespace, "datasourceTable", "DatasourceList");
         dsOverview.add(table);
 
         Container forms = new Container(namespace, "datasourceAttributes", "Datasource", Choice);

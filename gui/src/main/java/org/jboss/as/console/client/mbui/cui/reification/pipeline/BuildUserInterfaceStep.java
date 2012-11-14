@@ -42,10 +42,12 @@ public class BuildUserInterfaceStep extends ReificationStep
 {
 
     final Set<ReificationStrategy<ReificationWidget>> strategies;
+    private StringBuffer log = new StringBuffer();
+    private int tabCount = 0;
 
     public BuildUserInterfaceStep()
     {
-        super("build ui");
+        super("BuildUserInterfaceStep");
         this.strategies = new HashSet<ReificationStrategy<ReificationWidget>>();
         this.strategies.add(new OrderIndependanceStrategy());
         this.strategies.add(new ChoiceStrategy());
@@ -56,6 +58,9 @@ public class BuildUserInterfaceStep extends ReificationStep
     @Override
     public void execute(Iterator<ReificationStep> iterator, AsyncCallback<Boolean> outcome) {
 
+        log = new StringBuffer();
+        tabCount = 0;
+
         ReificationWidget widget = null;
         if (isValid())
         {
@@ -64,9 +69,8 @@ public class BuildUserInterfaceStep extends ReificationStep
         }
         context.set(ContextKey.WIDGET, widget);
 
-
         System.out.println("Finished " + getName());
-
+        System.out.println(log.toString());
         outcome.onSuccess(Boolean.TRUE);
 
         next(iterator, outcome);
@@ -74,30 +78,45 @@ public class BuildUserInterfaceStep extends ReificationStep
 
     private ReificationWidget startReification(final InteractionUnit parentUnit, final Context context)
     {
-        ReificationWidget parentWidget = null;
+        start(parentUnit);
         ReificationStrategy<ReificationWidget> strategy = resolve(parentUnit);
-        if (strategy != null)
+        ReificationWidget parentWidget = strategy.reify(parentUnit, context);
+
+        // process children
+        if (parentUnit instanceof Container)
         {
-            parentWidget = strategy.reify(parentUnit, context);
-            if (parentWidget != null)
+            Container container = (Container) parentUnit;
+            for (InteractionUnit childUnit : container.getChildren())
             {
-                if (parentUnit instanceof Container)
+
+                ReificationWidget childWidget = startReification(childUnit, context);
+                if (childWidget != null)
                 {
-                    Container container = (Container) parentUnit;
-                    for (InteractionUnit childUnit : container.getChildren())
-                    {
-
-                            ReificationWidget childWidget = startReification(childUnit, context);
-                            if (childWidget != null)
-                            {
-                                parentWidget.add(childWidget, childUnit, container);
-                            }
-
-                    }
+                    parentWidget.add(childWidget, childUnit, container);
                 }
+
             }
         }
+        end(parentUnit);
         return parentWidget;
+    }
+
+
+
+    private void start(InteractionUnit parentUnit) {
+        tabCount++;
+        for(int i=0; i<tabCount;i++)
+            log.append("\t");
+        log.append("<").append(parentUnit.getName()).append(">");
+        log.append("\n");
+    }
+
+    private void end(InteractionUnit parentUnit) {
+        for(int i=0; i<tabCount;i++)
+            log.append("\t");
+        log.append("</").append(parentUnit.getName()).append(">");
+        log.append("\n");
+        tabCount--;
     }
 
     private ReificationStrategy<ReificationWidget> resolve(InteractionUnit interactionUnit)

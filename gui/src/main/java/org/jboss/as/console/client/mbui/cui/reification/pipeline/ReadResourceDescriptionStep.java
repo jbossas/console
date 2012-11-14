@@ -54,7 +54,7 @@ public class ReadResourceDescriptionStep extends ReificationStep
     @Inject
     public ReadResourceDescriptionStep(final DispatchAsync dispatcher)
     {
-        super("read resource descriptions");
+        super("ReadResourceDescriptionStep");
         this.dispatcher = dispatcher;
     }
 
