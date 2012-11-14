@@ -27,14 +27,6 @@ public abstract class Mapping
     protected MappingType type;
     protected String namespace;
 
-    public String getNamespace()
-    {
-        return namespace;
-    }
-
-    public MappingType getType() {
-        return type;
-    }
 
     protected Mapping(MappingType type, String namespace)
     {
@@ -57,6 +49,16 @@ public abstract class Mapping
     @Override
     public String toString()
     {
-        return "Mapping{type="+type+'}';
+        return "Mapping{type=" + type + '}';
+    }
+
+    public String getNamespace()
+    {
+        return namespace;
+    }
+
+    public MappingType getType()
+    {
+        return type;
     }
 }

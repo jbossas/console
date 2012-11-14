@@ -20,6 +20,9 @@ package org.jboss.as.console.client.mbui.aui.aim;
 
 import org.jboss.as.console.client.mbui.aui.aim.assets.EventConsumption;
 import org.jboss.as.console.client.mbui.aui.mapping.EntityContext;
+import org.jboss.as.console.client.mbui.aui.mapping.Mapping;
+import org.jboss.as.console.client.mbui.aui.mapping.MappingType;
+import org.jboss.as.console.client.mbui.aui.mapping.Predicate;
 
 /**
  * @author Harald Pehl
@@ -30,22 +33,23 @@ public abstract class InteractionUnit implements EventConsumer
     public final static String ENTITY_CONTEXT_SUFFIX = "_entityContext";
 
     private final QName id;
-    private final EntityContext entityContext;
     private String name;
-    private String mappingReference;
-    private InteractionUnit parent = null;
+    private final EntityContext entityContext;
+    private EventConsumption eventConsumption;
+    private InteractionUnit parent;
 
-    private EventConsumption eventConsumption = new EventConsumption(EventType.System);
 
     protected InteractionUnit(String namespace, final String id)
     {
         this(new QName(namespace, id), null);
     }
 
+
     protected InteractionUnit(String namespace, final String id, final String name)
     {
         this(new QName(namespace, id), name);
     }
+
 
     protected InteractionUnit(final QName id, final String name)
     {
@@ -54,20 +58,7 @@ public abstract class InteractionUnit implements EventConsumer
         this.id = id;
         this.name = name;
         this.entityContext = new EntityContext(id + ENTITY_CONTEXT_SUFFIX);
-    }
-
-    void setParent(InteractionUnit parent)
-    {
-        this.parent = parent;
-    }
-
-    public InteractionUnit getParent() {
-        return parent;
-    }
-
-    public boolean hasParent()
-    {
-        return parent!=null;
+        this.eventConsumption = new EventConsumption(EventType.System);
     }
 
     @Override
@@ -94,17 +85,62 @@ public abstract class InteractionUnit implements EventConsumer
         return "InteractionUnit{" + id + '}';
     }
 
+
+    // ------------------------------------------------------ mappings
+
+    public <T extends Mapping> T findMapping(MappingType type)
+    {
+        return findMapping(type, null);
+    }
+
+    public <T extends Mapping> T findMapping(MappingType type, Predicate<T> predicate)
+    {
+        T mapping = entityContext.getMapping(type);
+        if (mapping != null)
+        {
+            // check predicate
+            if (predicate != null)
+            {
+                mapping = (predicate.appliesTo(mapping)) ? mapping : null;
+            }
+        }
+        if (mapping == null && parent != null)
+        {
+            mapping = parent.findMapping(type);
+        }
+        return mapping;
+    }
+
+    // ------------------------------------------------------ event handling
+
     @Override
-    public EventType[] getConsumedTypes() {
+    public EventType[] getConsumedTypes()
+    {
         return eventConsumption.getConsumedTypes();
     }
 
     @Override
-    public boolean consumes(Event event) {
+    public boolean consumes(Event event)
+    {
         return eventConsumption.consumes(event);
     }
 
     // ------------------------------------------------------ properties
+
+    public InteractionUnit getParent()
+    {
+        return parent;
+    }
+
+    void setParent(InteractionUnit parent)
+    {
+        this.parent = parent;
+    }
+
+    public boolean hasParent()
+    {
+        return parent != null;
+    }
 
     public QName getId()
     {
@@ -124,15 +160,5 @@ public abstract class InteractionUnit implements EventConsumer
     public EntityContext getEntityContext()
     {
         return entityContext;
-    }
-
-    public String getMappingReference()
-    {
-        return mappingReference;
-    }
-
-    public void setMappingReference(final String mappingReference)
-    {
-        this.mappingReference = mappingReference;
     }
 }
