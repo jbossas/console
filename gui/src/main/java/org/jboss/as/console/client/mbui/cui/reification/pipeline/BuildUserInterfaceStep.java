@@ -24,6 +24,7 @@ import org.jboss.as.console.client.mbui.aui.aim.InteractionUnit;
 import org.jboss.as.console.client.mbui.cui.Context;
 import org.jboss.as.console.client.mbui.cui.ReificationStrategy;
 import org.jboss.as.console.client.mbui.cui.reification.ChoiceStrategy;
+import org.jboss.as.console.client.mbui.cui.reification.ContextKey;
 import org.jboss.as.console.client.mbui.cui.reification.FormStrategy;
 import org.jboss.as.console.client.mbui.cui.reification.OrderIndependanceStrategy;
 import org.jboss.as.console.client.mbui.cui.reification.ReificationWidget;
@@ -40,7 +41,7 @@ import static java.lang.Boolean.TRUE;
  */
 public class BuildUserInterfaceStep extends ReificationStep
 {
-    public static final String WIDGET = "widget";
+
     final Set<ReificationStrategy<ReificationWidget>> strategies;
 
     public BuildUserInterfaceStep()
@@ -62,7 +63,7 @@ public class BuildUserInterfaceStep extends ReificationStep
             assert !toplevelUnit.hasParent() : "Entry point interaction units are not expected to have parents";
             widget = startReification(toplevelUnit, context);
         }
-        context.set(WIDGET, widget);
+        context.set(ContextKey.WIDGET, widget);
         callback.onSuccess(TRUE);
     }
 

@@ -18,8 +18,9 @@
  */
 package org.jboss.as.console.client.mbui.cui;
 
-import java.util.HashMap;
-import java.util.Map;
+import org.jboss.as.console.client.mbui.cui.reification.ContextKey;
+
+import java.util.EnumMap;
 import java.util.Stack;
 
 /**
@@ -28,7 +29,7 @@ import java.util.Stack;
  */
 public class Context
 {
-    private Stack<Map<String, Object>> subcontexts = new Stack<Map<String, Object>>();
+    private Stack<EnumMap<ContextKey, Object>> subcontexts = new Stack<EnumMap<ContextKey, Object>>();
 
     public Context()
     {
@@ -37,7 +38,7 @@ public class Context
 
     public void push()
     {
-        subcontexts.push(new HashMap<String, Object>());
+        subcontexts.push(new EnumMap<ContextKey, Object>(ContextKey.class));
     }
 
     public void pop()
@@ -45,13 +46,13 @@ public class Context
         subcontexts.pop();
     }
 
-    public <T> Context set(final String name, final T value)
+    public <T> Context set(final ContextKey key, final T value)
     {
-        subcontexts.peek().put(name, value);
+        subcontexts.peek().put(key, value);
         return this;
     }
 
-    public <T> T get(final String name)
+    public <T> T get(final ContextKey name)
     {
         Object value = subcontexts.peek().get(name);
         if (value != null)
@@ -61,7 +62,7 @@ public class Context
         return null;
     }
 
-    public boolean has(final String name)
+    public boolean has(final ContextKey name)
     {
         Object value = subcontexts.peek().get(name);
         return value != null;

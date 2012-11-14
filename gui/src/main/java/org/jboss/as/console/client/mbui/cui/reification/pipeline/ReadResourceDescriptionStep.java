@@ -26,6 +26,7 @@ import org.jboss.as.console.client.mbui.aui.aim.InteractionUnit;
 import org.jboss.as.console.client.mbui.aui.mapping.EntityContext;
 import org.jboss.as.console.client.mbui.aui.mapping.MappingType;
 import org.jboss.as.console.client.mbui.aui.mapping.as7.ResourceMapping;
+import org.jboss.as.console.client.mbui.cui.reification.ContextKey;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
@@ -49,8 +50,6 @@ import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 public class ReadResourceDescriptionStep extends ReificationStep
 {
     final DispatchAsync dispatcher;
-    private Map<String, InteractionUnit> stepReference = new HashMap<String, InteractionUnit>();
-    private Set<String> resolvedOperations = new HashSet<String>();
 
     @Inject
     public ReadResourceDescriptionStep(final DispatchAsync dispatcher)
@@ -59,43 +58,56 @@ public class ReadResourceDescriptionStep extends ReificationStep
         this.dispatcher = dispatcher;
     }
 
-
     @Override
     public void execute(final AsyncCallback<Boolean> callback)
     {
+        final Map<String, InteractionUnit> stepReference = new HashMap<String, InteractionUnit>();
+        final Set<String> resolvedOperations = new HashSet<String>();
+
         ModelNode compsite = new ModelNode();
         compsite.get(OP).set(COMPOSITE);
         compsite.get(ADDRESS).setEmptyList();
 
         List<ModelNode> steps = new ArrayList<ModelNode>();
-        collectOperations(toplevelUnit, steps);
+        collectOperations(toplevelUnit, steps, stepReference, resolvedOperations);
 
         compsite.get(STEPS).set(steps);
 
-        System.out.println(compsite);
+        System.out.println(">>"+compsite);
+
         dispatcher.execute(new DMRAction(compsite), new SimpleCallback<DMRResponse>()
         {
+            @Override
+            public void onFailure(final Throwable caught)
+            {
+                throw new RuntimeException("Failed to execute " + getName(), caught);
+            }
+
             @Override
             public void onSuccess(final DMRResponse result)
             {
                 ModelNode response = result.get();
-                System.out.println(response);
+                //System.out.println(response);
 
                 // evaluate step responses
-                for(String step : stepReference.keySet())
+                for (String step : stepReference.keySet())
                 {
-                    System.out.println(step);
-                    ModelNode stepResponse = response.get(RESULT).get(step);
-                    List<ModelNode> scope = stepResponse.get(RESULT).asList();
-                    ModelNode description = scope.get(0).get(RESULT).asObject();
 
-                    if(!context.has("model-descriptions"))
+                    ModelNode stepResponse = response.get(RESULT).get(step);
+
+                    //System.out.println("<<"+stepResponse);
+
+                    List<ModelNode> list = stepResponse.get(RESULT).asList();
+                    ModelNode description = list.get(0).get(RESULT).asObject();
+
+                    if (!context.has(ContextKey.MODEL_DESCRIPTIONS))
                     {
-                        context.set("model-descriptions", new HashMap<String, ModelNode>());
+                        context.set(ContextKey.MODEL_DESCRIPTIONS, new HashMap<String, ModelNode>());
                     }
 
-                    Map<String, ModelNode> descriptionMap = context.get("model-descriptions");
-                    ResourceMapping mapping = stepReference.get(step).getEntityContext().getMapping(MappingType.RESOURCE);
+                    Map<String, ModelNode> descriptionMap = context.get(ContextKey.MODEL_DESCRIPTIONS);
+                    ResourceMapping mapping = stepReference.get(step).getEntityContext()
+                            .getMapping(MappingType.RESOURCE);
                     descriptionMap.put(mapping.getNamespace(), description);
 
                 }
@@ -106,7 +118,8 @@ public class ReadResourceDescriptionStep extends ReificationStep
     }
 
     private void collectOperations(final InteractionUnit interactionUnit,
-            final List<ModelNode> steps)
+            final List<ModelNode> steps, final Map<String, InteractionUnit> stepReference,
+            final Set<String> resolvedOperations)
     {
         EntityContext entityContext = interactionUnit.getEntityContext();
         if (entityContext.hasMapping(MappingType.RESOURCE))
@@ -136,7 +149,7 @@ public class ReadResourceDescriptionStep extends ReificationStep
         {
             Container container = (Container)interactionUnit;
             for(InteractionUnit child : container.getChildren())
-                collectOperations(child, steps);
+                collectOperations(child, steps, stepReference, resolvedOperations);
         }
 
     }

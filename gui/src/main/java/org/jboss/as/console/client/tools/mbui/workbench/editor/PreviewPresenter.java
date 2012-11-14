@@ -28,11 +28,8 @@ import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import org.jboss.as.console.client.mbui.aui.aim.InteractionUnit;
 import org.jboss.as.console.client.mbui.cui.Context;
-import org.jboss.as.console.client.mbui.cui.reification.pipeline.ReificationCallback;
-import org.jboss.as.console.client.mbui.cui.reification.pipeline.ReificationPipeline;
-import org.jboss.as.console.client.tools.mbui.workbench.ApplicationPresenter;
+import org.jboss.as.console.client.mbui.cui.reification.ContextKey;
 import org.jboss.as.console.client.mbui.cui.reification.ReificationWidget;
-import org.jboss.as.console.client.mbui.cui.reification.pipeline.BuildUserInterfaceStep;
 import org.jboss.as.console.client.mbui.cui.reification.pipeline.ReificationCallback;
 import org.jboss.as.console.client.mbui.cui.reification.pipeline.ReificationPipeline;
 import org.jboss.as.console.client.tools.mbui.workbench.ApplicationPresenter;
@@ -96,7 +93,7 @@ public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, Preview
                     {
                         if (result != null && result.booleanValue())
                         {
-                            ReificationWidget widget = context.get(BuildUserInterfaceStep.WIDGET);
+                            ReificationWidget widget = context.get(ContextKey.WIDGET);
                             if (widget != null)
                             {
                                 getView().show(widget);

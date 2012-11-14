@@ -54,7 +54,7 @@ public class FormStrategy implements ReificationStrategy<ReificationWidget>
         FormAdapter adapter = null;
         if (interactionUnit != null)
         {
-            Map<String, ModelNode> descriptions = context.get ("model-descriptions");
+            Map<String, ModelNode> descriptions = context.get (ContextKey.MODEL_DESCRIPTIONS);
             ModelNode modelDescription = descriptions.get(interactionUnit.getId().getNamespaceURI());
             assert modelDescription!=null : "Model description are required to execute FormStrategy";
 
