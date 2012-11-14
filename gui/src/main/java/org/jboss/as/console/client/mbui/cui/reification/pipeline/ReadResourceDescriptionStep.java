@@ -68,7 +68,7 @@ public class ReadResourceDescriptionStep extends ReificationStep
         compsite.get(ADDRESS).setEmptyList();
 
         List<ModelNode> steps = new ArrayList<ModelNode>();
-        collectOperations(interactionUnit, steps);
+        collectOperations(toplevelUnit, steps);
 
         compsite.get(STEPS).set(steps);
 
@@ -78,8 +78,28 @@ public class ReadResourceDescriptionStep extends ReificationStep
             @Override
             public void onSuccess(final DMRResponse result)
             {
-                ModelNode modelNode = result.get();
-                System.out.println(modelNode);
+                ModelNode response = result.get();
+                System.out.println(response);
+
+                // evaluate step responses
+                for(String step : stepReference.keySet())
+                {
+                    System.out.println(step);
+                    ModelNode stepResponse = response.get(RESULT).get(step);
+                    List<ModelNode> scope = stepResponse.get(RESULT).asList();
+                    ModelNode description = scope.get(0).get(RESULT).asObject();
+
+                    if(!context.has("model-descriptions"))
+                    {
+                        context.set("model-descriptions", new HashMap<String, ModelNode>());
+                    }
+
+                    Map<String, ModelNode> descriptionMap = context.get("model-descriptions");
+                    ResourceMapping mapping = stepReference.get(step).getEntityContext().getMapping(MappingType.RESOURCE);
+                    descriptionMap.put(mapping.getNamespace(), description);
+
+                }
+
                 callback.onSuccess(TRUE);
             }
         });

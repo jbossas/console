@@ -59,8 +59,8 @@ public class BuildUserInterfaceStep extends ReificationStep
         ReificationWidget widget = null;
         if (isValid())
         {
-            assert !interactionUnit.hasParent() : "Entry point interaction units are not expected to have parents";
-            widget = startReification(interactionUnit, context);
+            assert !toplevelUnit.hasParent() : "Entry point interaction units are not expected to have parents";
+            widget = startReification(toplevelUnit, context);
         }
         context.set(WIDGET, widget);
         callback.onSuccess(TRUE);
@@ -80,19 +80,19 @@ public class BuildUserInterfaceStep extends ReificationStep
                     Container container = (Container) parentUnit;
                     for (InteractionUnit childUnit : container.getChildren())
                     {
-                        try
-                        {
-                            context.push();
+//                        try
+//                        {
+//                            context.push();
                             ReificationWidget childWidget = startReification(childUnit, context);
                             if (childWidget != null)
                             {
                                 parentWidget.add(childWidget, childUnit, container);
                             }
-                        }
-                        catch (Exception e)
-                        {
-                            context.pop();
-                        }
+//                        }
+//                        catch (Exception e)
+//                        {
+//                            context.pop();
+//                        }
                     }
                 }
             }

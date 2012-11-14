@@ -29,7 +29,7 @@ import org.jboss.as.console.client.shared.dispatch.AsyncCommand;
 public abstract class ReificationStep implements AsyncCommand<Boolean>
 {
     private final String name;
-    protected InteractionUnit interactionUnit;
+    protected InteractionUnit toplevelUnit;
     protected Context context;
 
     protected ReificationStep(final String name)
@@ -39,13 +39,15 @@ public abstract class ReificationStep implements AsyncCommand<Boolean>
 
     public void init(final InteractionUnit interactionUnit, final Context context)
     {
-        this.interactionUnit = interactionUnit;
+        this.toplevelUnit = interactionUnit;
         this.context = context;
+
+        assert !toplevelUnit.hasParent() : "Top level units are not expected to have parents";
     }
 
     public boolean isValid()
     {
-        return interactionUnit != null && context != null;
+        return toplevelUnit != null && context != null;
     }
 
     public String getName()

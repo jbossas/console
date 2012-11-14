@@ -23,15 +23,15 @@ import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
-import org.jboss.as.console.client.mbui.aui.mapping.MappingType;
-import org.jboss.ballroom.client.widgets.tables.DefaultPager;
 import org.jboss.as.console.client.mbui.aui.aim.InteractionUnit;
 import org.jboss.as.console.client.mbui.aui.aim.Select;
+import org.jboss.as.console.client.mbui.aui.mapping.MappingType;
 import org.jboss.as.console.client.mbui.aui.mapping.as7.ResourceAttribute;
 import org.jboss.as.console.client.mbui.aui.mapping.as7.ResourceMapping;
 import org.jboss.as.console.client.mbui.cui.Context;
 import org.jboss.as.console.client.mbui.cui.ReificationStrategy;
 import org.jboss.as.console.client.mbui.cui.widgets.ModelNodeCellTable;
+import org.jboss.ballroom.client.widgets.tables.DefaultPager;
 
 import java.util.List;
 

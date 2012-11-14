@@ -54,7 +54,11 @@ public class FormStrategy implements ReificationStrategy<ReificationWidget>
         FormAdapter adapter = null;
         if (interactionUnit != null)
         {
-            adapter = new FormAdapter(interactionUnit);
+            Map<String, ModelNode> descriptions = context.get ("model-descriptions");
+            ModelNode modelDescription = descriptions.get(interactionUnit.getId().getNamespaceURI());
+            assert modelDescription!=null : "Model description are required to execute FormStrategy";
+
+            adapter = new FormAdapter(interactionUnit, modelDescription);
         }
         return adapter;
     }
@@ -70,16 +74,16 @@ public class FormStrategy implements ReificationStrategy<ReificationWidget>
         final ModelNodeForm form;
         final InteractionUnit interactionUnit;
 
-        FormAdapter(final InteractionUnit interactionUnit)
+        FormAdapter(final InteractionUnit interactionUnit, final ModelNode modelDescription)
         {
             this.interactionUnit = interactionUnit;
             this.form = new ModelNodeForm();
             this.form.setNumColumns(2);
             this.form.setEnabled(false);
 
-            ModelNode modelNode = ModelNode.fromBase64(base64);
-            ModelNode description = modelNode.get("result").get("step-1").get("result");
-            List<Property> attributeDescriptions = description.get("attributes").asPropertyList();
+            //ModelNode modelNode = ModelNode.fromBase64(base64);
+            //ModelNode description = modelNode.get("result").get("step-1").get("result");
+            List<Property> attributeDescriptions = modelDescription.get("attributes").asPropertyList();
 
             ResourceMapping resourceMapping = (ResourceMapping)
                     this.interactionUnit.getEntityContext()

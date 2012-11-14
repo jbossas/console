@@ -45,13 +45,17 @@ public class TransactionSample implements Sample
         String ns = "org.jboss.transactions";
 
         // abstract UI modelling
+        ResourceMapping global = new ResourceMapping(ns)
+                .setAddress("/profile={0}/subsystem=transactions");
+
         Container overview = new Container(ns, "transactionManager", "TransactionManager", OrderIndependance);
+        overview.getEntityContext().addMapping(global);
 
         Form basicAttributes = new Form(ns, "basicAttributes", "Attributes");
         overview.add(basicAttributes);
 
         Mapping basicAttributesMapping =
-                new ResourceMapping("/profile=${profile}/subsystem=transactions")
+                new ResourceMapping(ns)
                         .addAttributes("enable-statistics", "enable-tsm-status", "jts", "default-timeout",
                                 "node-identifier", "use-hornetq-store");
 
@@ -61,16 +65,14 @@ public class TransactionSample implements Sample
         Form processAttributes = new Form(ns, "process", "Process ID");
         details.add(processAttributes);
 
-        Mapping processMapping =
-                new ResourceMapping("/profile=${profile}/subsystem=transactions")
-                        .addAttributes("process-id-uuid", "process-id-socket-binding");
+        Mapping processMapping = new ResourceMapping(ns).addAttributes("process-id-uuid", "process-id-socket-binding");
         processAttributes.getEntityContext().addMapping(processMapping);
 
         Form recoveryAttributes = new Form(ns, "recovery", "Recovery");
         details.add(recoveryAttributes);
 
         Mapping recoveryMapping =
-                new ResourceMapping("/profile=${profile}/subsystem=transactions")
+                new ResourceMapping(ns)
                         .addAttributes("recovery-listener", "socket-binding");
         recoveryAttributes.getEntityContext().addMapping(recoveryMapping);
 

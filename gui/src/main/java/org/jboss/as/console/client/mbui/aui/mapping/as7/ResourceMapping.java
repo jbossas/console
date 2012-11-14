@@ -18,9 +18,8 @@
  */
 package org.jboss.as.console.client.mbui.aui.mapping.as7;
 
-import org.jboss.as.console.client.mbui.aui.mapping.MappingType;
-import org.jboss.dmr.client.ModelNode;
 import org.jboss.as.console.client.mbui.aui.mapping.Mapping;
+import org.jboss.as.console.client.mbui.aui.mapping.MappingType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,8 +34,6 @@ public class ResourceMapping extends Mapping
 {
     private String address;
     private final List<ResourceAttribute> attributes;
-    private ModelNode resourceDescription;
-
 
     public ResourceMapping(final String namespace)
     {
@@ -80,15 +77,5 @@ public class ResourceMapping extends Mapping
     public List<ResourceAttribute> getAttributes()
     {
         return attributes;
-    }
-
-    public ModelNode getResourceDescription()
-    {
-        return resourceDescription;
-    }
-
-    public void setResourceDescription(final ModelNode resourceDescription)
-    {
-        this.resourceDescription = resourceDescription;
     }
 }
