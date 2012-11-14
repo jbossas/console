@@ -112,8 +112,8 @@ public class ReadResourceDescriptionStep extends ReificationStep
 
                 }
 
-
-                outcome.onSuccess(Boolean.TRUE);
+                System.out.println("Finished " + getName());
+                outcome.onSuccess(!response.isFailure());
 
                 next(iterator, outcome);
 

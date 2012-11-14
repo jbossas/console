@@ -64,6 +64,9 @@ public class BuildUserInterfaceStep extends ReificationStep
         }
         context.set(ContextKey.WIDGET, widget);
 
+
+        System.out.println("Finished " + getName());
+
         outcome.onSuccess(Boolean.TRUE);
 
         next(iterator, outcome);
@@ -83,19 +86,13 @@ public class BuildUserInterfaceStep extends ReificationStep
                     Container container = (Container) parentUnit;
                     for (InteractionUnit childUnit : container.getChildren())
                     {
-//                        try
-//                        {
-//                            context.push();
+
                             ReificationWidget childWidget = startReification(childUnit, context);
                             if (childWidget != null)
                             {
                                 parentWidget.add(childWidget, childUnit, container);
                             }
-//                        }
-//                        catch (Exception e)
-//                        {
-//                            context.pop();
-//                        }
+
                     }
                 }
             }

@@ -55,7 +55,11 @@ public class ReificationPipeline
         }
 
         Iterator<ReificationStep> iterator = steps.iterator();
-        iterator.next().execute(iterator, new ReificationCallback() {
+        ReificationStep first = iterator.next();
+
+        System.out.println("First would be " + first.getName());
+
+        first.execute(iterator, new ReificationCallback() {
 
             int numResponses;
             boolean overallResult;
@@ -65,8 +69,7 @@ public class ReificationPipeline
                 numResponses++;
                 overallResult = successful;
 
-                if(numResponses==steps.size())
-                {
+                if (numResponses == steps.size()) {
                     outcome.onSuccess(overallResult);
                 }
             }
