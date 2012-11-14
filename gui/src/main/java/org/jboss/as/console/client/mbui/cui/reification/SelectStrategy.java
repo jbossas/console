@@ -23,7 +23,7 @@ import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
-import org.jboss.as.console.client.mbui.aui.mapping.as7.MappingType;
+import org.jboss.as.console.client.mbui.aui.mapping.MappingType;
 import org.jboss.ballroom.client.widgets.tables.DefaultPager;
 import org.jboss.as.console.client.mbui.aui.aim.InteractionUnit;
 import org.jboss.as.console.client.mbui.aui.aim.Select;

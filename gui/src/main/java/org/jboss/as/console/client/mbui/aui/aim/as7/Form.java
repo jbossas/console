@@ -28,13 +28,8 @@ import static org.jboss.as.console.client.mbui.aui.aim.TemporalOperator.OrderInd
  */
 public class Form extends Container
 {
-    public Form(final String id)
+    public Form(final String namespace, final String id, final String name)
     {
-        super(id, OrderIndependance);
-    }
-
-    public Form(final String id, final String name)
-    {
-        super(id, name, OrderIndependance);
+        super(namespace, id, name, OrderIndependance);
     }
 }

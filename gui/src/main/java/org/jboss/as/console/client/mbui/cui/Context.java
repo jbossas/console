@@ -30,7 +30,6 @@ public class Context
 {
     private Stack<Map<String, Object>> subcontexts = new Stack<Map<String, Object>>();
 
-
     public Context()
     {
         push();

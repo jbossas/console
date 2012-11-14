@@ -16,47 +16,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.as.console.client.mbui.aui.mapping;
+package org.jboss.as.console.client.mbui.aui.aim;
 
 /**
  * @author Harald Pehl
- * @date 10/25/2012
+ * @date 11/14/2012
  */
-public abstract class Mapping
+public class QName
 {
-    protected MappingType type;
-    protected String namespace;
-
-    public String getNamespace()
-    {
-        return namespace;
-    }
-
-    public MappingType getType() {
-        return type;
-    }
-
-    protected Mapping(MappingType type, String namespace)
-    {
-        this.type = type;
-        this.namespace = namespace;
-    }
-
-    @Override
-    public boolean equals(final Object o)
-    {
-        if (this == o) { return true; }
-        if (!(o instanceof Mapping)) { return false; }
-
-        Mapping mapping = (Mapping) o;
-        if (!type.equals(mapping.type)) { return false; }
-
-        return true;
-    }
-
-    @Override
-    public String toString()
-    {
-        return "Mapping{type="+type+'}';
-    }
 }

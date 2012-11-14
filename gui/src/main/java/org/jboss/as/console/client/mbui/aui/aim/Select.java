@@ -24,14 +24,9 @@ package org.jboss.as.console.client.mbui.aui.aim;
  */
 public class Select extends InteractionUnit
 {
-    public Select(final String id)
+    public Select(final String namespace, final String id, final String name)
     {
-        super(id);
-    }
-
-    public Select(final String id, final String name)
-    {
-        super(id, name);
+        super(namespace, id, name);
     }
 
     @Override

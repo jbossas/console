@@ -18,11 +18,8 @@
  */
 package org.jboss.as.console.client.mbui.aui.mapping;
 
-import org.jboss.as.console.client.mbui.aui.mapping.as7.MappingType;
-
 import java.util.Collection;
 import java.util.EnumMap;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -49,23 +46,14 @@ public class EntityContext
         }
     }
 
-    public Mapping getMapping(final MappingType type)
+    public boolean hasMapping(MappingType type)
     {
-        Mapping mapping = mappings.get(type);
-        return mapping == null ? Mapping.EMPTY : mapping;
+        return mappings.get(type) != null;
     }
 
-    /**
-     * If there's only one mapping, this mapping is returned. Otherwise {@link Mapping#EMPTY} is returned.
-     * @return
-     */
-    public Mapping getDefaultMapping()
+    public <T extends Mapping> T getMapping(final MappingType type)
     {
-        if (mappings.size() == 1)
-        {
-            return mappings.values().iterator().next();
-        }
-        return Mapping.EMPTY;
+        return (T) mappings.get(type);
     }
 
     public Collection<Mapping> getMappings()

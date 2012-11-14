@@ -46,39 +46,44 @@ public class DataSourceSample implements Sample
     {
         // abstract UI modelling
 
-        Container container = new Container("datasources", "Datasources", Choice);
-        Container dsOverview = new Container("datasourceOverview", "Datasources", OrderIndependance);
-        Container xaOverview = new Container("xaOverview", "XA Datasources", OrderIndependance);
+        String namespace = "org.jboss.ds";
+
+        ResourceMapping global = new ResourceMapping(namespace)
+                .setAddress("/profile={0}/subsystem=datasources/data-source={1}");
+
+        // global address scopefor namespace
+        Container container = new Container(namespace, "datasources", "Datasources", Choice);
+        container.getEntityContext().addMapping(global);
+
+        Container dsOverview = new Container(namespace, "datasourceOverview", "Datasources", OrderIndependance);
+        Container xaOverview = new Container(namespace, "xaOverview", "XA Datasources", OrderIndependance);
 
         container.add(dsOverview);
         container.add(xaOverview);
 
-        Select table = new Select("datasourceTable", "Datasources");
+        Select table = new Select(namespace, "datasourceTable", "Datasources");
         dsOverview.add(table);
 
-        Container forms = new Container("datasourceAttributes", "Datasource", Choice);
+        Container forms = new Container(namespace, "datasourceAttributes", "Datasource", Choice);
         dsOverview.add(forms);
 
-        Form basicAttributes = new Form("basicAttributes", "Attributes");
+        Form basicAttributes = new Form(namespace, "basicAttributes", "Attributes");
         forms.add(basicAttributes);
 
-        Form connectionAttributes = new Form("connectionAttributes", "Connection");
+        Form connectionAttributes = new Form(namespace, "connectionAttributes", "Connection");
         forms.add(connectionAttributes);
 
         // mappings (required)
-        Mapping tableMapping = new ResourceMapping(
-                "/profile=${profile}/subsystem=datasources/data-source=*")
+        Mapping tableMapping = new ResourceMapping(namespace)
                 .addAttribute(new ResourceAttribute("${resource.name}", "Name"))
                 .addAttributes("jndi-name", "enabled");
 
-        Mapping basicAttributesMapping = new ResourceMapping(
-                "/profile=${profile}/subsystem=datasources/data-source=${datasource}")
+        Mapping basicAttributesMapping = new ResourceMapping(namespace)
                 .addAttribute(new ResourceAttribute("${resource.name}", "Name"))
                 .addAttributes("jndi-name", "enabled", "driver-name", "share-prepared-statements",
                         "prepared-statements-cache-size");
 
-        Mapping connectionAttributesMapping = new ResourceMapping(
-                "/profile=${profile}/subsystem=datasources/data-source=${datasource}")
+        Mapping connectionAttributesMapping = new ResourceMapping(namespace)
                 .addAttributes("connection-url", "new-connection-sql", "jta", "use-ccm");
 
         table.getEntityContext().addMapping(tableMapping);

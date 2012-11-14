@@ -30,14 +30,10 @@ public class Container extends InteractionUnit
     private final List<InteractionUnit> children;
     private final TemporalOperator temporalOperator;
 
-    public Container(final String id, final TemporalOperator temporalOperator)
+    public Container(final String namespace, final String id, final String name,
+            final TemporalOperator temporalOperator)
     {
-        this(id, null, temporalOperator);
-    }
-
-    public Container(final String id, final String name, final TemporalOperator temporalOperator)
-    {
-        super(id, name);
+        super(namespace, id, name);
         this.temporalOperator = temporalOperator;
         this.children = new LinkedList<InteractionUnit>();
     }

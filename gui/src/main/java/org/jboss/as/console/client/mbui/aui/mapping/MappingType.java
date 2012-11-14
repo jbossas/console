@@ -1,4 +1,4 @@
-package org.jboss.as.console.client.mbui.aui.mapping.as7;
+package org.jboss.as.console.client.mbui.aui.mapping;
 
 /**
  * @author Heiko Braun

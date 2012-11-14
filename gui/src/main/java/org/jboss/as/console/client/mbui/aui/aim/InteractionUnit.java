@@ -29,7 +29,7 @@ public abstract class InteractionUnit implements EventConsumer
 {
     public final static String ENTITY_CONTEXT_SUFFIX = "_entityContext";
 
-    private final String id;
+    private final QName id;
     private final EntityContext entityContext;
     private String name;
     private String mappingReference;
@@ -37,14 +37,20 @@ public abstract class InteractionUnit implements EventConsumer
 
     private EventConsumption eventConsumption = new EventConsumption(EventType.System);
 
-    protected InteractionUnit(final String id)
+    protected InteractionUnit(String namespace, final String id)
     {
-        this(id, null);
+        this(new QName(namespace, id), null);
     }
 
-    protected InteractionUnit(final String id, final String name)
+    protected InteractionUnit(String namespace, final String id, final String name)
+    {
+        this(new QName(namespace, id), name);
+    }
+
+    protected InteractionUnit(final QName id, final String name)
     {
         assert id != null : "Id must not be null";
+        assert !id.getNamespaceURI().isEmpty() : "Units require qualified namespace";
         this.id = id;
         this.name = name;
         this.entityContext = new EntityContext(id + ENTITY_CONTEXT_SUFFIX);
@@ -100,7 +106,7 @@ public abstract class InteractionUnit implements EventConsumer
 
     // ------------------------------------------------------ properties
 
-    public String getId()
+    public QName getId()
     {
         return id;
     }

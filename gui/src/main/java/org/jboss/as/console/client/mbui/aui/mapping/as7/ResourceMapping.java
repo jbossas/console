@@ -18,6 +18,7 @@
  */
 package org.jboss.as.console.client.mbui.aui.mapping.as7;
 
+import org.jboss.as.console.client.mbui.aui.mapping.MappingType;
 import org.jboss.dmr.client.ModelNode;
 import org.jboss.as.console.client.mbui.aui.mapping.Mapping;
 
@@ -32,17 +33,22 @@ import java.util.List;
  */
 public class ResourceMapping extends Mapping
 {
-    private final String address;
+    private String address;
     private final List<ResourceAttribute> attributes;
     private ModelNode resourceDescription;
 
 
-    public ResourceMapping(final String address)
+    public ResourceMapping(final String namespace)
     {
-        super(MappingType.RESOURCE);
+        super(MappingType.RESOURCE, namespace);
+        this.attributes = new ArrayList<ResourceAttribute>();
+    }
+
+    public ResourceMapping setAddress(String address)
+    {
         assert address != null : "Address must not be null";
         this.address = address;
-        this.attributes = new ArrayList<ResourceAttribute>();
+        return this;
     }
 
     public ResourceMapping addAttributes(final String... attributes)

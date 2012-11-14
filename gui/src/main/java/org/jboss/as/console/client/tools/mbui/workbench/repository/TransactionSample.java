@@ -20,10 +20,8 @@ package org.jboss.as.console.client.tools.mbui.workbench.repository;
 
 import org.jboss.as.console.client.mbui.aui.aim.Container;
 import org.jboss.as.console.client.mbui.aui.aim.InteractionUnit;
-import org.jboss.as.console.client.mbui.aui.aim.Select;
 import org.jboss.as.console.client.mbui.aui.aim.as7.Form;
 import org.jboss.as.console.client.mbui.aui.mapping.Mapping;
-import org.jboss.as.console.client.mbui.aui.mapping.as7.ResourceAttribute;
 import org.jboss.as.console.client.mbui.aui.mapping.as7.ResourceMapping;
 
 import static org.jboss.as.console.client.mbui.aui.aim.TemporalOperator.Choice;
@@ -44,10 +42,12 @@ public class TransactionSample implements Sample
     @Override
     public InteractionUnit build()
     {
-        // abstract UI modelling
-        Container overview = new Container("transactionManager", "TransactionManager", OrderIndependance);
+        String ns = "org.jboss.transactions";
 
-        Form basicAttributes = new Form("basicAttributes", "Attributes");
+        // abstract UI modelling
+        Container overview = new Container(ns, "transactionManager", "TransactionManager", OrderIndependance);
+
+        Form basicAttributes = new Form(ns, "basicAttributes", "Attributes");
         overview.add(basicAttributes);
 
         Mapping basicAttributesMapping =
@@ -57,8 +57,8 @@ public class TransactionSample implements Sample
 
         basicAttributes.getEntityContext().addMapping(basicAttributesMapping);
 
-        Container details = new Container("configGroups", "Details", Choice);
-        Form processAttributes = new Form("process", "Process ID");
+        Container details = new Container(ns, "configGroups", "Details", Choice);
+        Form processAttributes = new Form(ns, "process", "Process ID");
         details.add(processAttributes);
 
         Mapping processMapping =
@@ -66,7 +66,7 @@ public class TransactionSample implements Sample
                         .addAttributes("process-id-uuid", "process-id-socket-binding");
         processAttributes.getEntityContext().addMapping(processMapping);
 
-        Form recoveryAttributes = new Form("recovery", "Recovery");
+        Form recoveryAttributes = new Form(ns, "recovery", "Recovery");
         details.add(recoveryAttributes);
 
         Mapping recoveryMapping =
