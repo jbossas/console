@@ -24,4 +24,5 @@ package org.jboss.as.console.client.mbui.cui.reification;
  */
 public enum ContextKey
 {
+    WIDGET, MODEL_DESCRIPTIONS, PROPERTIES
 }
