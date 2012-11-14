@@ -43,7 +43,6 @@ public class OrderIndependanceStrategy implements ReificationStrategy<Reificatio
         SimpleLayoutAdapter adapter = null;
         if (interactionUnit != null)
         {
-            System.out.println(context+": hasParent="+interactionUnit.hasParent());
             adapter = new SimpleLayoutAdapter(interactionUnit, context);
         }
         return adapter;

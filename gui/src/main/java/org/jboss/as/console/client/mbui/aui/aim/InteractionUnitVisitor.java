@@ -16,26 +16,17 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.as.console.client.mbui.aui.aim.as7;
-
-import org.jboss.as.console.client.mbui.aui.aim.Container;
-
-import static org.jboss.as.console.client.mbui.aui.aim.TemporalOperator.OrderIndependance;
+package org.jboss.as.console.client.mbui.aui.aim;
 
 /**
  * @author Harald Pehl
- * @date 11/12/2012
+ * @date 11/14/2012
  */
-public class Form extends Container
+public interface InteractionUnitVisitor
 {
-    public Form(final String namespace, final String id, final String name)
-    {
-        super(namespace, id, name, OrderIndependance);
-    }
+    void startVisit(Container container);
 
-    @Override
-    public String toString()
-    {
-        return "Form{" + getId() + '}';
-    }
+    void visit(InteractionUnit interactionUnit);
+
+    void endVisit(Container container);
 }

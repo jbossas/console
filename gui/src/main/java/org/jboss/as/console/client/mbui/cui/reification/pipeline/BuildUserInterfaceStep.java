@@ -21,18 +21,20 @@ package org.jboss.as.console.client.mbui.cui.reification.pipeline;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import org.jboss.as.console.client.mbui.aui.aim.Container;
 import org.jboss.as.console.client.mbui.aui.aim.InteractionUnit;
-import org.jboss.as.console.client.mbui.cui.Context;
+import org.jboss.as.console.client.mbui.aui.aim.InteractionUnitVisitor;
 import org.jboss.as.console.client.mbui.cui.ReificationStrategy;
 import org.jboss.as.console.client.mbui.cui.reification.ChoiceStrategy;
-import org.jboss.as.console.client.mbui.cui.reification.ContextKey;
 import org.jboss.as.console.client.mbui.cui.reification.FormStrategy;
 import org.jboss.as.console.client.mbui.cui.reification.OrderIndependanceStrategy;
 import org.jboss.as.console.client.mbui.cui.reification.ReificationWidget;
 import org.jboss.as.console.client.mbui.cui.reification.SelectStrategy;
 
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Set;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Stack;
+
+import static org.jboss.as.console.client.mbui.cui.reification.ContextKey.WIDGET;
 
 /**
  * @author Harald Pehl
@@ -40,77 +42,94 @@ import java.util.Set;
  */
 public class BuildUserInterfaceStep extends ReificationStep
 {
-
-    final Set<ReificationStrategy<ReificationWidget>> strategies;
+    final List<ReificationStrategy<ReificationWidget>> strategies;
 
     public BuildUserInterfaceStep()
     {
         super("build ui");
-        this.strategies = new HashSet<ReificationStrategy<ReificationWidget>>();
+        this.strategies = new LinkedList<ReificationStrategy<ReificationWidget>>();
+        // order is important! add specific strategies first!
+        this.strategies.add(new FormStrategy());
+        this.strategies.add(new SelectStrategy());
         this.strategies.add(new OrderIndependanceStrategy());
         this.strategies.add(new ChoiceStrategy());
-        this.strategies.add(new SelectStrategy());
-        this.strategies.add(new FormStrategy());
     }
 
     @Override
-    public void execute(Iterator<ReificationStep> iterator, AsyncCallback<Boolean> outcome) {
-
-        ReificationWidget widget = null;
+    public void execute(Iterator<ReificationStep> iterator, AsyncCallback<Boolean> outcome)
+    {
         if (isValid())
         {
             assert !toplevelUnit.hasParent() : "Entry point interaction units are not expected to have parents";
-            widget = startReification(toplevelUnit, context);
+            BuildUserInterfaceVisitor visitor = new BuildUserInterfaceVisitor();
+            toplevelUnit.accept(visitor);
+            context.set(WIDGET, visitor.root);
+            System.out.println("Finished " + getName());
         }
-        context.set(ContextKey.WIDGET, widget);
-
-
-        System.out.println("Finished " + getName());
-
         outcome.onSuccess(Boolean.TRUE);
-
         next(iterator, outcome);
     }
 
-    private ReificationWidget startReification(final InteractionUnit parentUnit, final Context context)
+
+    class BuildUserInterfaceVisitor implements InteractionUnitVisitor
     {
-        ReificationWidget parentWidget = null;
-        ReificationStrategy<ReificationWidget> strategy = resolve(parentUnit);
-        if (strategy != null)
+        ReificationWidget root;
+        Stack<ReificationWidget> container = new Stack<ReificationWidget>();
+
+        @Override
+        public void startVisit(final Container container)
         {
-            parentWidget = strategy.reify(parentUnit, context);
-            if (parentWidget != null)
+            ReificationStrategy<ReificationWidget> strategy = resolve(container);
+            if (strategy != null)
             {
-                if (parentUnit instanceof Container)
+                ReificationWidget widget = strategy.reify(container, context);
+                if (widget != null)
                 {
-                    Container container = (Container) parentUnit;
-                    for (InteractionUnit childUnit : container.getChildren())
+                    if (root == null)
                     {
-
-                            ReificationWidget childWidget = startReification(childUnit, context);
-                            if (childWidget != null)
-                            {
-                                parentWidget.add(childWidget);
-                            }
-
+                        root = widget;
                     }
+                    if (!this.container.isEmpty())
+                    {
+                        this.container.peek().add(widget);
+                    }
+                    this.container.push(widget);
                 }
             }
         }
-        return parentWidget;
-    }
 
-    private ReificationStrategy<ReificationWidget> resolve(InteractionUnit interactionUnit)
-    {
-        ReificationStrategy<ReificationWidget> match = null;
-        for (ReificationStrategy<ReificationWidget> strategy : strategies)
+        @Override
+        public void visit(final InteractionUnit interactionUnit)
         {
-            if (strategy.appliesTo(interactionUnit))
+            ReificationStrategy<ReificationWidget> strategy = resolve(interactionUnit);
+            if (strategy != null)
             {
-                match = strategy;
-                break;
+                ReificationWidget widget = strategy.reify(interactionUnit, context);
+                if (widget != null && this.container.peek() != null)
+                {
+                    this.container.peek().add(widget);
+                }
             }
         }
-        return match;
+
+        @Override
+        public void endVisit(final Container container)
+        {
+            this.container.pop();
+        }
+
+        private ReificationStrategy<ReificationWidget> resolve(InteractionUnit interactionUnit)
+        {
+            ReificationStrategy<ReificationWidget> match = null;
+            for (ReificationStrategy<ReificationWidget> strategy : strategies)
+            {
+                if (strategy.appliesTo(interactionUnit))
+                {
+                    match = strategy;
+                    break;
+                }
+            }
+            return match;
+        }
     }
 }

@@ -155,6 +155,7 @@ public abstract class InteractionUnit implements EventConsumer
         return mapping;
     }
 
+
     // ------------------------------------------------------ event handling
 
     @Override
@@ -168,6 +169,15 @@ public abstract class InteractionUnit implements EventConsumer
     {
         return eventConsumption.consumes(event);
     }
+
+
+    // ------------------------------------------------------ visitor related
+
+    public void accept(InteractionUnitVisitor visitor)
+    {
+        visitor.visit(this);
+    }
+
 
     // ------------------------------------------------------ properties
 

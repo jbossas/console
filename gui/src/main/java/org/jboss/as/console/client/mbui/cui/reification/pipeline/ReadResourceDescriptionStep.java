@@ -23,9 +23,9 @@ import com.google.inject.Inject;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.mbui.aui.aim.Container;
 import org.jboss.as.console.client.mbui.aui.aim.InteractionUnit;
-import org.jboss.as.console.client.mbui.aui.mapping.MappingType;
+import org.jboss.as.console.client.mbui.aui.aim.InteractionUnitVisitor;
+import org.jboss.as.console.client.mbui.aui.mapping.Predicate;
 import org.jboss.as.console.client.mbui.aui.mapping.as7.ResourceMapping;
-import org.jboss.as.console.client.mbui.cui.reification.ContextKey;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
@@ -40,6 +40,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static org.jboss.as.console.client.mbui.aui.mapping.MappingType.RESOURCE;
+import static org.jboss.as.console.client.mbui.cui.reification.ContextKey.MODEL_DESCRIPTIONS;
 import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 
 /**
@@ -58,130 +60,114 @@ public class ReadResourceDescriptionStep extends ReificationStep
     }
 
     @Override
-    public void execute(final Iterator<ReificationStep> iterator, final AsyncCallback<Boolean> outcome) {
-
-        final Map<String, InteractionUnit> stepReference = new HashMap<String, InteractionUnit>();
-        final Set<String> resolvedOperations = new HashSet<String>();
-
-        ModelNode compsite = new ModelNode();
-        compsite.get(OP).set(COMPOSITE);
-        compsite.get(ADDRESS).setEmptyList();
-
-        List<ModelNode> steps = new ArrayList<ModelNode>();
-        collectOperations(toplevelUnit, steps, stepReference, resolvedOperations);
-
-        compsite.get(STEPS).set(steps);
-
-        System.out.println(">>"+compsite);
-
-        dispatcher.execute(new DMRAction(compsite), new SimpleCallback<DMRResponse>()
+    public void execute(final Iterator<ReificationStep> iterator, final AsyncCallback<Boolean> outcome)
+    {
+        if (isValid())
         {
-            @Override
-            public void onFailure(final Throwable caught)
-            {
-                outcome.onSuccess(Boolean.FALSE);
-            }
+            final CollectOperationsVisitor visitor = new CollectOperationsVisitor();
+            toplevelUnit.accept(visitor);
 
-            @Override
-            public void onSuccess(final DMRResponse result)
-            {
-                ModelNode response = result.get();
-                //System.out.println(response);
+            ModelNode compsite = new ModelNode();
+            compsite.get(OP).set(COMPOSITE);
+            compsite.get(ADDRESS).setEmptyList();
+            compsite.get(STEPS).set(visitor.steps);
+            System.out.println(">>" + compsite);
 
-                // evaluate step responses
-                for (String step : stepReference.keySet())
+            dispatcher.execute(new DMRAction(compsite), new SimpleCallback<DMRResponse>()
+            {
+                @Override
+                public void onFailure(final Throwable caught)
                 {
-
-                    ModelNode stepResponse = response.get(RESULT).get(step);
-
-                    //System.out.println("<<"+stepResponse);
-
-                    List<ModelNode> list = stepResponse.get(RESULT).asList();
-                    ModelNode description = list.get(0).get(RESULT).asObject();
-
-                    if (!context.has(ContextKey.MODEL_DESCRIPTIONS))
-                    {
-                        context.set(ContextKey.MODEL_DESCRIPTIONS, new HashMap<String, ModelNode>());
-                    }
-
-                    Map<String, ModelNode> descriptionMap = context.get(ContextKey.MODEL_DESCRIPTIONS);
-                    ResourceMapping mapping = stepReference.get(step).getMapping(MappingType.RESOURCE);
-                    descriptionMap.put(mapping.getNamespace(), description);
-
+                    outcome.onSuccess(Boolean.FALSE);
                 }
 
-                System.out.println("Finished " + getName());
-                outcome.onSuccess(!response.isFailure());
+                @Override
+                public void onSuccess(final DMRResponse result)
+                {
+                    ModelNode response = result.get();
 
-                next(iterator, outcome);
+                    // evaluate step responses
+                    for (String step : visitor.stepReference.keySet())
+                    {
+                        ModelNode stepResponse = response.get(RESULT).get(step);
+                        //System.out.println("<<"+stepResponse);
 
-            }
-        });
+                        List<ModelNode> list = stepResponse.get(RESULT).asList();
+                        ModelNode description = list.get(0).get(RESULT).asObject();
+                        Map<String, ModelNode> descriptionMap = context.get(MODEL_DESCRIPTIONS);
+                        if (descriptionMap == null)
+                        {
+                            descriptionMap = new HashMap<String, ModelNode>();
+                            context.set(MODEL_DESCRIPTIONS, descriptionMap);
+
+                        }
+                        ResourceMapping mapping = visitor.stepReference.get(step).getMapping(RESOURCE);
+                        descriptionMap.put(mapping.getNamespace(), description);
+                    }
+
+                    System.out.println("Finished " + getName());
+                    outcome.onSuccess(!response.isFailure());
+                    next(iterator, outcome);
+                }
+            });
+        }
     }
 
-    private void collectOperations(final InteractionUnit interactionUnit,
-            final List<ModelNode> steps, final Map<String, InteractionUnit> stepReference,
-            final Set<String> resolvedOperations)
-    {
-        if (interactionUnit.hasMapping(MappingType.RESOURCE))
-        {
-            ResourceMapping mapping = interactionUnit.getMapping(MappingType.RESOURCE);
-            String resolvedAddress = resolveAddress(interactionUnit, mapping);
 
-            if(!resolvedOperations.contains(resolvedAddress))
+    class CollectOperationsVisitor implements InteractionUnitVisitor
+    {
+        List<ModelNode> steps = new ArrayList<ModelNode>();
+        Set<String> resolvedAdresses = new HashSet<String>();
+        Map<String, InteractionUnit> stepReference = new HashMap<String, InteractionUnit>();
+
+        @Override
+        public void startVisit(final Container container)
+        {
+            addStep(container);
+        }
+
+        @Override
+        public void visit(final InteractionUnit interactionUnit)
+        {
+            addStep(interactionUnit);
+        }
+
+        @Override
+        public void endVisit(final Container container)
+        {
+            // noop
+        }
+
+        private void addStep(InteractionUnit interactionUnit)
+        {
+            ResourceMapping mapping = interactionUnit.findMapping(RESOURCE, new Predicate<ResourceMapping>()
             {
-                List<String[]> addressTokens = AddressBinding.parseAddressString(resolvedAddress);
-                AddressBinding addressBinding = new AddressBinding(addressTokens);
-
-                String[] args = new String[addressBinding.getNumWildCards()];
-                for(int i=0; i<addressBinding.getNumWildCards(); i++)
-                    args[i] = "*";
-
-                ModelNode descOp = addressBinding.asResource(args);
-                descOp.get(OP).set(READ_RESOURCE_DESCRIPTION_OPERATION);
-                steps.add(descOp);
-
-                resolvedOperations.add(resolvedAddress);
-                stepReference.put("step-"+steps.size(), interactionUnit);
-            }
-        }
-
-        if(interactionUnit instanceof Container)
-        {
-            Container container = (Container)interactionUnit;
-            for(InteractionUnit child : container.getChildren())
-                collectOperations(child, steps, stepReference, resolvedOperations);
-        }
-
-    }
-
-    private String resolveAddress(final InteractionUnit interactionUnit, final ResourceMapping mapping)
-    {
-        String address = mapping.getAddress();
-        if(null==address)
-        {
-            address = resolveFromParent(interactionUnit, mapping.getNamespace());
-        }
-        return address;
-    }
-
-    private String resolveFromParent(final InteractionUnit interactionUnit, final String namespace)
-    {
-        String parentAddress = null;
-
-        InteractionUnit parent = interactionUnit.getParent();
-        if(parent!=null)
-        {
-            if(parent.hasMapping(MappingType.RESOURCE))
+                @Override
+                public boolean appliesTo(final ResourceMapping candidate)
+                {
+                    return candidate.getAddress() != null;
+                }
+            });
+            if (mapping != null)
             {
-                ResourceMapping parentMapping = parent.getMapping(MappingType.RESOURCE);
-                parentAddress = parentMapping.getAddress();
+                String address = mapping.getAddress();
+                if (!resolvedAdresses.contains(address))
+                {
+                    List<String[]> addressTokens = AddressBinding.parseAddressString(address);
+                    AddressBinding addressBinding = new AddressBinding(addressTokens);
+
+                    String[] args = new String[addressBinding.getNumWildCards()];
+                    for (int i = 0; i < addressBinding.getNumWildCards(); i++)
+                        args[i] = "*";
+
+                    ModelNode op = addressBinding.asResource(args);
+                    op.get(OP).set(READ_RESOURCE_DESCRIPTION_OPERATION);
+                    steps.add(op);
+
+                    resolvedAdresses.add(address);
+                    stepReference.put("step-" + steps.size(), interactionUnit);
+                }
             }
-
-            if(null==parentAddress)
-                parentAddress = resolveFromParent(parent, namespace);
         }
-
-        return parentAddress;
     }
 }
