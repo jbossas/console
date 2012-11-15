@@ -5,11 +5,13 @@ import org.jboss.as.console.client.core.BootstrapContext;
 import org.jboss.as.console.client.shared.dispatch.AsyncCommand;
 import org.jboss.as.console.client.shared.dispatch.ResponseProcessorFactory;
 
+import java.util.Iterator;
+
 /**
  * @author Heiko Braun
  * @date 1/17/12
  */
-public class ChoseProcessor implements AsyncCommand<Boolean>{
+public class ChoseProcessor extends BoostrapStep {
 
     private BootstrapContext bootstrap;
 
@@ -18,9 +20,9 @@ public class ChoseProcessor implements AsyncCommand<Boolean>{
     }
 
     @Override
-    public void execute(AsyncCallback<Boolean> callback) {
-
+    public void execute(Iterator<BoostrapStep> iterator, AsyncCallback<Boolean> outcome) {
         ResponseProcessorFactory.INSTANCE.bootstrap(bootstrap.isStandalone());
-        callback.onSuccess(Boolean.TRUE);
+        outcome.onSuccess(Boolean.TRUE);
+        next(iterator, outcome);
     }
 }

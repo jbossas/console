@@ -9,6 +9,7 @@ import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.domain.profiles.CurrentProfileSelection;
 import org.jboss.as.console.client.shared.dispatch.AsyncCommand;
 
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -19,7 +20,7 @@ import java.util.List;
  * @author Heiko Braun
  * @date 1/13/12
  */
-public class EagerLoadProfiles implements AsyncCommand<Boolean> {
+public class EagerLoadProfiles extends BoostrapStep {
 
     private ProfileStore profileStore;
     private CurrentProfileSelection profileSelection;
@@ -30,7 +31,7 @@ public class EagerLoadProfiles implements AsyncCommand<Boolean> {
     }
 
     @Override
-    public void execute(final AsyncCallback<Boolean> callback) {
+    public void execute(Iterator<BoostrapStep> iterator, final AsyncCallback<Boolean> outcome) {
 
         BootstrapContext bootstrapContext = Console.getBootstrapContext();
 
@@ -40,7 +41,7 @@ public class EagerLoadProfiles implements AsyncCommand<Boolean> {
 
                 @Override
                 public void onFailure(Throwable caught) {
-                    callback.onSuccess(Boolean.FALSE);
+                    outcome.onSuccess(Boolean.FALSE);
                     throw new RuntimeException(caught);
                 }
 
@@ -52,7 +53,7 @@ public class EagerLoadProfiles implements AsyncCommand<Boolean> {
                         selectDefaultProfile(result);
                     }
 
-                    callback.onSuccess(Boolean.TRUE);
+                    outcome.onSuccess(Boolean.TRUE);
                 }
             });
 
@@ -60,8 +61,10 @@ public class EagerLoadProfiles implements AsyncCommand<Boolean> {
         else
         {
             // standalone
-            callback.onSuccess(Boolean.TRUE);
+            outcome.onSuccess(Boolean.TRUE);
         }
+
+        next(iterator, outcome);
     }
 
     private void selectDefaultProfile(List<ProfileRecord> result) {

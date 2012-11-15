@@ -1,10 +1,11 @@
 package org.jboss.as.console.client.core.bootstrap;
 
-import com.google.gwt.user.client.Window;
+import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import org.jboss.as.console.client.Console;
+import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.shared.dispatch.AsyncCommand;
 
+import java.util.Iterator;
 import java.util.LinkedList;
 
 /**
@@ -13,48 +14,35 @@ import java.util.LinkedList;
  */
 public class BootstrapProcess {
 
-    private LinkedList<AsyncCommand> hooks = new LinkedList<AsyncCommand>();
-    private int index = 0;
+    private LinkedList<BoostrapStep> hooks = new LinkedList<BoostrapStep>();
 
-    public void addHook(AsyncCommand hook) {
+    public void addHook(BoostrapStep hook) {
         hooks.add(hook);
     }
 
-    public void execute(AsyncCallback<Boolean> outcome) {
-        index = 0;
-        executeNext(outcome);
+    public void execute(final AsyncCallback<Boolean> outcome) {
+
+        Iterator<BoostrapStep> iterator = hooks.iterator();
+        BoostrapStep first = iterator.next();
+
+        Log.debug("Bootstrap: " + first.getClass());
+
+        first.execute(iterator, new SimpleCallback<Boolean>() {
+
+            int numResponses;
+            boolean overallResult;
+
+            @Override
+            public void onSuccess(Boolean successful) {
+                numResponses++;
+                overallResult = successful;
+
+                if (numResponses == hooks.size()) {
+                    outcome.onSuccess(overallResult);
+                }
+            }
+        });
     }
 
-    private void executeNext(final AsyncCallback<Boolean> outcome) {
-        if(index < hooks.size())
-        {
-            final AsyncCommand nextHook = hooks.get(index);
-            index++;
 
-            Window.setStatus(index + ": " + nextHook.getClass().getName());
-
-            nextHook.execute(new AsyncCallback<Boolean>() {
-                @Override
-                public void onFailure(Throwable caught) {
-                    Console.error("Bootstrap failed", caught.getMessage());
-                }
-
-                @Override
-                public void onSuccess(Boolean successful) {
-                    if(successful)
-                    {
-                        executeNext(outcome);
-                    }
-                    else
-                    {
-                        Console.error("Failed to execute "+nextHook.getClass().getName());
-                        outcome.onSuccess(Boolean.FALSE);
-                    }
-                }
-            });
-        }
-
-        outcome.onSuccess(Boolean.TRUE);
-        Window.setStatus("");
-    }
 }

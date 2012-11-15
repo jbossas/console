@@ -5,13 +5,17 @@ import com.google.gwt.visualization.client.VisualizationUtils;
 import com.google.gwt.visualization.client.visualizations.corechart.LineChart;
 import org.jboss.as.console.client.shared.dispatch.AsyncCommand;
 
+import java.util.Iterator;
+
 /**
  * @author Heiko Braun
  * @date 12/7/11
  */
-public class LoadGoogleViz implements AsyncCommand<Boolean> {
+public class LoadGoogleViz extends BoostrapStep {
+
     @Override
-    public void execute(AsyncCallback<Boolean> callback) {
+    public void execute(Iterator<BoostrapStep> iterator, AsyncCallback<Boolean> outcome) {
+
         VisualizationUtils.loadVisualizationApi(
                 new Runnable() {
                     @Override
@@ -21,6 +25,8 @@ public class LoadGoogleViz implements AsyncCommand<Boolean> {
                 }, LineChart.PACKAGE
         );
 
-        callback.onSuccess(Boolean.TRUE);
+        outcome.onSuccess(Boolean.TRUE);
+
+        next(iterator, outcome);
     }
 }

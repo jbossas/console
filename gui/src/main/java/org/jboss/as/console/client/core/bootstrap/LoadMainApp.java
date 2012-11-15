@@ -11,6 +11,7 @@ import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.shared.dispatch.AsyncCommand;
 
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -21,7 +22,7 @@ import java.util.Set;
  * @author Heiko Braun
  * @date 12/7/11
  */
-public class LoadMainApp implements AsyncCommand<Boolean> {
+public class LoadMainApp extends BoostrapStep{
 
     private PlaceManager placeManager;
     private TokenFormatter formatter;
@@ -42,7 +43,7 @@ public class LoadMainApp implements AsyncCommand<Boolean> {
     }
 
     @Override
-    public void execute(AsyncCallback<Boolean> callback) {
+    public void execute(Iterator<BoostrapStep> iterator, AsyncCallback<Boolean> outcome) {
 
         String initialToken = History.getToken();
 
@@ -65,7 +66,9 @@ public class LoadMainApp implements AsyncCommand<Boolean> {
             placeManager.revealDefaultPlace();
         }
 
-        callback.onSuccess(Boolean.TRUE);
+        outcome.onSuccess(Boolean.TRUE);
+
+        next(iterator, outcome);
     }
 
     private static boolean isBlackListed (String token)

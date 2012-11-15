@@ -28,13 +28,15 @@ import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.dmr.client.ModelNode;
 
+import java.util.Iterator;
+
 import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 
 /**
  * @author Heiko Braun
  * @date 5/19/11
  */
-public class ExecutionMode implements AsyncCommand<Boolean>{
+public class ExecutionMode extends BoostrapStep {
 
 
     private BootstrapContext bootstrap;
@@ -46,7 +48,7 @@ public class ExecutionMode implements AsyncCommand<Boolean>{
     }
 
     @Override
-    public void execute(final AsyncCallback<Boolean> callback) {
+    public void execute(final Iterator<BoostrapStep> iterator, final AsyncCallback<Boolean> outcome) {
 
         // :read-attribute(name=process-type)
         final ModelNode operation = new ModelNode();
@@ -60,7 +62,7 @@ public class ExecutionMode implements AsyncCommand<Boolean>{
                 bootstrap.setProperty(BootstrapContext.STANDALONE, "false");
                 bootstrap.setlastError(caught);
                 Log.error(caught.getMessage());
-                callback.onSuccess(Boolean.FALSE);
+                outcome.onSuccess(Boolean.FALSE);
             }
 
             @Override
@@ -71,9 +73,11 @@ public class ExecutionMode implements AsyncCommand<Boolean>{
                 bootstrap.setProperty(BootstrapContext.STANDALONE, Boolean.valueOf(isServer).toString());
 
 
-                callback.onSuccess(Boolean.TRUE);
+                outcome.onSuccess(Boolean.TRUE);
 
+                next(iterator, outcome);
             }
+
         });
 
     }

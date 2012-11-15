@@ -5,11 +5,13 @@ import com.google.gwt.user.client.ui.RootLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.shared.dispatch.AsyncCommand;
 
+import java.util.Iterator;
+
 /**
  * @author Heiko Braun
  * @date 12/7/11
  */
-public class RemoveLoadingPanel implements AsyncCommand<Boolean>{
+public class RemoveLoadingPanel extends BoostrapStep {
     private Widget widget;
 
     public RemoveLoadingPanel(Widget loadingPanel) {
@@ -17,8 +19,11 @@ public class RemoveLoadingPanel implements AsyncCommand<Boolean>{
     }
 
     @Override
-    public void execute(AsyncCallback<Boolean> callback) {
+    public void execute(Iterator<BoostrapStep> iterator, AsyncCallback<Boolean> outcome) {
+
         RootLayoutPanel.get().remove(widget);
-        callback.onSuccess(Boolean.TRUE);
+        outcome.onSuccess(Boolean.TRUE);
+
+        next(iterator, outcome);
     }
 }

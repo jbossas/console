@@ -123,7 +123,7 @@ public class Console implements EntryPoint {
                 // viz can be loaded in background ...
                 //bootstrap.addHook(new LoadGoogleViz());
 
-                bootstrap.execute(new AsyncCallback<Boolean>() {
+                bootstrap.execute( new AsyncCallback<Boolean>() {
                     @Override
                     public void onFailure(Throwable caught) {
                         error("Bootstrap failed", caught.getMessage());
