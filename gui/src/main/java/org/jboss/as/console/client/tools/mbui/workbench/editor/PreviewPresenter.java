@@ -19,7 +19,6 @@
 package org.jboss.as.console.client.tools.mbui.workbench.editor;
 
 import com.allen_sauer.gwt.log.client.Log;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.Presenter;
@@ -28,30 +27,27 @@ import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyStandard;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
-import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.mbui.aui.aim.InteractionUnit;
 import org.jboss.as.console.client.mbui.cui.Context;
+import org.jboss.as.console.client.mbui.cui.behaviour.InteractionCoordinator;
 import org.jboss.as.console.client.mbui.cui.reification.ContextKey;
 import org.jboss.as.console.client.mbui.cui.reification.ReificationWidget;
-import org.jboss.as.console.client.mbui.cui.reification.pipeline.ReificationCallback;
 import org.jboss.as.console.client.mbui.cui.reification.pipeline.ReificationPipeline;
 import org.jboss.as.console.client.tools.mbui.workbench.ApplicationPresenter;
 import org.jboss.as.console.client.tools.mbui.workbench.ReifyEvent;
+import org.jboss.as.console.client.tools.mbui.workbench.ResetEvent;
 import org.jboss.as.console.client.tools.mbui.workbench.repository.Sample;
 
 import static org.jboss.as.console.client.tools.mbui.workbench.NameTokens.preview;
 
 /**
- * Listens for
- * <ul>
- *     <li>Reify</li>
- * </ul>
  *
  * @author Harald Pehl
  * @date 10/30/2012
  */
-public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, PreviewPresenter.MyProxy> implements ReifyEvent.ReifyHandler
+public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, PreviewPresenter.MyProxy>
+        implements ReifyEvent.ReifyHandler, ResetEvent.Handler
 {
     public interface MyView extends View
     {
@@ -65,13 +61,27 @@ public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, Preview
     }
 
     private final ReificationPipeline reificationPipeline;
+    private InteractionCoordinator coordinator;
 
     @Inject
     public PreviewPresenter(final EventBus eventBus, final MyView view, final MyProxy proxy, final ReificationPipeline reificationPipeline)
     {
         super(eventBus, view, proxy);
         this.reificationPipeline = reificationPipeline;
+        this.coordinator = new InteractionCoordinator();
+    }
+
+    // in a real this would be wired Presenter.onReset()
+    @Override
+    public void doReset() {
+        coordinator.onReset();
+    }
+
+    @Override
+    protected void onBind() {
+        super.onBind();
         getEventBus().addHandler(ReifyEvent.getType(), this);
+        getEventBus().addHandler(ResetEvent.TYPE, this);
     }
 
     @Override
@@ -80,6 +90,7 @@ public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, Preview
         RevealContentEvent.fire(this, ApplicationPresenter.TYPE_SetMainContent, this);
     }
 
+    // in real this would be wired to Presenter.onBind()
     @Override
     public void onReify(final ReifyEvent event)
     {
@@ -87,6 +98,10 @@ public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, Preview
         InteractionUnit interactionUnit = sample.build();
 
         final Context context = new Context();
+
+        // make the coordinator bus available to the model components
+        context.set(ContextKey.COORDINATOR, coordinator.getLocalBus());
+
         reificationPipeline.execute(interactionUnit, context, new SimpleCallback<Boolean>()
         {
             @Override

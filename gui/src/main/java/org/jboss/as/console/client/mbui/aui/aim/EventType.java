@@ -6,5 +6,5 @@ package org.jboss.as.console.client.mbui.aui.aim;
  */
 public enum EventType {
 
-    Interaction, Transition, System, External
+    Interaction, Transition, System
 }

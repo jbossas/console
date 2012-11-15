@@ -16,8 +16,11 @@
     </ui:style>
 
     <g:DockLayoutPanel unit="PX" addStyleNames="{style.repository}">
-        <g:south size="30">
-            <g:Button ui:field="reify" addStyleNames="{style.button}">Reify</g:Button>
+        <g:south size="100">
+            <g:VerticalPanel addStyleNames="{style.list}">
+                <g:Button ui:field="reify" addStyleNames="{style.button}">onBind</g:Button>
+                <g:Button ui:field="reset" addStyleNames="{style.button}">onReset</g:Button>
+            </g:VerticalPanel>
         </g:south>
         <g:center>
             <g:ScrollPanel addStyleNames="{style.list}">

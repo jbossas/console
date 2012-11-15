@@ -23,6 +23,7 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.PresenterWidget;
 import com.gwtplatform.mvp.client.View;
 import org.jboss.as.console.client.tools.mbui.workbench.ReifyEvent;
+import org.jboss.as.console.client.tools.mbui.workbench.ResetEvent;
 
 /**
  * Lists the available interaction units and let the user create new interaction units.
@@ -37,6 +38,7 @@ import org.jboss.as.console.client.tools.mbui.workbench.ReifyEvent;
  */
 public class RepositoryPresenter extends PresenterWidget<RepositoryPresenter.MyView>
 {
+
     public interface MyView extends View
     {
         void setPresenter(RepositoryPresenter presenter);
@@ -60,4 +62,9 @@ public class RepositoryPresenter extends PresenterWidget<RepositoryPresenter.MyV
     {
         ReifyEvent.fire(this, new ReifyEvent(sample));
     }
+
+    public void reset() {
+        ResetEvent.fire(this, new ResetEvent());
+    }
+
 }

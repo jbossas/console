@@ -68,6 +68,7 @@ public class RepositoryView extends ViewImpl implements RepositoryPresenter.MyVi
     private RepositoryPresenter presenter;
 
     @UiField Button reify;
+    @UiField Button reset;
     @UiField(provided = true) CellList<Sample> list;
 
     @Inject
@@ -104,6 +105,12 @@ public class RepositoryView extends ViewImpl implements RepositoryPresenter.MyVi
     public void onReify(ClickEvent event)
     {
         presenter.reify(selectionModel.getSelectedObject());
+    }
+
+    @UiHandler("reset")
+    public void onReset(ClickEvent event)
+    {
+        presenter.reset();
     }
 
     @Override

@@ -21,12 +21,15 @@ package org.jboss.as.console.client.mbui.cui.reification;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.web.bindery.event.shared.EventBus;
 import org.jboss.as.console.client.mbui.aui.aim.InteractionUnit;
 import org.jboss.as.console.client.mbui.aui.mapping.MappingType;
 import org.jboss.as.console.client.mbui.aui.mapping.as7.ResourceAttribute;
 import org.jboss.as.console.client.mbui.aui.mapping.as7.ResourceMapping;
 import org.jboss.as.console.client.mbui.cui.Context;
 import org.jboss.as.console.client.mbui.cui.ReificationStrategy;
+import org.jboss.as.console.client.mbui.cui.behaviour.SystemEvent;
+import org.jboss.as.console.client.mbui.cui.behaviour.TransitionEvent;
 import org.jboss.as.console.client.mbui.cui.widgets.ModelNodeForm;
 import org.jboss.as.console.client.shared.help.StaticHelpPanel;
 import org.jboss.as.console.client.widgets.forms.FormToolStrip;
@@ -59,7 +62,10 @@ public class FormStrategy implements ReificationStrategy<ReificationWidget>
             ModelNode modelDescription = descriptions.get(interactionUnit.getId().getNamespaceURI());
             assert modelDescription!=null : "Model description is required to execute FormStrategy";
 
-            adapter = new FormAdapter(interactionUnit, modelDescription);
+            EventBus coordinator = context.get(ContextKey.COORDINATOR);
+            assert coordinator!=null : "Coordinator bus is required to execute FormStrategy";
+
+            adapter = new FormAdapter(interactionUnit, coordinator, modelDescription);
         }
         return adapter;
     }
@@ -75,10 +81,13 @@ public class FormStrategy implements ReificationStrategy<ReificationWidget>
         final ModelNodeForm form;
         final InteractionUnit interactionUnit;
         private SafeHtmlBuilder helpTexts;
+        private EventBus coordinator;
 
-        FormAdapter(final InteractionUnit interactionUnit, final ModelNode modelDescription)
+        FormAdapter(final InteractionUnit interactionUnit, EventBus coordinator, final ModelNode modelDescription)
         {
             this.interactionUnit = interactionUnit;
+            this.coordinator = coordinator;
+
             this.form = new ModelNodeForm();
             this.form.setNumColumns(2);
             this.form.setEnabled(false);
@@ -180,7 +189,10 @@ public class FormStrategy implements ReificationStrategy<ReificationWidget>
                     new FormToolStrip.FormCallback<ModelNode>() {
                         @Override
                         public void onSave(Map<String, Object> changeset) {
-                            // TODO: what's happening here ?
+                            coordinator.fireEventFromSource(
+                                    new TransitionEvent(TransitionEvent.Kind.FUNCTION_CALL),
+                                    interactionUnit.getId()
+                            );
                         }
 
                         @Override
@@ -194,6 +206,37 @@ public class FormStrategy implements ReificationStrategy<ReificationWidget>
             layout.add(tools.asWidget());
             layout.add(help.asWidget());
             layout.add(form.asWidget());
+
+            // handle resets within this scope
+            coordinator.addHandler(SystemEvent.TYPE, new SystemEvent.Handler()
+            {
+                @Override
+                public boolean accepts(SystemEvent.Kind kind) {
+                    return (SystemEvent.Kind.RESET == kind);
+                }
+
+                @Override
+                public void onSystemEvent(SystemEvent event) {
+                    form.cancel();
+                    form.clearValues();
+                }
+            });
+
+
+            // handle the results of function calls
+            coordinator.addHandler(TransitionEvent.TYPE, new TransitionEvent.Handler()
+            {
+                @Override
+                public boolean accepts(TransitionEvent.Kind kind) {
+                    return (TransitionEvent.Kind.STATEMENT == kind);
+                }
+
+                @Override
+                public void onTransitionEvent(TransitionEvent event) {
+                    if(event.getPayload() instanceof ModelNode)  // TODO: can this be avoided somehow?
+                        form.edit((ModelNode)event.getPayload());
+                }
+            });
 
             return layout;
         }
