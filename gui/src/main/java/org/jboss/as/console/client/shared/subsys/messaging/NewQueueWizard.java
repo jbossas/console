@@ -57,6 +57,7 @@ public class NewQueueWizard {
         TextBoxItem jndiName = new JndiNameItem("jndiName", "JNDI Name");
 
         CheckBoxItem durable = new CheckBoxItem("durable", "Durable?");
+        durable.setValue(true); // new queues are durable by default (AS7-4955)
         TextBoxItem selector = new TextBoxItem("selector", "Selector")
         {
             @Override
