@@ -18,6 +18,7 @@
  */
 package org.jboss.as.console.client.mbui.cui.reification;
 
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.mbui.aui.aim.InteractionUnit;
@@ -27,7 +28,7 @@ import org.jboss.as.console.client.mbui.aui.mapping.as7.ResourceMapping;
 import org.jboss.as.console.client.mbui.cui.Context;
 import org.jboss.as.console.client.mbui.cui.ReificationStrategy;
 import org.jboss.as.console.client.mbui.cui.widgets.ModelNodeForm;
-import org.jboss.as.console.client.shared.help.FormHelpPanel;
+import org.jboss.as.console.client.shared.help.StaticHelpPanel;
 import org.jboss.as.console.client.widgets.forms.FormToolStrip;
 import org.jboss.ballroom.client.widgets.forms.CheckBoxItem;
 import org.jboss.ballroom.client.widgets.forms.FormItem;
@@ -56,7 +57,7 @@ public class FormStrategy implements ReificationStrategy<ReificationWidget>
         {
             Map<String, ModelNode> descriptions = context.get (ContextKey.MODEL_DESCRIPTIONS);
             ModelNode modelDescription = descriptions.get(interactionUnit.getId().getNamespaceURI());
-            assert modelDescription!=null : "Model description are required to execute FormStrategy";
+            assert modelDescription!=null : "Model description is required to execute FormStrategy";
 
             adapter = new FormAdapter(interactionUnit, modelDescription);
         }
@@ -73,6 +74,7 @@ public class FormStrategy implements ReificationStrategy<ReificationWidget>
     {
         final ModelNodeForm form;
         final InteractionUnit interactionUnit;
+        private SafeHtmlBuilder helpTexts;
 
         FormAdapter(final InteractionUnit interactionUnit, final ModelNode modelDescription)
         {
@@ -91,6 +93,9 @@ public class FormStrategy implements ReificationStrategy<ReificationWidget>
             List<ResourceAttribute> attributes = resourceMapping.getAttributes();
             List<FormItem> items = new ArrayList<FormItem>(attributes.size());
 
+            helpTexts = new SafeHtmlBuilder();
+            helpTexts.appendHtmlConstant("<table class='help-attribute-descriptions'>");
+
             for (ResourceAttribute attribute : attributes)
             {
                 for(Property attr : attributeDescriptions)
@@ -98,28 +103,50 @@ public class FormStrategy implements ReificationStrategy<ReificationWidget>
                     if(!attr.getName().equals(attribute.getName()))
                         continue;
 
-                    ModelType type = ModelType.valueOf(attr.getValue().get("type").asString());
+
+                    char[] stringArray = attr.getName().toCharArray();
+                    stringArray[0] = Character.toUpperCase(stringArray[0]);
+
+                    String label = new String(stringArray).replace("-", " ");
+                    ModelNode attrValue = attr.getValue();
+
+                    // help
+                    helpTexts.appendHtmlConstant("<tr class='help-field-row'>");
+                    helpTexts.appendHtmlConstant("<td class='help-field-name'>");
+                    helpTexts.appendEscaped(label).appendEscaped(": ");
+                    helpTexts.appendHtmlConstant("</td>");
+                    helpTexts.appendHtmlConstant("<td class='help-field-desc'>");
+                    try {
+                        helpTexts.appendHtmlConstant(attrValue.get("description").asString());
+                    } catch (Throwable e) {
+                        // ignore parse errors
+                        helpTexts.appendHtmlConstant("<i>Failed to parse description</i>");
+                    }
+                    helpTexts.appendHtmlConstant("</td>");
+                    helpTexts.appendHtmlConstant("</tr>");
+
+                    ModelType type = ModelType.valueOf(attrValue.get("type").asString());
                     //System.out.println(attr.getName()+">"+type);
                     switch(type)
                     {
                         case BOOLEAN:
-                            CheckBoxItem checkBoxItem = new CheckBoxItem(attr.getName(), attr.getName().toUpperCase());
+                            CheckBoxItem checkBoxItem = new CheckBoxItem(attr.getName(), label);
                             items.add(checkBoxItem);
                             break;
                         case DOUBLE:
-                            NumberBoxItem num = new NumberBoxItem(attr.getName(), attr.getName().toUpperCase());
+                            NumberBoxItem num = new NumberBoxItem(attr.getName(), label);
                             items.add(num);
                             break;
                         case LONG:
-                            NumberBoxItem num2 = new NumberBoxItem(attr.getName(), attr.getName().toUpperCase());
+                            NumberBoxItem num2 = new NumberBoxItem(attr.getName(), label);
                             items.add(num2);
                             break;
                         case INT:
-                            NumberBoxItem num3 = new NumberBoxItem(attr.getName(), attr.getName().toUpperCase());
+                            NumberBoxItem num3 = new NumberBoxItem(attr.getName(), label);
                             items.add(num3);
                             break;
                         case STRING:
-                            TextBoxItem tb = new TextBoxItem(attr.getName(), attr.getName().toUpperCase());
+                            TextBoxItem tb = new TextBoxItem(attr.getName(), label);
                             items.add(tb);
                             break;
                         default:
@@ -128,7 +155,10 @@ public class FormStrategy implements ReificationStrategy<ReificationWidget>
                 }
             }
 
+            helpTexts.appendHtmlConstant("</table>");
+
             form.setFields(items.toArray(new FormItem[]{}));
+
         }
 
         @Override
@@ -159,12 +189,7 @@ public class FormStrategy implements ReificationStrategy<ReificationWidget>
                         }
                     });
 
-            FormHelpPanel help = new FormHelpPanel(new FormHelpPanel.AddressCallback() {
-                @Override
-                public ModelNode getAddress() {
-                    return new ModelNode();// TODO: how to get to the address ?
-                }
-            }, form);
+            StaticHelpPanel help = new StaticHelpPanel(helpTexts.toSafeHtml());
 
             layout.add(tools.asWidget());
             layout.add(help.asWidget());
