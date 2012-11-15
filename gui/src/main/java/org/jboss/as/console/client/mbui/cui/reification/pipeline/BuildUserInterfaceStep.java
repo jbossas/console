@@ -44,6 +44,7 @@ import static org.jboss.as.console.client.mbui.cui.reification.ContextKey.WIDGET
 public class BuildUserInterfaceStep extends ReificationStep
 {
     final List<ReificationStrategy<ReificationWidget>> strategies;
+    private StructureLogger logger = new StructureLogger();
 
     public BuildUserInterfaceStep()
     {
@@ -54,6 +55,7 @@ public class BuildUserInterfaceStep extends ReificationStep
         this.strategies.add(new SelectStrategy());
         this.strategies.add(new OrderIndependanceStrategy());
         this.strategies.add(new ChoiceStrategy());
+
     }
 
     @Override
@@ -64,6 +66,7 @@ public class BuildUserInterfaceStep extends ReificationStep
             assert !toplevelUnit.hasParent() : "Entry point interaction units are not expected to have parents";
             BuildUserInterfaceVisitor visitor = new BuildUserInterfaceVisitor();
             toplevelUnit.accept(visitor);
+            System.out.println(logger.flush());
             context.set(WIDGET, visitor.root);
             System.out.println("Finished " + getName());
         }
@@ -80,6 +83,7 @@ public class BuildUserInterfaceStep extends ReificationStep
         @Override
         public void startVisit(final Container container)
         {
+            logger.start(container);
             ReificationStrategy<ReificationWidget> strategy = resolve(container);
             if (strategy != null)
             {
@@ -102,6 +106,7 @@ public class BuildUserInterfaceStep extends ReificationStep
         @Override
         public void visit(final InteractionUnit interactionUnit)
         {
+            logger.start(interactionUnit);
             ReificationStrategy<ReificationWidget> strategy = resolve(interactionUnit);
             if (strategy != null)
             {
@@ -111,11 +116,13 @@ public class BuildUserInterfaceStep extends ReificationStep
                     this.container.peek().add(widget);
                 }
             }
+            logger.end(interactionUnit);
         }
 
         @Override
         public void endVisit(final Container container)
         {
+            logger.end(container);
             this.container.pop();
         }
 

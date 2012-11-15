@@ -71,7 +71,7 @@ public class ReadResourceDescriptionStep extends ReificationStep
             compsite.get(OP).set(COMPOSITE);
             compsite.get(ADDRESS).setEmptyList();
             compsite.get(STEPS).set(visitor.steps);
-            System.out.println(">>" + compsite);
+            //System.out.println(">>" + compsite);
 
             dispatcher.execute(new DMRAction(compsite), new SimpleCallback<DMRResponse>()
             {

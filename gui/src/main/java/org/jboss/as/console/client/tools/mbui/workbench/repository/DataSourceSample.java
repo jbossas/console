@@ -67,8 +67,8 @@ public class DataSourceSample implements Sample
         InteractionUnit root = new Builder()
             .start(new Container(namespace, "datasources", "Datasources", Choice))
             .addMapping(global)
-                .start(new Container(namespace, "datasourceOverview", "Datasources", OrderIndependance))
-                    .add(new Select(namespace, "datasourceTable", "Datasources"))
+                .start(new Container(namespace, "regularDS", "Regular", OrderIndependance))
+                    .add(new Select(namespace, "datasourceTable", "DatasourceList"))
                     .addMapping(tableMapping)
                     .start(new Container(namespace, "datasourceAttributes", "Datasource", Choice))
                         .add(new Form(namespace, "basicAttributes", "Attributes"))
@@ -76,6 +76,8 @@ public class DataSourceSample implements Sample
                         .add(new Form(namespace, "connectionAttributes", "Connection"))
                         .addMapping(connectionAttributesMapping)
                     .end()
+                .end()
+                .start(new Container(namespace, "xsDS", "XA", OrderIndependance))
                 .end()
             .end().build();
 
