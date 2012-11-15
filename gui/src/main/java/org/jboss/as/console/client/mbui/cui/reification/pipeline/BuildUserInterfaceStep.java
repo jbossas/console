@@ -21,19 +21,20 @@ package org.jboss.as.console.client.mbui.cui.reification.pipeline;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import org.jboss.as.console.client.mbui.aui.aim.Container;
 import org.jboss.as.console.client.mbui.aui.aim.InteractionUnit;
-import org.jboss.as.console.client.mbui.cui.Context;
+import org.jboss.as.console.client.mbui.aui.aim.InteractionUnitVisitor;
 import org.jboss.as.console.client.mbui.cui.ReificationStrategy;
 import org.jboss.as.console.client.mbui.cui.reification.ChoiceStrategy;
-import org.jboss.as.console.client.mbui.cui.reification.ContextKey;
 import org.jboss.as.console.client.mbui.cui.reification.FormStrategy;
 import org.jboss.as.console.client.mbui.cui.reification.OrderIndependanceStrategy;
 import org.jboss.as.console.client.mbui.cui.reification.ReificationWidget;
 import org.jboss.as.console.client.mbui.cui.reification.SelectStrategy;
 
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.Set;
+import java.util.List;
+import java.util.Stack;
+
+import static org.jboss.as.console.client.mbui.cui.reification.ContextKey.WIDGET;
 
 /**
  * @author Harald Pehl
@@ -42,98 +43,94 @@ import java.util.Set;
  */
 public class BuildUserInterfaceStep extends ReificationStep
 {
-
-    final LinkedList<ReificationStrategy<ReificationWidget>> strategies;
-    private StringBuffer log = new StringBuffer();
-    private int tabCount = 0;
+    final List<ReificationStrategy<ReificationWidget>> strategies;
 
     public BuildUserInterfaceStep()
     {
-        super("BuildUserInterfaceStep");
-
+        super("build ui");
         this.strategies = new LinkedList<ReificationStrategy<ReificationWidget>>();
-
-        // setup order matters (precendence)
-
+        // order is important! add specific strategies first!
         this.strategies.add(new FormStrategy());
+        this.strategies.add(new SelectStrategy());
         this.strategies.add(new OrderIndependanceStrategy());
         this.strategies.add(new ChoiceStrategy());
-        this.strategies.add(new SelectStrategy());
     }
 
     @Override
-    public void execute(Iterator<ReificationStep> iterator, AsyncCallback<Boolean> outcome) {
-
-        log = new StringBuffer();
-        tabCount = 0;
-
-        ReificationWidget widget = null;
+    public void execute(Iterator<ReificationStep> iterator, AsyncCallback<Boolean> outcome)
+    {
         if (isValid())
         {
             assert !toplevelUnit.hasParent() : "Entry point interaction units are not expected to have parents";
-            widget = startReification(toplevelUnit, context);
+            BuildUserInterfaceVisitor visitor = new BuildUserInterfaceVisitor();
+            toplevelUnit.accept(visitor);
+            context.set(WIDGET, visitor.root);
+            System.out.println("Finished " + getName());
         }
-        context.set(ContextKey.WIDGET, widget);
-
-        System.out.println("Finished " + getName());
-        System.out.println(log.toString());
         outcome.onSuccess(Boolean.TRUE);
-
         next(iterator, outcome);
     }
 
-    private ReificationWidget startReification(final InteractionUnit parentUnit, final Context context)
+
+    class BuildUserInterfaceVisitor implements InteractionUnitVisitor
     {
-        start(parentUnit);
+        ReificationWidget root;
+        Stack<ReificationWidget> container = new Stack<ReificationWidget>();
 
-        ReificationStrategy<ReificationWidget> strategy = resolve(parentUnit);
-        ReificationWidget parentWidget = strategy.reify(parentUnit, context);
-
-        // process children
-        if (parentUnit instanceof Container)
+        @Override
+        public void startVisit(final Container container)
         {
-            Container container = (Container) parentUnit;
-            for (InteractionUnit childUnit : container.getChildren())
+            ReificationStrategy<ReificationWidget> strategy = resolve(container);
+            if (strategy != null)
             {
-                ReificationWidget childWidget = startReification(childUnit, context);
-                parentWidget.add(childWidget, childUnit, container);
+                ReificationWidget widget = strategy.reify(container, context);
+                if (widget != null)
+                {
+                    if (root == null)
+                    {
+                        root = widget;
+                    }
+                    if (!this.container.isEmpty())
+                    {
+                        this.container.peek().add(widget);
+                    }
+                    this.container.push(widget);
+                }
             }
         }
 
-        end(parentUnit);
-
-        return parentWidget;
-    }
-
-
-
-    private void start(InteractionUnit parentUnit) {
-        tabCount++;
-        for(int i=0; i<tabCount;i++)
-            log.append("\t");
-        log.append("<").append(parentUnit.getName()).append(">");
-        log.append("\n");
-    }
-
-    private void end(InteractionUnit parentUnit) {
-        for(int i=0; i<tabCount;i++)
-            log.append("\t");
-        log.append("</").append(parentUnit.getName()).append(">");
-        log.append("\n");
-        tabCount--;
-    }
-
-    private ReificationStrategy<ReificationWidget> resolve(InteractionUnit interactionUnit)
-    {
-        ReificationStrategy<ReificationWidget> match = null;
-        for (ReificationStrategy<ReificationWidget> strategy : strategies)
+        @Override
+        public void visit(final InteractionUnit interactionUnit)
         {
-            if (strategy.appliesTo(interactionUnit))
+            ReificationStrategy<ReificationWidget> strategy = resolve(interactionUnit);
+            if (strategy != null)
             {
-                match = strategy;
-                break;
+                ReificationWidget widget = strategy.reify(interactionUnit, context);
+                if (widget != null && this.container.peek() != null)
+                {
+                    this.container.peek().add(widget);
+                }
             }
         }
-        return match;
+
+        @Override
+        public void endVisit(final Container container)
+        {
+            this.container.pop();
+        }
+
+        private ReificationStrategy<ReificationWidget> resolve(InteractionUnit interactionUnit)
+        {
+            ReificationStrategy<ReificationWidget> match = null;
+            for (ReificationStrategy<ReificationWidget> strategy : strategies)
+            {
+                if (strategy.appliesTo(interactionUnit))
+                {
+                    match = strategy;
+                    break;
+                }
+            }
+            return match;
+        }
     }
 }

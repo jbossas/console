@@ -21,6 +21,7 @@ package org.jboss.as.console.client.mbui.aui.aim;
 import org.junit.Before;
 import org.junit.Test;
 
+import static org.jboss.as.console.client.mbui.TestNamespace.NAMESPACE;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
@@ -33,16 +34,16 @@ public class ContainerTest
     Container cut;
 
     @Before
-    public void setUp() throws Exception
+    public void setUp()
     {
-        this.cut = new Container("test", TemporalOperator.Choice);
+        this.cut = new Container(NAMESPACE, "test", "Test", TemporalOperator.Choice);
     }
 
     @Test
     public void parentChild()
     {
-        InteractionUnit foo = new TestableInteractionUnit("foo");
-        InteractionUnit bar = new TestableInteractionUnit("bar");
+        InteractionUnit foo = new TestableInteractionUnit(NAMESPACE, "foo", "Foo");
+        InteractionUnit bar = new TestableInteractionUnit(NAMESPACE, "bar", "Bar");
 
         cut.add(foo);
         assertEquals(foo, cut.getChildren().get(0));

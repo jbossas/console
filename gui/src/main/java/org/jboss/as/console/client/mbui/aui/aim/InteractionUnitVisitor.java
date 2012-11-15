@@ -16,29 +16,17 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.as.console.client.tools.mbui.workbench.repository;
-
-import org.jboss.as.console.client.mbui.aui.aim.InteractionUnit;
+package org.jboss.as.console.client.mbui.aui.aim;
 
 /**
  * @author Harald Pehl
- * @date 10/31/2012
+ * @date 11/14/2012
  */
-public class NoopSample implements Sample
+public interface InteractionUnitVisitor
 {
-    private final String name;
+    void startVisit(Container container);
 
-    public NoopSample(final String name) {this.name = name;}
+    void visit(InteractionUnit interactionUnit);
 
-    @Override
-    public String getName()
-    {
-        return name;
-    }
-
-    @Override
-    public InteractionUnit build()
-    {
-        return null;
-    }
+    void endVisit(Container container);
 }

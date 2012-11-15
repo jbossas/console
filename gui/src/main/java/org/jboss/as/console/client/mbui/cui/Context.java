@@ -21,7 +21,7 @@ package org.jboss.as.console.client.mbui.cui;
 import org.jboss.as.console.client.mbui.cui.reification.ContextKey;
 
 import java.util.EnumMap;
-import java.util.Stack;
+import java.util.Map;
 
 /**
  * @author Harald Pehl
@@ -29,32 +29,22 @@ import java.util.Stack;
  */
 public class Context
 {
-    private Stack<EnumMap<ContextKey, Object>> subcontexts = new Stack<EnumMap<ContextKey, Object>>();
+    private final Map<ContextKey, Object> data;
 
     public Context()
     {
-        push();
-    }
-
-    public void push()
-    {
-        subcontexts.push(new EnumMap<ContextKey, Object>(ContextKey.class));
-    }
-
-    public void pop()
-    {
-        subcontexts.pop();
+        this.data = new EnumMap<ContextKey, Object>(ContextKey.class);
     }
 
     public <T> Context set(final ContextKey key, final T value)
     {
-        subcontexts.peek().put(key, value);
+        data.put(key, value);
         return this;
     }
 
     public <T> T get(final ContextKey name)
     {
-        Object value = subcontexts.peek().get(name);
+        Object value = data.get(name);
         if (value != null)
         {
             return (T) value;
@@ -64,13 +54,13 @@ public class Context
 
     public boolean has(final ContextKey name)
     {
-        Object value = subcontexts.peek().get(name);
+        Object value = data.get(name);
         return value != null;
     }
 
     @Override
     public String toString()
     {
-        return "Context {sub=" + subcontexts.size() + "}";
+        return "Context " + data;
     }
 }

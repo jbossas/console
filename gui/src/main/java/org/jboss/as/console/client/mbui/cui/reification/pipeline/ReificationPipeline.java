@@ -35,8 +35,10 @@ public class ReificationPipeline
 {
     private final List<ReificationStep> steps;
 
+
     @Inject
-    public ReificationPipeline(ReadResourceDescriptionStep readResourceDescriptionStep, BuildUserInterfaceStep buildUserInterfaceStep)
+    public ReificationPipeline(ReadResourceDescriptionStep readResourceDescriptionStep,
+            BuildUserInterfaceStep buildUserInterfaceStep)
     {
         // order is important!
         this.steps = new LinkedList<ReificationStep>();
@@ -56,24 +58,23 @@ public class ReificationPipeline
 
         Iterator<ReificationStep> iterator = steps.iterator();
         ReificationStep first = iterator.next();
+        System.out.println("First would be " + first.getName());
 
-        System.out.println("First " + first.getName());
-
-        first.execute(iterator, new ReificationCallback() {
-
+        first.execute(iterator, new ReificationCallback()
+        {
             int numResponses;
             boolean overallResult;
 
             @Override
-            public void onSuccess(Boolean successful) {
+            public void onSuccess(Boolean successful)
+            {
                 numResponses++;
                 overallResult = successful;
-
-                if (numResponses == steps.size()) {
+                if (numResponses == steps.size())
+                {
                     outcome.onSuccess(overallResult);
                 }
             }
         });
     }
-
 }

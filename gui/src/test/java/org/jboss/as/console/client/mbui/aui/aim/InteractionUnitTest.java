@@ -18,11 +18,20 @@
  */
 package org.jboss.as.console.client.mbui.aui.aim;
 
+import org.jboss.as.console.client.mbui.aui.aim.as7.Form;
+import org.jboss.as.console.client.mbui.aui.mapping.Predicate;
+import org.jboss.as.console.client.mbui.aui.mapping.as7.ResourceMapping;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.jboss.as.console.client.mbui.TestNamespace.NAMESPACE;
 import static org.jboss.as.console.client.mbui.aui.aim.EventType.*;
+import static org.jboss.as.console.client.mbui.aui.aim.EventType.System;
+import static org.jboss.as.console.client.mbui.aui.aim.EventType.Transition;
+import static org.jboss.as.console.client.mbui.aui.aim.TemporalOperator.Choice;
+import static org.jboss.as.console.client.mbui.aui.aim.TemporalOperator.OrderIndependance;
+import static org.jboss.as.console.client.mbui.aui.mapping.MappingType.RESOURCE;
+import static org.junit.Assert.*;
 
 /**
  * @author Harald Pehl
@@ -31,27 +40,21 @@ import static org.jboss.as.console.client.mbui.aui.aim.EventType.*;
  */
 public class InteractionUnitTest
 {
-    InteractionUnit unit;
+    InteractionUnit cut;
 
     @Before
-    public void setUp() throws Exception
+    public void setUp()
     {
-        this.unit = new TestableInteractionUnit("test");
+        this.cut = new TestableInteractionUnit(NAMESPACE, "test", "Test");
     }
 
     @Test
-    public void newInstance()
+    public void verifyEventTypeConstraints()
     {
-        assertNotNull(unit.getEntityContext());
-        assertEquals("test" + InteractionUnit.ENTITY_CONTEXT_SUFFIX, unit.getEntityContext().getId());
-    }
+        Container container = new Container(NAMESPACE, "parent", "Parent", TemporalOperator.OrderIndependance);
 
-    @Test
-    public void testVerifyEventTypeConstraints() {
-        Container container = new Container("parent", TemporalOperator.OrderIndependance);
-
-        Input textInput = new Input("firstName");
-        Input submit = new Input("submit");
+        Input textInput = new Input(NAMESPACE, "firstName", "Firstname");
+        Input submit = new Input(NAMESPACE, "submit", "Submit");
 
         container.add(textInput);
         container.add(submit);
@@ -70,9 +73,10 @@ public class InteractionUnitTest
     }
 
     @Test
-    public void testBehaviourResolution() {
+    public void behaviourResolution()
+    {
         Event<EventType> submitEvent = new Event<EventType>("submitName", Interaction);
-        Event<EventType> deviceRotation= new Event<EventType>("deviceRotation", System);
+        Event<EventType> deviceRotation = new Event<EventType>("deviceRotation", System);
         Event<EventType> loadData = new Event<EventType>("loadData", Transition);
 
         Behaviour behaviour = new Behaviour("onSubmitName", submitEvent);
@@ -83,27 +87,59 @@ public class InteractionUnitTest
 
         final StringBuffer sharedState = new StringBuffer("");
 
-        behaviour.setCondition(new Condition() {
+        behaviour.setCondition(new Condition()
+        {
             @Override
-            public boolean isMet() {
+            public boolean isMet()
+            {
                 return true;
             }
         });
 
-        behaviour.addTransition(
-                new FunctionCall() {
-                    @Override
-                    public void perform() {
-                        sharedState.append("updated");
-                    }
-                }
-        );
+        behaviour.addTransition(new FunctionCall()
+        {
+            @Override
+            public void perform()
+            {
+                sharedState.append("updated");
+            }
+        });
 
-        if(behaviour.consumes(loadData))
+        if (behaviour.consumes(loadData))
         {
             behaviour.execute();
             assertTrue("sharedState should be updated", sharedState.toString().equals("updated"));
         }
+    }
 
+    @Test
+    public void findMapping()
+    {
+        Form basicAttributes = new Form(NAMESPACE, "basicAttributes", "Basic Attributes");
+        InteractionUnit root = new Builder()
+            .start(new Container(NAMESPACE, "root", "Root", OrderIndependance))
+            .addMapping(new ResourceMapping(NAMESPACE).setAddress("root"))
+                .add(new Select(NAMESPACE, "table", "Table"))
+                .start(new Container(NAMESPACE, "forms", "Forms", Choice))
+                    .add(basicAttributes)
+                    .addMapping(new ResourceMapping(NAMESPACE).setAddress("basicAttributes"))
+                    .add(new Form(NAMESPACE, "extendedAttributes", "Basic Attributes"))
+                .end()
+            .end().build();
+
+        ResourceMapping mapping = basicAttributes.findMapping(RESOURCE);
+        assertNotNull(mapping);
+        assertEquals("basicAttributes", mapping.getAddress());
+
+        mapping = basicAttributes.findMapping(RESOURCE, new Predicate<ResourceMapping>()
+        {
+            @Override
+            public boolean appliesTo(final ResourceMapping candidate)
+            {
+                return "root".equals(candidate.getAddress());
+            }
+        });
+        assertNotNull(mapping);
+        assertEquals("root", mapping.getAddress());
     }
 }

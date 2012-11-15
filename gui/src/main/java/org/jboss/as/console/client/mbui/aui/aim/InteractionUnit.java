@@ -19,7 +19,13 @@
 package org.jboss.as.console.client.mbui.aui.aim;
 
 import org.jboss.as.console.client.mbui.aui.aim.assets.EventConsumption;
-import org.jboss.as.console.client.mbui.aui.mapping.EntityContext;
+import org.jboss.as.console.client.mbui.aui.mapping.Mapping;
+import org.jboss.as.console.client.mbui.aui.mapping.MappingType;
+import org.jboss.as.console.client.mbui.aui.mapping.Predicate;
+
+import java.util.Collection;
+import java.util.EnumMap;
+import java.util.Map;
 
 /**
  * @author Harald Pehl
@@ -28,24 +34,24 @@ import org.jboss.as.console.client.mbui.aui.mapping.EntityContext;
 public abstract class InteractionUnit implements EventConsumer
 {
     public final static String ENTITY_CONTEXT_SUFFIX = "_entityContext";
-
     private final QName id;
-    private final EntityContext entityContext;
+    private final Map<MappingType, Mapping> mappings;
     private String name;
-    private String mappingReference;
-    private InteractionUnit parent = null;
+    private EventConsumption eventConsumption;
+    private InteractionUnit parent;
 
-    private EventConsumption eventConsumption = new EventConsumption(EventType.System);
 
     protected InteractionUnit(String namespace, final String id)
     {
         this(new QName(namespace, id), null);
     }
 
+
     protected InteractionUnit(String namespace, final String id, final String name)
     {
         this(new QName(namespace, id), name);
     }
+
 
     protected InteractionUnit(final QName id, final String name)
     {
@@ -53,21 +59,8 @@ public abstract class InteractionUnit implements EventConsumer
         assert !id.getNamespaceURI().isEmpty() : "Units require qualified namespace";
         this.id = id;
         this.name = name;
-        this.entityContext = new EntityContext(id + ENTITY_CONTEXT_SUFFIX);
-    }
-
-    void setParent(InteractionUnit parent)
-    {
-        this.parent = parent;
-    }
-
-    public InteractionUnit getParent() {
-        return parent;
-    }
-
-    public boolean hasParent()
-    {
-        return parent!=null;
+        this.mappings = new EnumMap<MappingType, Mapping>(MappingType.class);
+        this.eventConsumption = new EventConsumption(EventType.System);
     }
 
     @Override
@@ -94,17 +87,114 @@ public abstract class InteractionUnit implements EventConsumer
         return "InteractionUnit{" + id + '}';
     }
 
+
+    // ------------------------------------------------------ mappings
+
+    public void addMapping(Mapping mapping)
+    {
+        if (mapping != null)
+        {
+            mappings.put(mapping.getType(), mapping);
+        }
+    }
+
+    public boolean hasMapping(MappingType type)
+    {
+        return mappings.get(type) != null;
+    }
+
+    public <T extends Mapping> T getMapping(final MappingType type)
+    {
+        return (T) mappings.get(type);
+    }
+
+    public Collection<Mapping> getMappings()
+    {
+        return mappings.values();
+    }
+
+    /**
+     * Finds a specific mapping over a hirarchy of interaction units following a bottom up approach.
+     *
+     * @param type
+     * @param <T>
+     *
+     * @return
+     */
+    public <T extends Mapping> T findMapping(MappingType type)
+    {
+        return findMapping(type, null);
+    }
+
+    /**
+     * Finds a specific mapping over a hirarchy of interaction units following a bottom up approach.
+     * <p/>
+     * The mapping is only returned if the predicate matches.
+     *
+     * @param type
+     * @param predicate Use {@code null} to ignore
+     * @param <T>
+     *
+     * @return
+     */
+    public <T extends Mapping> T findMapping(MappingType type, Predicate<T> predicate)
+    {
+        T mapping = getMapping(type);
+        if (mapping != null)
+        {
+            // check predicate
+            if (predicate != null)
+            {
+                mapping = (predicate.appliesTo(mapping)) ? mapping : null;
+            }
+        }
+        if (mapping == null && parent != null)
+        {
+            mapping = parent.findMapping(type);
+        }
+        return mapping;
+    }
+
+
+    // ------------------------------------------------------ event handling
+
     @Override
-    public EventType[] getConsumedTypes() {
+    public EventType[] getConsumedTypes()
+    {
         return eventConsumption.getConsumedTypes();
     }
 
     @Override
-    public boolean consumes(Event event) {
+    public boolean consumes(Event event)
+    {
         return eventConsumption.consumes(event);
     }
 
+
+    // ------------------------------------------------------ visitor related
+
+    public void accept(InteractionUnitVisitor visitor)
+    {
+        visitor.visit(this);
+    }
+
+
     // ------------------------------------------------------ properties
+
+    public InteractionUnit getParent()
+    {
+        return parent;
+    }
+
+    void setParent(InteractionUnit parent)
+    {
+        this.parent = parent;
+    }
+
+    public boolean hasParent()
+    {
+        return parent != null;
+    }
 
     public QName getId()
     {
@@ -119,20 +209,5 @@ public abstract class InteractionUnit implements EventConsumer
     public void setName(final String name)
     {
         this.name = name;
-    }
-
-    public EntityContext getEntityContext()
-    {
-        return entityContext;
-    }
-
-    public String getMappingReference()
-    {
-        return mappingReference;
-    }
-
-    public void setMappingReference(final String mappingReference)
-    {
-        this.mappingReference = mappingReference;
     }
 }

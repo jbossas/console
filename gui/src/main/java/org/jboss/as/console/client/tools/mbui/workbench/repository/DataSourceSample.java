@@ -18,6 +18,7 @@
  */
 package org.jboss.as.console.client.tools.mbui.workbench.repository;
 
+import org.jboss.as.console.client.mbui.aui.aim.Builder;
 import org.jboss.as.console.client.mbui.aui.aim.Container;
 import org.jboss.as.console.client.mbui.aui.aim.InteractionUnit;
 import org.jboss.as.console.client.mbui.aui.aim.Select;
@@ -44,36 +45,12 @@ public class DataSourceSample implements Sample
     @Override
     public InteractionUnit build()
     {
-        // abstract UI modelling
-
         String namespace = "org.jboss.ds";
 
+        // mappings
         ResourceMapping global = new ResourceMapping(namespace)
                 .setAddress("/profile={0}/subsystem=datasources/data-source={1}");
 
-        // global address scopefor namespace
-        Container container = new Container(namespace, "datasources", "Datasources", Choice);
-        container.getEntityContext().addMapping(global);
-
-        Container dsOverview = new Container(namespace, "datasourceOverview", "Regular", OrderIndependance);
-        Container xaOverview = new Container(namespace, "xaOverview", "XA", OrderIndependance);
-
-        container.add(dsOverview);
-        container.add(xaOverview);
-
-        Select table = new Select(namespace, "datasourceTable", "DatasourceList");
-        dsOverview.add(table);
-
-        Container forms = new Container(namespace, "datasourceAttributes", "Datasource", Choice);
-        dsOverview.add(forms);
-
-        Form basicAttributes = new Form(namespace, "basicAttributes", "Attributes");
-        forms.add(basicAttributes);
-
-        Form connectionAttributes = new Form(namespace, "connectionAttributes", "Connection");
-        forms.add(connectionAttributes);
-
-        // mappings (required)
         Mapping tableMapping = new ResourceMapping(namespace)
                 .addAttribute(new ResourceAttribute("${resource.name}", "Name"))
                 .addAttributes("jndi-name", "enabled");
@@ -86,10 +63,22 @@ public class DataSourceSample implements Sample
         Mapping connectionAttributesMapping = new ResourceMapping(namespace)
                 .addAttributes("connection-url", "new-connection-sql", "jta", "use-ccm");
 
-        table.getEntityContext().addMapping(tableMapping);
-        basicAttributes.getEntityContext().addMapping(basicAttributesMapping);
-        connectionAttributes.getEntityContext().addMapping(connectionAttributesMapping);
+        // UI
+        InteractionUnit root = new Builder()
+            .start(new Container(namespace, "datasources", "Datasources", Choice))
+            .addMapping(global)
+                .start(new Container(namespace, "datasourceOverview", "Datasources", OrderIndependance))
+                    .add(new Select(namespace, "datasourceTable", "Datasources"))
+                    .addMapping(tableMapping)
+                    .start(new Container(namespace, "datasourceAttributes", "Datasource", Choice))
+                        .add(new Form(namespace, "basicAttributes", "Attributes"))
+                        .addMapping(basicAttributesMapping)
+                        .add(new Form(namespace, "connectionAttributes", "Connection"))
+                        .addMapping(connectionAttributesMapping)
+                    .end()
+                .end()
+            .end().build();
 
-        return container;
+        return root;
     }
 }

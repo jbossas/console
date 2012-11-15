@@ -32,4 +32,10 @@ public class Form extends Container
     {
         super(namespace, id, name, OrderIndependance);
     }
+
+    @Override
+    public String toString()
+    {
+        return "Form{" + getId() + '}';
+    }
 }

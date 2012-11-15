@@ -71,6 +71,19 @@ public class Container extends InteractionUnit
     }
 
 
+    // ------------------------------------------------------ visitor related
+
+    public void accept(InteractionUnitVisitor visitor)
+    {
+        visitor.startVisit(this);
+        for (InteractionUnit child : children)
+        {
+            child.accept(visitor);
+        }
+        visitor.endVisit(this);
+    }
+
+
     // ------------------------------------------------------ properties
 
     public TemporalOperator getTemporalOperator()

@@ -16,39 +16,13 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.as.console.client.mbui.cui.reification.pipeline;
-
-import com.google.gwt.user.client.ui.Widget;
-import org.jboss.as.console.client.mbui.aui.aim.InteractionUnit;
-import org.jboss.as.console.client.mbui.cui.reification.ReificationWidget;
-
-import java.util.ArrayList;
-import java.util.List;
+package org.jboss.as.console.client.mbui;
 
 /**
  * @author Harald Pehl
- * @date 10/30/2012
+ * @date 11/14/2012
  */
-public class TestableReificationWidget implements ReificationWidget
+public interface TestNamespace
 {
-    final InteractionUnit interactionUnit;
-    final List<ReificationWidget> children;
-
-    public TestableReificationWidget(final InteractionUnit interactionUnit)
-    {
-        this.interactionUnit = interactionUnit;
-        this.children = new ArrayList<ReificationWidget>();
-    }
-
-    @Override
-    public void add(final ReificationWidget widget, final InteractionUnit interactionUnit, final InteractionUnit parent)
-    {
-        children.add(widget);
-    }
-
-    @Override
-    public Widget asWidget()
-    {
-        return null;
-    }
+    String NAMESPACE = "org.jboss.test";
 }

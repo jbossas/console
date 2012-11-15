@@ -21,7 +21,6 @@ package org.jboss.as.console.client.mbui.cui.reification.pipeline;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import org.jboss.as.console.client.mbui.aui.aim.InteractionUnit;
 import org.jboss.as.console.client.mbui.cui.Context;
-import org.jboss.as.console.client.shared.dispatch.AsyncCommand;
 
 import java.util.Iterator;
 
@@ -60,8 +59,7 @@ public abstract class ReificationStep
 
     public abstract void execute(Iterator<ReificationStep> iterator, AsyncCallback<Boolean> outcome);
 
-    protected final void next(
-            final Iterator<ReificationStep> iterator, AsyncCallback<Boolean> outcome)
+    protected final void next(final Iterator<ReificationStep> iterator, AsyncCallback<Boolean> outcome)
     {
         if (iterator.hasNext())
         {
@@ -70,5 +68,4 @@ public abstract class ReificationStep
             nextAction.execute(iterator, outcome);
         }
     }
-
 }

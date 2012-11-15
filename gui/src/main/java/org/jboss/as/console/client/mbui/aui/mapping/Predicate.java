@@ -16,32 +16,13 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.as.console.client.mbui.cui.reification.pipeline;
-
-import org.jboss.as.console.client.mbui.aui.aim.InteractionUnit;
-import org.jboss.as.console.client.mbui.cui.Context;
-import org.jboss.as.console.client.mbui.cui.ReificationStrategy;
-import org.jboss.as.console.client.mbui.cui.reification.ReificationWidget;
+package org.jboss.as.console.client.mbui.aui.mapping;
 
 /**
  * @author Harald Pehl
- * @date 10/30/2012
+ * @date 11/14/2012
  */
-public class TestableReificationStrategy implements ReificationStrategy<ReificationWidget>
+public interface Predicate<T extends Mapping>
 {
-    public TestableReificationStrategy()
-    {
-    }
-
-    @Override
-    public ReificationWidget reify(final InteractionUnit interactionUnit, final Context context)
-    {
-        return new TestableReificationWidget(interactionUnit);
-    }
-
-    @Override
-    public boolean appliesTo(final InteractionUnit interactionUnit)
-    {
-        return true;
-    }
+    boolean appliesTo(T candidate);
 }

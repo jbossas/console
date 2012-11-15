@@ -49,7 +49,7 @@ public class TransactionSample implements Sample
                 .setAddress("/profile={0}/subsystem=transactions");
 
         Container overview = new Container(ns, "transactionManager", "TransactionManager", OrderIndependance);
-        overview.getEntityContext().addMapping(global);
+        overview.addMapping(global);
 
         Form basicAttributes = new Form(ns, "basicAttributes", "Attributes");
         overview.add(basicAttributes);
@@ -59,14 +59,14 @@ public class TransactionSample implements Sample
                         .addAttributes("enable-statistics", "enable-tsm-status", "jts", "default-timeout",
                                 "node-identifier", "use-hornetq-store");
 
-        basicAttributes.getEntityContext().addMapping(basicAttributesMapping);
+        basicAttributes.addMapping(basicAttributesMapping);
 
         Container details = new Container(ns, "configGroups", "Details", Choice);
         Form processAttributes = new Form(ns, "process", "Process ID");
         details.add(processAttributes);
 
         Mapping processMapping = new ResourceMapping(ns).addAttributes("process-id-uuid", "process-id-socket-binding");
-        processAttributes.getEntityContext().addMapping(processMapping);
+        processAttributes.addMapping(processMapping);
 
         Form recoveryAttributes = new Form(ns, "recovery", "Recovery");
         details.add(recoveryAttributes);
@@ -74,7 +74,7 @@ public class TransactionSample implements Sample
         Mapping recoveryMapping =
                 new ResourceMapping(ns)
                         .addAttributes("recovery-listener", "socket-binding");
-        recoveryAttributes.getEntityContext().addMapping(recoveryMapping);
+        recoveryAttributes.addMapping(recoveryMapping);
 
         overview.add(details);
 
