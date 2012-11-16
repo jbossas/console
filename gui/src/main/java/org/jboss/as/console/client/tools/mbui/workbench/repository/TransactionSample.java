@@ -19,7 +19,9 @@
 package org.jboss.as.console.client.tools.mbui.workbench.repository;
 
 import org.jboss.as.console.client.mbui.aui.aim.Behaviour;
+import org.jboss.as.console.client.mbui.aui.aim.Builder;
 import org.jboss.as.console.client.mbui.aui.aim.Container;
+import org.jboss.as.console.client.mbui.aui.aim.Select;
 import org.jboss.as.console.client.mbui.aui.aim.Trigger;
 import org.jboss.as.console.client.mbui.aui.aim.TriggerType;
 import org.jboss.as.console.client.mbui.aui.aim.InteractionUnit;
@@ -50,53 +52,51 @@ public class TransactionSample implements Sample
     {
         String ns = "org.jboss.transactions";
 
-        // abstract UI modelling
-        ResourceMapping global = new ResourceMapping(ns)
+        // entities
+        Mapping global = new ResourceMapping(ns)
                 .setAddress("/profile={0}/subsystem=transactions");
 
+        Mapping basicAttributesMapping = new ResourceMapping(ns)
+                .addAttributes(
+                        "enable-statistics", "enable-tsm-status", "jts", "default-timeout",
+                        "node-identifier", "use-hornetq-store");
+
+        Mapping processMapping = new ResourceMapping(ns)
+                .addAttributes("process-id-uuid", "process-id-socket-binding");
+
+        Mapping recoveryMapping = new ResourceMapping(ns)
+                .addAttributes("recovery-listener", "socket-binding");
+
         Container overview = new Container(ns, "transactionManager", "TransactionManager", OrderIndependance);
-        overview.addMapping(global);
-
         Form basicAttributes = new Form(ns, "basicAttributes", "Attributes");
-        overview.add(basicAttributes);
-
-        Mapping basicAttributesMapping =
-                new ResourceMapping(ns)
-                        .addAttributes("enable-statistics", "enable-tsm-status", "jts", "default-timeout",
-                                "node-identifier", "use-hornetq-store");
-
-        basicAttributes.addMapping(basicAttributesMapping);
-
         Container details = new Container(ns, "configGroups", "Details", Choice);
         Form processAttributes = new Form(ns, "process", "Process ID");
-        details.add(processAttributes);
-
-        Mapping processMapping = new ResourceMapping(ns).addAttributes("process-id-uuid", "process-id-socket-binding");
-        processAttributes.addMapping(processMapping);
-
         Form recoveryAttributes = new Form(ns, "recovery", "Recovery");
-        details.add(recoveryAttributes);
 
-        Mapping recoveryMapping =
-                new ResourceMapping(ns)
-                        .addAttributes("recovery-listener", "socket-binding");
-        recoveryAttributes.addMapping(recoveryMapping);
+        // structure & mapping
+        InteractionUnit root = new Builder()
+                .start(overview)
+                .addMapping(global)
+                    .add(basicAttributes).addMapping(basicAttributesMapping)
+                    .start(details)
+                        .add(processAttributes).addMapping(processMapping)
+                        .add(recoveryAttributes).addMapping(recoveryMapping)
+                    .end()
+                .end()
+                .build();
 
-        overview.add(details);
-
-        // add behaviour hints
+        // behaviour hints
         Trigger<TriggerType> resetEvent = new Trigger<TriggerType>(ns, "reset", System);
         Trigger<TriggerType> updateEvent = new Trigger<TriggerType>(ns, "update", Transition);
 
         basicAttributes.setOutputs(new Trigger<TriggerType>(ns, "save", Interaction));
         basicAttributes.setInputs(resetEvent, updateEvent);
 
-
         // TODO: the actual behaviour wiring
         Behaviour handleResets = new Behaviour(ns, "handleResets", resetEvent);
         Behaviour handleUpdates = new Behaviour(ns, "handleUpdates", updateEvent);
 
-        return overview;
+        return root;
     }
 }
 
