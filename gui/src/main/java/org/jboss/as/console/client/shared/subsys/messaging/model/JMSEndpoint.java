@@ -21,6 +21,8 @@ package org.jboss.as.console.client.shared.subsys.messaging.model;
 
 import org.jboss.as.console.client.widgets.forms.Binding;
 
+import java.util.List;
+
 /**
  * @author Heiko Braun
  * @date 3/29/11
@@ -31,7 +33,7 @@ public interface JMSEndpoint {
     String getName();
     void setName(String name);
 
-    @Binding(detypedName = "jndi-name")
-    String getJndiName();
-    void setJndiName(String jndi);
+    @Binding(listType="java.lang.String")
+    List<String> getEntries();
+    void setEntries(List<String> jndiNames);
 }

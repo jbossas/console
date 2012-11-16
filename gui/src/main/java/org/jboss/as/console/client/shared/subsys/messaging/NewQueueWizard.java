@@ -26,10 +26,11 @@ import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.messaging.model.Queue;
-import org.jboss.as.console.client.widgets.forms.items.JndiNameItem;
+import org.jboss.as.console.client.widgets.forms.items.JndiNamesItem;
 import org.jboss.ballroom.client.widgets.forms.CheckBoxItem;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.FormValidation;
+import org.jboss.ballroom.client.widgets.forms.ListItem;
 import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
 import org.jboss.ballroom.client.widgets.window.DialogueOptions;
 import org.jboss.ballroom.client.widgets.window.WindowContentBuilder;
@@ -54,7 +55,7 @@ public class NewQueueWizard {
 
 
         TextBoxItem name = new TextBoxItem("name", "Name");
-        TextBoxItem jndiName = new JndiNameItem("jndiName", "JNDI Name");
+        ListItem jndiName = new JndiNamesItem("entries", "JNDI Names");
 
         CheckBoxItem durable = new CheckBoxItem("durable", "Durable?");
         durable.setValue(true); // new queues are durable by default (AS7-4955)

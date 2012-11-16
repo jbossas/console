@@ -28,7 +28,9 @@ import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.subsys.messaging.model.JMSEndpoint;
 import org.jboss.as.console.client.shared.subsys.messaging.model.Topic;
 import org.jboss.as.console.client.widgets.forms.FormToolStrip;
+import org.jboss.as.console.client.widgets.forms.items.JndiNamesItem;
 import org.jboss.ballroom.client.widgets.forms.Form;
+import org.jboss.ballroom.client.widgets.forms.ListItem;
 import org.jboss.ballroom.client.widgets.forms.TextItem;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
 import org.jboss.ballroom.client.widgets.tools.ToolStrip;
@@ -120,7 +122,7 @@ public class TopicList {
         // -----
 
         TextItem name = new TextItem("name", "Name");
-        TextItem jndi = new TextItem("jndiName", "JNDI");
+        ListItem jndi = new JndiNamesItem("entries", "JNDI Names");
 
         form.setFields(name, jndi);
 

@@ -26,9 +26,10 @@ import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.messaging.model.Topic;
-import org.jboss.as.console.client.widgets.forms.items.JndiNameItem;
+import org.jboss.as.console.client.widgets.forms.items.JndiNamesItem;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.FormValidation;
+import org.jboss.ballroom.client.widgets.forms.ListItem;
 import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
 import org.jboss.ballroom.client.widgets.window.DialogueOptions;
 import org.jboss.ballroom.client.widgets.window.WindowContentBuilder;
@@ -51,9 +52,8 @@ public class NewTopicWizard {
         layout.setStyleName("window-content");
         final Form<Topic> form = new Form<Topic>(Topic.class);
 
-
         TextBoxItem name = new TextBoxItem("name", "Name");
-        TextBoxItem jndiName = new JndiNameItem("jndiName", "JNDI Name");
+        ListItem jndiName = new JndiNamesItem("entries", "JNDI Names");
 
         form.setFields(name, jndiName);
 

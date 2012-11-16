@@ -24,6 +24,9 @@ import com.google.gwt.view.client.ProvidesKey;
 import org.jboss.as.console.client.shared.subsys.messaging.model.JMSEndpoint;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 
+import java.util.Iterator;
+import java.util.List;
+
 /**
  * @author Heiko Braun
  * @date 3/29/11
@@ -34,7 +37,7 @@ class EndpointTable extends DefaultCellTable<JMSEndpoint>{
         super(8, new ProvidesKey<JMSEndpoint>() {
             @Override
             public Object getKey(JMSEndpoint item) {
-                return item.getJndiName();
+                return item.getEntries();
             }
         });
 
@@ -48,7 +51,19 @@ class EndpointTable extends DefaultCellTable<JMSEndpoint>{
         TextColumn<JMSEndpoint> jndiNameColumn = new TextColumn<JMSEndpoint>() {
             @Override
             public String getValue(JMSEndpoint record) {
-                return record.getJndiName();
+                List<String> names = record.getEntries();
+                StringBuilder builder = new StringBuilder();
+                if (!names.isEmpty())
+                {
+                    Iterator<String> iterator = names.iterator();
+                    builder.append("[").append(iterator.next());
+                    if (iterator.hasNext())
+                    {
+                        builder.append(", ...");
+                    }
+                    builder.append("]");
+                }
+                return builder.toString();
             }
         };
 

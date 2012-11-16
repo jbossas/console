@@ -125,8 +125,13 @@ public class LoadJMSCmd implements AsyncCommand<AggregatedJMSModel> {
                 queue.setName(prop.getName());
 
                 ModelNode propValue = prop.getValue();
-                String jndi = propValue.get("entries").asList().get(0).asString();
-                queue.setJndiName(jndi);
+                List<ModelNode> entires = propValue.get("entries").asList();
+                List<String> values = new ArrayList<String>(entires.size());
+                for (ModelNode entry : entires)
+                {
+                    values.add(entry.asString());
+                }
+                queue.setEntries(values);
 
                 if(propValue.hasDefined("durable"))
                     queue.setDurable(propValue.get("durable").asBoolean());
@@ -154,9 +159,13 @@ public class LoadJMSCmd implements AsyncCommand<AggregatedJMSModel> {
                 JMSEndpoint topic = factory.topic().as();
                 topic.setName(prop.getName());
 
-                ModelNode propValue = prop.getValue();
-                String jndi = propValue.get("entries").asList().get(0).asString();
-                topic.setJndiName(jndi);
+                List<ModelNode> entires = prop.getValue().get("entries").asList();
+                List<String> values = new ArrayList<String>(entires.size());
+                for (ModelNode entry : entires)
+                {
+                    values.add(entry.asString());
+                }
+                topic.setEntries(values);
 
                 topics.add(topic);
             }
