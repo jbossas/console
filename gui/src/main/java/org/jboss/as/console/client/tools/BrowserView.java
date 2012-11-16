@@ -6,7 +6,6 @@ import com.google.gwt.event.logical.shared.OpenEvent;
 import com.google.gwt.event.logical.shared.OpenHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
-import com.google.web.bindery.event.shared.EventBus;
 import com.google.gwt.user.client.ui.HasTreeItems;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
@@ -15,6 +14,7 @@ import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.PopupViewImpl;
 import org.jboss.ballroom.client.widgets.common.DefaultButton;
 import org.jboss.ballroom.client.widgets.window.DefaultWindow;
@@ -25,7 +25,6 @@ import javax.inject.Inject;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
 /**
  * @author Heiko Braun
@@ -42,7 +41,6 @@ public class BrowserView extends PopupViewImpl implements BrowserPresenter.MyVie
     private DescriptionView descView;
     private DefaultWindow window;
 
-    private FXTemplatesView storageView;
     private NodeHeader nodeHeader;
 
 
@@ -105,7 +103,6 @@ public class BrowserView extends PopupViewImpl implements BrowserPresenter.MyVie
         rawView = new RawView();
         descView = new DescriptionView();
         nodeHeader = new NodeHeader();
-        storageView = new FXTemplatesView();
 
         TabPanel tabs = new TabPanel();
         tabs.setStyleName("default-tabpanel");
@@ -333,10 +330,5 @@ public class BrowserView extends PopupViewImpl implements BrowserPresenter.MyVie
         PlaceholderItem() {
             super("*");
         }
-    }
-
-    @Override
-    public void setTemplates(Set<FXTemplate> fxTemplates) {
-        //TODO storageView.setTemplates(fxTemplates);
     }
 }
