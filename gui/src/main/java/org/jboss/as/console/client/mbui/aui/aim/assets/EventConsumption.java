@@ -1,8 +1,8 @@
 package org.jboss.as.console.client.mbui.aui.aim.assets;
 
-import org.jboss.as.console.client.mbui.aui.aim.Event;
-import org.jboss.as.console.client.mbui.aui.aim.EventConsumer;
-import org.jboss.as.console.client.mbui.aui.aim.EventType;
+import org.jboss.as.console.client.mbui.aui.aim.TriggerTarget;
+import org.jboss.as.console.client.mbui.aui.aim.Trigger;
+import org.jboss.as.console.client.mbui.aui.aim.TriggerType;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -11,22 +11,22 @@ import java.util.Set;
  * @author Heiko Braun
  * @date 10/31/12
  */
-public class EventConsumption implements EventConsumer {
+public class EventConsumption implements TriggerTarget {
 
-    private Set<Event<EventType>> consumedTypes;
+    private Set<Trigger<TriggerType>> consumedTypes;
 
     @Override
-    public Set<Event<EventType>> getTriggers() {
+    public Set<Trigger<TriggerType>> getInputs() {
         return consumedTypes;
     }
 
     @Override
-    public boolean isTriggeredBy(Event<EventType> event) {
+    public boolean isTriggeredBy(Trigger<TriggerType> event) {
         boolean match = false;
 
         if(consumedTypes!=null)
         {
-            for(Event<EventType> candidate : consumedTypes)
+            for(Trigger<TriggerType> candidate : consumedTypes)
             {
                 if(candidate.equals(event))
                 {
@@ -39,9 +39,9 @@ public class EventConsumption implements EventConsumer {
     }
 
     @Override
-    public void setTriggers(Event<EventType>... trigger) {
-        this.consumedTypes = new HashSet<Event<EventType>>();
-        for(Event<EventType> event : trigger)
+    public void setInputs(Trigger<TriggerType>... trigger) {
+        this.consumedTypes = new HashSet<Trigger<TriggerType>>();
+        for(Trigger<TriggerType> event : trigger)
             consumedTypes.add(event);
     }
 }

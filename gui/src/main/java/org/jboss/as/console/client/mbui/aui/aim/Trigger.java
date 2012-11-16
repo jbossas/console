@@ -4,12 +4,12 @@ package org.jboss.as.console.client.mbui.aui.aim;
  * @author Heiko Braun
  * @date 10/31/12
  */
-public class Event<T extends Enum<T>> {
+public class Trigger<T extends Enum<T>> {
 
     private QName id;
     private T type;
 
-    public Event(String namespace, String id, T type) {
+    public Trigger(String namespace, String id, T type) {
         this.id = new QName(namespace, id);
         this.type = type;
     }
@@ -30,9 +30,9 @@ public class Event<T extends Enum<T>> {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Event)) return false;
+        if (!(o instanceof Trigger)) return false;
 
-        Event event = (Event) o;
+        Trigger event = (Trigger) o;
 
         if (!id.equals(event.id)) return false;
         if (!type.equals(event.type)) return false;

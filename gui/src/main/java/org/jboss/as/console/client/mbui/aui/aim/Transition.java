@@ -8,27 +8,27 @@ import java.util.Set;
  * @author Heiko Braun
  * @date 10/31/12
  */
-public abstract class Transition implements EventProducer {
+public abstract class Transition implements TriggerSource {
 
     private String id;
 
     private EventProduction eventProduction =
-            new EventProduction(EventType.Transition);
+            new EventProduction(TriggerType.Transition);
 
     public abstract void perform();
 
     @Override
-    public boolean doesProduceEvents() {
-        return eventProduction.doesProduceEvents();
+    public boolean doesTrigger() {
+        return eventProduction.doesTrigger();
     }
 
     @Override
-    public void setProducedEvents(Event<EventType>... events) {
-        this.eventProduction.setProducedEvents(events);
+    public void setOutputs(Trigger<TriggerType>... events) {
+        this.eventProduction.setOutputs(events);
     }
 
-    public Set<Event<EventType>> getProducedEvents()
+    public Set<Trigger<TriggerType>> getOutputs()
     {
-        return eventProduction.getProducedEvents();
+        return eventProduction.getOutputs();
     }
 }

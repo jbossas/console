@@ -9,11 +9,11 @@ import java.util.Set;
  * @author Heiko Braun
  * @date 10/31/12
  */
-public class Behaviour implements EventConsumer {
+public class Behaviour implements TriggerTarget {
 
     private QName id;
     private Condition condition;
-    private Event trigger;
+    private Trigger trigger;
     private LinkedList<Transition> transitions = new LinkedList<Transition>();
 
     private static final Condition CONDITION_ALWAYS= new Condition() {
@@ -25,14 +25,14 @@ public class Behaviour implements EventConsumer {
 
     private EventConsumption eventConsumption = new EventConsumption();
 
-    public Behaviour(String namespace, String id, Event trigger) {
+    public Behaviour(String namespace, String id, Trigger trigger) {
         this.trigger = trigger;
         this.id = new QName(namespace, id);
         this.condition = CONDITION_ALWAYS;
-        this.eventConsumption.setTriggers(trigger);
+        this.eventConsumption.setInputs(trigger);
     }
 
-    public Behaviour(String namespace, String id, Event trigger, Condition condition) {
+    public Behaviour(String namespace, String id, Trigger trigger, Condition condition) {
         this(namespace, id, trigger);
         this.condition = condition;
     }
@@ -41,7 +41,7 @@ public class Behaviour implements EventConsumer {
         return id;
     }
 
-    public Event getTrigger() {
+    public Trigger getTrigger() {
         return trigger;
     }
 
@@ -63,17 +63,17 @@ public class Behaviour implements EventConsumer {
     }
 
     @Override
-    public Set<Event<EventType>> getTriggers() {
-        return eventConsumption.getTriggers();
+    public Set<Trigger<TriggerType>> getInputs() {
+        return eventConsumption.getInputs();
     }
 
     @Override
-    public void setTriggers(Event<EventType>... trigger) {
-        eventConsumption.setTriggers(trigger);
+    public void setInputs(Trigger<TriggerType>... trigger) {
+        eventConsumption.setInputs(trigger);
     }
 
     @Override
-    public boolean isTriggeredBy(Event<EventType> type) {
+    public boolean isTriggeredBy(Trigger<TriggerType> type) {
         return eventConsumption.isTriggeredBy(type);
     }
 }

@@ -28,9 +28,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static org.jboss.as.console.client.mbui.TestNamespace.NAMESPACE;
-import static org.jboss.as.console.client.mbui.aui.aim.EventType.*;
-import static org.jboss.as.console.client.mbui.aui.aim.EventType.System;
-import static org.jboss.as.console.client.mbui.aui.aim.EventType.Transition;
+import static org.jboss.as.console.client.mbui.aui.aim.TriggerType.*;
+import static org.jboss.as.console.client.mbui.aui.aim.TriggerType.System;
+import static org.jboss.as.console.client.mbui.aui.aim.TriggerType.Transition;
 import static org.jboss.as.console.client.mbui.aui.aim.TemporalOperator.Choice;
 import static org.jboss.as.console.client.mbui.aui.aim.TemporalOperator.OrderIndependance;
 import static org.jboss.as.console.client.mbui.aui.mapping.MappingType.RESOURCE;
@@ -55,27 +55,28 @@ public class InteractionUnitTest
     public void verifyBehaviourConstraints()
     {
 
-        Container container = new Container(NAMESPACE, "window", "Window", TemporalOperator.OrderIndependance);
-
         Input textInput = new Input(NAMESPACE, "firstName", "Firstname");
         Input submit = new Input(NAMESPACE, "submit", "Submit");
-
         Input close = new Input(NAMESPACE, "close", "Close Dialogue");
 
-        container.add(textInput);
-        container.add(submit);
-        container.add(close);
+        InteractionUnit container = new Builder()
+                .start(new Container(NAMESPACE, "window", "Window", TemporalOperator.OrderIndependance))
+                    .add(textInput)
+                    .add(submit)
+                    .add(close)
+                .end()
+                .build();
 
-        assertFalse("Should not produce events by default", submit.doesProduceEvents());
+        assertFalse("Should not produce events by default", submit.doesTrigger());
 
-        Event<EventType> submitEvent = new Event<EventType>(NAMESPACE, "submitName", Interaction);
-        submit.setProducedEvents(submitEvent);
+        Trigger<TriggerType> submitEvent = new Trigger<TriggerType>(NAMESPACE, "submitName", Interaction);
+        submit.setOutputs(submitEvent);
 
-        assertTrue("submit should produce events", submit.doesProduceEvents());
-
+        assertTrue("submit should produce events", submit.doesTrigger());
         assertFalse("submit should not consume interaction events",
-                container.isTriggeredBy(new Event<EventType>(NAMESPACE, "pressCancel", Interaction))
+                container.isTriggeredBy(new Trigger<TriggerType>(NAMESPACE, "pressCancel", Interaction))
         );
+
 
         Behaviour handleSubmit = new Behaviour(NAMESPACE, "handleSubmit", submitEvent);
         assertTrue("Behaviour should be triggered by submitEvent", handleSubmit.isTriggeredBy(submitEvent));
@@ -88,8 +89,8 @@ public class InteractionUnitTest
         verifyIntegrity(container, behaviours);
 
         // create a derivation that causes the integrity check to fail
-        Event<EventType> closeEvent = new Event<EventType>(NAMESPACE, "closeDialogue", Interaction);
-        close.setProducedEvents(closeEvent);
+        Trigger<TriggerType> closeEvent = new Trigger<TriggerType>(NAMESPACE, "closeDialogue", Interaction);
+        close.setOutputs(closeEvent);
 
         try {
             verifyIntegrity(container, behaviours);
@@ -98,17 +99,17 @@ public class InteractionUnitTest
         }
     }
 
-    private void verifyIntegrity(Container container, final Set<Behaviour> behaviours) {
+    private void verifyIntegrity(InteractionUnit container, final Set<Behaviour> behaviours) {
         container.accept(new InteractionUnitVisitor() {
             @Override
             public void startVisit(Container container) {
-                if(container.doesProduceEvents())
+                if(container.doesTrigger())
                     assertTrue("Behaviour not declared for " + container.getName(), isBehaviourDeclared(container));
             }
 
             @Override
             public void visit(InteractionUnit interactionUnit) {
-                if(interactionUnit.doesProduceEvents())
+                if(interactionUnit.doesTrigger())
                     assertTrue("Behaviour not declared for "+interactionUnit.getName(), isBehaviourDeclared(interactionUnit));
             }
 
@@ -123,8 +124,8 @@ public class InteractionUnitTest
 
                 for(Behaviour candidate : behaviours)
                 {
-                    Set<Event<EventType>> producedTypes = unit.getProducedEvents();
-                    for(Event<EventType> event : producedTypes)
+                    Set<Trigger<TriggerType>> producedTypes = unit.getOutputs();
+                    for(Trigger<TriggerType> event : producedTypes)
                     {
                         if(candidate.isTriggeredBy(event))
                         {
@@ -144,9 +145,9 @@ public class InteractionUnitTest
     @Test
     public void behaviourResolution()
     {
-        Event<EventType> submitEvent = new Event<EventType>(NAMESPACE, "submitName", Interaction);
-        Event<EventType> deviceRotation = new Event<EventType>(NAMESPACE, "deviceRotation", System);
-        Event<EventType> loadData = new Event<EventType>(NAMESPACE, "loadData", Transition);
+        Trigger<TriggerType> submitEvent = new Trigger<TriggerType>(NAMESPACE, "submitName", Interaction);
+        Trigger<TriggerType> deviceRotation = new Trigger<TriggerType>(NAMESPACE, "deviceRotation", System);
+        Trigger<TriggerType> loadData = new Trigger<TriggerType>(NAMESPACE, "loadData", Transition);
 
         Behaviour behaviour = new Behaviour(NAMESPACE, "onSubmitName", submitEvent);
 

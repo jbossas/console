@@ -33,7 +33,7 @@ import java.util.Set;
  * @author Harald Pehl
  * @date 10/24/2012
  */
-public abstract class InteractionUnit implements EventConsumer, EventProducer
+public abstract class InteractionUnit implements TriggerTarget, TriggerSource
 {
     private final QName id;
     private InteractionUnit parent;
@@ -64,7 +64,7 @@ public abstract class InteractionUnit implements EventConsumer, EventProducer
         this.name = name;
         this.mappings = new EnumMap<MappingType, Mapping>(MappingType.class);
         this.eventConsumption = new EventConsumption();
-        this.eventProduction = new EventProduction(EventType.Interaction);
+        this.eventProduction = new EventProduction(TriggerType.Interaction);
     }
 
     @Override
@@ -163,13 +163,13 @@ public abstract class InteractionUnit implements EventConsumer, EventProducer
     // ------------------------------------------------------ event handling
 
     @Override
-    public Set<Event<EventType>> getTriggers()
+    public Set<Trigger<TriggerType>> getInputs()
     {
-        return eventConsumption.getTriggers();
+        return eventConsumption.getInputs();
     }
 
     @Override
-    public boolean isTriggeredBy(Event<EventType> event)
+    public boolean isTriggeredBy(Trigger<TriggerType> event)
     {
         return eventConsumption.isTriggeredBy(event);
     }
@@ -215,24 +215,24 @@ public abstract class InteractionUnit implements EventConsumer, EventProducer
         this.name = name;
     }
 
-    public boolean doesProduceEvents()
+    public boolean doesTrigger()
     {
-        return eventProduction.doesProduceEvents();
+        return eventProduction.doesTrigger();
     }
 
     @Override
-    public void setProducedEvents(Event<EventType>... events)
+    public void setOutputs(Trigger<TriggerType>... events)
     {
-        eventProduction.setProducedEvents(events);
+        eventProduction.setOutputs(events);
     }
 
     @Override
-    public void setTriggers(Event<EventType>... trigger) {
-        for(Event<EventType> e : trigger)
-            eventConsumption.setTriggers(e);
+    public void setInputs(Trigger<TriggerType>... trigger) {
+        for(Trigger<TriggerType> e : trigger)
+            eventConsumption.setInputs(e);
     }
 
-    public Set<Event<EventType>> getProducedEvents() {
-        return eventProduction.getProducedEvents();
+    public Set<Trigger<TriggerType>> getOutputs() {
+        return eventProduction.getOutputs();
     }
 }
