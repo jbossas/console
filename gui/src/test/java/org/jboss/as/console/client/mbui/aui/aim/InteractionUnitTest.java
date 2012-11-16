@@ -68,9 +68,6 @@ public class InteractionUnitTest
 
         assertFalse("Should not produce events by default", submit.doesProduceEvents());
 
-        Event<EventType> closeEvent = new Event<EventType>(NAMESPACE, "closeDialogue", Interaction);
-        close.setProducedEvents(closeEvent);
-
         Event<EventType> submitEvent = new Event<EventType>(NAMESPACE, "submitName", Interaction);
         submit.setProducedEvents(submitEvent);
 
@@ -80,19 +77,33 @@ public class InteractionUnitTest
                 container.isTriggeredBy(new Event<EventType>(NAMESPACE, "pressCancel", Interaction))
         );
 
-        Behaviour handleSubmit = new Behaviour(NAMESPACE, "onSubmitName", submitEvent);
+        Behaviour handleSubmit = new Behaviour(NAMESPACE, "handleSubmit", submitEvent);
         assertTrue("Behaviour should be triggered by submitEvent", handleSubmit.isTriggeredBy(submitEvent));
 
-        // verify integrity
-        // integrity is given when any produced type is matched by a consumer
+        // integrity checks
         final Set<Behaviour> behaviours = new HashSet<Behaviour>();
         behaviours.add(handleSubmit);
 
+        // the integrity check will pass
+        verifyIntegrity(container, behaviours);
+
+        // create a derivation that causes the integrity check to fail
+        Event<EventType> closeEvent = new Event<EventType>(NAMESPACE, "closeDialogue", Interaction);
+        close.setProducedEvents(closeEvent);
+
+        try {
+            verifyIntegrity(container, behaviours);
+        } catch (AssertionError assertion) {
+            // all good, this is expected
+        }
+    }
+
+    private void verifyIntegrity(Container container, final Set<Behaviour> behaviours) {
         container.accept(new InteractionUnitVisitor() {
             @Override
             public void startVisit(Container container) {
                 if(container.doesProduceEvents())
-                    assertTrue("Behaviour not declared for "+container.getName(), isBehaviourDeclared(container));
+                    assertTrue("Behaviour not declared for " + container.getName(), isBehaviourDeclared(container));
             }
 
             @Override
@@ -176,15 +187,15 @@ public class InteractionUnitTest
     {
         Form basicAttributes = new Form(NAMESPACE, "basicAttributes", "Basic Attributes");
         InteractionUnit root = new Builder()
-            .start(new Container(NAMESPACE, "root", "Root", OrderIndependance))
-            .addMapping(new ResourceMapping(NAMESPACE).setAddress("root"))
+                .start(new Container(NAMESPACE, "root", "Root", OrderIndependance))
+                .addMapping(new ResourceMapping(NAMESPACE).setAddress("root"))
                 .add(new Select(NAMESPACE, "table", "Table"))
                 .start(new Container(NAMESPACE, "forms", "Forms", Choice))
-                    .add(basicAttributes)
-                    .addMapping(new ResourceMapping(NAMESPACE).setAddress("basicAttributes"))
-                    .add(new Form(NAMESPACE, "extendedAttributes", "Basic Attributes"))
+                .add(basicAttributes)
+                .addMapping(new ResourceMapping(NAMESPACE).setAddress("basicAttributes"))
+                .add(new Form(NAMESPACE, "extendedAttributes", "Basic Attributes"))
                 .end()
-            .end().build();
+                .end().build();
 
         ResourceMapping mapping = basicAttributes.findMapping(RESOURCE);
         assertNotNull(mapping);
