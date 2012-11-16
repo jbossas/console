@@ -18,12 +18,18 @@
  */
 package org.jboss.as.console.client.tools.mbui.workbench.repository;
 
+import org.jboss.as.console.client.mbui.aui.aim.Behaviour;
 import org.jboss.as.console.client.mbui.aui.aim.Container;
+import org.jboss.as.console.client.mbui.aui.aim.Event;
+import org.jboss.as.console.client.mbui.aui.aim.EventType;
 import org.jboss.as.console.client.mbui.aui.aim.InteractionUnit;
 import org.jboss.as.console.client.mbui.aui.aim.as7.Form;
 import org.jboss.as.console.client.mbui.aui.mapping.Mapping;
 import org.jboss.as.console.client.mbui.aui.mapping.as7.ResourceMapping;
 
+import static org.jboss.as.console.client.mbui.aui.aim.EventType.Interaction;
+import static org.jboss.as.console.client.mbui.aui.aim.EventType.System;
+import static org.jboss.as.console.client.mbui.aui.aim.EventType.Transition;
 import static org.jboss.as.console.client.mbui.aui.aim.TemporalOperator.Choice;
 import static org.jboss.as.console.client.mbui.aui.aim.TemporalOperator.OrderIndependance;
 
@@ -77,6 +83,18 @@ public class TransactionSample implements Sample
         recoveryAttributes.addMapping(recoveryMapping);
 
         overview.add(details);
+
+        // add behaviour hints
+        Event<EventType> resetEvent = new Event<EventType>(ns, "reset", System);
+        Event<EventType> updateEvent = new Event<EventType>(ns, "update", Transition);
+
+        basicAttributes.setProducedEvents(new Event<EventType>(ns, "save", Interaction));
+        basicAttributes.setTriggers(resetEvent, updateEvent);
+
+
+        // TODO: the actual behaviour wiring
+        Behaviour handleResets = new Behaviour(ns, "handleResets", resetEvent);
+        Behaviour handleUpdates = new Behaviour(ns, "handleUpdates", updateEvent);
 
         return overview;
     }

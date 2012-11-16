@@ -1,12 +1,16 @@
 package org.jboss.as.console.client.mbui.aui.aim;
 
+import java.util.Set;
+
 /**
  * @author Heiko Braun
  * @date 10/31/12
  */
 public interface EventConsumer {
 
-    EventType[] getConsumedTypes();
+    Set<Event<EventType>> getTriggers();
 
-    boolean consumes(Event event);
+    boolean isTriggeredBy(Event<EventType> event);
+
+    void setTriggers(Event<EventType>... trigger);
 }

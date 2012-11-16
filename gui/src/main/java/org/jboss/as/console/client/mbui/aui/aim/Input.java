@@ -18,19 +18,13 @@
  */
 package org.jboss.as.console.client.mbui.aui.aim;
 
-import org.jboss.as.console.client.mbui.aui.aim.assets.EventProduction;
-
 /**
  * @author Harald Pehl
  * @author Heiko Braun
  * @date 10/25/2012
  */
-public class Input extends InteractionUnit implements EventProducer<EventType>
+public class Input extends InteractionUnit
 {
-    private EventProduction<EventType> eventProduction =
-            new EventProduction<EventType>(EventType.Interaction);
-
-
     public Input(String ns, final String id, final String name)
     {
         super(ns, id, name);
@@ -42,14 +36,4 @@ public class Input extends InteractionUnit implements EventProducer<EventType>
         return "Input{" + getId() + '}';
     }
 
-    public boolean doesProduceEvents()
-    {
-        return eventProduction.doesProduceEvents();
-    }
-
-    @Override
-    public void setProducedEvents(Event<EventType>... events)
-    {
-        eventProduction.setProducedEvents(events);
-    }
 }

@@ -37,7 +37,12 @@ import org.jboss.as.console.client.mbui.cui.reification.pipeline.ReificationPipe
 import org.jboss.as.console.client.tools.mbui.workbench.ApplicationPresenter;
 import org.jboss.as.console.client.tools.mbui.workbench.ReifyEvent;
 import org.jboss.as.console.client.tools.mbui.workbench.ResetEvent;
+import org.jboss.as.console.client.tools.mbui.workbench.repository.DataSourceSample;
 import org.jboss.as.console.client.tools.mbui.workbench.repository.Sample;
+import org.jboss.as.console.client.tools.mbui.workbench.repository.TransactionSample;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.jboss.as.console.client.tools.mbui.workbench.NameTokens.preview;
 
@@ -49,6 +54,11 @@ import static org.jboss.as.console.client.tools.mbui.workbench.NameTokens.previe
 public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, PreviewPresenter.MyProxy>
         implements ReifyEvent.ReifyHandler, ResetEvent.Handler
 {
+
+    private Map<String, InteractionCoordinator> coordinators = new HashMap<String, InteractionCoordinator>();
+    private String selectedSample = null;
+    private final ReificationPipeline reificationPipeline;
+
     public interface MyView extends View
     {
         void show(ReificationWidget interactionUnit);
@@ -60,21 +70,29 @@ public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, Preview
     {
     }
 
-    private final ReificationPipeline reificationPipeline;
-    private InteractionCoordinator coordinator;
+
 
     @Inject
     public PreviewPresenter(final EventBus eventBus, final MyView view, final MyProxy proxy, final ReificationPipeline reificationPipeline)
     {
         super(eventBus, view, proxy);
         this.reificationPipeline = reificationPipeline;
-        this.coordinator = new InteractionCoordinator();
+
+        coordinators.put(new TransactionSample().getName(), new InteractionCoordinator());
+        coordinators.put(new DataSourceSample().getName(), new InteractionCoordinator());
     }
 
+    private InteractionCoordinator getActiveCoordinator()
+    {
+        if(null==selectedSample)
+            throw new RuntimeException("No sample selected (requires reification/onBind)");
+
+        return coordinators.get(selectedSample);
+    }
     // in a real this would be wired Presenter.onReset()
     @Override
     public void doReset() {
-        coordinator.onReset();
+        getActiveCoordinator().onReset();
     }
 
     @Override
@@ -95,12 +113,13 @@ public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, Preview
     public void onReify(final ReifyEvent event)
     {
         Sample sample = event.getSample();
-        InteractionUnit interactionUnit = sample.build();
+        selectedSample = sample.getName();
 
+        InteractionUnit interactionUnit = sample.build();
         final Context context = new Context();
 
         // make the coordinator bus available to the model components
-        context.set(ContextKey.COORDINATOR, coordinator.getLocalBus());
+        context.set(ContextKey.COORDINATOR, getActiveCoordinator().getLocalBus());
 
         reificationPipeline.execute(interactionUnit, context, new SimpleCallback<Boolean>()
         {

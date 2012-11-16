@@ -47,6 +47,7 @@ public class InteractionCoordinator implements FrameworkContract, TransitionEven
     public void onReset() {
         System.out.println("reset coordinator");
         bus.fireEvent(new SystemEvent(SystemEvent.Kind.RESET));
+
     }
 
     //  ----- Transitions ------

@@ -19,6 +19,7 @@
 package org.jboss.as.console.client.mbui.aui.aim;
 
 import org.jboss.as.console.client.mbui.aui.aim.assets.EventConsumption;
+import org.jboss.as.console.client.mbui.aui.aim.assets.EventProduction;
 import org.jboss.as.console.client.mbui.aui.mapping.Mapping;
 import org.jboss.as.console.client.mbui.aui.mapping.MappingType;
 import org.jboss.as.console.client.mbui.aui.mapping.Predicate;
@@ -26,20 +27,22 @@ import org.jboss.as.console.client.mbui.aui.mapping.Predicate;
 import java.util.Collection;
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Harald Pehl
  * @date 10/24/2012
  */
-public abstract class InteractionUnit implements EventConsumer
+public abstract class InteractionUnit implements EventConsumer, EventProducer
 {
-    public final static String ENTITY_CONTEXT_SUFFIX = "_entityContext";
     private final QName id;
-    private final Map<MappingType, Mapping> mappings;
-    private String name;
-    private EventConsumption eventConsumption;
     private InteractionUnit parent;
+    private String name;
 
+    private final Map<MappingType, Mapping> mappings;
+
+    private EventConsumption eventConsumption;
+    private EventProduction eventProduction;
 
     protected InteractionUnit(String namespace, final String id)
     {
@@ -60,7 +63,8 @@ public abstract class InteractionUnit implements EventConsumer
         this.id = id;
         this.name = name;
         this.mappings = new EnumMap<MappingType, Mapping>(MappingType.class);
-        this.eventConsumption = new EventConsumption(EventType.System);
+        this.eventConsumption = new EventConsumption();
+        this.eventProduction = new EventProduction(EventType.Interaction);
     }
 
     @Override
@@ -159,15 +163,15 @@ public abstract class InteractionUnit implements EventConsumer
     // ------------------------------------------------------ event handling
 
     @Override
-    public EventType[] getConsumedTypes()
+    public Set<Event<EventType>> getTriggers()
     {
-        return eventConsumption.getConsumedTypes();
+        return eventConsumption.getTriggers();
     }
 
     @Override
-    public boolean consumes(Event event)
+    public boolean isTriggeredBy(Event<EventType> event)
     {
-        return eventConsumption.consumes(event);
+        return eventConsumption.isTriggeredBy(event);
     }
 
 
@@ -209,5 +213,26 @@ public abstract class InteractionUnit implements EventConsumer
     public void setName(final String name)
     {
         this.name = name;
+    }
+
+    public boolean doesProduceEvents()
+    {
+        return eventProduction.doesProduceEvents();
+    }
+
+    @Override
+    public void setProducedEvents(Event<EventType>... events)
+    {
+        eventProduction.setProducedEvents(events);
+    }
+
+    @Override
+    public void setTriggers(Event<EventType>... trigger) {
+        for(Event<EventType> e : trigger)
+            eventConsumption.setTriggers(e);
+    }
+
+    public Set<Event<EventType>> getProducedEvents() {
+        return eventProduction.getProducedEvents();
     }
 }

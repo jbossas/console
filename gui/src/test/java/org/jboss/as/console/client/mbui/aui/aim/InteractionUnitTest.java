@@ -24,6 +24,9 @@ import org.jboss.as.console.client.mbui.aui.mapping.as7.ResourceMapping;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import static org.jboss.as.console.client.mbui.TestNamespace.NAMESPACE;
 import static org.jboss.as.console.client.mbui.aui.aim.EventType.*;
 import static org.jboss.as.console.client.mbui.aui.aim.EventType.System;
@@ -49,8 +52,9 @@ public class InteractionUnitTest
     }
 
     @Test
-    public void verifyEventTypeConstraints()
+    public void verifyBehaviourConstraints()
     {
+
         Container container = new Container(NAMESPACE, "parent", "Parent", TemporalOperator.OrderIndependance);
 
         Input textInput = new Input(NAMESPACE, "firstName", "Firstname");
@@ -61,29 +65,78 @@ public class InteractionUnitTest
 
         assertFalse("Should not produce events by default", submit.doesProduceEvents());
 
-        Event<EventType> submitEvent = new Event<EventType>("submitName", Interaction);
+        Event<EventType> submitEvent = new Event<EventType>(NAMESPACE, "submitName", Interaction);
         submit.setProducedEvents(submitEvent);
 
         assertTrue("submit should produce events", submit.doesProduceEvents());
 
         assertFalse("submit should not consume interaction events",
-                container.consumes(new Event<EventType>("pressCancel", Interaction))
+                container.isTriggeredBy(new Event<EventType>(NAMESPACE, "pressCancel", Interaction))
         );
 
+        Behaviour handleSubmit = new Behaviour(NAMESPACE, "onSubmitName", submitEvent);
+        assertTrue("Behaviour should be triggered by submitEvent", handleSubmit.isTriggeredBy(submitEvent));
+
+        // verify integrity
+        // integrity is given when any produced type is matched by a consumer
+        final Set<Behaviour> behaviours = new HashSet<Behaviour>();
+        behaviours.add(handleSubmit);
+
+        container.accept(new InteractionUnitVisitor() {
+            @Override
+            public void startVisit(Container container) {
+                if(container.doesProduceEvents())
+                    assertTrue(isBehaviourDeclared(container));
+            }
+
+            @Override
+            public void visit(InteractionUnit interactionUnit) {
+                if(interactionUnit.doesProduceEvents())
+                    assertTrue(isBehaviourDeclared(interactionUnit));
+            }
+
+            @Override
+            public void endVisit(Container container) {
+
+            }
+
+            boolean isBehaviourDeclared(InteractionUnit unit)
+            {
+                boolean isDeclared = false;
+
+                for(Behaviour candidate : behaviours)
+                {
+                    Set<Event<EventType>> producedTypes = unit.getProducedEvents();
+                    for(Event<EventType> event : producedTypes)
+                    {
+                        if(candidate.isTriggeredBy(event))
+                        {
+                            isDeclared = true;
+                            break;
+                        }
+                    }
+
+                    if(isDeclared) break;
+                }
+
+                return isDeclared;
+            }
+        });
     }
 
     @Test
     public void behaviourResolution()
     {
-        Event<EventType> submitEvent = new Event<EventType>("submitName", Interaction);
-        Event<EventType> deviceRotation = new Event<EventType>("deviceRotation", System);
-        Event<EventType> loadData = new Event<EventType>("loadData", Transition);
+        Event<EventType> submitEvent = new Event<EventType>(NAMESPACE, "submitName", Interaction);
+        Event<EventType> deviceRotation = new Event<EventType>(NAMESPACE, "deviceRotation", System);
+        Event<EventType> loadData = new Event<EventType>(NAMESPACE, "loadData", Transition);
 
-        Behaviour behaviour = new Behaviour("onSubmitName", submitEvent);
+        Behaviour behaviour = new Behaviour(NAMESPACE, "onSubmitName", submitEvent);
 
-        assertTrue("Behaviour can be triggered by deviceRotation", behaviour.consumes(deviceRotation));
-        assertTrue("Behaviour can be triggered by submitEvent", behaviour.consumes(deviceRotation));
-        assertTrue("Behaviour can be triggered by loadData", behaviour.consumes(loadData));
+        assertTrue("Behaviour can be triggered by submitEvent", behaviour.isTriggeredBy(submitEvent));
+
+        assertFalse("Behaviour should not be triggered by deviceRotation", behaviour.isTriggeredBy(deviceRotation));
+        assertFalse("Behaviour should not be triggered by loadData", behaviour.isTriggeredBy(loadData));
 
         final StringBuffer sharedState = new StringBuffer("");
 
@@ -105,7 +158,7 @@ public class InteractionUnitTest
             }
         });
 
-        if (behaviour.consumes(loadData))
+        if (behaviour.isTriggeredBy(loadData))
         {
             behaviour.execute();
             assertTrue("sharedState should be updated", sharedState.toString().equals("updated"));

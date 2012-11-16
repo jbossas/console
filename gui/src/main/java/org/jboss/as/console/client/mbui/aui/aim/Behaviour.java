@@ -3,6 +3,7 @@ package org.jboss.as.console.client.mbui.aui.aim;
 import org.jboss.as.console.client.mbui.aui.aim.assets.EventConsumption;
 
 import java.util.LinkedList;
+import java.util.Set;
 
 /**
  * @author Heiko Braun
@@ -10,33 +11,38 @@ import java.util.LinkedList;
  */
 public class Behaviour implements EventConsumer {
 
-    private String id;
-
-    private Event triggeredBy;
+    private QName id;
     private Condition condition;
+    private Event trigger;
     private LinkedList<Transition> transitions = new LinkedList<Transition>();
 
-    private static final Condition CONDITION_NONE = new Condition() {
+    private static final Condition CONDITION_ALWAYS= new Condition() {
         @Override
         public boolean isMet() {
-            return false;
+            return true;
         }
     };
 
-    private EventConsumption eventConsumption = new EventConsumption(
-            EventType.System, EventType.Interaction, EventType.Transition
-    );
+    private EventConsumption eventConsumption = new EventConsumption();
 
-    public Behaviour(String id, Event trigger) {
-        this.triggeredBy = trigger;
-        this.id = id;
-        this.condition = CONDITION_NONE;
+    public Behaviour(String namespace, String id, Event trigger) {
+        this.trigger = trigger;
+        this.id = new QName(namespace, id);
+        this.condition = CONDITION_ALWAYS;
+        this.eventConsumption.setTriggers(trigger);
     }
 
-    public Behaviour(String id, Event trigger, Condition condition) {
-        this.id = id;
-        this.triggeredBy = trigger;
+    public Behaviour(String namespace, String id, Event trigger, Condition condition) {
+        this(namespace, id, trigger);
         this.condition = condition;
+    }
+
+    public QName getId() {
+        return id;
+    }
+
+    public Event getTrigger() {
+        return trigger;
     }
 
     public void setCondition(Condition condition) {
@@ -57,12 +63,17 @@ public class Behaviour implements EventConsumer {
     }
 
     @Override
-    public EventType[] getConsumedTypes() {
-        return eventConsumption.getConsumedTypes();
+    public Set<Event<EventType>> getTriggers() {
+        return eventConsumption.getTriggers();
     }
 
     @Override
-    public boolean consumes(Event event) {
-        return eventConsumption.consumes(event);
+    public void setTriggers(Event<EventType>... trigger) {
+        eventConsumption.setTriggers(trigger);
+    }
+
+    @Override
+    public boolean isTriggeredBy(Event<EventType> type) {
+        return eventConsumption.isTriggeredBy(type);
     }
 }
