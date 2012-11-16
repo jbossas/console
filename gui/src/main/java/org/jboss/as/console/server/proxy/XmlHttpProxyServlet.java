@@ -514,7 +514,7 @@ public class XmlHttpProxyServlet extends HttpServlet
             } */
             else
             {
-                iox.printStackTrace();
+                //iox.printStackTrace();
                 getLogger().severe("XmlHttpProxyServlet: caught " + iox);
 
                 res.setStatus(500);
