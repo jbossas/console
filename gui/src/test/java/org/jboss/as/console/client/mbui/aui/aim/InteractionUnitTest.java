@@ -55,15 +55,21 @@ public class InteractionUnitTest
     public void verifyBehaviourConstraints()
     {
 
-        Container container = new Container(NAMESPACE, "parent", "Parent", TemporalOperator.OrderIndependance);
+        Container container = new Container(NAMESPACE, "window", "Window", TemporalOperator.OrderIndependance);
 
         Input textInput = new Input(NAMESPACE, "firstName", "Firstname");
         Input submit = new Input(NAMESPACE, "submit", "Submit");
 
+        Input close = new Input(NAMESPACE, "close", "Close Dialogue");
+
         container.add(textInput);
         container.add(submit);
+        container.add(close);
 
         assertFalse("Should not produce events by default", submit.doesProduceEvents());
+
+        Event<EventType> closeEvent = new Event<EventType>(NAMESPACE, "closeDialogue", Interaction);
+        close.setProducedEvents(closeEvent);
 
         Event<EventType> submitEvent = new Event<EventType>(NAMESPACE, "submitName", Interaction);
         submit.setProducedEvents(submitEvent);
@@ -86,13 +92,13 @@ public class InteractionUnitTest
             @Override
             public void startVisit(Container container) {
                 if(container.doesProduceEvents())
-                    assertTrue(isBehaviourDeclared(container));
+                    assertTrue("Behaviour not declared for "+container.getName(), isBehaviourDeclared(container));
             }
 
             @Override
             public void visit(InteractionUnit interactionUnit) {
                 if(interactionUnit.doesProduceEvents())
-                    assertTrue(isBehaviourDeclared(interactionUnit));
+                    assertTrue("Behaviour not declared for "+interactionUnit.getName(), isBehaviourDeclared(interactionUnit));
             }
 
             @Override
