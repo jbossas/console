@@ -23,8 +23,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.web.bindery.event.shared.EventBus;
 import org.jboss.as.console.client.mbui.aui.aim.InteractionUnit;
-import org.jboss.as.console.client.mbui.aui.aim.Trigger;
-import org.jboss.as.console.client.mbui.aui.aim.TriggerType;
+import org.jboss.as.console.client.mbui.aui.aim.QName;
 import org.jboss.as.console.client.mbui.aui.mapping.MappingType;
 import org.jboss.as.console.client.mbui.aui.mapping.as7.ResourceAttribute;
 import org.jboss.as.console.client.mbui.aui.mapping.as7.ResourceMapping;
@@ -46,7 +45,6 @@ import org.jboss.dmr.client.Property;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * @author Harald Pehl
@@ -193,7 +191,9 @@ public class FormStrategy implements ReificationStrategy<ReificationWidget>
                         @Override
                         public void onSave(Map<String, Object> changeset) {
                             coordinator.fireEventFromSource(
-                                    new TransitionEvent(TransitionEvent.Kind.FUNCTION_CALL),
+                                    new TransitionEvent(
+                                            QName.valueOf("org.jboss.as:save"),
+                                            TransitionEvent.Kind.FUNCTION_CALL),
                                     interactionUnit.getId()
                             );
                         }
@@ -223,7 +223,9 @@ public class FormStrategy implements ReificationStrategy<ReificationWidget>
                     form.clearValues();
 
                     // request loading of data
-                    TransitionEvent transitionEvent = new TransitionEvent(TransitionEvent.Kind.FUNCTION_CALL);
+                    TransitionEvent transitionEvent = new TransitionEvent(
+                            QName.valueOf("org.jboss.as:load"),
+                            TransitionEvent.Kind.FUNCTION_CALL);
                     coordinator.fireEventFromSource(
                             transitionEvent,
                             interactionUnit.getId()

@@ -7,11 +7,25 @@ package org.jboss.as.console.client.mbui.aui.aim;
 public class Trigger<T extends Enum<T>> {
 
     private QName id;
+    private QName source;
     private T type;
 
     public Trigger(String namespace, String id, T type) {
         this.id = new QName(namespace, id);
         this.type = type;
+    }
+
+    public Trigger(QName id, T type) {
+        this.id = id;
+        this.type = type;
+    }
+
+    public QName getSource() {
+        return source;
+    }
+
+    public void setSource(QName source) {
+        this.source = source;
     }
 
     public T getType()

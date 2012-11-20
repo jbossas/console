@@ -8,6 +8,7 @@ package org.jboss.as.console.client.mbui.cui.behaviour;
 import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HasHandlers;
+import org.jboss.as.console.client.mbui.aui.aim.QName;
 
 /**
  * @author Heiko Braun
@@ -22,9 +23,16 @@ public class TransitionEvent extends GwtEvent<TransitionEvent.Handler> {
 
     public Object payload;
 
-    public TransitionEvent(Kind kind) {
+    private QName id;
+
+    public TransitionEvent(QName id, Kind kind) {
         super();
         this.kind = kind;
+        this.id = id;
+    }
+
+    public QName getId() {
+        return id;
     }
 
     public Object getPayload() {
@@ -46,7 +54,8 @@ public class TransitionEvent extends GwtEvent<TransitionEvent.Handler> {
 
     @Override
     protected void dispatch(Handler listener) {
-        listener.onTransitionEvent(this);
+        if(listener.accepts(this.kind))
+            listener.onTransitionEvent(this);
     }
 
     public interface Handler extends EventHandler {
@@ -56,6 +65,14 @@ public class TransitionEvent extends GwtEvent<TransitionEvent.Handler> {
 
     public static void fire(HasHandlers source, TransitionEvent eventInstance) {
         source.fireEvent(eventInstance);
+    }
+
+    @Override
+    public String toString() {
+        return "TransitionEvent{" +
+                "kind=" + kind + " => "+getId()+
+                ", source=" + getSource() +
+                '}';
     }
 }
 

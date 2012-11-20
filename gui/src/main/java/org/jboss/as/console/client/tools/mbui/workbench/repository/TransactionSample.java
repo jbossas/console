@@ -25,6 +25,7 @@ import org.jboss.as.console.client.mbui.aui.aim.InteractionUnit;
 import org.jboss.as.console.client.mbui.aui.aim.Trigger;
 import org.jboss.as.console.client.mbui.aui.aim.TriggerType;
 import org.jboss.as.console.client.mbui.aui.aim.as7.Form;
+import org.jboss.as.console.client.mbui.aui.aim.as7.ImplicitBehaviour;
 import org.jboss.as.console.client.mbui.aui.mapping.Mapping;
 import org.jboss.as.console.client.mbui.aui.mapping.as7.ResourceMapping;
 
@@ -83,16 +84,8 @@ public class TransactionSample implements Sample
                 .end()
                 .build();
 
-        // behaviour
-        Trigger<TriggerType> resetEvent = new Trigger<TriggerType>(ns, "reset", System);
-        Trigger<TriggerType> updateEvent = new Trigger<TriggerType>(ns, "update", Transition);
-
-        basicAttributes.setOutputs(new Trigger<TriggerType>(ns, "save", Interaction));
-        basicAttributes.setInputs(resetEvent, updateEvent);
-
-        // TODO: the actual behaviour wiring
-        Behaviour handleResets = new Behaviour(ns, "handleResets", resetEvent);
-        Behaviour handleUpdates = new Behaviour(ns, "handleUpdates", updateEvent);
+        // attach the implicit behaviour
+        ImplicitBehaviour.attach(basicAttributes);
 
         return root;
     }

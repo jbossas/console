@@ -221,15 +221,23 @@ public abstract class InteractionUnit implements TriggerTarget, TriggerSource
     }
 
     @Override
-    public void setOutputs(Trigger<TriggerType>... events)
+    public void setOutputs(Trigger<TriggerType>... trigger)
     {
-        eventProduction.setOutputs(events);
+        for(Trigger<TriggerType> event : trigger)
+            event.setSource(getId());
+
+        eventProduction.setOutputs(trigger);
     }
 
     @Override
     public void setInputs(Trigger<TriggerType>... trigger) {
+
+        for(Trigger<TriggerType> event : trigger)
+            event.setSource(getId());
+
         for(Trigger<TriggerType> e : trigger)
             eventConsumption.setInputs(e);
+
     }
 
     public Set<Trigger<TriggerType>> getOutputs() {

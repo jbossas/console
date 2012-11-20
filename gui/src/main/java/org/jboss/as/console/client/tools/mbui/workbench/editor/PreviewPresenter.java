@@ -32,7 +32,7 @@ import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.mbui.aui.aim.InteractionUnit;
 import org.jboss.as.console.client.mbui.aui.aim.QName;
 import org.jboss.as.console.client.mbui.cui.Context;
-import org.jboss.as.console.client.mbui.cui.behaviour.Integrity;
+import org.jboss.as.console.client.mbui.cui.behaviour.BehaviourExecution;
 import org.jboss.as.console.client.mbui.cui.behaviour.InteractionCoordinator;
 import org.jboss.as.console.client.mbui.cui.reification.ContextKey;
 import org.jboss.as.console.client.mbui.cui.reification.ReificationWidget;
@@ -93,13 +93,33 @@ public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, Preview
 
         // setup behaviour hooks
 
-        txCoordinator.executeOn(new QName("org.jboss.transactions", "basicAttributes"), new Command() {
-            @Override
-            public void execute() {
-                // load tx resource
-                System.out.println("load tx resource");
-            }
-        });
+        BehaviourExecution saveBasicAttributes = new BehaviourExecution(
+                new QName("org.jboss.as", "save"),
+                new QName("org.jboss.transactions", "basicAttributes"),
+                new Command() {
+                    @Override
+                    public void execute() {
+                        // load tx resource
+                        System.out.println("save basic attributes");
+                    }
+                }
+        );
+
+        BehaviourExecution loadBasicAttributes = new BehaviourExecution(
+                new QName("org.jboss.as", "load"),
+                new QName("org.jboss.transactions", "basicAttributes"),
+                new Command() {
+                    @Override
+                    public void execute() {
+                        // load tx resource
+                        System.out.println("load basic attributes");
+                    }
+                }
+        );
+
+
+        txCoordinator.perform(saveBasicAttributes);
+        txCoordinator.perform(loadBasicAttributes);
     }
 
     private InteractionCoordinator getActiveCoordinator()
