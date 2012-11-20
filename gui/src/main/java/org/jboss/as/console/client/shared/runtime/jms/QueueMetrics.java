@@ -27,6 +27,7 @@ import org.jboss.ballroom.client.widgets.tools.ToolStrip;
 import org.jboss.dmr.client.ModelDescriptionConstants;
 import org.jboss.dmr.client.ModelNode;
 
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -75,7 +76,19 @@ public class QueueMetrics {
         com.google.gwt.user.cellview.client.Column<Queue, String> protocolColumn = new com.google.gwt.user.cellview.client.Column<Queue, String>(new TextCell()) {
             @Override
             public String getValue(Queue object) {
-                return object.getJndiName();
+                List<String> names = object.getEntries();
+                StringBuilder builder = new StringBuilder();
+                if (!names.isEmpty())
+                {
+                    Iterator<String> iterator = names.iterator();
+                    builder.append("[").append(iterator.next());
+                    if (iterator.hasNext())
+                    {
+                        builder.append(", ...");
+                    }
+                    builder.append("]");
+                }
+                return builder.toString();
             }
         };
 

@@ -21,11 +21,11 @@ package org.jboss.as.console.client.shared.subsys.messaging;
 
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
-import com.google.web.bindery.event.shared.EventBus;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.inject.Inject;
+import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.View;
 import com.gwtplatform.mvp.client.annotations.NameToken;
@@ -45,7 +45,6 @@ import org.jboss.as.console.client.shared.model.ModelAdapter;
 import org.jboss.as.console.client.shared.model.ResponseWrapper;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
-import org.jboss.as.console.client.shared.subsys.messaging.connections.MsgConnectionsPresenter;
 import org.jboss.as.console.client.shared.subsys.messaging.model.AddressingPattern;
 import org.jboss.as.console.client.shared.subsys.messaging.model.ConnectionFactory;
 import org.jboss.as.console.client.shared.subsys.messaging.model.Divert;
@@ -92,6 +91,8 @@ public class MsgDestinationsPresenter extends Presenter<MsgDestinationsPresenter
     private LoadJMSCmd loadJMSCmd;
     private EntityAdapter<ConnectionFactory> factoryAdapter;
     private EntityAdapter<Divert> divertAdapter;
+    private EntityAdapter<Queue> queueAdapter;
+    private EntityAdapter<Topic> topicAdapter;
 
 
     @ProxyCodeSplit
@@ -160,9 +161,10 @@ public class MsgDestinationsPresenter extends Presenter<MsgDestinationsPresenter
                 propertyMetaData
         );
 
-
         factoryAdapter = new EntityAdapter<ConnectionFactory>(ConnectionFactory.class, metaData);
         divertAdapter = new EntityAdapter<Divert>(Divert.class, metaData);
+        queueAdapter = new EntityAdapter<Queue>(Queue.class, metaData);
+        topicAdapter = new EntityAdapter<Topic>(Topic.class, metaData);
 
         this.loadJMSCmd = new LoadJMSCmd(dispatcher, factory, metaData);
     }
@@ -662,7 +664,6 @@ public class MsgDestinationsPresenter extends Presenter<MsgDestinationsPresenter
         if(changedValues.isEmpty()) return;
 
         ModelNode proto = new ModelNode();
-        proto.get(OP).set(WRITE_ATTRIBUTE_OPERATION);
         proto.get(ADDRESS).set(Baseadress.get());
         proto.get(ADDRESS).add("subsystem", "messaging");
         proto.get(ADDRESS).add("hornetq-server", getCurrentServer());
@@ -672,10 +673,14 @@ public class MsgDestinationsPresenter extends Presenter<MsgDestinationsPresenter
         //if(changedValues.containsKey("selector") && changedValues.get("selector").equals(""))
         //    changedValues.put("selector", "undefined");
 
-        List<PropertyBinding> bindings = metaData.getBindingsForType(Queue.class);
-        ModelNode operation  = ModelAdapter.detypedFromChangeset(proto, changedValues, bindings);
-
+        ModelNode operation = queueAdapter.fromChangeset(changedValues, proto);
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+
+            @Override
+            public void onFailure(final Throwable caught)
+            {
+                caught.printStackTrace();
+            }
 
             @Override
             public void onSuccess(DMRResponse result) {
@@ -703,9 +708,14 @@ public class MsgDestinationsPresenter extends Presenter<MsgDestinationsPresenter
         queue.get(ADDRESS).add("hornetq-server", getCurrentServer());
         queue.get(ADDRESS).add("jms-queue", entity.getName());
 
-        queue.get("entries").setEmptyList();
-        queue.get("entries").add(entity.getJndiName());
-
+        List<String> jndiNames = entity.getEntries();
+        if (jndiNames != null)
+        {
+            for (String jndiName : jndiNames)
+            {
+                queue.get("entries").add(jndiName);
+            }
+        }
         queue.get("durable").set(entity.isDurable());
 
         if(entity.getSelector()!=null && !entity.getSelector().equals(""))
@@ -812,15 +822,12 @@ public class MsgDestinationsPresenter extends Presenter<MsgDestinationsPresenter
         if(changedValues.isEmpty()) return;
 
         ModelNode proto = new ModelNode();
-        proto.get(OP).set(WRITE_ATTRIBUTE_OPERATION);
         proto.get(ADDRESS).set(Baseadress.get());
         proto.get(ADDRESS).add("subsystem", "messaging");
         proto.get(ADDRESS).add("hornetq-server", getCurrentServer());
         proto.get(ADDRESS).add("jms-topic", name);
 
-        List<PropertyBinding> bindings = metaData.getBindingsForType(Topic.class);
-        ModelNode operation  = ModelAdapter.detypedFromChangeset(proto, changedValues, bindings);
-
+        ModelNode operation = topicAdapter.fromChangeset(changedValues, proto);
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
 
             @Override
@@ -870,8 +877,14 @@ public class MsgDestinationsPresenter extends Presenter<MsgDestinationsPresenter
         topic.get(ADDRESS).add("hornetq-server", getCurrentServer());
         topic.get(ADDRESS).add("jms-topic", entity.getName());
 
-        topic.get("entries").setEmptyList();
-        topic.get("entries").add(entity.getJndiName());
+        List<String> jndiNames = entity.getEntries();
+        if (jndiNames != null)
+        {
+            for (String jndiName : jndiNames)
+            {
+                topic.get("entries").add(jndiName);
+            }
+        }
 
         dispatcher.execute(new DMRAction(topic), new SimpleCallback<DMRResponse>() {
 

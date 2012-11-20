@@ -31,8 +31,10 @@ import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.messaging.model.Queue;
 import org.jboss.as.console.client.widgets.forms.FormToolStrip;
+import org.jboss.as.console.client.widgets.forms.items.JndiNamesItem;
 import org.jboss.ballroom.client.widgets.forms.CheckBoxItem;
 import org.jboss.ballroom.client.widgets.forms.Form;
+import org.jboss.ballroom.client.widgets.forms.ListItem;
 import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
 import org.jboss.ballroom.client.widgets.forms.TextItem;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
@@ -41,6 +43,7 @@ import org.jboss.ballroom.client.widgets.tools.ToolStrip;
 import org.jboss.ballroom.client.widgets.window.Feedback;
 import org.jboss.dmr.client.ModelNode;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -117,7 +120,7 @@ public class QueueList {
         queueTable = new DefaultCellTable<Queue>(8, new ProvidesKey<Queue>() {
             @Override
             public Object getKey(Queue item) {
-                return item.getJndiName();
+                return item.getEntries();
             }
         });
         queueProvider = new ListDataProvider<Queue>();
@@ -133,7 +136,19 @@ public class QueueList {
         TextColumn<Queue> jndiNameColumn = new TextColumn<Queue>() {
             @Override
             public String getValue(Queue record) {
-                return record.getJndiName();
+                List<String> names = record.getEntries();
+                StringBuilder builder = new StringBuilder();
+                if (!names.isEmpty())
+                {
+                    Iterator<String> iterator = names.iterator();
+                    builder.append("[").append(iterator.next());
+                    if (iterator.hasNext())
+                    {
+                        builder.append(", ...");
+                    }
+                    builder.append("]");
+                }
+                return builder.toString();
             }
         };
 
@@ -146,7 +161,7 @@ public class QueueList {
         // ----
 
         TextItem name = new TextItem("name", "Name");
-        TextItem jndi = new TextItem("jndiName", "JNDI");
+        ListItem jndi = new JndiNamesItem("entries", "JNDI Names");
 
         CheckBoxItem durable = new CheckBoxItem("durable", "Durable?");
         TextBoxItem selector = new TextBoxItem("selector", "Selector") {
