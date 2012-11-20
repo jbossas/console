@@ -9,27 +9,27 @@ import org.jboss.as.console.client.mbui.aui.aim.QName;
  */
 public class BehaviourExecution {
 
-    private Command command;
+    private DataDrivenCommand command;
     private QName requiredSource;
     private QName triggerId;
 
 
-    public BehaviourExecution( QName triggerId, Command command) {
+    public BehaviourExecution( QName triggerId, DataDrivenCommand command) {
         this.command = command;
         this.triggerId = triggerId;
     }
 
-    public BehaviourExecution( QName triggerId, QName requiredSource, Command command) {
+    public BehaviourExecution( QName triggerId, QName requiredSource, DataDrivenCommand command) {
         this.command = command;
         this.requiredSource = requiredSource;
         this.triggerId = triggerId;
     }
 
-    public Command getCommand() {
+    public DataDrivenCommand getCommand() {
         return command;
     }
 
-    public void setCommand(Command command) {
+    public void setCommand(DataDrivenCommand command) {
         this.command = command;
     }
 

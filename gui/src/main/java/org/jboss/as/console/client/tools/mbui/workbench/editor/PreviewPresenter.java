@@ -19,7 +19,6 @@
 package org.jboss.as.console.client.tools.mbui.workbench.editor;
 
 import com.allen_sauer.gwt.log.client.Log;
-import com.google.gwt.user.client.Command;
 import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.Presenter;
@@ -33,6 +32,7 @@ import org.jboss.as.console.client.mbui.aui.aim.InteractionUnit;
 import org.jboss.as.console.client.mbui.aui.aim.QName;
 import org.jboss.as.console.client.mbui.cui.Context;
 import org.jboss.as.console.client.mbui.cui.behaviour.BehaviourExecution;
+import org.jboss.as.console.client.mbui.cui.behaviour.DataDrivenCommand;
 import org.jboss.as.console.client.mbui.cui.behaviour.InteractionCoordinator;
 import org.jboss.as.console.client.mbui.cui.behaviour.StatementEvent;
 import org.jboss.as.console.client.mbui.cui.reification.ContextKey;
@@ -41,8 +41,6 @@ import org.jboss.as.console.client.mbui.cui.reification.pipeline.ReificationPipe
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
-import org.jboss.as.console.client.shared.subsys.Baseadress;
-import org.jboss.as.console.client.shared.subsys.tx.model.TransactionManager;
 import org.jboss.as.console.client.tools.mbui.workbench.ApplicationPresenter;
 import org.jboss.as.console.client.tools.mbui.workbench.ReifyEvent;
 import org.jboss.as.console.client.tools.mbui.workbench.ResetEvent;
@@ -104,11 +102,12 @@ public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, Preview
         BehaviourExecution saveBasicAttributes = new BehaviourExecution(
                 new QName("org.jboss.as", "save"),
                 basicAttributes,
-                new Command() {
+                new DataDrivenCommand<HashMap>() {
                     @Override
-                    public void execute() {
+                    public void execute(HashMap payload) {
                         // load tx resource
                         System.out.println("save basic attributes");
+                        System.out.println(payload);
                     }
                 }
         );
@@ -116,9 +115,9 @@ public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, Preview
         BehaviourExecution loadBasicAttributes = new BehaviourExecution(
                 new QName("org.jboss.as", "load"),
                 basicAttributes,
-                new Command() {
+                new DataDrivenCommand() {
                     @Override
-                    public void execute() {
+                    public void execute(Object payload) {
                         // load tx resource
                         System.out.println("load basic attributes");
 

@@ -87,16 +87,26 @@ public class InteractionCoordinator implements FrameworkContract, TransitionEven
     }
 
     @Override
-    public void onTransitionEvent(TransitionEvent event) {
+    public void onTransitionEvent(final TransitionEvent event) {
         QName trigger = event.getId();
         Object source = event.getSource();
 
-        BehaviourExecution execution = behaviours.get(trigger);
+        final BehaviourExecution execution = behaviours.get(trigger);
 
         if(execution!=null && execution.doesMatch(trigger, source))
-            execution.getCommand().execute();
+        {
+
+            Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+                @Override
+                public void execute() {
+                    execution.getCommand().execute(event.getPayload());
+                }
+            });
+        }
         else
+        {
             System.out.println("No behaviour for " +event);
+        }
 
     }
 

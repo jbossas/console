@@ -218,19 +218,19 @@ public class ModelNodeForm extends AbstractForm<ModelNode> {
                         Class baseType = obj.getClass();
 
                         if (baseType == String.class) {
-                            node.add((String)obj);
+                            node.set((String)obj);
                         } else if (baseType == Long.class) {
-                            node.add((Long)obj);
+                            node.set((Long)obj);
                         } else if (baseType == Integer.class) {
-                            node.add((Integer)obj);
+                            node.set((Integer)obj);
                         } else if (baseType == Boolean.class) {
-                            node.add((Boolean)obj);
+                            node.set((Boolean)obj);
                         } else if (baseType == Double.class) {
-                            node.add((Double)obj);
+                            node.set((Double)obj);
                         } else if (baseType == BigDecimal.class) {
-                            node.add((BigDecimal)obj);
+                            node.set((BigDecimal)obj);
                         } else if (baseType == byte[].class) {
-                            node.add((byte[])obj);
+                            node.set((byte[])obj);
                         } else {
                             throw new IllegalArgumentException("Can not convert. This value is not of a recognized base type. Value =" + obj.toString());
                         }

@@ -191,10 +191,15 @@ public class FormStrategy implements ReificationStrategy<ReificationWidget>
                     new FormToolStrip.FormCallback<ModelNode>() {
                         @Override
                         public void onSave(Map<String, Object> changeset) {
+
+                            TransitionEvent transitionEvent = new TransitionEvent(
+                                    QName.valueOf("org.jboss.as:save"),
+                                    TransitionEvent.Kind.FUNCTION_CALL);
+
+                            transitionEvent.setPayload(form.getChangedValues());
+
                             coordinator.fireEventFromSource(
-                                    new TransitionEvent(
-                                            QName.valueOf("org.jboss.as:save"),
-                                            TransitionEvent.Kind.FUNCTION_CALL),
+                                    transitionEvent,
                                     interactionUnit.getId()
                             );
                         }
