@@ -68,6 +68,7 @@ public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, Preview
     private String selectedSample = null;
     private final ReificationPipeline reificationPipeline;
     private DispatchAsync dispatcher;
+    private HashMap<String, ReificationWidget> cachedWidgets = new HashMap<String, ReificationWidget>();
 
     public interface MyView extends View
     {
@@ -185,31 +186,39 @@ public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, Preview
         Sample sample = event.getSample();
         selectedSample = sample.getName();
 
-        InteractionUnit interactionUnit = sample.build();
-        final Context context = new Context();
-
-        // make the coordinator bus available to the model components
-        context.set(ContextKey.COORDINATOR, getActiveCoordinator().getLocalBus());
-
-        reificationPipeline.execute(interactionUnit, context, new SimpleCallback<Boolean>()
+        if(cachedWidgets.get(selectedSample)==null)
         {
-            @Override
-            public void onSuccess(final Boolean successful)
+            InteractionUnit interactionUnit = sample.build();
+            final Context context = new Context();
+
+            // make the coordinator bus available to the model components
+            context.set(ContextKey.COORDINATOR, getActiveCoordinator().getLocalBus());
+
+            reificationPipeline.execute(interactionUnit, context, new SimpleCallback<Boolean>()
             {
-                if (successful)
+                @Override
+                public void onSuccess(final Boolean successful)
                 {
-                    ReificationWidget widget = context.get(ContextKey.WIDGET);
-                    if (widget != null)
+                    if (successful)
                     {
-                        getView().show(widget);
+                        ReificationWidget widget = context.get(ContextKey.WIDGET);
+                        if (widget != null)
+                        {
+                            cachedWidgets.put(selectedSample, widget);
+                            getView().show(widget);
+                        }
+                    }
+                    else
+                    {
+                        Log.error("Reification failed");
                     }
                 }
-                else
-                {
-                    Log.error("Reification failed");
-                }
-            }
-        });
+            });
+        }
+        else
+        {
+            getView().show(cachedWidgets.get(selectedSample));
+        }
     }
 
     // in a real this would be wired Presenter.onReset()
