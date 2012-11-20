@@ -23,6 +23,8 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.web.bindery.event.shared.EventBus;
 import org.jboss.as.console.client.mbui.aui.aim.InteractionUnit;
+import org.jboss.as.console.client.mbui.aui.aim.Trigger;
+import org.jboss.as.console.client.mbui.aui.aim.TriggerType;
 import org.jboss.as.console.client.mbui.aui.mapping.MappingType;
 import org.jboss.as.console.client.mbui.aui.mapping.as7.ResourceAttribute;
 import org.jboss.as.console.client.mbui.aui.mapping.as7.ResourceMapping;
@@ -44,6 +46,7 @@ import org.jboss.dmr.client.Property;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Harald Pehl
@@ -208,8 +211,7 @@ public class FormStrategy implements ReificationStrategy<ReificationWidget>
             layout.add(form.asWidget());
 
             // handle resets within this scope
-            coordinator.addHandler(SystemEvent.TYPE, new SystemEvent.Handler()
-            {
+            coordinator.addHandler(SystemEvent.TYPE, new SystemEvent.Handler() {
                 @Override
                 public boolean accepts(SystemEvent.Kind kind) {
                     return (SystemEvent.Kind.RESET == kind);
@@ -219,6 +221,13 @@ public class FormStrategy implements ReificationStrategy<ReificationWidget>
                 public void onSystemEvent(SystemEvent event) {
                     form.cancel();
                     form.clearValues();
+
+                    // request loading of data
+                    TransitionEvent transitionEvent = new TransitionEvent(TransitionEvent.Kind.FUNCTION_CALL);
+                    coordinator.fireEventFromSource(
+                            transitionEvent,
+                            interactionUnit.getId()
+                    );
                 }
             });
 

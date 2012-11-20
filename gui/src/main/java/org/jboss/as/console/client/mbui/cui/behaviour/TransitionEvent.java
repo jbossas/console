@@ -31,6 +31,14 @@ public class TransitionEvent extends GwtEvent<TransitionEvent.Handler> {
         return payload;
     }
 
+    public void setPayload(Object payload) {
+        this.payload = payload;
+    }
+
+    public Kind getKind() {
+        return kind;
+    }
+
     @Override
     public Type<Handler> getAssociatedType() {
         return TYPE;

@@ -19,6 +19,7 @@
 package org.jboss.as.console.client.tools.mbui.workbench.editor;
 
 import com.allen_sauer.gwt.log.client.Log;
+import com.google.gwt.user.client.Command;
 import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.Presenter;
@@ -29,11 +30,14 @@ import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.mbui.aui.aim.InteractionUnit;
+import org.jboss.as.console.client.mbui.aui.aim.QName;
 import org.jboss.as.console.client.mbui.cui.Context;
+import org.jboss.as.console.client.mbui.cui.behaviour.Integrity;
 import org.jboss.as.console.client.mbui.cui.behaviour.InteractionCoordinator;
 import org.jboss.as.console.client.mbui.cui.reification.ContextKey;
 import org.jboss.as.console.client.mbui.cui.reification.ReificationWidget;
 import org.jboss.as.console.client.mbui.cui.reification.pipeline.ReificationPipeline;
+import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.tools.mbui.workbench.ApplicationPresenter;
 import org.jboss.as.console.client.tools.mbui.workbench.ReifyEvent;
 import org.jboss.as.console.client.tools.mbui.workbench.ResetEvent;
@@ -58,6 +62,7 @@ public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, Preview
     private Map<String, InteractionCoordinator> coordinators = new HashMap<String, InteractionCoordinator>();
     private String selectedSample = null;
     private final ReificationPipeline reificationPipeline;
+    private DispatchAsync dispatcher;
 
     public interface MyView extends View
     {
@@ -70,16 +75,31 @@ public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, Preview
     {
     }
 
-
-
     @Inject
-    public PreviewPresenter(final EventBus eventBus, final MyView view, final MyProxy proxy, final ReificationPipeline reificationPipeline)
+    public PreviewPresenter(
+            final EventBus eventBus, final MyView view,
+            final MyProxy proxy, final ReificationPipeline reificationPipeline,
+            DispatchAsync dispatcher)
     {
         super(eventBus, view, proxy);
         this.reificationPipeline = reificationPipeline;
+        this.dispatcher = dispatcher;
 
-        coordinators.put(new TransactionSample().getName(), new InteractionCoordinator());
-        coordinators.put(new DataSourceSample().getName(), new InteractionCoordinator());
+        InteractionCoordinator txCoordinator = new InteractionCoordinator();
+        InteractionCoordinator dsCoordinator = new InteractionCoordinator();
+
+        coordinators.put(new TransactionSample().getName(), txCoordinator);
+        coordinators.put(new DataSourceSample().getName(), dsCoordinator);
+
+        // setup behaviour hooks
+
+        txCoordinator.executeOn(new QName("org.jboss.transactions", "basicAttributes"), new Command() {
+            @Override
+            public void execute() {
+                // load tx resource
+                System.out.println("load tx resource");
+            }
+        });
     }
 
     private InteractionCoordinator getActiveCoordinator()
@@ -88,11 +108,6 @@ public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, Preview
             throw new RuntimeException("No sample selected (requires reification/onBind)");
 
         return coordinators.get(selectedSample);
-    }
-    // in a real this would be wired Presenter.onReset()
-    @Override
-    public void doReset() {
-        getActiveCoordinator().onReset();
     }
 
     @Override
@@ -140,6 +155,11 @@ public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, Preview
                 }
             }
         });
+    }
 
+    // in a real this would be wired Presenter.onReset()
+    @Override
+    public void doReset() {
+        getActiveCoordinator().onReset();
     }
 }

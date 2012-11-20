@@ -21,19 +21,17 @@ package org.jboss.as.console.client.tools.mbui.workbench.repository;
 import org.jboss.as.console.client.mbui.aui.aim.Behaviour;
 import org.jboss.as.console.client.mbui.aui.aim.Builder;
 import org.jboss.as.console.client.mbui.aui.aim.Container;
-import org.jboss.as.console.client.mbui.aui.aim.Select;
+import org.jboss.as.console.client.mbui.aui.aim.InteractionUnit;
 import org.jboss.as.console.client.mbui.aui.aim.Trigger;
 import org.jboss.as.console.client.mbui.aui.aim.TriggerType;
-import org.jboss.as.console.client.mbui.aui.aim.InteractionUnit;
 import org.jboss.as.console.client.mbui.aui.aim.as7.Form;
 import org.jboss.as.console.client.mbui.aui.mapping.Mapping;
 import org.jboss.as.console.client.mbui.aui.mapping.as7.ResourceMapping;
 
-import static org.jboss.as.console.client.mbui.aui.aim.TriggerType.Interaction;
-import static org.jboss.as.console.client.mbui.aui.aim.TriggerType.System;
-import static org.jboss.as.console.client.mbui.aui.aim.TriggerType.Transition;
 import static org.jboss.as.console.client.mbui.aui.aim.TemporalOperator.Choice;
 import static org.jboss.as.console.client.mbui.aui.aim.TemporalOperator.OrderIndependance;
+import static org.jboss.as.console.client.mbui.aui.aim.TriggerType.*;
+import static org.jboss.as.console.client.mbui.aui.aim.TriggerType.System;
 
 /**
  * @author Harald Pehl
@@ -85,7 +83,7 @@ public class TransactionSample implements Sample
                 .end()
                 .build();
 
-        // behaviour hints
+        // behaviour
         Trigger<TriggerType> resetEvent = new Trigger<TriggerType>(ns, "reset", System);
         Trigger<TriggerType> updateEvent = new Trigger<TriggerType>(ns, "update", Transition);
 
