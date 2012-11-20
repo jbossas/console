@@ -19,6 +19,8 @@ public class StatementEvent extends GwtEvent<StatementEvent.Handler> {
     private Kind kind;
     private Object payload;
 
+    private QName target;
+
     public StatementEvent(QName id, Kind kind) {
         super();
         this.id = id;
@@ -41,6 +43,14 @@ public class StatementEvent extends GwtEvent<StatementEvent.Handler> {
         return id;
     }
 
+    public QName getTarget() {
+        return target;
+    }
+
+    public void setTarget(QName target) {
+        this.target = target;
+    }
+
     @Override
     public Type<Handler> getAssociatedType() {
         return TYPE;
@@ -48,12 +58,12 @@ public class StatementEvent extends GwtEvent<StatementEvent.Handler> {
 
     @Override
     protected void dispatch(Handler listener) {
-        if(listener.accepts(kind))
+        if(listener.accepts(this))
             listener.onStatementEvent(this);
     }
 
     public interface Handler extends EventHandler {
-        boolean accepts(Kind kind);
+        boolean accepts(StatementEvent event);
         void onStatementEvent(StatementEvent event);
     }
 

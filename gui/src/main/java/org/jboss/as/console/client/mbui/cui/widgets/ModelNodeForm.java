@@ -4,6 +4,7 @@ import org.jboss.ballroom.client.widgets.forms.AbstractForm;
 import org.jboss.ballroom.client.widgets.forms.EditListener;
 import org.jboss.ballroom.client.widgets.forms.FormItem;
 import org.jboss.dmr.client.ModelNode;
+import org.jboss.dmr.client.ModelType;
 
 import java.math.BigDecimal;
 import java.util.Collections;
@@ -60,7 +61,7 @@ public class ModelNodeForm extends AbstractForm<ModelNode> {
                         else if(value!=null)
                         {
                             item.setUndefined(false);
-                            item.setValue(value);
+                            item.setValue(downCast(value));
                         }
                         else
                         {
@@ -73,6 +74,33 @@ public class ModelNodeForm extends AbstractForm<ModelNode> {
                 return true;
             }
 
+            private Object downCast(ModelNode value)
+            {
+                Object result = null;
+                ModelType type = value.getType();
+                switch (type)
+                {
+                    case INT:
+                        result = value.asInt();
+                        break;
+                    case DOUBLE:
+                        result = value.asDouble();
+                        break;
+                    case LONG:
+                        result = value.asLong();
+                        break;
+                    case BOOLEAN:
+                        result = value.asBoolean();
+                        break;
+                    case STRING:
+                        result = value.asString();
+                        break;
+                    default:
+                        throw new RuntimeException("Unexpected type "+type);
+
+                }
+                return result;
+            }
 
             @Override
             public boolean visitReferenceProperty(String propertyName, ModelNode value, PropertyContext ctx) {

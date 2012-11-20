@@ -39,6 +39,10 @@ import org.jboss.as.console.client.mbui.cui.reification.ContextKey;
 import org.jboss.as.console.client.mbui.cui.reification.ReificationWidget;
 import org.jboss.as.console.client.mbui.cui.reification.pipeline.ReificationPipeline;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
+import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
+import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
+import org.jboss.as.console.client.shared.subsys.Baseadress;
+import org.jboss.as.console.client.shared.subsys.tx.model.TransactionManager;
 import org.jboss.as.console.client.tools.mbui.workbench.ApplicationPresenter;
 import org.jboss.as.console.client.tools.mbui.workbench.ReifyEvent;
 import org.jboss.as.console.client.tools.mbui.workbench.ResetEvent;
@@ -51,6 +55,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.jboss.as.console.client.tools.mbui.workbench.NameTokens.preview;
+import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 
 /**
  *
@@ -95,9 +100,10 @@ public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, Preview
 
         // setup behaviour hooks
 
+        final QName basicAttributes = new QName("org.jboss.transactions", "basicAttributes");
         BehaviourExecution saveBasicAttributes = new BehaviourExecution(
                 new QName("org.jboss.as", "save"),
-                new QName("org.jboss.transactions", "basicAttributes"),
+                basicAttributes,
                 new Command() {
                     @Override
                     public void execute() {
@@ -109,29 +115,47 @@ public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, Preview
 
         BehaviourExecution loadBasicAttributes = new BehaviourExecution(
                 new QName("org.jboss.as", "load"),
-                new QName("org.jboss.transactions", "basicAttributes"),
+                basicAttributes,
                 new Command() {
                     @Override
                     public void execute() {
                         // load tx resource
                         System.out.println("load basic attributes");
 
-                        // when load is finished update view
-                        StatementEvent statement = new StatementEvent(
-                                QName.valueOf("org.jboss.as:form-update"),
-                                StatementEvent.Kind.UPDATE
-                        );
+                        ModelNode operation = new ModelNode();
+                        operation.get(OP).set(READ_RESOURCE_OPERATION);
+                        operation.get(ADDRESS).add("profile", "full");
+                        operation.get(ADDRESS).add("subsystem", "transactions");
+                        operation.get(INCLUDE_RUNTIME).set(true);
 
-                        statement.setPayload(new ModelNode());
+                        getDispatcher().execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
 
-                        txCoordinator.fireEvent(statement);
+                            // when load is finished update view
+                            @Override
+                            public void onSuccess(DMRResponse dmrResponse) {
+                                ModelNode response = dmrResponse.get();
 
+                                StatementEvent statement = new StatementEvent(
+                                        QName.valueOf("org.jboss.as:form-update"),
+                                        StatementEvent.Kind.UPDATE
+                                );
+
+                                statement.setTarget(basicAttributes);
+                                statement.setPayload(response.get(RESULT));
+
+                                txCoordinator.fireEvent(statement);
+                            }
+                        });
                     }
                 }
         );
 
         txCoordinator.perform(saveBasicAttributes);
         txCoordinator.perform(loadBasicAttributes);
+    }
+
+    public DispatchAsync getDispatcher() {
+        return dispatcher;
     }
 
     private InteractionCoordinator getActiveCoordinator()

@@ -241,16 +241,19 @@ public class FormStrategy implements ReificationStrategy<ReificationWidget>
             coordinator.addHandler(StatementEvent.TYPE, new StatementEvent.Handler()
             {
                 @Override
-                public boolean accepts(StatementEvent.Kind kind) {
-                    return (StatementEvent.Kind.UPDATE == kind);
+                public boolean accepts(StatementEvent event) {
+                    return (StatementEvent.Kind.UPDATE == event.getKind() && event.getTarget().equals(interactionUnit.getId()));
                 }
 
                 @Override
                 public void onStatementEvent(StatementEvent event) {
 
+                    assert (event.getPayload() instanceof ModelNode) : "Unexpected type "+event.getPayload().getClass();
+
                     System.out.println(event.getKind()+"=>"+event.getId()+", target="+interactionUnit.getId());
+                    System.out.println(event.getPayload());
 
-
+                    form.edit((ModelNode)event.getPayload());
                 }
             });
 
