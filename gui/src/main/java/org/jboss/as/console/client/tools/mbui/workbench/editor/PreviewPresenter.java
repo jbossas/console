@@ -34,6 +34,7 @@ import org.jboss.as.console.client.mbui.aui.aim.QName;
 import org.jboss.as.console.client.mbui.cui.Context;
 import org.jboss.as.console.client.mbui.cui.behaviour.BehaviourExecution;
 import org.jboss.as.console.client.mbui.cui.behaviour.InteractionCoordinator;
+import org.jboss.as.console.client.mbui.cui.behaviour.StatementEvent;
 import org.jboss.as.console.client.mbui.cui.reification.ContextKey;
 import org.jboss.as.console.client.mbui.cui.reification.ReificationWidget;
 import org.jboss.as.console.client.mbui.cui.reification.pipeline.ReificationPipeline;
@@ -44,6 +45,7 @@ import org.jboss.as.console.client.tools.mbui.workbench.ResetEvent;
 import org.jboss.as.console.client.tools.mbui.workbench.repository.DataSourceSample;
 import org.jboss.as.console.client.tools.mbui.workbench.repository.Sample;
 import org.jboss.as.console.client.tools.mbui.workbench.repository.TransactionSample;
+import org.jboss.dmr.client.ModelNode;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -85,8 +87,8 @@ public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, Preview
         this.reificationPipeline = reificationPipeline;
         this.dispatcher = dispatcher;
 
-        InteractionCoordinator txCoordinator = new InteractionCoordinator();
-        InteractionCoordinator dsCoordinator = new InteractionCoordinator();
+        final InteractionCoordinator txCoordinator = new InteractionCoordinator();
+        final InteractionCoordinator dsCoordinator = new InteractionCoordinator();
 
         coordinators.put(new TransactionSample().getName(), txCoordinator);
         coordinators.put(new DataSourceSample().getName(), dsCoordinator);
@@ -113,10 +115,20 @@ public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, Preview
                     public void execute() {
                         // load tx resource
                         System.out.println("load basic attributes");
+
+                        // when load is finished update view
+                        StatementEvent statement = new StatementEvent(
+                                QName.valueOf("org.jboss.as:form-update"),
+                                StatementEvent.Kind.UPDATE
+                        );
+
+                        statement.setPayload(new ModelNode());
+
+                        txCoordinator.fireEvent(statement);
+
                     }
                 }
         );
-
 
         txCoordinator.perform(saveBasicAttributes);
         txCoordinator.perform(loadBasicAttributes);

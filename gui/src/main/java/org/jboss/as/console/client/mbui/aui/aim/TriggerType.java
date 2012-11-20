@@ -6,5 +6,5 @@ package org.jboss.as.console.client.mbui.aui.aim;
  */
 public enum TriggerType {
 
-    Interaction, Transition, System
+    Interaction, Transition, System, Statement
 }

@@ -29,6 +29,7 @@ import org.jboss.as.console.client.mbui.aui.mapping.as7.ResourceAttribute;
 import org.jboss.as.console.client.mbui.aui.mapping.as7.ResourceMapping;
 import org.jboss.as.console.client.mbui.cui.Context;
 import org.jboss.as.console.client.mbui.cui.ReificationStrategy;
+import org.jboss.as.console.client.mbui.cui.behaviour.StatementEvent;
 import org.jboss.as.console.client.mbui.cui.behaviour.SystemEvent;
 import org.jboss.as.console.client.mbui.cui.behaviour.TransitionEvent;
 import org.jboss.as.console.client.mbui.cui.widgets.ModelNodeForm;
@@ -214,7 +215,7 @@ public class FormStrategy implements ReificationStrategy<ReificationWidget>
             coordinator.addHandler(SystemEvent.TYPE, new SystemEvent.Handler() {
                 @Override
                 public boolean accepts(SystemEvent.Kind kind) {
-                    return (SystemEvent.Kind.RESET == kind);
+                    return (SystemEvent.Kind.FRAMEWORK == kind);
                 }
 
                 @Override
@@ -226,6 +227,8 @@ public class FormStrategy implements ReificationStrategy<ReificationWidget>
                     TransitionEvent transitionEvent = new TransitionEvent(
                             QName.valueOf("org.jboss.as:load"),
                             TransitionEvent.Kind.FUNCTION_CALL);
+
+                    // update interaction units
                     coordinator.fireEventFromSource(
                             transitionEvent,
                             interactionUnit.getId()
@@ -234,18 +237,20 @@ public class FormStrategy implements ReificationStrategy<ReificationWidget>
             });
 
 
-            // handle the results of function calls
-            coordinator.addHandler(TransitionEvent.TYPE, new TransitionEvent.Handler()
+            // handle the results of function calls (statements)
+            coordinator.addHandler(StatementEvent.TYPE, new StatementEvent.Handler()
             {
                 @Override
-                public boolean accepts(TransitionEvent.Kind kind) {
-                    return (TransitionEvent.Kind.STATEMENT == kind);
+                public boolean accepts(StatementEvent.Kind kind) {
+                    return (StatementEvent.Kind.UPDATE == kind);
                 }
 
                 @Override
-                public void onTransitionEvent(TransitionEvent event) {
-                    if(event.getPayload() instanceof ModelNode)  // TODO: can this be avoided somehow?
-                        form.edit((ModelNode)event.getPayload());
+                public void onStatementEvent(StatementEvent event) {
+
+                    System.out.println(event.getKind()+"=>"+event.getId()+", target="+interactionUnit.getId());
+
+
                 }
             });
 

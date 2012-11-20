@@ -1,6 +1,8 @@
 package org.jboss.as.console.client.mbui.cui.behaviour;
 
+import com.google.gwt.core.client.Scheduler;
 import com.google.inject.Inject;
+import com.google.web.bindery.event.shared.Event;
 import com.google.web.bindery.event.shared.EventBus;
 import com.google.web.bindery.event.shared.SimpleEventBus;
 import org.jboss.as.console.client.mbui.aui.aim.QName;
@@ -20,6 +22,8 @@ import java.util.Map;
  */
 public class InteractionCoordinator implements FrameworkContract, TransitionEvent.Handler {
 
+    private static final String PROJECT_NAMESPACE = "org.jboss.as";
+
     // a bus scoped to this coordinator and the associated models
     private EventBus bus;
     private Map<QName, BehaviourExecution> behaviours = new HashMap<QName, BehaviourExecution>();
@@ -37,6 +41,22 @@ public class InteractionCoordinator implements FrameworkContract, TransitionEven
         return this.bus;
     }
 
+    /**
+     * Command entry point
+     *
+     * @param event
+     */
+    public void fireEvent(final Event<?> event)
+    {
+        Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+            @Override
+            public void execute() {
+                bus.fireEventFromSource(event, this);
+            }
+        });
+
+    }
+
     public void perform(BehaviourExecution execution)
     {
         behaviours.put(execution.getTriggerId(), execution);
@@ -45,18 +65,18 @@ public class InteractionCoordinator implements FrameworkContract, TransitionEven
     //  ----- System events ------
     @Override
     public void onBind() {
-        bus.fireEvent(new SystemEvent(SystemEvent.Kind.BIND));
+        bus.fireEvent(new SystemEvent(new QName(PROJECT_NAMESPACE, "bind"), SystemEvent.Kind.FRAMEWORK));
     }
 
     @Override
     public void onReveal() {
-        bus.fireEvent(new SystemEvent(SystemEvent.Kind.REVEAL));
+        bus.fireEvent(new SystemEvent(new QName(PROJECT_NAMESPACE, "reveal"), SystemEvent.Kind.FRAMEWORK));
 
     }
 
     @Override
     public void onReset() {
-        bus.fireEvent(new SystemEvent(SystemEvent.Kind.RESET));
+        bus.fireEvent(new SystemEvent(new QName(PROJECT_NAMESPACE, "reset"), SystemEvent.Kind.FRAMEWORK));
     }
 
     //  ----- Transitions ------
