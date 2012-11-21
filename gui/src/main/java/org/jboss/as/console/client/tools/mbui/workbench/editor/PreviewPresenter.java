@@ -120,10 +120,6 @@ public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, Preview
                 new DataDrivenCommand<HashMap>() {
                     @Override
                     public void execute(HashMap changeset) {
-                        // load tx resource
-                        System.out.println("save basic attributes");
-                        System.out.println(changeset);
-
                         onSaveConfig(changeset);
                     }
 
@@ -169,10 +165,10 @@ public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, Preview
                         // load tx resource
                         System.out.println("load basic attributes");
 
-                        ModelNode operation = new ModelNode();
+                        ModelNode operation = metaData.getBeanMetaData(TransactionManager.class)
+                                .getAddress().asResource(Baseadress.get());
+
                         operation.get(OP).set(READ_RESOURCE_OPERATION);
-                        operation.get(ADDRESS).add("profile", "full");
-                        operation.get(ADDRESS).add("subsystem", "transactions");
                         operation.get(INCLUDE_RUNTIME).set(true);
 
                         getDispatcher().execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {

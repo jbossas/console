@@ -571,6 +571,7 @@ public class EntityAdapter<T> {
         steps.addAll(Arrays.asList(extraSteps));
 
         operation.get(STEPS).set(steps);
+        System.out.println(operation);
         return operation;
     }
 
