@@ -30,11 +30,11 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static org.jboss.as.console.client.mbui.TestNamespace.NAMESPACE;
+import static org.jboss.as.console.client.mbui.aui.aim.TemporalOperator.Choice;
+import static org.jboss.as.console.client.mbui.aui.aim.TemporalOperator.OrderIndependance;
 import static org.jboss.as.console.client.mbui.aui.aim.TriggerType.*;
 import static org.jboss.as.console.client.mbui.aui.aim.TriggerType.System;
 import static org.jboss.as.console.client.mbui.aui.aim.TriggerType.Transition;
-import static org.jboss.as.console.client.mbui.aui.aim.TemporalOperator.Choice;
-import static org.jboss.as.console.client.mbui.aui.aim.TemporalOperator.OrderIndependance;
 import static org.jboss.as.console.client.mbui.aui.mapping.MappingType.RESOURCE;
 import static org.junit.Assert.*;
 
@@ -126,31 +126,6 @@ public class InteractionUnitTest
         assertFalse("Behaviour should not be triggered by deviceRotation", behaviour.isTriggeredBy(deviceRotation));
         assertFalse("Behaviour should not be triggered by loadData", behaviour.isTriggeredBy(loadData));
 
-        final StringBuffer sharedState = new StringBuffer("");
-
-        behaviour.setCondition(new Condition()
-        {
-            @Override
-            public boolean isMet()
-            {
-                return true;
-            }
-        });
-
-        behaviour.addTransition(new FunctionCall()
-        {
-            @Override
-            public void perform()
-            {
-                sharedState.append("updated");
-            }
-        });
-
-        if (behaviour.isTriggeredBy(loadData))
-        {
-            behaviour.execute();
-            assertTrue("sharedState should be updated", sharedState.toString().equals("updated"));
-        }
     }
 
     @Test

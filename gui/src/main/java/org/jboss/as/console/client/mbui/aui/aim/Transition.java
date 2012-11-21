@@ -10,12 +10,18 @@ import java.util.Set;
  */
 public abstract class Transition implements TriggerSource {
 
-    private String id;
+    private QName id;
+
+    protected Transition(QName id) {
+        this.id = id;
+    }
+
+    public QName getId() {
+        return id;
+    }
 
     private EventProduction eventProduction =
             new EventProduction(TriggerType.Transition);
-
-    public abstract void perform();
 
     @Override
     public boolean doesTrigger() {

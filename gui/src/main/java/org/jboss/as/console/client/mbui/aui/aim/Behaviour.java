@@ -49,15 +49,6 @@ public class Behaviour implements TriggerTarget {
         this.condition = condition;
     }
 
-    public void execute() {
-
-        if(condition.isMet())
-        {
-            for(Transition action : transitions)
-                action.perform();
-        }
-    }
-
     public void addTransition(Transition transition) {
         transitions.add(transition);
     }
@@ -76,4 +67,5 @@ public class Behaviour implements TriggerTarget {
     public boolean isTriggeredBy(Trigger<TriggerType> type) {
         return eventConsumption.isTriggeredBy(type);
     }
+
 }
