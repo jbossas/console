@@ -18,6 +18,7 @@
  */
 package org.jboss.as.console.client.shared.viewframework;
 
+import com.allen_sauer.gwt.log.client.Log;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
@@ -49,7 +50,7 @@ public class EntityToDmrBridgeImpl<T extends NamedEntity> implements EntityToDmr
     protected ApplicationMetaData propertyMetadata;
     protected BeanMetaData beanMetaData;
     protected AddressBinding address;
-    protected Class<?> type;
+    protected final Class<?> type;
     protected EntityAdapter<T> entityAdapter;
     protected DispatchAsync dispatcher;
     protected FrameworkView view;
@@ -237,9 +238,14 @@ public class EntityToDmrBridgeImpl<T extends NamedEntity> implements EntityToDmr
     }
 
     protected void onLoadEntitiesSuccess(ModelNode response) {
-        List<T> entities = entityAdapter.fromDMRList(response.get(RESULT).asList());
-        entityList = sortEntities(entities);
-        refreshView(response);
+        try {
+            List<T> entities = entityAdapter.fromDMRList(response.get(RESULT).asList());
+            entityList = sortEntities(entities);
+            refreshView(response);
+        } catch (RuntimeException e) {
+            Log.error("Parse error", e);
+            Console.error("Failed to parse response");
+        }
     }
 
     /**

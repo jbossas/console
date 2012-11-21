@@ -30,8 +30,8 @@ import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 public class EntityAdapter<T> {
 
 
-    private final  EntityFactory<PropertyRecord> propertyRecordFactory;
-    private Class<?> type;
+    private final EntityFactory<PropertyRecord> propertyRecordFactory;
+    private final Class<?> type;
     private ApplicationMetaData metaData;
     private KeyAssignment keyAssignment = null;
 
@@ -47,6 +47,10 @@ public class EntityAdapter<T> {
         return this;
     }
 
+    private Class<?> getType() {
+        return type;
+    }
+
     /**
      * Determine if this is an EntityAdapter for a one of the supported ModelNode
      * base classes (String, Long, BigDecimal, etc).
@@ -54,7 +58,7 @@ public class EntityAdapter<T> {
      * @return <code>true</code> if this is a base class EntityAdapter, <code>false</code> otherwise.
      */
     public boolean isBaseTypeAdapter() {
-        return isBaseType(this.type);
+        return isBaseType(getType());
     }
 
     /**
@@ -74,13 +78,13 @@ public class EntityAdapter<T> {
     }
 
     private T convertToBaseType(ModelNode dmr) {
-        if (type == String.class) return (T)dmr.asString();
-        if (type == Long.class) return (T)Long.valueOf(dmr.asLong());
-        if (type == Integer.class) return (T)Integer.valueOf(dmr.asInt());
-        if (type == Boolean.class) return (T)Boolean.valueOf(dmr.asBoolean());
-        if (type == Double.class) return (T)Double.valueOf(dmr.asDouble());
-        if (type == BigDecimal.class) return (T)BigDecimal.valueOf(dmr.asDouble());
-        if (type == byte[].class) return (T)dmr.asBytes();
+        if (getType() == String.class) return (T)dmr.asString();
+        if (getType() == Long.class) return (T)Long.valueOf(dmr.asLong());
+        if (getType() == Integer.class) return (T)Integer.valueOf(dmr.asInt());
+        if (getType() == Boolean.class) return (T)Boolean.valueOf(dmr.asBoolean());
+        if (getType() == Double.class) return (T)Double.valueOf(dmr.asDouble());
+        if (getType() == BigDecimal.class) return (T)BigDecimal.valueOf(dmr.asDouble());
+        if (getType() == byte[].class) return (T)dmr.asBytes();
 
         throw new IllegalArgumentException("Can not convert. This node is not of a base type. Actual type is " + type.getName());
     }
@@ -98,10 +102,10 @@ public class EntityAdapter<T> {
         if (isBaseTypeAdapter()) return convertToBaseType(dmr);
 
         ModelNode actualPayload = null;
-        EntityFactory<?> factory = metaData.getFactory(type);
+        EntityFactory<?> factory = metaData.getFactory(getType());
 
         if(null==factory)
-            throw new IllegalArgumentException("No factory method for " + type);
+            throw new IllegalArgumentException("No factory method for " + getType());
 
         T entity = (T) factory.create();
 
@@ -140,8 +144,8 @@ public class EntityAdapter<T> {
             throw new IllegalArgumentException("Unknown ModelType "+dmr.getType()+": "+dmr);
         }
 
-        BeanMetaData beanMetaData = metaData.getBeanMetaData(type);
-        Mutator mutator = metaData.getMutator(type);
+        BeanMetaData beanMetaData = metaData.getBeanMetaData(getType());
+        Mutator mutator = metaData.getMutator(getType());
 
         for(PropertyBinding propBinding : beanMetaData.getProperties())
         {
@@ -299,7 +303,8 @@ public class EntityAdapter<T> {
 
         for(ModelNode item : dmr)
         {
-            entities.add(fromDMR(item));
+            T entity = fromDMR(item);
+            entities.add(entity);
         }
 
         return entities;
@@ -329,8 +334,8 @@ public class EntityAdapter<T> {
     {
 
         ModelNode operation = new ModelNode();
-        List<PropertyBinding> properties = metaData.getBeanMetaData(type).getProperties();
-        Mutator mutator = metaData.getMutator(type);
+        List<PropertyBinding> properties = metaData.getBeanMetaData(getType()).getProperties();
+        Mutator mutator = metaData.getMutator(getType());
 
         for(PropertyBinding property : properties)
         {
@@ -532,9 +537,9 @@ public class EntityAdapter<T> {
     }
 
     private void setValue(PropertyBinding binding, ModelNode nodeToSetValueUpon, Object value) {
-        Class type = value.getClass();
+        final Class sourceType = value.getClass();
 
-        if(FormItem.VALUE_SEMANTICS.class == type) {
+        if(FormItem.VALUE_SEMANTICS.class == sourceType) {
 
             // skip undefined form item values (FormItem.UNDEFINED.Value)
             // or persist as UNDEFINED
@@ -545,7 +550,7 @@ public class EntityAdapter<T> {
             }
 
         }
-        else if(String.class == type)
+        else if(String.class == sourceType)
         {
 
             String stringValue = (String) value;
@@ -554,23 +559,23 @@ public class EntityAdapter<T> {
             else
                 nodeToSetValueUpon.set(stringValue);
         }
-        else if(Boolean.class == type)
+        else if(Boolean.class == sourceType)
         {
             nodeToSetValueUpon.set((Boolean)value);
         }
-        else if(Integer.class == type)
+        else if(Integer.class == sourceType)
         {
             nodeToSetValueUpon.set((Integer)value);
         }
-        else if(Double.class == type)
+        else if(Double.class == sourceType)
         {
             nodeToSetValueUpon.set((Double)value);
         }
-        else if (Long.class == type)
+        else if (Long.class == sourceType)
         {
             nodeToSetValueUpon.set((Long)value);
         }
-        else if (Float.class == type)
+        else if (Float.class == sourceType)
         {
             nodeToSetValueUpon.set((Float)value);
         }
@@ -586,7 +591,7 @@ public class EntityAdapter<T> {
         }
         else
         {
-            throw new RuntimeException("Unsupported type: "+type);
+            throw new RuntimeException("Unsupported type: "+sourceType);
         }
     }
 
