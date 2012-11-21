@@ -247,7 +247,9 @@ public class FormStrategy implements ReificationStrategy<ReificationWidget>
             {
                 @Override
                 public boolean accepts(StatementEvent event) {
-                    return (StatementEvent.Kind.UPDATE == event.getKind() && event.getTarget().equals(interactionUnit.getId()));
+                    return (StatementEvent.Kind.UPDATE == event.getKind() &&
+                            event.getTarget().equalsIgnoreSuffix(interactionUnit.getId())
+                    );
                 }
 
                 @Override
@@ -255,8 +257,8 @@ public class FormStrategy implements ReificationStrategy<ReificationWidget>
 
                     assert (event.getPayload() instanceof ModelNode) : "Unexpected type "+event.getPayload().getClass();
 
-                    System.out.println(event.getKind()+"=>"+event.getId()+", target="+interactionUnit.getId());
-                    System.out.println(event.getPayload());
+                    //System.out.println(event.getKind()+"=>"+event.getId()+", target="+interactionUnit.getId());
+                    //System.out.println(event.getPayload());
 
                     form.edit((ModelNode)event.getPayload());
                 }

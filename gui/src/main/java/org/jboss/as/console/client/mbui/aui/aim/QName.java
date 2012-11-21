@@ -264,6 +264,28 @@ public class QName {
                 && localPart.equals(qName.localPart);
     }
 
+    public final boolean equalsIgnoreSuffix(Object objectToTest) {
+        if (objectToTest == null || !(objectToTest instanceof QName)) {
+            return false;
+        }
+
+        QName qName = (QName) objectToTest;
+
+        return namespaceURI.equals(qName.getNamespaceURI())
+                && getNormalizedLocalPart().equals(qName.getNormalizedLocalPart());
+    }
+
+    /**
+     * return the local part without suffix
+     */
+    public String getNormalizedLocalPart() {
+        int i = localPart.indexOf("#");
+        if(i!=-1)
+            return localPart.substring(0, i);
+        else
+            return localPart;
+    }
+
     /**
      * <p>Generate the hash code for this <code>QName</code>.</p>
      *

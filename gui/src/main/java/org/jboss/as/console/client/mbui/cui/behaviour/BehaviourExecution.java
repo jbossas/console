@@ -65,10 +65,14 @@ public class BehaviourExecution {
         if(!getTriggerId().equals(triggerId))
             return false;
 
-        // second match sourceId (if given)
+        // second match source classifier (if given)
         if(null==this.requiredSource)
+        {
             return true;
+        }
         else
-            return this.requiredSource.equals(source);
+        {
+            return this.requiredSource.equalsIgnoreSuffix(source);
+        }
     }
 }

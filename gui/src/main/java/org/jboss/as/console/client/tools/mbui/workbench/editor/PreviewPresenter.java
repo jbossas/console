@@ -99,10 +99,11 @@ public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, Preview
 
         // setup behaviour hooks
 
-        final QName basicAttributes = new QName("org.jboss.transactions", "basicAttributes");
+        final QName transactionManagerResource = new QName("org.jboss.transactions", "root");
+
         BehaviourExecution saveBasicAttributes = new BehaviourExecution(
                 new QName("org.jboss.as", "save"),
-                basicAttributes,
+                transactionManagerResource,
                 new DataDrivenCommand<HashMap>() {
                     @Override
                     public void execute(HashMap payload) {
@@ -115,7 +116,7 @@ public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, Preview
 
         BehaviourExecution loadBasicAttributes = new BehaviourExecution(
                 new QName("org.jboss.as", "load"),
-                basicAttributes,
+                transactionManagerResource,
                 new DataDrivenCommand() {
                     @Override
                     public void execute(Object payload) {
@@ -140,7 +141,7 @@ public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, Preview
                                         StatementEvent.Kind.UPDATE
                                 );
 
-                                statement.setTarget(basicAttributes);
+                                statement.setTarget(transactionManagerResource);
                                 statement.setPayload(response.get(RESULT));
 
                                 txCoordinator.fireEvent(statement);
