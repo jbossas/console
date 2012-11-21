@@ -101,7 +101,6 @@
                     <runTarget>App.html</runTarget>
                     <warSourceDirectory>war</warSourceDirectory>
                     <extraJvmArgs>-Xmx1024m -DDEBUG -XX:MaxPermSize=256M</extraJvmArgs>
-                    <servicePattern>**/*Service.java</servicePattern>
                     <style>OBF</style>
                     <hostedWebapp>war</hostedWebapp>
                     <localWorkers>2</localWorkers>
@@ -260,6 +259,8 @@
                         <artifactId>gwt-maven-plugin</artifactId>
                         <configuration>
                             <module>org.jboss.as.console.composite.App_dev</module>
+                            <style>DETAILED</style>
+                            <enableClosureCompiler>false</enableClosureCompiler>
                         </configuration>
                     </plugin>
 
