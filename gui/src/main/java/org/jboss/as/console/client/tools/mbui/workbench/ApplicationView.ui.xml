@@ -13,12 +13,6 @@
     </ui:style>
 
     <g:DockLayoutPanel unit="PX">
-        <g:north size="60">
-            <g:SimpleLayoutPanel ui:field="headerPanel"/>
-        </g:north>
-        <g:south size="25">
-            <g:SimpleLayoutPanel ui:field="footerPanel"/>
-        </g:south>
         <g:west size="250">
             <g:SimpleLayoutPanel ui:field="repositoryPanel" addStyleNames="{style.border-right}"/>
         </g:west>

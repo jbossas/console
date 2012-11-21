@@ -27,8 +27,10 @@ import com.gwtplatform.mvp.client.annotations.ContentSlot;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyStandard;
 import com.gwtplatform.mvp.client.proxy.Proxy;
+import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
 import com.gwtplatform.mvp.client.proxy.RevealRootLayoutContentEvent;
+import org.jboss.as.console.client.core.MainLayoutPresenter;
 import org.jboss.as.console.client.tools.mbui.workbench.context.ContextPresenter;
 import org.jboss.as.console.client.tools.mbui.workbench.repository.RepositoryPresenter;
 
@@ -76,7 +78,7 @@ public class ApplicationPresenter extends Presenter<ApplicationPresenter.MyView,
     @Override
     protected void revealInParent()
     {
-        RevealRootLayoutContentEvent.fire(this, this);
+        RevealContentEvent.fire(this, MainLayoutPresenter.TYPE_MainContent, this);
     }
 
     @Override

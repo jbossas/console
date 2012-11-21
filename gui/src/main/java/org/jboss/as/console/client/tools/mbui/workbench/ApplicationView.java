@@ -41,10 +41,8 @@ public class ApplicationView extends ViewImpl implements ApplicationPresenter.My
 
     private final Widget widget;
     @UiField SimpleLayoutPanel mainPanel;
-    @UiField SimpleLayoutPanel headerPanel;
     @UiField SimpleLayoutPanel repositoryPanel;
     //@UiField SimpleLayoutPanel contextPanel;
-    @UiField SimpleLayoutPanel footerPanel;
 
     @Inject
     public ApplicationView(final Binder binder)
@@ -67,10 +65,6 @@ public class ApplicationView extends ViewImpl implements ApplicationPresenter.My
         {
             mainPanel.setWidget(widget);
         }
-        else if (slot == Header_Slot)
-        {
-            headerPanel.setWidget(widget);
-        }
         else if (slot == Repository_Slot)
         {
             repositoryPanel.setWidget(widget);
@@ -79,10 +73,6 @@ public class ApplicationView extends ViewImpl implements ApplicationPresenter.My
         {
             contextPanel.setWidget(widget);
         } */
-        else if (slot == Footer_Slot)
-        {
-            footerPanel.setWidget(widget);
-        }
         else
         {
             super.setInSlot(slot, widget);
