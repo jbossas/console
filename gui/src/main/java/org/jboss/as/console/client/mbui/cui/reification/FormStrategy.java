@@ -226,7 +226,6 @@ public class FormStrategy implements ReificationStrategy<ReificationWidget>
                 @Override
                 public void onSystemEvent(SystemEvent event) {
                     form.cancel();
-                    form.clearValues();
 
                     // request loading of data
                     TransitionEvent transitionEvent = new TransitionEvent(
