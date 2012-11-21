@@ -21,6 +21,7 @@ package org.jboss.as.console.client.domain.model.impl;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.domain.model.ProfileRecord;
 import org.jboss.as.console.client.domain.model.ProfileStore;
 import org.jboss.as.console.client.domain.profiles.CurrentProfileSelection;
@@ -74,18 +75,25 @@ public class ProfileStoreImpl implements ProfileStore {
                 @Override
                 public void onSuccess(DMRResponse result) {
                     ModelNode response = result.get();
-                    List<ModelNode> payload = response.get("result").asList();
-
-                    List<ProfileRecord> records = new ArrayList<ProfileRecord>(payload.size());
-                    for(int i=0; i<payload.size(); i++)
+                    if(response.isFailure())
                     {
-                        ProfileRecord record = factory.profile().as();
-                        record.setName(payload.get(i).asString());
-                        records.add(record);
+                        Console.error("Failed to load profiles");
                     }
+                    else
+                    {
+                        List<ModelNode> payload = response.get("result").asList();
 
-                    ProfileStoreImpl.this.cachedRecords = records;
-                    callback.onSuccess(records);
+                        List<ProfileRecord> records = new ArrayList<ProfileRecord>(payload.size());
+                        for(int i=0; i<payload.size(); i++)
+                        {
+                            ProfileRecord record = factory.profile().as();
+                            record.setName(payload.get(i).asString());
+                            records.add(record);
+                        }
+
+                        ProfileStoreImpl.this.cachedRecords = records;
+                        callback.onSuccess(records);
+                    }
                 }
             });
         }
