@@ -19,6 +19,7 @@
 package org.jboss.as.console.client.tools.mbui.workbench.editor;
 
 import com.allen_sauer.gwt.log.client.Log;
+import com.google.gwt.core.client.Scheduler;
 import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.Presenter;
@@ -27,6 +28,7 @@ import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyStandard;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.mbui.aui.aim.InteractionUnit;
 import org.jboss.as.console.client.mbui.aui.aim.QName;
@@ -41,12 +43,17 @@ import org.jboss.as.console.client.mbui.cui.reification.pipeline.ReificationPipe
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
+import org.jboss.as.console.client.shared.model.ModelAdapter;
+import org.jboss.as.console.client.shared.subsys.Baseadress;
+import org.jboss.as.console.client.shared.subsys.tx.model.TransactionManager;
 import org.jboss.as.console.client.tools.mbui.workbench.ApplicationPresenter;
 import org.jboss.as.console.client.tools.mbui.workbench.ReifyEvent;
 import org.jboss.as.console.client.tools.mbui.workbench.ResetEvent;
 import org.jboss.as.console.client.tools.mbui.workbench.repository.DataSourceSample;
 import org.jboss.as.console.client.tools.mbui.workbench.repository.Sample;
 import org.jboss.as.console.client.tools.mbui.workbench.repository.TransactionSample;
+import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
+import org.jboss.as.console.client.widgets.forms.EntityAdapter;
 import org.jboss.dmr.client.ModelNode;
 
 import java.util.HashMap;
@@ -69,6 +76,8 @@ public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, Preview
     private final ReificationPipeline reificationPipeline;
     private DispatchAsync dispatcher;
     private HashMap<String, ReificationWidget> cachedWidgets = new HashMap<String, ReificationWidget>();
+    private final ApplicationMetaData metaData;
+    private final EntityAdapter<TransactionManager> txAdapter;
 
     public interface MyView extends View
     {
@@ -85,11 +94,15 @@ public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, Preview
     public PreviewPresenter(
             final EventBus eventBus, final MyView view,
             final MyProxy proxy, final ReificationPipeline reificationPipeline,
-            DispatchAsync dispatcher)
+            final ApplicationMetaData metaData,
+            final DispatchAsync dispatcher)
     {
         super(eventBus, view, proxy);
         this.reificationPipeline = reificationPipeline;
+        this.metaData = metaData;
         this.dispatcher = dispatcher;
+
+        this.txAdapter = new EntityAdapter<TransactionManager>(TransactionManager.class, metaData);
 
         final InteractionCoordinator txCoordinator = new InteractionCoordinator();
         final InteractionCoordinator dsCoordinator = new InteractionCoordinator();
@@ -106,10 +119,43 @@ public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, Preview
                 transactionManagerResource,
                 new DataDrivenCommand<HashMap>() {
                     @Override
-                    public void execute(HashMap payload) {
+                    public void execute(HashMap changeset) {
                         // load tx resource
                         System.out.println("save basic attributes");
-                        System.out.println(payload);
+                        System.out.println(changeset);
+
+                        onSaveConfig(changeset);
+                    }
+
+                    public void onSaveConfig(Map<String, Object> changeset) {
+                        ModelNode operation =
+                                txAdapter.fromDmrChangeset(
+                                        changeset,
+                                        metaData.getBeanMetaData(TransactionManager.class)
+                                                .getAddress().asResource(Baseadress.get())
+                                );
+
+                        System.out.println(operation);
+
+                        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+                            @Override
+                            public void onSuccess(DMRResponse dmrResponse) {
+                                ModelNode response = dmrResponse.get();
+
+                                if(response.isFailure())
+                                    Console.error(Console.MESSAGES.modificationFailed("Transaction Manager"), response.getFailureDescription());
+                                else
+                                    Console.info(Console.MESSAGES.modified("Transaction Manager"));
+
+                                Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+                                    @Override
+                                    public void execute() {
+                                        txCoordinator.onReset();
+                                    }
+                                });
+
+                            }
+                        });
                     }
                 }
         );

@@ -74,34 +74,6 @@ public class ModelNodeForm extends AbstractForm<ModelNode> {
                 return true;
             }
 
-            private Object downCast(ModelNode value)
-            {
-                Object result = null;
-                ModelType type = value.getType();
-                switch (type)
-                {
-                    case INT:
-                        result = value.asInt();
-                        break;
-                    case DOUBLE:
-                        result = value.asDouble();
-                        break;
-                    case LONG:
-                        result = value.asLong();
-                        break;
-                    case BOOLEAN:
-                        result = value.asBoolean();
-                        break;
-                    case STRING:
-                        result = value.asString();
-                        break;
-                    default:
-                        throw new RuntimeException("Unexpected type "+type);
-
-                }
-                return result;
-            }
-
             @Override
             public boolean visitReferenceProperty(String propertyName, ModelNode value, PropertyContext ctx) {
                 isComplex = true;
@@ -141,6 +113,34 @@ public class ModelNodeForm extends AbstractForm<ModelNode> {
 
         // plain views
         refreshPlainView();
+    }
+
+    private Object downCast(ModelNode value)
+    {
+        Object result = null;
+        ModelType type = value.getType();
+        switch (type)
+        {
+            case INT:
+                result = value.asInt();
+                break;
+            case DOUBLE:
+                result = value.asDouble();
+                break;
+            case LONG:
+                result = value.asLong();
+                break;
+            case BOOLEAN:
+                result = value.asBoolean();
+                break;
+            case STRING:
+                result = value.asString();
+                break;
+            default:
+                throw new RuntimeException("Unexpected type "+type);
+
+        }
+        return result;
     }
 
     void visitItem(final String name, FormItemVisitor visitor) {
@@ -190,7 +190,7 @@ public class ModelNodeForm extends AbstractForm<ModelNode> {
                 if(src.hasDefined(propertyName))
                 {
                     if(!src.get(propertyName).equals(dest.get(propertyName)))
-                        changedValues.put(propertyName, dest.get(propertyName));
+                        changedValues.put(propertyName, downCast(dest.get(propertyName)));
                 }
                 return true;
             }

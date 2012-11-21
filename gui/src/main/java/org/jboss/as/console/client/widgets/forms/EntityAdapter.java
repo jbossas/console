@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 
@@ -468,6 +469,48 @@ public class EntityAdapter<T> {
     }
 
     /**
+     * use this method if the changeset was calculated based on DMR attributes opposed to Autobean's
+     * @param changeSet
+     * @param address
+     * @param extraSteps
+     * @return
+     */
+    public ModelNode fromDmrChangeset(Map<String, Object> changeSet, ModelNode address, ModelNode... extraSteps)
+    {
+        ModelNode protoType = new ModelNode();
+        protoType.get(ADDRESS).set(address.get(ADDRESS));
+        protoType.get(OP).set(WRITE_ATTRIBUTE_OPERATION);
+
+        ModelNode operation = new ModelNode();
+        operation.get(OP).set(COMPOSITE);
+        operation.get(ADDRESS).setEmptyList();
+
+        List<ModelNode> steps = new ArrayList<ModelNode>();
+
+        Set<String> attributes = changeSet.keySet();
+
+        for(String attr : attributes)
+        {
+            Object value = changeSet.get(attr);
+            if (value == null) continue;
+
+            ModelNode step = protoType.clone();
+
+            step.get(NAME).set(attr);
+            ModelNode nodeToSetValueUpon = step.get(VALUE);
+            setValue(nodeToSetValueUpon, value);
+            steps.add(step);
+
+        }
+
+        // add extra steps
+        steps.addAll(Arrays.asList(extraSteps));
+
+        operation.get(STEPS).set(steps);
+        return operation;
+    }
+
+    /**
      * Turns a changeset into a composite write attribute operation.
      *
      * @param changeSet
@@ -529,6 +572,54 @@ public class EntityAdapter<T> {
 
         operation.get(STEPS).set(steps);
         return operation;
+    }
+
+    private void setValue(ModelNode nodeToSetValueUpon, Object value) {
+        Class type = value.getClass();
+
+        if(FormItem.VALUE_SEMANTICS.class == type) {
+
+            // skip undefined form item values (FormItem.UNDEFINED.Value)
+            // or persist as UNDEFINED
+            if(value.equals(FormItem.VALUE_SEMANTICS.UNDEFINED))
+            {
+                nodeToSetValueUpon.set(ModelType.UNDEFINED);
+            }
+
+        }
+        else if(String.class == type)
+        {
+
+            String stringValue = (String) value;
+            if(stringValue.startsWith("$"))     // TODO: further constraints
+                nodeToSetValueUpon.setExpression(stringValue);
+            else
+                nodeToSetValueUpon.set(stringValue);
+        }
+        else if(Boolean.class == type)
+        {
+            nodeToSetValueUpon.set((Boolean)value);
+        }
+        else if(Integer.class == type)
+        {
+            nodeToSetValueUpon.set((Integer)value);
+        }
+        else if(Double.class == type)
+        {
+            nodeToSetValueUpon.set((Double)value);
+        }
+        else if (Long.class == type)
+        {
+            nodeToSetValueUpon.set((Long)value);
+        }
+        else if (Float.class == type)
+        {
+            nodeToSetValueUpon.set((Float)value);
+        }
+        else
+        {
+            throw new RuntimeException("Unsupported type: "+type);
+        }
     }
 
     private void setValue(PropertyBinding binding, ModelNode nodeToSetValueUpon, Object value) {
