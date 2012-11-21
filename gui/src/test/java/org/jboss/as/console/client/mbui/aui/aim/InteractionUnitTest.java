@@ -21,6 +21,8 @@ package org.jboss.as.console.client.mbui.aui.aim;
 import org.jboss.as.console.client.mbui.aui.aim.as7.Form;
 import org.jboss.as.console.client.mbui.aui.mapping.Predicate;
 import org.jboss.as.console.client.mbui.aui.mapping.as7.ResourceMapping;
+import org.jboss.as.console.client.mbui.cui.behaviour.Integrity;
+import org.jboss.as.console.client.mbui.cui.behaviour.IntegrityException;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -56,8 +58,8 @@ public class InteractionUnitTest
     {
 
         Input textInput = new Input(NAMESPACE, "firstName", "Firstname");
-        Input submit = new Input(NAMESPACE, "submit", "Submit");
-        Input close = new Input(NAMESPACE, "close", "Close Dialogue");
+        Input submit = new Input(NAMESPACE, "submitButton", "Submit");
+        Input close = new Input(NAMESPACE, "closeButton", "Close Dialogue");
 
         InteractionUnit container = new Builder()
                 .start(new Container(NAMESPACE, "window", "Window", TemporalOperator.OrderIndependance))
@@ -69,7 +71,7 @@ public class InteractionUnitTest
 
         assertFalse("Should not produce events by default", submit.doesTrigger());
 
-        Trigger<TriggerType> submitEvent = new Trigger<TriggerType>(NAMESPACE, "submitName", Interaction);
+        Trigger<TriggerType> submitEvent = new Trigger<TriggerType>(NAMESPACE, "submit", Interaction);
         submit.setOutputs(submitEvent);
 
         assertTrue("submit should produce events", submit.doesTrigger());
@@ -86,60 +88,28 @@ public class InteractionUnitTest
         behaviours.add(handleSubmit);
 
         // the integrity check will pass
-        verifyIntegrity(container, behaviours);
+        try {
+            verifyIntegrity(container, behaviours);
+        } catch (IntegrityException e) {
+            throw new AssertionError("Should nto raise error");
+        }
 
         // create a derivation that causes the integrity check to fail
-        Trigger<TriggerType> closeEvent = new Trigger<TriggerType>(NAMESPACE, "closeDialogue", Interaction);
+        Trigger<TriggerType> closeEvent = new Trigger<TriggerType>(NAMESPACE, "dialog-close", Interaction);
         close.setOutputs(closeEvent);
 
         try {
             verifyIntegrity(container, behaviours);
-        } catch (AssertionError assertion) {
+        } catch (IntegrityException err) {
+
+            java.lang.System.out.print(err.getMessage());
             // all good, this is expected
         }
     }
 
-    private void verifyIntegrity(InteractionUnit container, final Set<Behaviour> behaviours) {
-        container.accept(new InteractionUnitVisitor() {
-            @Override
-            public void startVisit(Container container) {
-                if(container.doesTrigger())
-                    assertTrue("Behaviour not declared for " + container.getName(), isBehaviourDeclared(container));
-            }
-
-            @Override
-            public void visit(InteractionUnit interactionUnit) {
-                if(interactionUnit.doesTrigger())
-                    assertTrue("Behaviour not declared for "+interactionUnit.getName(), isBehaviourDeclared(interactionUnit));
-            }
-
-            @Override
-            public void endVisit(Container container) {
-
-            }
-
-            boolean isBehaviourDeclared(InteractionUnit unit)
-            {
-                boolean isDeclared = false;
-
-                for(Behaviour candidate : behaviours)
-                {
-                    Set<Trigger<TriggerType>> producedTypes = unit.getOutputs();
-                    for(Trigger<TriggerType> event : producedTypes)
-                    {
-                        if(candidate.isTriggeredBy(event))
-                        {
-                            isDeclared = true;
-                            break;
-                        }
-                    }
-
-                    if(isDeclared) break;
-                }
-
-                return isDeclared;
-            }
-        });
+    private void verifyIntegrity(InteractionUnit container, final Set<Behaviour> behaviours)
+        throws IntegrityException{
+        Integrity.check(container, behaviours);
     }
 
     @Test

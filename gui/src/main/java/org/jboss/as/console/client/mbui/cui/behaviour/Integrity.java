@@ -23,15 +23,16 @@ public class Integrity {
         container.accept(new InteractionUnitVisitor() {
             @Override
             public void startVisit(Container container) {
-                if(container.doesTrigger() && isBehaviourDeclared(container))
-                    err.add(container.getId());
+                if(container.doesTrigger())
+                    checkDeclared(container, err);
 
             }
 
             @Override
             public void visit(InteractionUnit interactionUnit) {
-                if(interactionUnit.doesTrigger() && isBehaviourDeclared(interactionUnit))
-                    err.add(interactionUnit.getId());
+                if(interactionUnit.doesTrigger())
+                    checkDeclared(interactionUnit, err);
+
             }
 
             @Override
@@ -39,26 +40,27 @@ public class Integrity {
 
             }
 
-            boolean isBehaviourDeclared(InteractionUnit unit)
+            void checkDeclared(InteractionUnit unit, IntegrityException exception)
             {
-                boolean isDeclared = false;
+                // check each declared trigger against existing behaviours
+                Set<Trigger<TriggerType>> producedTypes = unit.getOutputs();
 
-                for(Behaviour candidate : behaviours)
+                for(Trigger<TriggerType> event : producedTypes)
                 {
-                    Set<Trigger<TriggerType>> producedTypes = unit.getOutputs();
-                    for(Trigger<TriggerType> event : producedTypes)
+                    boolean match = false;
+                    for(Behaviour candidate : behaviours)
                     {
                         if(candidate.isTriggeredBy(event))
                         {
-                            isDeclared = true;
+                            match = true;
                             break;
                         }
                     }
 
-                    if(isDeclared) break;
+                    if(!match)
+                        err.add(unit.getId(), "no behaviour for <<"+event.getId()+">>");
                 }
 
-                return isDeclared;
             }
         });
 

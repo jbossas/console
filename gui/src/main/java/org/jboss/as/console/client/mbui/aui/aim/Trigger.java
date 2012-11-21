@@ -20,6 +20,10 @@ public class Trigger<T extends Enum<T>> {
         this.type = type;
     }
 
+    public QName getId() {
+        return id;
+    }
+
     public QName getSource() {
         return source;
     }

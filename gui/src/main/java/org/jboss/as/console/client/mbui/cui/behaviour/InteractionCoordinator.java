@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * A coordinator acts as the middleman between an MVP presenter (framework), the structure (interface model)
+ * A coordinator acts as the middleman between a framework (i.e. GWTP), the structure (interface model)
  * and the behaviour (interaction model). <p/>
  *
  * It translates framework events (presenter lifecyle) into {@link SystemEvent}'s

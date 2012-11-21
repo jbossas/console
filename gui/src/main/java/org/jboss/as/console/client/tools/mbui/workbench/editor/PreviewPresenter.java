@@ -35,6 +35,7 @@ import org.jboss.as.console.client.mbui.aui.aim.QName;
 import org.jboss.as.console.client.mbui.cui.Context;
 import org.jboss.as.console.client.mbui.cui.behaviour.BehaviourExecution;
 import org.jboss.as.console.client.mbui.cui.behaviour.DataDrivenCommand;
+import org.jboss.as.console.client.mbui.cui.behaviour.Integrity;
 import org.jboss.as.console.client.mbui.cui.behaviour.InteractionCoordinator;
 import org.jboss.as.console.client.mbui.cui.behaviour.StatementEvent;
 import org.jboss.as.console.client.mbui.cui.reification.ContextKey;
@@ -43,7 +44,6 @@ import org.jboss.as.console.client.mbui.cui.reification.pipeline.ReificationPipe
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
-import org.jboss.as.console.client.shared.model.ModelAdapter;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.tx.model.TransactionManager;
 import org.jboss.as.console.client.tools.mbui.workbench.ApplicationPresenter;
@@ -195,6 +195,7 @@ public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, Preview
 
         txCoordinator.perform(saveBasicAttributes);
         txCoordinator.perform(loadBasicAttributes);
+
     }
 
     public DispatchAsync getDispatcher() {

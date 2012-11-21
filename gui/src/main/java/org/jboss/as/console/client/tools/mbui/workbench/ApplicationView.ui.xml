@@ -13,7 +13,7 @@
     </ui:style>
 
     <g:DockLayoutPanel unit="PX">
-        <g:west size="250">
+        <g:west size="197">
             <g:SimpleLayoutPanel ui:field="repositoryPanel" addStyleNames="{style.border-right}"/>
         </g:west>
         <!--g:south size="150">
