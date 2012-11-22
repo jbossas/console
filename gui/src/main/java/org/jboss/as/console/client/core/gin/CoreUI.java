@@ -121,6 +121,7 @@ import org.jboss.as.console.client.shared.subsys.ws.StandaloneEndpointStrategy;
 import org.jboss.as.console.client.shared.subsys.ws.WebServicePresenter;
 import org.jboss.as.console.client.standalone.ServerMgmtApplicationPresenter;
 import org.jboss.as.console.client.standalone.StandaloneServerPresenter;
+import org.jboss.as.console.client.standalone.deployment.DeploymentBrowserPresenter;
 import org.jboss.as.console.client.standalone.deployment.DeploymentListPresenter;
 import org.jboss.as.console.client.standalone.runtime.StandaloneRuntimePresenter;
 import org.jboss.as.console.client.standalone.runtime.VMMetricsPresenter;
@@ -203,6 +204,7 @@ public interface CoreUI {
     // ----------------------------------------------------------------------
     AsyncProvider<ServerMgmtApplicationPresenter> getServerManagementAppPresenter();
     AsyncProvider<DeploymentListPresenter> getDeploymentListPresenter();
+    AsyncProvider<DeploymentBrowserPresenter> getDeploymentBrowserPresenter();
 
     DeploymentStore getDeploymentStore();
 
