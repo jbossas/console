@@ -60,6 +60,7 @@ public class StandaloneRuntimeNavigation {
 
         serverLeaf.addItem(server);
         serverLeaf.addItem(new LHSNavTreeItem("Manage Deployments", NameTokens.DeploymentListPresenter));
+        serverLeaf.addItem(new LHSNavTreeItem("Browse Deployments", "deployments2"));
         navigation.addItem(serverLeaf);
 
 
