@@ -19,6 +19,8 @@
 
 package org.jboss.as.console.client.shared.model;
 
+import java.util.List;
+
 /**
  * @author Heiko Braun
  * @date 1/31/11
@@ -54,4 +56,13 @@ public interface DeploymentRecord  {
 
     public boolean isArchive();
     public void setArchive(boolean isArchive);
+
+    public boolean isSubdeployment();
+    public void setSubdeployment(boolean subdeployment);
+
+    public List<SubsystemRecord> getSubsystems();
+    public void setSubsystems(List<SubsystemRecord> subsystems);
+
+    public List<DeploymentRecord> getSubdeployments();
+    public void setSubdeployments(List<DeploymentRecord> subdeployments);
 }

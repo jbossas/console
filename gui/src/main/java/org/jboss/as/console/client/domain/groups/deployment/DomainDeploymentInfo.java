@@ -135,12 +135,15 @@ public class DomainDeploymentInfo implements DeploymentViewRefresher {
 
                         DomainDeploymentInfo.this.serverGroupDeployments = serverGroupDeployments;
 
-                        deploymentStore.loadDeploymentContent(new SimpleCallback<List<DeploymentRecord>>() {
+                        deploymentStore.loadDeployments(new SimpleCallback<List<DeploymentRecord>>()
+                        {
 
                             @Override
-                            public void onSuccess(List<DeploymentRecord> result) {
+                            public void onSuccess(List<DeploymentRecord> result)
+                            {
                                 DomainDeploymentInfo.this.domainDeployments = result;
-                                DomainDeploymentInfo.this.presenter.getView().updateDeploymentInfo(DomainDeploymentInfo.this, targets);
+                                DomainDeploymentInfo.this.presenter.getView()
+                                        .updateDeploymentInfo(DomainDeploymentInfo.this, targets);
                             }
                         });
                     }
