@@ -124,11 +124,6 @@ public class DeploymentBrowserPresenter
     {
     }
 
-    public <T> void updateContext(T selectedContext)
-    {
-        getView().updateContext(selectedContext);
-    }
-
     @Override
     public void removeContent(final DeploymentRecord record)
     {

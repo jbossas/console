@@ -29,6 +29,7 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.SelectionModel;
+import com.google.gwt.view.client.SingleSelectionModel;
 import com.google.gwt.view.client.TreeViewModel;
 import org.jboss.as.console.client.shared.model.DeploymentRecord;
 import org.jboss.as.console.client.shared.model.DeploymentStore;
@@ -44,6 +45,8 @@ import java.util.List;
 public class DeploymentTreeModel implements TreeViewModel
 {
     static final DeploymentTemplates DEPLOYMENT_TEMPLATES = GWT.create(DeploymentTemplates.class);
+
+    private final DeploymentBrowserPresenter presenter;
     private final DeploymentStore deploymentStore;
     private final ListDataProvider<DeploymentRecord> deploymentDataProvider;
     private final SelectionModel<DeploymentRecord> deploymentSelectionModel;
@@ -51,17 +54,15 @@ public class DeploymentTreeModel implements TreeViewModel
     private final SelectionModel<SubsystemRecord> subsystemSelectionModel;
 
 
-    public DeploymentTreeModel(final DeploymentStore deploymentStore,
-            final ListDataProvider<DeploymentRecord> deploymentDataProvider,
-            final DeploymentBrowserSelectionModel<DeploymentRecord> deploymentSelectionModel,
-            final DeploymentBrowserSelectionModel<DeploymentRecord> subdeploymentSelectionModel,
-            final DeploymentBrowserSelectionModel<SubsystemRecord> subsystemSelectionModel)
+    public DeploymentTreeModel(final DeploymentBrowserPresenter presenter, final DeploymentStore deploymentStore,
+            final ListDataProvider<DeploymentRecord> deploymentDataProvider)
     {
+        this.presenter = presenter;
         this.deploymentStore = deploymentStore;
         this.deploymentDataProvider = deploymentDataProvider;
-        this.deploymentSelectionModel = deploymentSelectionModel;
-        this.subdeploymentSelectionModel = subdeploymentSelectionModel;
-        this.subsystemSelectionModel = subsystemSelectionModel;
+        this.deploymentSelectionModel = new DeploymentSelectionModel(presenter);
+        this.subdeploymentSelectionModel = new DeploymentSelectionModel(presenter);
+        this.subsystemSelectionModel = new SingleSelectionModel<SubsystemRecord>();
     }
 
     @Override
