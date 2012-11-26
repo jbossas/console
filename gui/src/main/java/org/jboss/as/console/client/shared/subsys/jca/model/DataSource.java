@@ -77,6 +77,10 @@ public interface DataSource {
     String getDriverClass();
     void setDriverClass(String driverClass);
 
+    @Binding(detypedName = "datasource-class")
+    String getDatasourceClass();
+    void setDatasourceClass(String datasourceClass);
+
     @Binding(detypedName = "driver-name")
     String getDriverName();
     void setDriverName(String driver);

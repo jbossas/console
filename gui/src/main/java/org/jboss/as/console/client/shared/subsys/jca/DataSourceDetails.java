@@ -26,12 +26,14 @@ import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
+import org.jboss.as.console.client.widgets.forms.BlankItem;
 import org.jboss.as.console.client.widgets.forms.FormToolStrip;
 import org.jboss.as.console.client.widgets.forms.items.JndiNameItem;
 import org.jboss.ballroom.client.widgets.forms.CheckBoxItem;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.NumberBoxItem;
 import org.jboss.ballroom.client.widgets.forms.StatusItem;
+import org.jboss.ballroom.client.widgets.forms.TextAreaItem;
 import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
 import org.jboss.ballroom.client.widgets.forms.TextItem;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
@@ -128,12 +130,13 @@ public class DataSourceDetails {
         final TextItem nameItem = new TextItem("name", "Name");
         TextBoxItem jndiItem = new JndiNameItem("jndiName", "JNDI");
         StatusItem enabledFlagItem = new StatusItem("enabled", "Is enabled?");
+        TextAreaItem dsClassItem = new TextAreaItem("datasourceClass", "Datasource Class",false);
         TextItem driverItem = new TextItem("driverName", "Driver");
 
         CheckBoxItem shareStatements = new CheckBoxItem("sharePreparedStatements", "Share Prepared Statements");
         NumberBoxItem statementCacheSize = new NumberBoxItem("prepareStatementCacheSize", "Statement Cache Size");
 
-        form.setFields(nameItem, jndiItem, enabledFlagItem, driverItem, shareStatements, statementCacheSize);
+        form.setFields(nameItem, jndiItem, enabledFlagItem, BlankItem.INSTANCE, dsClassItem, driverItem, shareStatements, statementCacheSize);
 
         form.setEnabled(false); // currently not editable
 
