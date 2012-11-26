@@ -1,6 +1,7 @@
 package org.jboss.as.console.client.core.bootstrap;
 
 import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
@@ -22,7 +23,8 @@ import java.util.Set;
  * @author Heiko Braun
  * @date 12/7/11
  */
-public class LoadMainApp extends BoostrapStep{
+public class LoadMainApp implements Command
+{
 
     private PlaceManager placeManager;
     private TokenFormatter formatter;
@@ -43,7 +45,7 @@ public class LoadMainApp extends BoostrapStep{
     }
 
     @Override
-    public void execute(Iterator<BoostrapStep> iterator, AsyncCallback<Boolean> outcome) {
+    public void execute() {
 
         String initialToken = History.getToken();
 
@@ -65,10 +67,6 @@ public class LoadMainApp extends BoostrapStep{
         else {
             placeManager.revealDefaultPlace();
         }
-
-        outcome.onSuccess(Boolean.TRUE);
-
-        next(iterator, outcome);
     }
 
     private static boolean isBlackListed (String token)
