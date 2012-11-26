@@ -10,6 +10,7 @@ import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.jca.model.PoolConfig;
 import org.jboss.as.console.client.widgets.forms.FormToolStrip;
 import org.jboss.ballroom.client.widgets.forms.CheckBoxItem;
+import org.jboss.ballroom.client.widgets.forms.ComboBoxItem;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.FormValidation;
 import org.jboss.ballroom.client.widgets.forms.NumberBoxItem;
@@ -40,29 +41,36 @@ public class PoolConfigurationView {
         CheckBoxItem strictMin = new CheckBoxItem("poolStrictMin", "Strict Minimum");
         CheckBoxItem prefill = new CheckBoxItem("poolPrefill", "Prefill enabled");
 
+        ComboBoxItem flushStrategy = new ComboBoxItem("flushStrategy", "Flush Strategy");
+        flushStrategy.setValueMap(new String[] {"FailingConnectionOnly", "IdleConnections", "EntirePool"});
+
+        final NumberBoxItem idleTimeout = new NumberBoxItem("idleTimeout", "Idle Timeout");
+
+        ComboBoxItem trackStmt = new ComboBoxItem("trackStatements", "Track Statements");
+        trackStmt.setValueMap(new String[] {"true", "false", "nowarn"});
+
         VerticalPanel panel = new VerticalPanel();
         panel.setStyleName("fill-layout");
         form = new Form<PoolConfig>(PoolConfig.class) {
-        	@Override
-        	public FormValidation validate() {
-        		FormValidation superValidation = super.validate();
+            @Override
+            public FormValidation validate() {
+                FormValidation superValidation = super.validate();
                 PoolConfig updatedEntity = this.getUpdatedEntity();
                 int minPoolSize = updatedEntity.getMinPoolSize();
-        		int maxPoolSize = updatedEntity.getMaxPoolSize();
-        		if(minPoolSize > maxPoolSize){
-        			superValidation.addError("maxPoolSize");
-        			maxCon.setErroneous(true);
-        			maxCon.setErrMessage("Max Pool Size must be greater than Min Pool Size");
-        		} 
-        		return superValidation;
-        	}
+                int maxPoolSize = updatedEntity.getMaxPoolSize();
+                if(minPoolSize > maxPoolSize){
+                    superValidation.addError("maxPoolSize");
+                    maxCon.setErroneous(true);
+                    maxCon.setErrMessage("Max Pool Size must be greater than Min Pool Size");
+                }
+                return superValidation;
+            }
         };
         form.setNumColumns(2);
         form.setEnabled(false);
-        
-        if(!xaDisplay)
-            form.setFields(minCon, maxCon, strictMin, prefill);
-        
+
+        form.setFields(minCon, maxCon, strictMin, prefill, flushStrategy, idleTimeout, trackStmt);
+
         FormToolStrip<PoolConfig> toolStrip = new FormToolStrip<PoolConfig>(
                 form,
                 new FormToolStrip.FormCallback<PoolConfig>() {
@@ -73,7 +81,7 @@ public class PoolConfigurationView {
 
                     @Override
                     public void onDelete(PoolConfig entity) {
-                       management.onResetPoolConfig(editedName, entity);
+                        management.onResetPoolConfig(editedName, entity);
                     }
                 }, Console.CONSTANTS.common_label_reset()
         );
