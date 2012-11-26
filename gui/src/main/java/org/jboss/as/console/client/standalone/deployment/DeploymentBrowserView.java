@@ -25,7 +25,6 @@ import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
-import com.google.gwt.view.client.ProvidesKey;
 import com.google.inject.Inject;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
@@ -34,7 +33,6 @@ import org.jboss.as.console.client.shared.deployment.DeploymentCommandDelegate;
 import org.jboss.as.console.client.shared.deployment.DeploymentFilter;
 import org.jboss.as.console.client.shared.model.DeploymentRecord;
 import org.jboss.as.console.client.shared.model.DeploymentStore;
-import org.jboss.as.console.client.shared.model.SubsystemRecord;
 import org.jboss.as.console.client.shared.viewframework.builder.OneToOneLayout;
 import org.jboss.as.console.client.widgets.browser.DefaultCellBrowser;
 import org.jboss.ballroom.client.widgets.forms.Form;
@@ -57,10 +55,6 @@ public class DeploymentBrowserView extends SuspendableViewImpl implements Deploy
     private DeploymentStore deploymentStore;
     private DeploymentBrowserPresenter presenter;
     private DeploymentTreeModel deploymentTreeModel;
-    private ListDataProvider<DeploymentRecord> deploymentDataProvider;
-    private DeploymentBrowserSelectionModel<DeploymentRecord> deploymentSelectionModel;
-    private DeploymentBrowserSelectionModel<DeploymentRecord> subdeploymentSelectionModel;
-    private DeploymentBrowserSelectionModel<SubsystemRecord> subsystemSelectionModel;
     private DeckPanel contextPanel;
     private Form<DeploymentRecord> deploymentForm;
 
@@ -74,26 +68,8 @@ public class DeploymentBrowserView extends SuspendableViewImpl implements Deploy
     @Override
     public Widget createWidget()
     {
-        ProvidesKey<DeploymentRecord> deploymentKey = new ProvidesKey<DeploymentRecord>()
-        {
-            @Override
-            public Object getKey(DeploymentRecord item)
-            {
-                return item.getName();
-            }
-        };
-        ProvidesKey<SubsystemRecord> subsystemKey = new ProvidesKey<SubsystemRecord>()
-        {
-            @Override
-            public Object getKey(final SubsystemRecord item)
-            {
-                return item.getKey();
-            }
-        };
-        deploymentDataProvider = new ListDataProvider<DeploymentRecord>(deploymentKey);
-        deploymentSelectionModel = new DeploymentBrowserSelectionModel<DeploymentRecord>(deploymentKey, presenter);
-        subdeploymentSelectionModel = new DeploymentBrowserSelectionModel<DeploymentRecord>(deploymentKey, presenter);
-        subsystemSelectionModel = new DeploymentBrowserSelectionModel<SubsystemRecord>(subsystemKey, presenter);
+        DeploymentKeyProvider keyProvider = new DeploymentKeyProvider();
+        final DeploymentSelectionModel selectionModel = new DeploymentSelectionModel(keyProvider, presenter);
 
         final ToolStrip toolStrip = new ToolStrip();
         ToolButton addBtn = new ToolButton(Console.CONSTANTS.common_label_add(), new ClickHandler()
@@ -112,7 +88,7 @@ public class DeploymentBrowserView extends SuspendableViewImpl implements Deploy
                     @Override
                     public void onClick(ClickEvent clickEvent)
                     {
-                        DeploymentRecord selection = deploymentSelectionModel.getSelectedObject();
+                        DeploymentRecord selection = selectionModel.getSelectedObject();
                         if (selection != null)
                         {
                             new DeploymentCommandDelegate(
@@ -129,7 +105,7 @@ public class DeploymentBrowserView extends SuspendableViewImpl implements Deploy
                     @Override
                     public void onClick(ClickEvent clickEvent)
                     {
-                        DeploymentRecord selection = deploymentSelectionModel.getSelectedObject();
+                        DeploymentRecord selection = selectionModel.getSelectedObject();
                         if (selection != null)
                         {
                             new DeploymentCommandDelegate(
@@ -146,7 +122,7 @@ public class DeploymentBrowserView extends SuspendableViewImpl implements Deploy
                     @Override
                     public void onClick(ClickEvent clickEvent)
                     {
-                        DeploymentRecord selection = deploymentSelectionModel.getSelectedObject();
+                        DeploymentRecord selection = selectionModel.getSelectedObject();
                         if (selection != null)
                         {
                             new DeploymentCommandDelegate(
@@ -158,7 +134,8 @@ public class DeploymentBrowserView extends SuspendableViewImpl implements Deploy
                     }
                 }));
 
-        filter = new DeploymentFilter(deploymentDataProvider);
+        ListDataProvider<DeploymentRecord> dataProvider = new ListDataProvider<DeploymentRecord>(keyProvider);
+        filter = new DeploymentFilter(dataProvider);
         toolStrip.addToolWidget(filter.asWidget());
 
         contextPanel = new DeckPanel();
@@ -175,8 +152,7 @@ public class DeploymentBrowserView extends SuspendableViewImpl implements Deploy
         contextPanel.showWidget(0);
 
         //DemoTreeModel demoTreeModel = new DemoTreeModel();
-        deploymentTreeModel = new DeploymentTreeModel(deploymentStore, deploymentDataProvider, deploymentSelectionModel,
-                subdeploymentSelectionModel, subsystemSelectionModel);
+        deploymentTreeModel = new DeploymentTreeModel(presenter, deploymentStore, dataProvider);
         DefaultCellBrowser cellBrowser = new DefaultCellBrowser.Builder(deploymentTreeModel, null).build();
 
         OneToOneLayout layout = new OneToOneLayout()
