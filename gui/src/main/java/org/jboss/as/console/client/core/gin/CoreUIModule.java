@@ -216,9 +216,14 @@ public class CoreUIModule extends AbstractPresenterModule {
         bind(Baseadress.class).in(Singleton.class);
         bind(RuntimeBaseAddress.class).in(Singleton.class);
 
+        // mobile:
+        // bindConstant().annotatedWith(GaAccount.class).to("UA-36590267-1");
+
         bindConstant().annotatedWith(GaAccount.class).to("UA-35829315-1");
-        bind(NavigationTracker.class).asEagerSingleton();
+
         bind(GoogleAnalytics.class).toProvider(AnalyticsProvider.class).in(Singleton.class);
+        bind(NavigationTracker.class).asEagerSingleton();
+
         // ----------------------------------------------------------------------
 
         //TODO: bind(EventBus.class).to(DebugEventBus.class).in(Singleton.class);

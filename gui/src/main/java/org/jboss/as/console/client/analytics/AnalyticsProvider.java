@@ -1,5 +1,6 @@
 package org.jboss.as.console.client.analytics;
 
+import com.allen_sauer.gwt.log.client.Log;
 import com.google.inject.Provider;
 import com.gwtplatform.mvp.client.googleanalytics.GoogleAnalytics;
 import com.gwtplatform.mvp.client.googleanalytics.GoogleAnalyticsImpl;
@@ -23,9 +24,11 @@ public class AnalyticsProvider implements Provider<GoogleAnalytics> {
             || Preferences.get(Preferences.Key.DISBALE_ANALYTICS).equals("true")) // or set to true
         {
             analytics = new CustomAnalyticsImpl();
+            System.out.println("Google analytics is setup");
         }
         else
         {
+            System.out.println("Running non-operational analytics implementation");
             analytics = NOOP;
         }
 

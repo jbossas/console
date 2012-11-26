@@ -33,14 +33,11 @@ import com.gwtplatform.mvp.client.googleanalytics.GoogleAnalytics;
 public class CustomAnalyticsImpl implements GoogleAnalytics {
   @Override
   public void init(String userAccount) {
-    Element firstScript = Document.get().getElementsByTagName("script").getItem(
-        0);
-
-    String domain = "jboss.org"; //GWT.getHostPageBaseURL();
+    Element firstScript = Document.get().getElementsByTagName("script").getItem(0);
 
     ScriptElement config = Document.get().createScriptElement(
         "var _gaq = _gaq || [];_gaq.push(['_setAccount', '" + userAccount
-            + "']);_gaq.push(['_setDomainName', '"+domain+"']);_gaq.push(['_setAllowLinker', true]);_gaq.push(['_trackPageview']);");
+            + "']);_gaq.push(['_trackPageview']);");
 
     firstScript.getParentNode().insertBefore(config, firstScript);
 
