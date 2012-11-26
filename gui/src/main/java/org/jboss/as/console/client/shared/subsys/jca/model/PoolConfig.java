@@ -30,6 +30,17 @@ public interface PoolConfig {
     boolean isPoolStrictMin();
     void setPoolStrictMin(boolean b);
 
+    @Binding(detypedName = "flush-strategy")
+    String getFlushStrategy();
+    void setFlushStrategy(String name);
+
+    @Binding(detypedName = "idle-timeout-minutes")
+    long getIdleTimeout();
+    void setIdleTimeout(long timeout);
+
+    @Binding(detypedName = "track-statements")
+    String getTrackStatements();
+    void setTrackStatements(String name);
 
     // metrics below
 
