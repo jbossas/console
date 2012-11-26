@@ -118,7 +118,6 @@ public class Console implements EntryPoint {
                 bootstrap.addHook(new ChoseProcessor(MODULES.getBootstrapContext()));
                 bootstrap.addHook(new EagerLoadProfiles(MODULES.getProfileStore(), MODULES.getCurrentSelectedProfile()));
                 bootstrap.addHook(new RemoveLoadingPanel(loadingPanel));
-                bootstrap.addHook(new LoadMainApp(MODULES.getBootstrapContext(), MODULES.getPlaceManager(), MODULES.getTokenFormatter()));
 
                 // viz can be loaded in background ...
                 //bootstrap.addHook(new LoadGoogleViz());
@@ -142,6 +141,12 @@ public class Console implements EntryPoint {
 
                             HTMLPanel explanation = new HTMLPanel("<center><div style='padding-top:150px;'><h2>The web console could not be loaded.</h2>"+cause+"</div></center>");
                             RootLayoutPanel.get().add(explanation);
+                        }
+                        else {
+                            new LoadMainApp(
+                                    MODULES.getBootstrapContext(),
+                                    MODULES.getPlaceManager(),
+                                    MODULES.getTokenFormatter()).execute();
                         }
                     }
                 });

@@ -31,7 +31,7 @@ public class EagerLoadProfiles extends BoostrapStep {
     }
 
     @Override
-    public void execute(Iterator<BoostrapStep> iterator, final AsyncCallback<Boolean> outcome) {
+    public void execute(final Iterator<BoostrapStep> iterator, final AsyncCallback<Boolean> outcome) {
 
         BootstrapContext bootstrapContext = Console.getBootstrapContext();
 
@@ -42,7 +42,7 @@ public class EagerLoadProfiles extends BoostrapStep {
                 @Override
                 public void onFailure(Throwable caught) {
                     outcome.onSuccess(Boolean.FALSE);
-                    throw new RuntimeException(caught);
+                    next(iterator, outcome);
                 }
 
                 @Override
@@ -54,6 +54,7 @@ public class EagerLoadProfiles extends BoostrapStep {
                     }
 
                     outcome.onSuccess(Boolean.TRUE);
+                    next(iterator, outcome);
                 }
             });
 
@@ -62,9 +63,9 @@ public class EagerLoadProfiles extends BoostrapStep {
         {
             // standalone
             outcome.onSuccess(Boolean.TRUE);
+            next(iterator, outcome);
         }
 
-        next(iterator, outcome);
     }
 
     private void selectDefaultProfile(List<ProfileRecord> result) {

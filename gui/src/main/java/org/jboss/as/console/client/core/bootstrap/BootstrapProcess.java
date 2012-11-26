@@ -30,12 +30,12 @@ public class BootstrapProcess {
         first.execute(iterator, new SimpleCallback<Boolean>() {
 
             int numResponses;
-            boolean overallResult;
+            boolean overallResult = true;
 
             @Override
             public void onSuccess(Boolean successful) {
                 numResponses++;
-                overallResult = successful;
+                overallResult = (overallResult&&successful);
 
                 if (numResponses == hooks.size()) {
                     outcome.onSuccess(overallResult);

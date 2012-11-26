@@ -63,6 +63,7 @@ public class ExecutionMode extends BoostrapStep {
                 bootstrap.setlastError(caught);
                 Log.error(caught.getMessage());
                 outcome.onSuccess(Boolean.FALSE);
+                next(iterator, outcome);
             }
 
             @Override
