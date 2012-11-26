@@ -55,13 +55,15 @@ public class StandaloneDeploymentInfo implements DeploymentViewRefresher {
   @Override
   public void refreshView(final DeploymentRecord... targets) {
     // load deployments
-    deploymentStore.loadDeploymentContent(new SimpleCallback<List<DeploymentRecord>>() {
+    deploymentStore.loadDeployments(new SimpleCallback<List<DeploymentRecord>>()
+    {
 
-      @Override
-      public void onSuccess(List<DeploymentRecord> result) {
-        allDeployments = result;
-        presenter.getView().updateDeploymentInfo(result);
-      }
+        @Override
+        public void onSuccess(List<DeploymentRecord> result)
+        {
+            allDeployments = result;
+            presenter.getView().updateDeploymentInfo(result);
+        }
     });
   }
 }

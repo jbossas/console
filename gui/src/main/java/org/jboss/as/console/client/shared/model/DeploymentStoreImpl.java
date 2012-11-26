@@ -53,7 +53,7 @@ public class DeploymentStoreImpl implements DeploymentStore {
     }
 
     @Override
-    public void loadDeploymentContent(final AsyncCallback<List<DeploymentRecord>> callback) {
+    public void loadDeployments(final AsyncCallback<List<DeploymentRecord>> callback) {
         // /:read-children-resources(child-type=deployment)
         final List<DeploymentRecord> deployments = new ArrayList<DeploymentRecord>();
 
@@ -102,6 +102,34 @@ public class DeploymentStoreImpl implements DeploymentStore {
                                 if(content.has("hash")) rec.setSha(content.get("hash").asString());
                             }
 
+                            // Subsystems or subdeployments?
+                            ModelNode subsystemNode = handler.get("subsystem");
+                            ModelNode subdeploymentNode = handler.get("subdeployment");
+                            if (subsystemNode.isDefined())
+                            {
+                                List<ModelNode> subsystemNodes = subsystemNode.asList();
+                                List<SubsystemRecord> subsystemRecords = new ArrayList<SubsystemRecord>(subsystemNodes.size());
+                                for (ModelNode n : subsystemNodes)
+                                {
+                                    SubsystemRecord subsystemRecord = factory.subsystem().as();
+                                    subsystemRecord.setKey(n.asProperty().getName());
+                                    subsystemRecords.add(subsystemRecord);
+                                }
+                                rec.setSubsystems(subsystemRecords);
+                            }
+                            else if (subdeploymentNode.isDefined())
+                            {
+                                List<ModelNode> subdeploymentNodes = subdeploymentNode.asList();
+                                ArrayList<DeploymentRecord> subdeploymentRecords = new ArrayList<DeploymentRecord>(subdeploymentNodes.size());
+                                for (ModelNode n : subdeploymentNodes)
+                                {
+                                    DeploymentRecord subdeploymentRecord = factory.deployment().as();
+                                    subdeploymentRecord.setName(n.asProperty().getName());
+                                    subdeploymentRecord.setSubdeployment(true);
+                                    subdeploymentRecords.add(subdeploymentRecord);
+                                }
+                                rec.setSubdeployments(subdeploymentRecords);
+                            }
                             deployments.add(rec);
                         } catch (IllegalArgumentException e) {
                             Log.error("Failed to parse data source representation", e);
@@ -159,6 +187,8 @@ public class DeploymentStoreImpl implements DeploymentStore {
             }
         });
     }
+
+
 
     @Override
     public void removeContent(DeploymentRecord deploymentRecord, AsyncCallback<DMRResponse> callback) {

@@ -35,7 +35,7 @@ import java.util.Set;
  */
 public interface DeploymentStore {
     void loadServerGroupDeployments(AsyncCallback<List<DeploymentRecord>> callback);
-    void loadDeploymentContent(AsyncCallback<List<DeploymentRecord>> callback);
+    void loadDeployments(AsyncCallback<List<DeploymentRecord>> callback);
     void addToServerGroups( Set<String> serverGroups, boolean enable, DeploymentRecord deploymentRecord, AsyncCallback<DMRResponse> callback);
     void removeContent(DeploymentRecord deploymentRecord, AsyncCallback<DMRResponse> callback);
     void enableDisableDeployment(DeploymentRecord deploymentRecord, AsyncCallback<DMRResponse> callback);

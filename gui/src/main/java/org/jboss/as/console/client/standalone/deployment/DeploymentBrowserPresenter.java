@@ -62,35 +62,37 @@ import static org.jboss.dmr.client.ModelDescriptionConstants.*;
  * @author Stan Silvert <ssilvert@redhat.com> (C) 2011 Red Hat Inc.
  * @date 3/14/11
  */
-public class DeploymentBrowserPresenter extends Presenter<DeploymentBrowserPresenter.MyView, DeploymentBrowserPresenter.MyProxy>
-        implements DeployCommandExecutor {
+public class DeploymentBrowserPresenter
+        extends Presenter<DeploymentBrowserPresenter.MyView, DeploymentBrowserPresenter.MyProxy>
+        implements DeployCommandExecutor
+{
+    @ProxyCodeSplit
+    @NameToken("deployments2")
+    @UseGatekeeper(StandaloneGateKeeper.class)
+    public interface MyProxy extends Proxy<DeploymentBrowserPresenter>, Place
+    {
+    }
+
+
+    public interface MyView extends View
+    {
+        void setPresenter(DeploymentBrowserPresenter presenter);
+        void updateDeploymentInfo(List<DeploymentRecord> deployments);
+        <T> void updateContext(T selectedContext);
+    }
+
 
     private final PlaceManager placeManager;
     private StandaloneDeploymentInfo2 deploymentInfo;
     private DeploymentStore deploymentStore;
-
     private DefaultWindow window;
     private DispatchAsync dispatcher;
 
 
-    @ProxyCodeSplit
-    @NameToken("deployments2")
-    @UseGatekeeper( StandaloneGateKeeper.class )
-    public interface MyProxy extends Proxy<DeploymentBrowserPresenter>, Place {
-    }
-
-    public interface MyView extends View {
-        void setPresenter(DeploymentBrowserPresenter presenter);
-        void updateDeploymentInfo(List<DeploymentRecord> deployments);
-    }
-
     @Inject
-    public DeploymentBrowserPresenter(
-            EventBus eventBus, MyView view, MyProxy proxy,
-            DeploymentStore deploymentStore,
-            PlaceManager placeManager,
-            DispatchAsync dispatcher) {
-
+    public DeploymentBrowserPresenter(EventBus eventBus, MyView view, MyProxy proxy, DeploymentStore deploymentStore,
+            PlaceManager placeManager, DispatchAsync dispatcher)
+    {
         super(eventBus, view, proxy);
         this.placeManager = placeManager;
         this.deploymentInfo = new StandaloneDeploymentInfo2(this, deploymentStore);
@@ -99,73 +101,93 @@ public class DeploymentBrowserPresenter extends Presenter<DeploymentBrowserPrese
     }
 
     @Override
-    protected void onBind() {
+    protected void onBind()
+    {
         super.onBind();
         getView().setPresenter(this);
     }
 
     @Override
-    protected void onReset() {
+    protected void onReset()
+    {
         super.onReset();
         deploymentInfo.refreshView();
     }
 
     @Override
-    protected void revealInParent() {
+    protected void revealInParent()
+    {
         RevealContentEvent.fire(this, StandaloneRuntimePresenter.TYPE_MainContent, this);
     }
 
-    public void onFilterType(String value) {
+    public void onFilterType(String value)
+    {
+    }
+
+    public <T> void updateContext(T selectedContext)
+    {
+        getView().updateContext(selectedContext);
     }
 
     @Override
-    public void removeContent(final DeploymentRecord record) {
-        deploymentStore.removeContent(record, new SimpleCallback<DMRResponse>() {
+    public void removeContent(final DeploymentRecord record)
+    {
+        deploymentStore.removeContent(record, new SimpleCallback<DMRResponse>()
+        {
 
             @Override
-            public void onSuccess(DMRResponse response) {
+            public void onSuccess(DMRResponse response)
+            {
                 deploymentInfo.refreshView();
                 DeploymentCommand.REMOVE_FROM_STANDALONE.displaySuccessMessage(DeploymentBrowserPresenter.this, record);
             }
 
             @Override
-            public void onFailure(Throwable t) {
+            public void onFailure(Throwable t)
+            {
                 super.onFailure(t);
                 deploymentInfo.refreshView();
-                DeploymentCommand.REMOVE_FROM_STANDALONE.displayFailureMessage(DeploymentBrowserPresenter.this, record, t);
+                DeploymentCommand.REMOVE_FROM_STANDALONE
+                        .displayFailureMessage(DeploymentBrowserPresenter.this, record, t);
             }
         });
     }
 
     @Override
-    public void enableDisableDeployment(final DeploymentRecord record) {
+    public void enableDisableDeployment(final DeploymentRecord record)
+    {
 
         final PopupPanel loading = Feedback.loading(
                 Console.CONSTANTS.common_label_plaseWait(),
                 Console.CONSTANTS.common_label_requestProcessed(),
-                new Feedback.LoadingCallback() {
+                new Feedback.LoadingCallback()
+                {
                     @Override
-                    public void onCancel() {
+                    public void onCancel()
+                    {
 
                     }
                 });
 
-        deploymentStore.enableDisableDeployment(record, new SimpleCallback<DMRResponse>() {
+        deploymentStore.enableDisableDeployment(record, new SimpleCallback<DMRResponse>()
+        {
 
             @Override
-            public void onSuccess(DMRResponse response) {
+            public void onSuccess(DMRResponse response)
+            {
                 loading.hide();
 
                 ModelNode result = response.get();
 
-                if(result.isFailure())
+                if (result.isFailure())
                 {
                     loading.hide();
-                    Console.error(Console.MESSAGES.modificationFailed("Deployment "+record.getRuntimeName()), result.getFailureDescription());
+                    Console.error(Console.MESSAGES.modificationFailed("Deployment " + record.getRuntimeName()),
+                            result.getFailureDescription());
                 }
                 else
                 {
-                    Console.info(Console.MESSAGES.modified("Deployment "+record.getRuntimeName()));
+                    Console.info(Console.MESSAGES.modified("Deployment " + record.getRuntimeName()));
                 }
 
                 deploymentInfo.refreshView();
@@ -176,37 +198,45 @@ public class DeploymentBrowserPresenter extends Presenter<DeploymentBrowserPrese
     }
 
     @Override
-    public void addToServerGroup(DeploymentRecord record, boolean enable, Set<ServerGroupSelection> selectedGroups) {
+    public void addToServerGroup(DeploymentRecord record, boolean enable, Set<ServerGroupSelection> selectedGroups)
+    {
         throw new UnsupportedOperationException("Not supported in standalone mode.");
     }
 
     @Override
-    public List<ServerGroupRecord> getPossibleGroupAssignments(DeploymentRecord record) {
+    public List<ServerGroupRecord> getPossibleGroupAssignments(DeploymentRecord record)
+    {
         return Collections.EMPTY_LIST;
     }
 
     @Override
-    public void promptForGroupSelections(DeploymentRecord record) {
+    public void promptForGroupSelections(DeploymentRecord record)
+    {
         throw new UnsupportedOperationException("Not supported in standalone mode.");
     }
 
     @Override
-    public void removeDeploymentFromGroup(DeploymentRecord record) {
+    public void removeDeploymentFromGroup(DeploymentRecord record)
+    {
         throw new UnsupportedOperationException("Not supported in standalone mode.");
     }
 
     @Override
-    public void updateDeployment(DeploymentRecord record) {
+    public void updateDeployment(DeploymentRecord record)
+    {
         launchNewDeploymentDialoge(record, true);
     }
 
-    public void launchNewDeploymentDialoge(DeploymentRecord record, boolean isUpdate) {
+    public void launchNewDeploymentDialoge(DeploymentRecord record, boolean isUpdate)
+    {
         window = new DefaultWindow(Console.MESSAGES.createTitle("Deployment"));
         window.setWidth(480);
         window.setHeight(450);
-        window.addCloseHandler(new CloseHandler<PopupPanel>() {
+        window.addCloseHandler(new CloseHandler<PopupPanel>()
+        {
             @Override
-            public void onClose(CloseEvent<PopupPanel> event) {
+            public void onClose(CloseEvent<PopupPanel> event)
+            {
 
             }
         });
@@ -219,7 +249,8 @@ public class DeploymentBrowserPresenter extends Presenter<DeploymentBrowserPrese
         window.center();
     }
 
-    public void onCreateUnmanaged(final DeploymentRecord entity) {
+    public void onCreateUnmanaged(final DeploymentRecord entity)
+    {
         window.hide();
 
         ModelNode operation = new ModelNode();
@@ -231,28 +262,29 @@ public class DeploymentBrowserPresenter extends Presenter<DeploymentBrowserPrese
         ModelNode path = new ModelNode();
         path.get("path").set(entity.getPath());
         path.get("archive").set(entity.isArchive());
-        if(entity.getRelativeTo()!=null && !entity.getRelativeTo().equals(""))
-            path.get("relative-to").set(entity.getRelativeTo());
+        if (entity.getRelativeTo() != null && !entity.getRelativeTo().equals(""))
+        { path.get("relative-to").set(entity.getRelativeTo()); }
 
         content.add(path);
         operation.get("content").set(content);
 
-        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>()
+        {
             @Override
-            public void onSuccess(DMRResponse dmrResponse) {
+            public void onSuccess(DMRResponse dmrResponse)
+            {
                 ModelNode response = dmrResponse.get();
-                if(response.isFailure())
+                if (response.isFailure())
                 {
                     Console.error("Failed to create unmanaged content", response.getFailureDescription());
                 }
                 else
                 {
-                    Console.info(Console.MESSAGES.added("Deployment "+entity.getName()));
+                    Console.info(Console.MESSAGES.added("Deployment " + entity.getName()));
                 }
 
                 deploymentInfo.refreshView();
             }
         });
     }
-
 }
