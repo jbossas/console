@@ -151,8 +151,7 @@ public class DeploymentBrowserView extends SuspendableViewImpl implements Deploy
         contextPanel.add(deploymentForm.asWidget());
         contextPanel.showWidget(0);
 
-        //DemoTreeModel demoTreeModel = new DemoTreeModel();
-        deploymentTreeModel = new DeploymentTreeModel(presenter, deploymentStore, dataProvider);
+        deploymentTreeModel = new DeploymentTreeModel(presenter, deploymentStore, dataProvider, selectionModel);
         DefaultCellBrowser cellBrowser = new DefaultCellBrowser.Builder(deploymentTreeModel, null).build();
 
         OneToOneLayout layout = new OneToOneLayout()
@@ -182,9 +181,24 @@ public class DeploymentBrowserView extends SuspendableViewImpl implements Deploy
     {
         if (selectedContext instanceof DeploymentRecord)
         {
-            DeploymentRecord deploymentRecord = (DeploymentRecord) selectedContext;
-            deploymentForm.edit(deploymentRecord);
+            DeploymentRecord deployment = (DeploymentRecord) selectedContext;
+            deploymentForm.edit(deployment);
             contextPanel.showWidget(1);
+        }
+        else if (selectedContext instanceof DeploymentRecord.Subsystem)
+        {
+            DeploymentRecord.Subsystem subsystem = (DeploymentRecord.Subsystem) selectedContext;
+            switch (subsystem.getType())
+            {
+                case ejb3:
+                    break;
+                case jpa:
+                    break;
+                case web:
+                    break;
+                case webservices:
+                    break;
+            }
         }
         else
         {

@@ -21,6 +21,8 @@ package org.jboss.as.console.client.widgets.browser;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.cellview.client.CellBrowser;
+import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.view.client.HasData;
 import com.google.gwt.view.client.TreeViewModel;
 
 import static com.google.gwt.resources.client.ImageResource.ImageOptions;
@@ -41,6 +43,13 @@ public class DefaultCellBrowser extends CellBrowser
         setHeight(DEFAULT_HEIGHT);
     }
 
+    @Override
+    protected <C> Widget createPager(final HasData<C> display)
+    {
+        // by returning null we can prevent the "flickering" of the "show more" link
+        // see http://stackoverflow.com/a/6827755/1538056
+        return null;
+    }
 
     public static class Builder<T> extends CellBrowser.Builder
     {

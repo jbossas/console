@@ -18,19 +18,29 @@
  */
 package org.jboss.as.console.client.standalone.deployment;
 
-import com.google.gwt.view.client.ProvidesKey;
+import com.google.gwt.view.client.SelectionChangeEvent;
+import com.google.gwt.view.client.SingleSelectionModel;
 import org.jboss.as.console.client.shared.model.DeploymentRecord;
 
-
 /**
-* @author Harald Pehl
-* @date 11/26/2012
-*/
-class SubsystemKeyProvider implements ProvidesKey<DeploymentRecord.Subsystem>
+ * @author Harald Pehl
+ * @date 11/26/2012
+ */
+public class SubsystemSelectionModel extends SingleSelectionModel<DeploymentRecord.Subsystem>
 {
-    @Override
-    public Object getKey(final DeploymentRecord.Subsystem item)
+    private final DeploymentBrowserPresenter presenter;
+
+    public SubsystemSelectionModel(final DeploymentBrowserPresenter presenter)
     {
-        return item.getName();
+        super(new SubsystemKeyProvider());
+        this.presenter = presenter;
+        addSelectionChangeHandler(new SelectionChangeEvent.Handler()
+        {
+            @Override
+            public void onSelectionChange(final SelectionChangeEvent event)
+            {
+                presenter.getView().updateContext(getSelectedObject());
+            }
+        });
     }
 }
