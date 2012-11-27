@@ -15,6 +15,7 @@ import javax.inject.Inject;
  */
 public class NavigationTracker implements NavigationHandler {
     private final GoogleAnalytics analytics;
+    private EventBus eventBus;
 
     @Inject
     public NavigationTracker(
@@ -22,17 +23,21 @@ public class NavigationTracker implements NavigationHandler {
             final EventBus eventBus, GoogleAnalytics delegate) {
 
         this.analytics = delegate;
+        this.eventBus = eventBus;
 
        // if (GWT.isScript()) {
             Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
                 @Override
                 public void execute() {
                     analytics.init(gaAccount);
-
-                    eventBus.addHandler(NavigationEvent.getType(), NavigationTracker.this);
+                    bind();
                 }
             });
        // }
+    }
+
+    public void bind() {
+        eventBus.addHandler(NavigationEvent.getType(), NavigationTracker.this);
     }
 
     @Override

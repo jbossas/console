@@ -45,6 +45,7 @@ import org.jboss.as.console.client.core.bootstrap.ExecutionMode;
 import org.jboss.as.console.client.core.bootstrap.LoadMainApp;
 import org.jboss.as.console.client.core.bootstrap.RegisterSubsystems;
 import org.jboss.as.console.client.core.bootstrap.RemoveLoadingPanel;
+import org.jboss.as.console.client.core.bootstrap.TrackExecutionMode;
 import org.jboss.as.console.client.core.gin.Composite;
 import org.jboss.as.console.client.core.message.Message;
 import org.jboss.as.console.client.core.message.MessageCenter;
@@ -114,6 +115,7 @@ public class Console implements EntryPoint {
                 final BootstrapProcess bootstrap = new BootstrapProcess();
 
                 bootstrap.addHook(new ExecutionMode(MODULES.getBootstrapContext(), MODULES.getDispatchAsync()));
+                bootstrap.addHook(new TrackExecutionMode(MODULES.getBootstrapContext(), MODULES.getAnalytics()));
                 bootstrap.addHook(new RegisterSubsystems(MODULES.getSubsystemRegistry()));
                 bootstrap.addHook(new ChoseProcessor(MODULES.getBootstrapContext()));
                 bootstrap.addHook(new EagerLoadProfiles(MODULES.getProfileStore(), MODULES.getCurrentSelectedProfile()));
