@@ -22,6 +22,7 @@ package org.jboss.as.console.client.core.settings;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.web.bindery.event.shared.EventBus;
 import com.google.gwt.i18n.rebind.LocaleUtils;
 import com.google.gwt.i18n.shared.GwtLocale;
@@ -31,6 +32,8 @@ import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.PopupViewImpl;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.Preferences;
+import org.jboss.as.console.client.shared.help.StaticHelpPanel;
+import org.jboss.as.console.client.widgets.ContentDescription;
 import org.jboss.ballroom.client.widgets.forms.CheckBoxItem;
 import org.jboss.ballroom.client.widgets.forms.ComboBoxItem;
 import org.jboss.ballroom.client.widgets.forms.Form;
@@ -58,7 +61,7 @@ public class SettingsView extends PopupViewImpl implements SettingsPresenterWidg
 
         window = new DefaultWindow(Console.CONSTANTS.common_label_settings());
         VerticalPanel layout = new VerticalPanel();
-        layout.setStyleName("fill-layout-width");
+        layout.setStyleName("window-content");
 
         form = new Form<CommonSettings>(CommonSettings.class);
 
@@ -69,8 +72,8 @@ public class SettingsView extends PopupViewImpl implements SettingsPresenterWidg
 
         //CheckBoxItem useCache = new CheckBoxItem(Preferences.Key.USE_CACHE.getToken(), Preferences.Key.USE_CACHE.getTitle());
 
-        CheckBoxItem disableAnalytics = new CheckBoxItem(Preferences.Key.DISBALE_ANALYTICS.getToken(), Preferences.Key.DISBALE_ANALYTICS.getTitle());
-        form.setFields(localeItem, disableAnalytics);
+        CheckBoxItem enableAnalytics = new CheckBoxItem(Preferences.Key.ANALYTICS.getToken(), Preferences.Key.ANALYTICS.getTitle());
+        form.setFields(localeItem, enableAnalytics);
 
         Widget formWidget = form.asWidget();
         formWidget.getElement().setAttribute("style", "margin:15px");
@@ -116,6 +119,14 @@ public class SettingsView extends PopupViewImpl implements SettingsPresenterWidg
 
         options.getElement().setAttribute("style", "padding:10px");
 
+        SafeHtmlBuilder html = new SafeHtmlBuilder();
+        html.appendHtmlConstant("<ul>");
+        html.appendHtmlConstant("<li>").appendEscaped("Locale: The user interface language.");
+        html.appendHtmlConstant("<li>").appendEscaped("Analytics: We track browser and operating system information in order to improve the user interface.");
+        html.appendEscaped("You can disable the analytics feature at anytime.");
+        html.appendHtmlConstant("</ul>");
+        StaticHelpPanel help = new StaticHelpPanel(html.toSafeHtml());
+        layout.add(help.asWidget());
         layout.add(form.asWidget());
 
         window.setWidth(480);

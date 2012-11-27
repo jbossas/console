@@ -20,8 +20,8 @@ public class AnalyticsProvider implements Provider<GoogleAnalytics> {
 
         GoogleAnalytics analytics = null;
 
-        if(!Preferences.has(Preferences.Key.DISBALE_ANALYTICS) // not set at all
-            || Preferences.get(Preferences.Key.DISBALE_ANALYTICS).equals("true")) // or set to true
+        if(!Preferences.has(Preferences.Key.ANALYTICS) // not set at all
+            || Preferences.get(Preferences.Key.ANALYTICS).equals("true")) // or set to true
         {
             analytics = new CustomAnalyticsImpl();
             System.out.println("Google analytics is setup");

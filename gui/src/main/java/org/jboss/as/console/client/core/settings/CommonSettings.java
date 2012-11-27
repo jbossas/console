@@ -30,7 +30,7 @@ public interface CommonSettings {
     String getLocale();
     void setLocale(String locale);
 
-    boolean isUseCache();
-    void setUseCache(boolean b);
+    boolean isAnalytics();
+    void setAnalytics(boolean b);
 
 }

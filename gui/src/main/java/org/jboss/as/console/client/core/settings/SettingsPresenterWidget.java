@@ -93,9 +93,9 @@ public class SettingsPresenterWidget
     public CommonSettings getCommonSettings() {
         CommonSettings settings = factory.settings().as();
         settings.setLocale(Preferences.get(Preferences.Key.LOCALE));
-        settings.setUseCache(
+        settings.setAnalytics(
                 Boolean.valueOf(
-                        Preferences.get(Preferences.Key.USE_CACHE, "false")
+                        Preferences.get(Preferences.Key.ANALYTICS, "true")
                 )
         );
         return settings;

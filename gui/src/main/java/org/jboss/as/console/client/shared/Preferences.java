@@ -34,8 +34,7 @@ public class Preferences
     public enum Key {
 
         LOCALE("locale", "Locale", "en"),
-        USE_CACHE("useCache", "Use Cache", "false"),
-        DISBALE_ANALYTICS("disableAnalytics", "Disable Analytics", "false");
+        ANALYTICS("analytics", "Analytics Enabled?", "true");
 
         private String token;
         private String title;
