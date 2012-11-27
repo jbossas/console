@@ -27,13 +27,13 @@ import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
+import com.google.gwt.view.client.AsyncDataProvider;
+import com.google.gwt.view.client.HasData;
 import com.google.gwt.view.client.ListDataProvider;
-import com.google.gwt.view.client.SelectionModel;
-import com.google.gwt.view.client.SingleSelectionModel;
 import com.google.gwt.view.client.TreeViewModel;
+import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.shared.model.DeploymentRecord;
 import org.jboss.as.console.client.shared.model.DeploymentStore;
-import org.jboss.as.console.client.shared.model.SubsystemRecord;
 import org.jboss.ballroom.client.widgets.icons.Icons;
 
 import java.util.List;
@@ -45,24 +45,24 @@ import java.util.List;
 public class DeploymentTreeModel implements TreeViewModel
 {
     static final DeploymentTemplates DEPLOYMENT_TEMPLATES = GWT.create(DeploymentTemplates.class);
-
     private final DeploymentBrowserPresenter presenter;
     private final DeploymentStore deploymentStore;
     private final ListDataProvider<DeploymentRecord> deploymentDataProvider;
-    private final SelectionModel<DeploymentRecord> deploymentSelectionModel;
-    private final SelectionModel<DeploymentRecord> subdeploymentSelectionModel;
-    private final SelectionModel<SubsystemRecord> subsystemSelectionModel;
+    private final DeploymentSelectionModel deploymentSelectionModel;
+    private final DeploymentSelectionModel subdeploymentSelectionModel;
+    private final SubsystemSelectionModel subsystemSelectionModel;
 
 
     public DeploymentTreeModel(final DeploymentBrowserPresenter presenter, final DeploymentStore deploymentStore,
-            final ListDataProvider<DeploymentRecord> deploymentDataProvider)
+            final ListDataProvider<DeploymentRecord> deploymentDataProvider,
+            final DeploymentSelectionModel deploymentRecordSelectionModel)
     {
         this.presenter = presenter;
         this.deploymentStore = deploymentStore;
         this.deploymentDataProvider = deploymentDataProvider;
-        this.deploymentSelectionModel = new DeploymentSelectionModel(presenter);
+        this.deploymentSelectionModel = deploymentRecordSelectionModel;
         this.subdeploymentSelectionModel = new DeploymentSelectionModel(presenter);
-        this.subsystemSelectionModel = new SingleSelectionModel<SubsystemRecord>();
+        this.subsystemSelectionModel = new SubsystemSelectionModel(presenter);
     }
 
     @Override
@@ -71,78 +71,73 @@ public class DeploymentTreeModel implements TreeViewModel
         if (value == null)
         {
             // level 0: return the deploymnts
-            Cell<DeploymentRecord> cell = new AbstractCell<DeploymentRecord>()
-            {
-                @Override
-                public void render(final Context context, final DeploymentRecord value, final SafeHtmlBuilder sb)
-                {
-                    ImageResource res = null;
-                    if ("FAILED".equalsIgnoreCase(value.getStatus()))
-                    {
-                        res = Icons.INSTANCE.status_warn();
-                    }
-                    else if (value.isEnabled())
-                    {
-                        res = Icons.INSTANCE.status_good();
-                    }
-                    else
-                    {
-                        res = Icons.INSTANCE.status_bad();
-                    }
-                    AbstractImagePrototype proto = AbstractImagePrototype.create(res);
-                    SafeHtml imageHtml = SafeHtmlUtils.fromTrustedString(proto.getHTML());
-                    sb.append(DEPLOYMENT_TEMPLATES.deployment(value.getName(), imageHtml));
-                }
-            };
+            Cell<DeploymentRecord> cell = new DeploymentCell();
             return new DefaultNodeInfo<DeploymentRecord>(deploymentDataProvider, cell, deploymentSelectionModel, null);
         }
         else if (value instanceof DeploymentRecord)
         {
-            DeploymentRecord deployment = (DeploymentRecord) value;
-            if (!deployment.isSubdeployment())
+            final DeploymentRecord deployment = (DeploymentRecord) value;
+            if (deployment.isHasSubdeployments())
             {
-                // level 1
-                List<SubsystemRecord> subsystems = deployment.getSubsystems();
-                List<DeploymentRecord> subdeployments = deployment.getSubdeployments();
-                if (subdeployments != null)
+                // level 1: return the subdeployments
+                AsyncDataProvider<DeploymentRecord> dataProvider = new AsyncDataProvider<DeploymentRecord>()
                 {
-                    // return subdeployments
-                    ListDataProvider<DeploymentRecord> dataProvider = new ListDataProvider<DeploymentRecord>(
-                            subdeployments);
-                    Cell<DeploymentRecord> cell = new AbstractCell<DeploymentRecord>()
+                    @Override
+                    protected void onRangeChanged(final HasData<DeploymentRecord> display)
                     {
-                        @Override
-                        public void render(final Context context, final DeploymentRecord value,
-                                final SafeHtmlBuilder sb)
-                        {
-                            sb.appendEscaped(value.getName());
-                        }
-                    };
-                    return new DefaultNodeInfo<DeploymentRecord>(dataProvider, cell, subdeploymentSelectionModel, null);
-                }
-                else if (subsystems != null)
-                {
-                    // return the subsystems
-                    ListDataProvider<SubsystemRecord> dataProvider = new ListDataProvider<SubsystemRecord>(subsystems);
-                    Cell<SubsystemRecord> cell = new AbstractCell<SubsystemRecord>()
-                    {
-                        @Override
-                        public void render(final Context context, final SubsystemRecord value, final SafeHtmlBuilder sb)
-                        {
-                            sb.appendEscaped(value.getKey());
-                        }
-                    };
-                    return new DefaultNodeInfo<SubsystemRecord>(dataProvider, cell, subsystemSelectionModel, null);
-                }
+                        deploymentStore.loadSubdeployments(deployment, new SimpleCallback<List<DeploymentRecord>>() {
+                            @Override
+                            public void onSuccess(final List<DeploymentRecord> result)
+                            {
+                                updateRowCount(result.size(), true);
+                                updateRowData(0, result);
+                            }
+                        });
+                    }
+                };
+                SubdeploymentCell cell = new SubdeploymentCell();
+                return new DefaultNodeInfo<DeploymentRecord>(dataProvider, cell, subdeploymentSelectionModel, null);
             }
-            else
+            else if (deployment.isHasSubsystems())
             {
-                // Level 2: return the subsystems of a selected subdeployment subdeployments
+                // level 1 or 2: return the subsystems
+                AsyncDataProvider<DeploymentRecord.Subsystem> dataProvider = new AsyncDataProvider<DeploymentRecord.Subsystem>()
+                {
+                    @Override
+                    protected void onRangeChanged(final HasData<DeploymentRecord.Subsystem> display)
+                    {
+                        deploymentStore
+                                .loadSubsystems(deployment, new SimpleCallback<List<DeploymentRecord.Subsystem>>()
+                                {
+                                    @Override
+                                    public void onSuccess(final List<DeploymentRecord.Subsystem> result)
+                                    {
+                                        updateRowCount(result.size(), true);
+                                        updateRowData(0, result);
+                                    }
+                                });
+                    }
+                };
+                Cell<DeploymentRecord.Subsystem> cell = new SubsystemCell();
+                return new DefaultNodeInfo<DeploymentRecord.Subsystem>(dataProvider, cell, subsystemSelectionModel,
+                        null);
             }
         }
-        else if (value instanceof SubsystemRecord)
+        else if (value instanceof DeploymentRecord.Subsystem)
         {
             // level 2/3: return the contents of the selected subsystem
+            DeploymentRecord.Subsystem subsystem = (DeploymentRecord.Subsystem) value;
+            switch (subsystem.getType())
+            {
+                case ejb3:
+                    break;
+                case jpa:
+                    break;
+                case web:
+                    break;
+                case webservices:
+                    break;
+            }
         }
         return null;
     }
@@ -164,5 +159,53 @@ public class DeploymentTreeModel implements TreeViewModel
         @Template(
                 "<div style=\"padding-right:20px;position:relative;zoom:1;\"><div>{0}</div><div style=\"margin-top:-9px;position:absolute;top:50%;right:0;line-height:0px;\">{1}</div></div>")
         SafeHtml deployment(String depployment, SafeHtml icon);
+    }
+
+
+    private static class DeploymentCell extends AbstractCell<DeploymentRecord>
+    {
+        @Override
+        public void render(final Context context, final DeploymentRecord value, final SafeHtmlBuilder sb)
+        {
+            ImageResource res = null;
+            if ("FAILED".equalsIgnoreCase(value.getStatus()))
+            {
+                res = Icons.INSTANCE.status_warn();
+            }
+            else if (value.isEnabled())
+            {
+                res = Icons.INSTANCE.status_good();
+            }
+            else
+            {
+                res = Icons.INSTANCE.status_bad();
+            }
+            AbstractImagePrototype proto = AbstractImagePrototype.create(res);
+            SafeHtml imageHtml = SafeHtmlUtils.fromTrustedString(proto.getHTML());
+            sb.append(DEPLOYMENT_TEMPLATES.deployment(value.getName(), imageHtml));
+        }
+    }
+
+
+    private static class SubdeploymentCell extends AbstractCell<DeploymentRecord>
+    {
+        @Override
+        public void render(final Context context, final DeploymentRecord value,
+                final SafeHtmlBuilder sb)
+        {
+            sb.appendEscaped(value.getName());
+        }
+
+
+    }
+
+
+    private static class SubsystemCell extends AbstractCell<DeploymentRecord.Subsystem>
+    {
+        @Override
+        public void render(final Context context, final DeploymentRecord.Subsystem value, final SafeHtmlBuilder sb)
+        {
+            sb.appendEscaped(value.getName());
+        }
     }
 }

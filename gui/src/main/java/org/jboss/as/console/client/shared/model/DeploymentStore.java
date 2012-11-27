@@ -36,6 +36,12 @@ import java.util.Set;
 public interface DeploymentStore {
     void loadServerGroupDeployments(AsyncCallback<List<DeploymentRecord>> callback);
     void loadDeployments(AsyncCallback<List<DeploymentRecord>> callback);
+    void loadSubdeployments(DeploymentRecord deployment, AsyncCallback<List<DeploymentRecord>> callback);
+    void loadSubsystems(DeploymentRecord deployment, AsyncCallback<List<DeploymentRecord.Subsystem>> callback);
+    void loadEjbs(DeploymentRecord.EjbSubsystem subsystem, AsyncCallback<List<DeploymentRecord.Ejb>> callback);
+    void loadPersistenceUnits(DeploymentRecord.JpaSubsystem subsystem, AsyncCallback<List<DeploymentRecord.PersistenceUnit>> callback);
+    void loadServlets(DeploymentRecord.WebSubsystemn subsystemn, AsyncCallback<List<DeploymentRecord.Servlet>> callback);
+    void loadEndpoints(DeploymentRecord.WebserviceSubsystem subsystem, AsyncCallback<List<DeploymentRecord.Endpoint>> callback);
     void addToServerGroups( Set<String> serverGroups, boolean enable, DeploymentRecord deploymentRecord, AsyncCallback<DMRResponse> callback);
     void removeContent(DeploymentRecord deploymentRecord, AsyncCallback<DMRResponse> callback);
     void enableDisableDeployment(DeploymentRecord deploymentRecord, AsyncCallback<DMRResponse> callback);

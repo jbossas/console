@@ -147,6 +147,14 @@ public interface CoreBeanFactory {
     AutoBean<ServerGroupRecord> serverGroup();
     AutoBean<PropertyRecord> property();
     AutoBean<DeploymentRecord> deployment();
+    AutoBean<DeploymentRecord.EjbSubsystem> deploymentEjbSubsystem();
+    AutoBean<DeploymentRecord.Ejb> deployedEjb();
+    AutoBean<DeploymentRecord.JpaSubsystem> deploymentJpaSubsystem();
+    AutoBean<DeploymentRecord.PersistenceUnit> deployedPersistenceUnit();
+    AutoBean<DeploymentRecord.WebSubsystemn> deploymentWebSubsystem();
+    AutoBean<DeploymentRecord.Servlet> deployedServlet();
+    AutoBean<DeploymentRecord.WebserviceSubsystem> deploymentWebserviceSubsystem();
+    AutoBean<DeploymentRecord.Endpoint> deployedEndpoint();
     AutoBean<Host> host();
     AutoBean<Server> server();
     AutoBean<Jvm> jvm();
