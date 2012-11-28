@@ -1,6 +1,7 @@
 package org.jboss.as.console.client.analytics;
 
 import com.allen_sauer.gwt.log.client.Log;
+import com.google.gwt.core.client.GWT;
 import com.google.inject.Provider;
 import com.gwtplatform.mvp.client.googleanalytics.GoogleAnalytics;
 import com.gwtplatform.mvp.client.googleanalytics.GoogleAnalyticsImpl;
@@ -21,14 +22,15 @@ public class AnalyticsProvider implements Provider<GoogleAnalytics> {
         GoogleAnalytics analytics = null;
 
         if(!Preferences.has(Preferences.Key.ANALYTICS) // not set at all
-            || Preferences.get(Preferences.Key.ANALYTICS).equals("true")) // or set to true
+            || Preferences.get(Preferences.Key.ANALYTICS).equals("true")
+                && GWT.isScript() ) // web mode only
         {
             analytics = new CustomAnalyticsImpl();
             System.out.println("Google analytics is setup");
         }
         else
         {
-            System.out.println("Running non-operational analytics implementation");
+            System.out.println("Running stub analytics implementation");
             analytics = NOOP;
         }
 
