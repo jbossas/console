@@ -34,6 +34,7 @@ import static com.google.gwt.resources.client.ImageResource.ImageOptions;
 public class DefaultCellBrowser extends CellBrowser
 {
     public static final int DEFAILT_PAGE_SIZE=  10;
+    public static final int MINIMUM_COLUMN_WIDTH = 50;
     public static final String DEFAULT_HEIGHT = "200px";
     public static final Resources DEFAULT_RESOURCES = GWT.create(Resources.class);
 
@@ -41,6 +42,7 @@ public class DefaultCellBrowser extends CellBrowser
     {
         super(builder);
         setHeight(DEFAULT_HEIGHT);
+        setMinimumColumnWidth(MINIMUM_COLUMN_WIDTH);
     }
 
     @Override

@@ -18,7 +18,6 @@
  */
 package org.jboss.as.console.client.standalone.deployment;
 
-import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
@@ -27,8 +26,10 @@ import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.view.client.ListDataProvider;
+import com.google.gwt.view.client.SingleSelectionModel;
 import com.google.gwt.view.client.TreeViewModel;
 import org.jboss.as.console.client.shared.deployment.DeploymentStore;
+import org.jboss.as.console.client.shared.deployment.model.DeploymentData;
 import org.jboss.as.console.client.shared.deployment.model.DeploymentRecord;
 import org.jboss.as.console.client.shared.deployment.model.DeploymentSubsystemElement;
 import org.jboss.ballroom.client.widgets.icons.Icons;
@@ -42,7 +43,6 @@ import java.util.List;
 public class DeploymentTreeModel implements TreeViewModel
 {
     static final DeploymentTemplates DEPLOYMENT_TEMPLATES = GWT.create(DeploymentTemplates.class);
-
     private final DeploymentNodeInfoFactory nodeInfoFactory;
     private final ListDataProvider<DeploymentRecord> deploymentDataProvider;
     private final DefaultNodeInfo<DeploymentRecord> level0;
@@ -52,8 +52,8 @@ public class DeploymentTreeModel implements TreeViewModel
     {
         this.nodeInfoFactory = new DeploymentNodeInfoFactory(presenter, deploymentStore);
         this.deploymentDataProvider = new ListDataProvider<DeploymentRecord>();
-        this.level0 = new DefaultNodeInfo<DeploymentRecord>(deploymentDataProvider, new MainDeploymentCell(),
-                new DeploymentDataSelectionModel<DeploymentRecord>(presenter), null);
+        this.level0 = new DefaultNodeInfo<DeploymentRecord>(deploymentDataProvider, new MainDeploymentCell(presenter),
+                new SingleSelectionModel<DeploymentRecord>(new DeploymentDataKeyProvider<DeploymentRecord>()), null);
     }
 
     @Override
@@ -65,7 +65,7 @@ public class DeploymentTreeModel implements TreeViewModel
         }
         else
         {
-            return nodeInfoFactory.nodeInfoFor(value);
+            return nodeInfoFactory.nodeInfoFor((DeploymentData) value);
         }
     }
 
@@ -89,8 +89,13 @@ public class DeploymentTreeModel implements TreeViewModel
     }
 
 
-    private static class MainDeploymentCell extends AbstractCell<DeploymentRecord>
+    private static class MainDeploymentCell extends DeploymentDataCell<DeploymentRecord>
     {
+        MainDeploymentCell(final DeploymentBrowserPresenter presenter)
+        {
+            super(presenter);
+        }
+
         @Override
         public void render(final Context context, final DeploymentRecord value, final SafeHtmlBuilder sb)
         {

@@ -18,13 +18,16 @@
  */
 package org.jboss.as.console.client.standalone.deployment;
 
+import com.google.gwt.cell.client.Cell;
 import com.google.gwt.user.client.Command;
+import com.google.gwt.view.client.SingleSelectionModel;
 import com.google.gwt.view.client.TreeViewModel;
 import org.jboss.as.console.client.shared.deployment.DeploymentStore;
 import org.jboss.as.console.client.shared.deployment.model.DeployedEjb;
 import org.jboss.as.console.client.shared.deployment.model.DeployedEndpoint;
 import org.jboss.as.console.client.shared.deployment.model.DeployedPersistenceUnit;
 import org.jboss.as.console.client.shared.deployment.model.DeployedServlet;
+import org.jboss.as.console.client.shared.deployment.model.DeploymentData;
 import org.jboss.as.console.client.shared.deployment.model.DeploymentRecord;
 import org.jboss.as.console.client.shared.deployment.model.DeploymentSubsystem;
 
@@ -39,145 +42,186 @@ public class DeploymentNodeInfoFactory
 {
     private final DeploymentBrowserPresenter presenter;
     private final DeploymentStore deploymentStore;
-    private final Map<String, TreeViewModel.NodeInfo> nodeInfos;
+    private final Map<String, DeploymentNodeInfo<? extends DeploymentData>> nodeInfos;
 
 
     public DeploymentNodeInfoFactory(final DeploymentBrowserPresenter presenter, final DeploymentStore deploymentStore)
     {
         this.presenter = presenter;
         this.deploymentStore = deploymentStore;
-        this.nodeInfos = new HashMap<String, TreeViewModel.NodeInfo>();
+        this.nodeInfos = new HashMap<String, DeploymentNodeInfo<? extends DeploymentData>>();
     }
 
-    public <T> TreeViewModel.NodeInfo<T> nodeInfoFor(T node)
+    public <T extends DeploymentData> DeploymentNodeInfo<T> nodeInfoFor(T node)
     {
-        TreeViewModel.NodeInfo<T> nodeInfo = nodeInfos.get(node.getClass().getName());
+        DeploymentNodeInfo<T> nodeInfo = (DeploymentNodeInfo<T>) nodeInfos.get(node.getClass().getName());
         if (nodeInfo == null)
         {
-            if (node instanceof DeploymentRecord)
+            // lazily create the node infos
+            nodeInfo = createNodeInfo(node);
+        }
+
+        // set the command for the specified node. the command must not be cached!
+        final DeploymentNodeInfo<T> finalNodeInfo = nodeInfo;
+        if (node instanceof DeploymentRecord)
+        {
+            final DeploymentRecord deployment = (DeploymentRecord) node;
+            if (deployment.isHasSubdeployments())
             {
-                final DeploymentRecord deployment = (DeploymentRecord) node;
-                if (deployment.isHasSubdeployments())
+                nodeInfo.setCommand(new Command()
                 {
-                    final DeploymentDataProvider<DeploymentRecord> dataProvider = new DeploymentDataProvider<DeploymentRecord>();
-                    dataProvider.exec(new Command()
+                    @Override
+                    public void execute()
                     {
-                        @Override
-                        public void execute()
-                        {
-                            deploymentStore.loadSubdeployments(deployment, dataProvider.new UpdateRowsCallback());
-                        }
-                    });
-                    nodeInfo = (TreeViewModel.NodeInfo<T>) new TreeViewModel.DefaultNodeInfo<DeploymentRecord>(
-                            dataProvider, new DeploymentDataCell<DeploymentRecord>(),
-                            new DeploymentDataSelectionModel<DeploymentRecord>(presenter), null);
-                    cache(nodeInfo, node.getClass().getName() + "#subdeployments");
-                }
-                else if (deployment.isHasSubsystems())
-                {
-                    // level 1 or 2: return the subsystems
-                    final DeploymentDataProvider<DeploymentSubsystem> dataProvider = new DeploymentDataProvider<DeploymentSubsystem>();
-                    dataProvider.exec(new Command()
-                    {
-                        @Override
-                        public void execute()
-                        {
-                            deploymentStore.loadSubsystems(deployment, dataProvider.new UpdateRowsCallback());
-                        }
-                    });
-                    nodeInfo = (TreeViewModel.NodeInfo<T>) new TreeViewModel.DefaultNodeInfo<DeploymentSubsystem>(
-                            dataProvider, new DeploymentDataCell<DeploymentSubsystem>(),
-                            new DeploymentDataSelectionModel<DeploymentSubsystem>(presenter), null);
-                    cache(nodeInfo, node.getClass().getName() + "#subsystems");
-                }
+                        deploymentStore
+                                .loadSubdeployments(deployment, finalNodeInfo.dataProvider.new UpdateRowsCallback());
+                    }
+                });
             }
-            else if (node instanceof DeploymentSubsystem)
+            else if (deployment.isHasSubsystems())
             {
-                // level 2/3: return the contents of the selected subsystem
-                final DeploymentSubsystem subsystem = (DeploymentSubsystem) node;
-                switch (subsystem.getType())
+                nodeInfo.setCommand(new Command()
                 {
-                    case ejb3:
+                    @Override
+                    public void execute()
                     {
-                        final DeploymentDataProvider<DeployedEjb> dataProvider = new DeploymentDataProvider<DeployedEjb>();
-                        dataProvider.exec(new Command()
-                        {
-                            @Override
-                            public void execute()
-                            {
-                                deploymentStore.loadEjbs(subsystem, dataProvider.new UpdateRowsCallback());
-                            }
-                        });
-                        nodeInfo = (TreeViewModel.NodeInfo<T>) new TreeViewModel.DefaultNodeInfo<DeployedEjb>(
-                                dataProvider, new DeploymentDataCell<DeployedEjb>(),
-                                new DeploymentDataSelectionModel<DeployedEjb>(presenter), null);
-                        cache(nodeInfo, node);
-                        break;
+                        deploymentStore.loadSubsystems(deployment, finalNodeInfo.dataProvider.new UpdateRowsCallback());
                     }
-                    case jpa:
+                });
+            }
+        }
+        else if (node instanceof DeploymentSubsystem)
+        {
+            final DeploymentSubsystem subsystem = (DeploymentSubsystem) node;
+            switch (subsystem.getType())
+            {
+                case ejb3:
+                    nodeInfo.setCommand(new Command()
                     {
-                        final DeploymentDataProvider<DeployedPersistenceUnit> dataProvider = new DeploymentDataProvider<DeployedPersistenceUnit>();
-                        dataProvider.exec(new Command()
+                        @Override
+                        public void execute()
                         {
-                            @Override
-                            public void execute()
-                            {
-                                deploymentStore.loadPersistenceUnits(subsystem, dataProvider.new UpdateRowsCallback());
-                            }
-                        });
-                        nodeInfo = (TreeViewModel.NodeInfo<T>) new TreeViewModel.DefaultNodeInfo<DeployedPersistenceUnit>(
-                                dataProvider, new DeploymentDataCell<DeployedPersistenceUnit>(),
-                                new DeploymentDataSelectionModel<DeployedPersistenceUnit>(presenter), null);
-                        cache(nodeInfo, node);
-                        break;
-                    }
-                    case web:
+                            deploymentStore.loadEjbs(subsystem, finalNodeInfo.dataProvider.new UpdateRowsCallback());
+                        }
+                    });
+                    break;
+                case jpa:
+                    nodeInfo.setCommand(new Command()
                     {
-                        final DeploymentDataProvider<DeployedServlet> dataProvider = new DeploymentDataProvider<DeployedServlet>();
-                        dataProvider.exec(new Command()
+                        @Override
+                        public void execute()
                         {
-                            @Override
-                            public void execute()
-                            {
-                                deploymentStore.loadServlets(subsystem, dataProvider.new UpdateRowsCallback());
-                            }
-                        });
-                        nodeInfo = (TreeViewModel.NodeInfo<T>) new TreeViewModel.DefaultNodeInfo<DeployedServlet>(
-                                dataProvider, new DeploymentDataCell<DeployedServlet>(),
-                                new DeploymentDataSelectionModel<DeployedServlet>(presenter), null);
-                        cache(nodeInfo, node);
-                        break;
-                    }
-                    case webservices:
+                            deploymentStore.loadPersistenceUnits(subsystem,
+                                    finalNodeInfo.dataProvider.new UpdateRowsCallback());
+                        }
+                    });
+                    break;
+                case web:
+                    nodeInfo.setCommand(new Command()
                     {
-                        final DeploymentDataProvider<DeployedEndpoint> dataProvider = new DeploymentDataProvider<DeployedEndpoint>();
-                        dataProvider.exec(new Command()
+                        @Override
+                        public void execute()
                         {
-                            @Override
-                            public void execute()
-                            {
-                                deploymentStore.loadEndpoints(subsystem, dataProvider.new UpdateRowsCallback());
-                            }
-                        });
-                        nodeInfo = (TreeViewModel.NodeInfo<T>) new TreeViewModel.DefaultNodeInfo<DeployedEndpoint>(
-                                dataProvider, new DeploymentDataCell<DeployedEndpoint>(),
-                                new DeploymentDataSelectionModel<DeployedEndpoint>(presenter), null);
-                        cache(nodeInfo, node);
-                        break;
-                    }
-                }
+                            deploymentStore
+                                    .loadServlets(subsystem, finalNodeInfo.dataProvider.new UpdateRowsCallback());
+                        }
+                    });
+                    break;
+                case webservices:
+                    nodeInfo.setCommand(new Command()
+                    {
+                        @Override
+                        public void execute()
+                        {
+                            deploymentStore
+                                    .loadEndpoints(subsystem, finalNodeInfo.dataProvider.new UpdateRowsCallback());
+                        }
+                    });
+                    break;
             }
         }
         return nodeInfo;
     }
 
-    private <T> void cache(final TreeViewModel.NodeInfo<T> nodeInfo, final T node)
+    private <T extends DeploymentData> DeploymentNodeInfo<T> createNodeInfo(final T node)
+    {
+        DeploymentNodeInfo<T> nodeInfo = null;
+        if (node instanceof DeploymentRecord)
+        {
+            DeploymentRecord deployment = (DeploymentRecord) node;
+            if (deployment.isHasSubdeployments())
+            {
+                nodeInfo = (DeploymentNodeInfo<T>) new DeploymentNodeInfo<DeploymentRecord>(
+                        new DeploymentDataProvider<DeploymentRecord>(),
+                        new DeploymentDataCell<DeploymentRecord>(presenter));
+                cache(nodeInfo, node.getClass().getName() + "#subdeployments");
+            }
+            else if (deployment.isHasSubsystems())
+            {
+                nodeInfo = (DeploymentNodeInfo<T>) new DeploymentNodeInfo<DeploymentSubsystem>(
+                        new DeploymentDataProvider<DeploymentSubsystem>(),
+                        new DeploymentDataCell<DeploymentSubsystem>(presenter));
+                cache(nodeInfo, node.getClass().getName() + "#subsystems");
+            }
+        }
+        else if (node instanceof DeploymentSubsystem)
+        {
+            // level 2/3: return the contents of the selected subsystem
+            final DeploymentSubsystem subsystem = (DeploymentSubsystem) node;
+            switch (subsystem.getType())
+            {
+                case ejb3:
+                    nodeInfo = (DeploymentNodeInfo<T>) new DeploymentNodeInfo<DeployedEjb>(
+                            new DeploymentDataProvider<DeployedEjb>(),
+                            new DeploymentDataCell<DeployedEjb>(presenter));
+                    break;
+                case jpa:
+                    nodeInfo = (DeploymentNodeInfo<T>) new DeploymentNodeInfo<DeployedPersistenceUnit>(
+                            new DeploymentDataProvider<DeployedPersistenceUnit>(),
+                            new DeploymentDataCell<DeployedPersistenceUnit>(presenter));
+                    break;
+                case web:
+                    nodeInfo = (DeploymentNodeInfo<T>) new DeploymentNodeInfo<DeployedServlet>(
+                            new DeploymentDataProvider<DeployedServlet>(),
+                            new DeploymentDataCell<DeployedServlet>(presenter));
+                    break;
+                case webservices:
+                    nodeInfo = (DeploymentNodeInfo<T>) new DeploymentNodeInfo<DeployedEndpoint>(
+                            new DeploymentDataProvider<DeployedEndpoint>(),
+                            new DeploymentDataCell<DeployedEndpoint>(presenter));
+                    break;
+            }
+            cache(nodeInfo, node);
+        }
+        return nodeInfo;
+    }
+
+    private <T extends DeploymentData> void cache(final DeploymentNodeInfo<?> nodeInfo, final T node)
     {
         cache(nodeInfo, node.getClass().getName());
     }
 
-    private <T> void cache(final TreeViewModel.NodeInfo<T> nodeInfo, final String key)
+    private <T extends DeploymentData> void cache(final DeploymentNodeInfo<T> nodeInfo, final String key)
     {
         nodeInfos.put(key, nodeInfo);
+    }
+
+
+    static class DeploymentNodeInfo<T extends DeploymentData> extends TreeViewModel.DefaultNodeInfo<T>
+    {
+        final DeploymentDataProvider dataProvider;
+
+
+        public DeploymentNodeInfo(final DeploymentDataProvider<T> dataProvider,
+                final Cell<T> cell)
+        {
+            super(dataProvider, cell, new SingleSelectionModel<T>(new DeploymentDataKeyProvider<T>()), null);
+            this.dataProvider = dataProvider;
+        }
+
+        void setCommand(Command command)
+        {
+            dataProvider.exec(command);
+        }
     }
 }

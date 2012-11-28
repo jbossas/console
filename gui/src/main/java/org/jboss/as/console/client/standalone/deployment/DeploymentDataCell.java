@@ -19,8 +19,14 @@
 package org.jboss.as.console.client.standalone.deployment;
 
 import com.google.gwt.cell.client.AbstractCell;
+import com.google.gwt.cell.client.ValueUpdater;
+import com.google.gwt.dom.client.BrowserEvents;
+import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import org.jboss.as.console.client.shared.deployment.model.DeploymentData;
+
+import static com.google.gwt.dom.client.BrowserEvents.CLICK;
 
 /**
 * @author Harald Pehl
@@ -28,9 +34,28 @@ import org.jboss.as.console.client.shared.deployment.model.DeploymentData;
 */
 class DeploymentDataCell<T extends DeploymentData> extends AbstractCell<T>
 {
+    private final DeploymentBrowserPresenter presenter;
+
+    DeploymentDataCell(final DeploymentBrowserPresenter presenter)
+    {
+        super(CLICK);
+        this.presenter = presenter;
+    }
+
     @Override
     public void render(final Context context, final T value, final SafeHtmlBuilder sb)
     {
         sb.appendEscaped(value.getName());
+    }
+
+    @Override
+    public void onBrowserEvent(final Context context, final Element parent, final T value, final NativeEvent event,
+            final ValueUpdater<T> valueUpdater)
+    {
+        super.onBrowserEvent(context, parent, value, event, valueUpdater);
+        if (BrowserEvents.CLICK.equals(event.getType()))
+        {
+            presenter.getView().updateContext(value);
+        }
     }
 }
