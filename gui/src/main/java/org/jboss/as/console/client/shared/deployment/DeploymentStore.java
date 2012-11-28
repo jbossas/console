@@ -24,12 +24,8 @@ import org.jboss.as.console.client.shared.deployment.model.DeployedEjb;
 import org.jboss.as.console.client.shared.deployment.model.DeployedEndpoint;
 import org.jboss.as.console.client.shared.deployment.model.DeployedPersistenceUnit;
 import org.jboss.as.console.client.shared.deployment.model.DeployedServlet;
-import org.jboss.as.console.client.shared.deployment.model.DeploymentEjbSubsystem;
-import org.jboss.as.console.client.shared.deployment.model.DeploymentJpaSubsystem;
 import org.jboss.as.console.client.shared.deployment.model.DeploymentRecord;
 import org.jboss.as.console.client.shared.deployment.model.DeploymentSubsystem;
-import org.jboss.as.console.client.shared.deployment.model.DeploymentWebSubsystem;
-import org.jboss.as.console.client.shared.deployment.model.DeploymentWebserviceSubsystem;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 
 import java.util.List;
@@ -48,10 +44,10 @@ public interface DeploymentStore {
     void loadDeployments(AsyncCallback<List<DeploymentRecord>> callback);
     void loadSubdeployments(DeploymentRecord deployment, AsyncCallback<List<DeploymentRecord>> callback);
     void loadSubsystems(DeploymentRecord deployment, AsyncCallback<List<DeploymentSubsystem>> callback);
-    void loadEjbs(DeploymentEjbSubsystem subsystem, AsyncCallback<List<DeployedEjb>> callback);
-    void loadPersistenceUnits(DeploymentJpaSubsystem subsystem, AsyncCallback<List<DeployedPersistenceUnit>> callback);
-    void loadServlets(DeploymentWebSubsystem subsystemn, AsyncCallback<List<DeployedServlet>> callback);
-    void loadEndpoints(DeploymentWebserviceSubsystem subsystem, AsyncCallback<List<DeployedEndpoint>> callback);
+    void loadEjbs(DeploymentSubsystem subsystem, AsyncCallback<List<DeployedEjb>> callback);
+    void loadPersistenceUnits(DeploymentSubsystem subsystem, AsyncCallback<List<DeployedPersistenceUnit>> callback);
+    void loadServlets(DeploymentSubsystem subsystemn, AsyncCallback<List<DeployedServlet>> callback);
+    void loadEndpoints(DeploymentSubsystem subsystem, AsyncCallback<List<DeployedEndpoint>> callback);
     void addToServerGroups( Set<String> serverGroups, boolean enable, DeploymentRecord deploymentRecord, AsyncCallback<DMRResponse> callback);
     void removeContent(DeploymentRecord deploymentRecord, AsyncCallback<DMRResponse> callback);
     void enableDisableDeployment(DeploymentRecord deploymentRecord, AsyncCallback<DMRResponse> callback);

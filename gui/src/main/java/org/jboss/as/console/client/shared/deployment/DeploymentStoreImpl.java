@@ -36,6 +36,7 @@ import org.jboss.as.console.client.shared.deployment.model.SubsystemType;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
+import org.jboss.as.console.client.shared.model.ModelAdapter;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.as.console.client.widgets.forms.EntityAdapter;
 import org.jboss.dmr.client.ModelNode;
@@ -43,6 +44,7 @@ import org.jboss.dmr.client.Property;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -136,9 +138,9 @@ public class DeploymentStoreImpl implements DeploymentStore
             public void onSuccess(DMRResponse result)
             {
                 ModelNode response = result.get();
-                if (response.get("result").isDefined())
+                if (response.get(RESULT).isDefined())
                 {
-                    List<ModelNode> nodes = response.get("result").asList();
+                    List<ModelNode> nodes = response.get(RESULT).asList();
                     for (ModelNode node : nodes)
                     {
                         deployments.add(mapDeployment(parent, node));
@@ -221,9 +223,9 @@ public class DeploymentStoreImpl implements DeploymentStore
             public void onSuccess(DMRResponse result)
             {
                 ModelNode response = result.get();
-                if (response.get("result").isDefined())
+                if (response.get(RESULT).isDefined())
                 {
-                    List<ModelNode> nodes = response.get("result").asList();
+                    List<ModelNode> nodes = response.get(RESULT).asList();
                     for (ModelNode node : nodes)
                     {
                         DeploymentSubsystem subsystem = mapSubsystem(deployment, node);
@@ -264,28 +266,96 @@ public class DeploymentStoreImpl implements DeploymentStore
     }
 
     @Override
-    public void loadEjbs(final DeploymentEjbSubsystem subsystem,
-            final AsyncCallback<List<DeployedEjb>> callback)
+    public void loadEjbs(final DeploymentSubsystem subsystem, final AsyncCallback<List<DeployedEjb>> callback)
     {
-        //To change body of implemented methods use File | Settings | File Templates.
+        // TODO Domain mode!
+        final int stepCount = 5;
+        final List<DeployedEjb> ejbs = new ArrayList<DeployedEjb>();
+
+        ModelNode operation = new ModelNode();
+        operation.get(OP).set(COMPOSITE);
+        operation.get(ADDRESS).setEmptyList();
+        List<ModelNode> steps = new LinkedList<ModelNode>();
+        steps.add(ejbOp(subsystem, "entity-bean"));
+        steps.add(ejbOp(subsystem, "message-driven-bean"));
+        steps.add(ejbOp(subsystem, "singleton-bean"));
+        steps.add(ejbOp(subsystem, "stateless-session-bean"));
+        steps.add(ejbOp(subsystem, "stateful-session-bean"));
+        operation.get(STEPS).set(steps);
+        operation.get(INCLUDE_RUNTIME).set(true);
+
+        dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>()
+        {
+            @Override
+            public void onFailure(Throwable caught)
+            {
+                callback.onFailure(caught);
+            }
+
+            @Override
+            public void onSuccess(DMRResponse result)
+            {
+                ModelNode response = result.get();
+                if (response.get(RESULT).isDefined())
+                {
+                    ModelNode steps = response.get(RESULT);
+                    for (int i = 1; i <= stepCount; i++)
+                    {
+                        List<ModelNode> ejbNodes = steps.get("step-" + i).get(RESULT).asList();
+                        for (ModelNode ejbNode : ejbNodes)
+                        {
+                            if (ModelAdapter.wasSuccess(ejbNode))
+                            {
+                                List<ModelNode> address = ejbNode.get(ADDRESS).asList();
+                                String name = address.get(address.size() - 1).asProperty().getValue().asString();
+                                DeployedEjb ejb = deployedEjbEntityAdapter.fromDMR(ejbNode.get(RESULT));
+                                ejb.setName(name);
+                                ejbs.add(ejb);
+                            }
+                        }
+                    }
+                }
+                callback.onSuccess(ejbs);
+            }
+        });
+    }
+
+    private ModelNode ejbOp(final DeploymentSubsystem subsystem, final String name)
+    {
+        ModelNode operation = new ModelNode();
+        DeploymentRecord deployment = subsystem.getDeployment();
+        if (deployment.isSubdeployment())
+        {
+            // /deployment=<deployment>/subdeployment=<subdeployment>/subsystem=ejb3/<name>=*:read-resource
+            operation.get(ADDRESS).add("deployment", deployment.getParent().getName())
+                    .add("subdeployment", deployment.getName());
+        }
+        else
+        {
+            // /deployment=<deployment>/subsystem=ejb3/<name>=*:read-resource
+            operation.get(ADDRESS).add("deployment", deployment.getName());
+        }
+        operation.get(ADDRESS).add("subsystem", subsystem.getName()).add(name, "*");
+        operation.get(OP).set(READ_RESOURCE_OPERATION);
+        return operation;
     }
 
     @Override
-    public void loadPersistenceUnits(final DeploymentJpaSubsystem subsystem,
+    public void loadPersistenceUnits(final DeploymentSubsystem subsystem,
             final AsyncCallback<List<DeployedPersistenceUnit>> callback)
     {
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override
-    public void loadServlets(final DeploymentWebSubsystem subsystemn,
+    public void loadServlets(final DeploymentSubsystem subsystemn,
             final AsyncCallback<List<DeployedServlet>> callback)
     {
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override
-    public void loadEndpoints(final DeploymentWebserviceSubsystem subsystem,
+    public void loadEndpoints(final DeploymentSubsystem subsystem,
             final AsyncCallback<List<DeployedEndpoint>> callback)
     {
         //To change body of implemented methods use File | Settings | File Templates.
@@ -313,16 +383,16 @@ public class DeploymentStoreImpl implements DeploymentStore
             public void onSuccess(DMRResponse result)
             {
                 ModelNode response = result.get();
-                if (!response.get("result").isDefined())
+                if (!response.get(RESULT).isDefined())
                 {
                     callback.onFailure(new Exception("Unexpected dmr result=" + response.toString()));
                 }
 
-                List<ModelNode> payload = response.get("result").asList();
+                List<ModelNode> payload = response.get(RESULT).asList();
                 for (ModelNode deployment : payload)
                 {
                     String serverGroup = deployment.get("address").asList().get(0).get("server-group").asString();
-                    ModelNode resultNode = deployment.get("result");
+                    ModelNode resultNode = deployment.get(RESULT);
                     try
                     {
                         DeploymentRecord rec = factory.deployment().as();
