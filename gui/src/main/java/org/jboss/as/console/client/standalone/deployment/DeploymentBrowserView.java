@@ -120,6 +120,8 @@ public class DeploymentBrowserView extends SuspendableViewImpl implements Deploy
                     }
                 }));
         toolStrip.addToolButtonRight(new ToolButton(Console.CONSTANTS.common_label_enOrDisable(), new
+
+
                 ClickHandler()
                 {
                     @Override
@@ -137,6 +139,8 @@ public class DeploymentBrowserView extends SuspendableViewImpl implements Deploy
                     }
                 }));
         toolStrip.addToolButtonRight(new ToolButton("Update", new
+
+
                 ClickHandler()
                 {
                     @Override
@@ -183,19 +187,26 @@ public class DeploymentBrowserView extends SuspendableViewImpl implements Deploy
 
         addContextForm(DeployedEjb.class, index++,
                 new TextAreaItem("name", "Name"),
-                new TextBoxItem("componentClassname", "Classname"),
+                new TextBoxItem("componentClassname", "Component Classname"),
                 new ListItem("declaredRoles", "Declared Roles"),
                 new TextBoxItem("runAsRole", "Run As Role"),
                 new TextBoxItem("securityDomain", "Security Domain"));
 
         addContextForm(DeployedPersistenceUnit.class, index++,
-                new TextAreaItem("name", "Name"));
+                new TextAreaItem("name", "Name"),
+                new CheckBoxItem("enabled", "Enabled"),
+                new ListItem("entities", "Entities"));
 
         addContextForm(DeployedServlet.class, index++,
-                new TextAreaItem("name", "Name"));
+                new TextAreaItem("name", "Name"),
+                new TextBoxItem("servletClass", "Servlet Class"));
 
         addContextForm(DeployedEndpoint.class, index++,
-                new TextAreaItem("name", "Name"));
+                new TextAreaItem("name", "Name"),
+                new TextBoxItem("classname", "Classname"),
+                new TextBoxItem("context", "Context"),
+                new TextBoxItem("type", "Type"),
+                new TextBoxItem("wsdl", "WSDL"));
 
         contextPanel.showWidget(0);
 
@@ -215,7 +226,7 @@ public class DeploymentBrowserView extends SuspendableViewImpl implements Deploy
     private <T extends DeploymentData> void addContextForm(Class<T> clazz, int index, FormItem... formItems)
     {
         Form<T> form = new Form<T>(clazz);
-        form.setNumColumns(2);
+        form.setNumColumns(1);
         form.setEnabled(false);
         form.setFields(formItems);
 

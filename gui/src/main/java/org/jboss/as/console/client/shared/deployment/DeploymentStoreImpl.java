@@ -275,7 +275,6 @@ public class DeploymentStoreImpl implements DeploymentStore
         steps.add(ejbOp(subsystem, "stateless-session-bean"));
         steps.add(ejbOp(subsystem, "stateful-session-bean"));
         operation.get(STEPS).set(steps);
-        operation.get(INCLUDE_RUNTIME).set(true);
 
         dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>()
         {
@@ -331,6 +330,7 @@ public class DeploymentStoreImpl implements DeploymentStore
         }
         operation.get(ADDRESS).add("subsystem", subsystem.getName()).add(name, "*");
         operation.get(OP).set(READ_RESOURCE_OPERATION);
+        operation.get(INCLUDE_RUNTIME).set(true);
         return operation;
     }
 
