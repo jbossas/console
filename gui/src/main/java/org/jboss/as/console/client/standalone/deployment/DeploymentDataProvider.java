@@ -22,6 +22,7 @@ import com.google.gwt.user.client.Command;
 import com.google.gwt.view.client.AsyncDataProvider;
 import com.google.gwt.view.client.HasData;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
+import org.jboss.as.console.client.shared.deployment.model.DeploymentData;
 
 import java.util.List;
 
@@ -29,7 +30,7 @@ import java.util.List;
  * @author Harald Pehl
  * @date 11/28/2012
  */
-public class DeploymentDataProvider<T> extends AsyncDataProvider<T>
+public class DeploymentDataProvider<T extends DeploymentData> extends AsyncDataProvider<T>
 {
     private Command command;
 

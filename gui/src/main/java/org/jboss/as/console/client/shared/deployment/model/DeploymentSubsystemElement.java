@@ -22,11 +22,8 @@ package org.jboss.as.console.client.shared.deployment.model;
 * @author Harald Pehl
 * @date 11/28/2012
 */
-public interface DeploymentSubsystemElement
+public interface DeploymentSubsystemElement extends DeploymentData
 {
-    String getName();
-    void setName(String name);
-
     DeploymentSubsystem getSubsystem();
     void setSubsystem(DeploymentSubsystem subsystem);
 }

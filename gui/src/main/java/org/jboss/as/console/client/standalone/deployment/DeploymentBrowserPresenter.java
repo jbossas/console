@@ -40,6 +40,7 @@ import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.shared.deployment.DeployCommandExecutor;
 import org.jboss.as.console.client.shared.deployment.DeploymentCommand;
 import org.jboss.as.console.client.shared.deployment.NewDeploymentWizard;
+import org.jboss.as.console.client.shared.deployment.model.DeploymentData;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
@@ -78,7 +79,7 @@ public class DeploymentBrowserPresenter
     {
         void setPresenter(DeploymentBrowserPresenter presenter);
         void updateDeploymentInfo(List<DeploymentRecord> deployments);
-        <T> void updateContext(T selectedContext);
+        <T extends DeploymentData> void updateContext(T selectedContext);
     }
 
 

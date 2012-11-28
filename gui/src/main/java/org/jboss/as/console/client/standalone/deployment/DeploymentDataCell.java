@@ -18,29 +18,19 @@
  */
 package org.jboss.as.console.client.standalone.deployment;
 
-import com.google.gwt.view.client.SelectionChangeEvent;
-import com.google.gwt.view.client.SingleSelectionModel;
-import org.jboss.as.console.client.shared.deployment.model.DeploymentSubsystem;
+import com.google.gwt.cell.client.AbstractCell;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
+import org.jboss.as.console.client.shared.deployment.model.DeploymentData;
 
 /**
- * @author Harald Pehl
- * @date 11/26/2012
- */
-public class SubsystemSelectionModel extends SingleSelectionModel<DeploymentSubsystem>
+* @author Harald Pehl
+* @date 11/28/2012
+*/
+class DeploymentDataCell<T extends DeploymentData> extends AbstractCell<T>
 {
-    private final DeploymentBrowserPresenter presenter;
-
-    public SubsystemSelectionModel(final DeploymentBrowserPresenter presenter)
+    @Override
+    public void render(final Context context, final T value, final SafeHtmlBuilder sb)
     {
-        super(new SubsystemKeyProvider());
-        this.presenter = presenter;
-        addSelectionChangeHandler(new SelectionChangeEvent.Handler()
-        {
-            @Override
-            public void onSelectionChange(final SelectionChangeEvent event)
-            {
-                presenter.getView().updateContext(getSelectedObject());
-            }
-        });
+        sb.appendEscaped(value.getName());
     }
 }

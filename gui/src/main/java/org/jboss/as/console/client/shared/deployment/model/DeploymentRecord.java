@@ -25,7 +25,7 @@ import org.jboss.as.console.client.widgets.forms.Binding;
  * @author Heiko Braun
  * @date 1/31/11
  */
-public interface DeploymentRecord
+public interface DeploymentRecord extends DeploymentData
 {
     @Binding(key = true)
     String getName();

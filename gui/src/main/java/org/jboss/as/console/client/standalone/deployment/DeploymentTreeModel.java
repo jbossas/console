@@ -19,21 +19,17 @@
 package org.jboss.as.console.client.standalone.deployment;
 
 import com.google.gwt.cell.client.AbstractCell;
-import com.google.gwt.cell.client.Cell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
-import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.TreeViewModel;
 import org.jboss.as.console.client.shared.deployment.DeploymentStore;
-import org.jboss.as.console.client.shared.deployment.model.DeployedEjb;
 import org.jboss.as.console.client.shared.deployment.model.DeploymentRecord;
-import org.jboss.as.console.client.shared.deployment.model.DeploymentSubsystem;
 import org.jboss.ballroom.client.widgets.icons.Icons;
 
 import java.util.List;
@@ -45,24 +41,18 @@ import java.util.List;
 public class DeploymentTreeModel implements TreeViewModel
 {
     static final DeploymentTemplates DEPLOYMENT_TEMPLATES = GWT.create(DeploymentTemplates.class);
-    private final DeploymentBrowserPresenter presenter;
-    private final DeploymentStore deploymentStore;
+
+    private final DeploymentNodeInfoFactory nodeInfoFactory;
     private final ListDataProvider<DeploymentRecord> deploymentDataProvider;
-    private final DeploymentSelectionModel deploymentSelectionModel;
-    private final DeploymentSelectionModel subdeploymentSelectionModel;
-    private final SubsystemSelectionModel subsystemSelectionModel;
+    private final DefaultNodeInfo<DeploymentRecord> level0;
 
 
-    public DeploymentTreeModel(final DeploymentBrowserPresenter presenter, final DeploymentStore deploymentStore,
-            final ListDataProvider<DeploymentRecord> deploymentDataProvider,
-            final DeploymentSelectionModel deploymentRecordSelectionModel)
+    public DeploymentTreeModel(final DeploymentBrowserPresenter presenter, final DeploymentStore deploymentStore)
     {
-        this.presenter = presenter;
-        this.deploymentStore = deploymentStore;
-        this.deploymentDataProvider = deploymentDataProvider;
-        this.deploymentSelectionModel = deploymentRecordSelectionModel;
-        this.subdeploymentSelectionModel = new DeploymentSelectionModel(presenter);
-        this.subsystemSelectionModel = new SubsystemSelectionModel(presenter);
+        this.nodeInfoFactory = new DeploymentNodeInfoFactory(presenter, deploymentStore);
+        this.deploymentDataProvider = new ListDataProvider<DeploymentRecord>();
+        this.level0 = new DefaultNodeInfo<DeploymentRecord>(deploymentDataProvider, new MainDeploymentCell(),
+                new DeploymentDataSelectionModel<DeploymentRecord>(presenter), null);
     }
 
     @Override
@@ -70,69 +60,12 @@ public class DeploymentTreeModel implements TreeViewModel
     {
         if (value == null)
         {
-            // level 0: return the deploymnts
-            Cell<DeploymentRecord> cell = new DeploymentCell();
-            return new DefaultNodeInfo<DeploymentRecord>(deploymentDataProvider, cell, deploymentSelectionModel, null);
+            return level0;
         }
-        else if (value instanceof DeploymentRecord)
+        else
         {
-            final DeploymentRecord deployment = (DeploymentRecord) value;
-            if (deployment.isHasSubdeployments())
-            {
-                // level 1: return the subdeployments
-                final DeploymentDataProvider<DeploymentRecord> dataProvider = new DeploymentDataProvider<DeploymentRecord>();
-                dataProvider.exec(new Command()
-                {
-                    @Override
-                    public void execute()
-                    {
-                        deploymentStore.loadSubdeployments(deployment, dataProvider.new UpdateRowsCallback());
-                    }
-                });
-                return new DefaultNodeInfo<DeploymentRecord>(dataProvider, new SubdeploymentCell(),
-                        subdeploymentSelectionModel, null);
-            }
-            else if (deployment.isHasSubsystems())
-            {
-                // level 1 or 2: return the subsystems
-                final DeploymentDataProvider<DeploymentSubsystem> dataProvider = new DeploymentDataProvider<DeploymentSubsystem>();
-                dataProvider.exec(new Command()
-                {
-                    @Override
-                    public void execute()
-                    {
-                        deploymentStore.loadSubsystems(deployment, dataProvider.new UpdateRowsCallback());
-                    }
-                });
-                return new DefaultNodeInfo<DeploymentSubsystem>(dataProvider, new SubsystemCell(),
-                        subsystemSelectionModel, null);
-            }
+            return nodeInfoFactory.nodeInfoFor(value);
         }
-        else if (value instanceof DeploymentSubsystem)
-        {
-            // level 2/3: return the contents of the selected subsystem
-            final DeploymentSubsystem subsystem = (DeploymentSubsystem) value;
-            switch (subsystem.getType())
-            {
-                case ejb3:
-                    final DeploymentDataProvider<DeployedEjb> dataProvider = new DeploymentDataProvider<DeployedEjb>();
-                    dataProvider.exec(new Command() {
-                        @Override
-                        public void execute()
-                        {
-                            deploymentStore.loadEjbs(subsystem, dataProvider.new UpdateRowsCallback());
-                        }
-                    });
-                    return new DefaultNodeInfo<DeployedEjb>(dataProvider, new EjbCell());
-                case jpa:
-                    break;
-                case web:
-                    break;
-                case webservices:
-                    break;
-            }
-        }
-        return null;
     }
 
     @Override
@@ -155,7 +88,7 @@ public class DeploymentTreeModel implements TreeViewModel
     }
 
 
-    private static class DeploymentCell extends AbstractCell<DeploymentRecord>
+    private static class MainDeploymentCell extends AbstractCell<DeploymentRecord>
     {
         @Override
         public void render(final Context context, final DeploymentRecord value, final SafeHtmlBuilder sb)
@@ -176,37 +109,6 @@ public class DeploymentTreeModel implements TreeViewModel
             AbstractImagePrototype proto = AbstractImagePrototype.create(res);
             SafeHtml imageHtml = SafeHtmlUtils.fromTrustedString(proto.getHTML());
             sb.append(DEPLOYMENT_TEMPLATES.deployment(value.getName(), imageHtml));
-        }
-    }
-
-
-    private static class SubdeploymentCell extends AbstractCell<DeploymentRecord>
-    {
-        @Override
-        public void render(final Context context, final DeploymentRecord value,
-                final SafeHtmlBuilder sb)
-        {
-            sb.appendEscaped(value.getName());
-        }
-    }
-
-
-    private static class SubsystemCell extends AbstractCell<DeploymentSubsystem>
-    {
-        @Override
-        public void render(final Context context, final DeploymentSubsystem value, final SafeHtmlBuilder sb)
-        {
-            sb.appendEscaped(value.getName());
-        }
-    }
-
-
-    private static class EjbCell extends AbstractCell<DeployedEjb>
-    {
-        @Override
-        public void render(final Context context, final DeployedEjb value, final SafeHtmlBuilder sb)
-        {
-            sb.appendEscaped(value.getName());
         }
     }
 }

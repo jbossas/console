@@ -16,20 +16,14 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.as.console.client.standalone.deployment;
+package org.jboss.as.console.client.shared.deployment.model;
 
-import com.google.gwt.view.client.ProvidesKey;
-import org.jboss.as.console.client.shared.deployment.model.DeploymentRecord;
+import com.google.gwt.user.client.ui.HasName;
 
 /**
-* @author Harald Pehl
-* @date 11/26/2012
-*/
-class DeploymentKeyProvider implements ProvidesKey<DeploymentRecord>
+ * @author Harald Pehl
+ * @date 11/28/2012
+ */
+public interface DeploymentData extends HasName
 {
-    @Override
-    public Object getKey(DeploymentRecord item)
-    {
-        return item.getName();
-    }
 }

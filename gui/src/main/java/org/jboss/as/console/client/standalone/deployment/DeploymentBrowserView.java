@@ -25,6 +25,7 @@ import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
+import com.google.gwt.view.client.SingleSelectionModel;
 import com.google.inject.Inject;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
@@ -32,6 +33,7 @@ import org.jboss.as.console.client.shared.deployment.DeploymentCommand;
 import org.jboss.as.console.client.shared.deployment.DeploymentCommandDelegate;
 import org.jboss.as.console.client.shared.deployment.DeploymentFilter;
 import org.jboss.as.console.client.shared.deployment.DeploymentStore;
+import org.jboss.as.console.client.shared.deployment.model.DeploymentData;
 import org.jboss.as.console.client.shared.deployment.model.DeploymentJpaSubsystem;
 import org.jboss.as.console.client.shared.deployment.model.DeploymentRecord;
 import org.jboss.as.console.client.shared.deployment.model.DeploymentSubsystem;
@@ -75,8 +77,8 @@ public class DeploymentBrowserView extends SuspendableViewImpl implements Deploy
     @Override
     public Widget createWidget()
     {
-        DeploymentKeyProvider keyProvider = new DeploymentKeyProvider();
-        final DeploymentSelectionModel selectionModel = new DeploymentSelectionModel(keyProvider, presenter);
+        DeploymentDataKeyProvider<DeploymentRecord> keyProvider = new DeploymentDataKeyProvider<DeploymentRecord>();
+        final SingleSelectionModel<DeploymentRecord> selectionModel = new SingleSelectionModel<DeploymentRecord>(keyProvider);
 
         final ToolStrip toolStrip = new ToolStrip();
         ToolButton addBtn = new ToolButton(Console.CONSTANTS.common_label_add(), new ClickHandler()
@@ -178,7 +180,7 @@ public class DeploymentBrowserView extends SuspendableViewImpl implements Deploy
         contextPanel.add(webSubsystemForm.asWidget());
         contextPanel.showWidget(0);
 
-        deploymentTreeModel = new DeploymentTreeModel(presenter, deploymentStore, dataProvider, selectionModel);
+        deploymentTreeModel = new DeploymentTreeModel(presenter, deploymentStore);
         DefaultCellBrowser cellBrowser = new DefaultCellBrowser.Builder(deploymentTreeModel, null).build();
 
         OneToOneLayout layout = new OneToOneLayout()
@@ -204,7 +206,7 @@ public class DeploymentBrowserView extends SuspendableViewImpl implements Deploy
     }
 
     @Override
-    public <T> void updateContext(final T selectedContext)
+    public <T extends DeploymentData> void updateContext(final T selectedContext)
     {
         if (selectedContext instanceof DeploymentRecord)
         {
