@@ -18,21 +18,25 @@
  */
 package org.jboss.as.console.client.shared.deployment.model;
 
+import org.jboss.as.console.client.widgets.forms.Binding;
+
 /**
 * @author Harald Pehl
 * @date 11/28/2012
 */
 public interface DeployedEndpoint extends DeploymentSubsystemElement
 {
-    public String getClassname();
-    public void setClassname(String classname);
+    @Binding(detypedName = "class")
+    String getClassname();
+    void setClassname(String classname);
 
-    public String getContext();
-    public void setContext(String context);
+    String getContext();
+    void setContext(String context);
 
-    public String getType();
-    public void setType(String type);
+    String getType();
+    void setType(String type);
 
-    public String getWsdlUrl();
-    public void setWsdlUrl(String wsdlUrl);
+    @Binding(detypedName = "wsdl-url")
+    String getWsdl();
+    void setWsdl(String wsdl);
 }

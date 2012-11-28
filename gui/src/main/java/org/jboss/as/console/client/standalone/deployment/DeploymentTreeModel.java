@@ -196,8 +196,6 @@ public class DeploymentTreeModel implements TreeViewModel
         {
             sb.appendEscaped(value.getName());
         }
-
-
     }
 
 

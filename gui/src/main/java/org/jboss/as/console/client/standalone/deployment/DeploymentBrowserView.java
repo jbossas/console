@@ -31,12 +31,16 @@ import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.shared.deployment.DeploymentCommand;
 import org.jboss.as.console.client.shared.deployment.DeploymentCommandDelegate;
 import org.jboss.as.console.client.shared.deployment.DeploymentFilter;
-import org.jboss.as.console.client.shared.deployment.model.DeploymentRecord;
 import org.jboss.as.console.client.shared.deployment.DeploymentStore;
+import org.jboss.as.console.client.shared.deployment.model.DeploymentJpaSubsystem;
+import org.jboss.as.console.client.shared.deployment.model.DeploymentRecord;
 import org.jboss.as.console.client.shared.deployment.model.DeploymentSubsystem;
+import org.jboss.as.console.client.shared.deployment.model.DeploymentWebSubsystem;
 import org.jboss.as.console.client.shared.viewframework.builder.OneToOneLayout;
 import org.jboss.as.console.client.widgets.browser.DefaultCellBrowser;
+import org.jboss.ballroom.client.widgets.forms.CheckBoxItem;
 import org.jboss.ballroom.client.widgets.forms.Form;
+import org.jboss.ballroom.client.widgets.forms.NumberBoxItem;
 import org.jboss.ballroom.client.widgets.forms.TextAreaItem;
 import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
@@ -58,6 +62,8 @@ public class DeploymentBrowserView extends SuspendableViewImpl implements Deploy
     private DeploymentTreeModel deploymentTreeModel;
     private DeckPanel contextPanel;
     private Form<DeploymentRecord> deploymentForm;
+    private Form<DeploymentJpaSubsystem> jpaSubsystemForm;
+    private Form<DeploymentWebSubsystem> webSubsystemForm;
 
 
     @Inject
@@ -148,8 +154,28 @@ public class DeploymentBrowserView extends SuspendableViewImpl implements Deploy
         TextAreaItem path = new TextAreaItem("path", "Path");
         TextBoxItem relative = new TextBoxItem("relativeTo", "Relative To");
         deploymentForm.setFields(name, path, runtimeName, relative);
+
+        jpaSubsystemForm = new Form<DeploymentJpaSubsystem>(DeploymentJpaSubsystem.class);
+        jpaSubsystemForm.setNumColumns(2);
+        jpaSubsystemForm.setEnabled(false);
+        TextBoxItem defaultDataSource = new TextBoxItem("defaultDataSource", "Default Datasource");
+        TextBoxItem defaultInheritance = new TextBoxItem("defaultInheritance", "Default Inheritance");
+        CheckBoxItem defaultVfs = new CheckBoxItem("defaultVfs", "Default VFS");
+        jpaSubsystemForm.setFields(defaultDataSource, defaultInheritance, defaultVfs);
+
+        webSubsystemForm = new Form<DeploymentWebSubsystem>(DeploymentWebSubsystem.class);
+        webSubsystemForm.setNumColumns(2);
+        webSubsystemForm.setEnabled(false);
+        // TODO Add link
+        TextBoxItem contextRoot = new TextBoxItem("contextRoot", "Context Root");
+        NumberBoxItem maxActiveSessions = new NumberBoxItem("maxActiveSessions", "Max Active Sessions");
+        TextBoxItem virtualHost = new TextBoxItem("virtualHost", "Virtual Host");
+        webSubsystemForm.setFields(contextRoot, maxActiveSessions, virtualHost);
+
         contextPanel.add(new Label("No information available."));
         contextPanel.add(deploymentForm.asWidget());
+        contextPanel.add(jpaSubsystemForm.asWidget());
+        contextPanel.add(webSubsystemForm.asWidget());
         contextPanel.showWidget(0);
 
         deploymentTreeModel = new DeploymentTreeModel(presenter, deploymentStore, dataProvider, selectionModel);
@@ -192,12 +218,16 @@ public class DeploymentBrowserView extends SuspendableViewImpl implements Deploy
             switch (subsystem.getType())
             {
                 case ejb3:
+                case webservices:
+                    contextPanel.showWidget(0);
                     break;
                 case jpa:
+                    jpaSubsystemForm.edit((DeploymentJpaSubsystem) subsystem);
+                    contextPanel.showWidget(2);
                     break;
                 case web:
-                    break;
-                case webservices:
+                    webSubsystemForm.edit((DeploymentWebSubsystem) subsystem);
+                    contextPanel.showWidget(3);
                     break;
             }
         }

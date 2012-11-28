@@ -30,12 +30,14 @@ import org.jboss.as.console.client.shared.deployment.model.DeploymentEjbSubsyste
 import org.jboss.as.console.client.shared.deployment.model.DeploymentJpaSubsystem;
 import org.jboss.as.console.client.shared.deployment.model.DeploymentRecord;
 import org.jboss.as.console.client.shared.deployment.model.DeploymentSubsystem;
-import org.jboss.as.console.client.shared.deployment.model.DeploymentWebSubsystemn;
+import org.jboss.as.console.client.shared.deployment.model.DeploymentWebSubsystem;
 import org.jboss.as.console.client.shared.deployment.model.DeploymentWebserviceSubsystem;
 import org.jboss.as.console.client.shared.deployment.model.SubsystemType;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
+import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
+import org.jboss.as.console.client.widgets.forms.EntityAdapter;
 import org.jboss.dmr.client.ModelNode;
 import org.jboss.dmr.client.Property;
 
@@ -47,24 +49,49 @@ import java.util.Set;
 import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 
 /**
+ * @author Harald Pehl
  * @author Heiko Braun
  * @author Stan Silvert
  * @date 3/18/11
  */
 public class DeploymentStoreImpl implements DeploymentStore
 {
-
-    private DispatchAsync dispatcher;
-    private BeanFactory factory;
-    private boolean isStandalone;
+    private final DispatchAsync dispatcher;
+    private final BeanFactory factory;
+    private final boolean isStandalone;
+    private final EntityAdapter<DeploymentRecord> deploymentEntityAdapter;
+    private final EntityAdapter<DeploymentEjbSubsystem> deploymentEjbSubsystemEntityAdapter;
+    private final EntityAdapter<DeploymentJpaSubsystem> deploymentJpaSubsystemEntityAdapter;
+    private final EntityAdapter<DeploymentWebserviceSubsystem> deploymentWebserviceSubsystemEntityAdapter;
+    private final EntityAdapter<DeploymentWebSubsystem> deploymentWebSubsystemnEntityAdapter;
+    private final EntityAdapter<DeployedEjb> deployedEjbEntityAdapter;
+    private final EntityAdapter<DeployedPersistenceUnit> deployedPersistenceUnitEntityAdapter;
+    private final EntityAdapter<DeployedEndpoint> deployedEndpointEntityAdapter;
+    private final EntityAdapter<DeployedServlet> deployedServletEntityAdapter;
 
 
     @Inject
-    public DeploymentStoreImpl(DispatchAsync dispatcher, BeanFactory factory, ApplicationProperties bootstrap)
+    public DeploymentStoreImpl(DispatchAsync dispatcher, BeanFactory factory, ApplicationProperties bootstrap,
+            ApplicationMetaData applicationMetaData)
     {
         this.dispatcher = dispatcher;
         this.factory = factory;
         this.isStandalone = bootstrap.getProperty(ApplicationProperties.STANDALONE).equals("true");
+        deploymentEntityAdapter = new EntityAdapter<DeploymentRecord>(DeploymentRecord.class, applicationMetaData);
+        deploymentEjbSubsystemEntityAdapter = new EntityAdapter<DeploymentEjbSubsystem>(DeploymentEjbSubsystem.class,
+                applicationMetaData);
+        deployedEjbEntityAdapter = new EntityAdapter<DeployedEjb>(DeployedEjb.class, applicationMetaData);
+        deploymentJpaSubsystemEntityAdapter = new EntityAdapter<DeploymentJpaSubsystem>(DeploymentJpaSubsystem.class,
+                applicationMetaData);
+        deployedPersistenceUnitEntityAdapter = new EntityAdapter<DeployedPersistenceUnit>(DeployedPersistenceUnit.class,
+                applicationMetaData);
+        deploymentWebserviceSubsystemEntityAdapter = new EntityAdapter<DeploymentWebserviceSubsystem>(
+                DeploymentWebserviceSubsystem.class, applicationMetaData);
+        deployedEndpointEntityAdapter = new EntityAdapter<DeployedEndpoint>(DeployedEndpoint.class,
+                applicationMetaData);
+        deploymentWebSubsystemnEntityAdapter = new EntityAdapter<DeploymentWebSubsystem>(DeploymentWebSubsystem.class,
+                applicationMetaData);
+        deployedServletEntityAdapter = new EntityAdapter<DeployedServlet>(DeployedServlet.class, applicationMetaData);
     }
 
     @Override
@@ -114,8 +141,7 @@ public class DeploymentStoreImpl implements DeploymentStore
                     List<ModelNode> nodes = response.get("result").asList();
                     for (ModelNode node : nodes)
                     {
-                        DeploymentRecord deployment = mapDeployment(parent, node);
-                        deployments.add(deployment);
+                        deployments.add(mapDeployment(parent, node));
                     }
                 }
                 callback.onSuccess(deployments);
@@ -125,30 +151,18 @@ public class DeploymentStoreImpl implements DeploymentStore
 
     private DeploymentRecord mapDeployment(final DeploymentRecord parent, final ModelNode node)
     {
-        DeploymentRecord deployment = factory.deployment().as();
-        Property property = node.asProperty();
-        deployment.setName(property.getName());
-        ModelNode deploymentNode = property.getValue().asObject();
+        ModelNode deploymentNode = node.asProperty().getValue().asObject();
+        DeploymentRecord deployment = deploymentEntityAdapter.fromDMR(deploymentNode);
+        deployment.setName(node.asProperty().getName()); // for subdeployments
         try
         {
-            ModelNode propNode = deploymentNode.get("runtime-name");
-            if (propNode.isDefined()) { deployment.setRuntimeName(propNode.asString()); }
-            if (isStandalone)
-            {
-                propNode = deploymentNode.get("enabled");
-                if (propNode.isDefined()) { deployment.setEnabled(propNode.asBoolean()); }
-                propNode = deploymentNode.get("persistent");
-                if (propNode.isDefined()) { deployment.setPersistent(propNode.asBoolean()); }
-            }
-            else
+            if (!isStandalone)
             {
                 deployment.setEnabled(true);
                 deployment.setPersistent(true);
             }
-            propNode = deploymentNode.get("status");
-            if (propNode.isDefined()) { deployment.setStatus(propNode.asString()); }
-            propNode = deploymentNode.get("content");
-            if (propNode.isDefined())
+            ModelNode property = deploymentNode.get("content");
+            if (property.isDefined())
             {
                 List<ModelNode> contentList = deploymentNode.get("content").asList();
                 if (!contentList.isEmpty())
@@ -224,23 +238,23 @@ public class DeploymentStoreImpl implements DeploymentStore
     private DeploymentSubsystem mapSubsystem(final DeploymentRecord deployment, ModelNode node)
     {
         DeploymentSubsystem subsystem = null;
-        String name = node.asProperty().getName();
+        Property property = node.asProperty();
+        String name = property.getName();
+        ModelNode subsystemNode = property.getValue().asObject();
         SubsystemType type = SubsystemType.valueOf(name);
         switch (type)
         {
             case ejb3:
-                subsystem = factory.deploymentEjbSubsystem().as();
+                subsystem = deploymentEjbSubsystemEntityAdapter.fromDMR(subsystemNode);
                 break;
             case jpa:
-                subsystem = factory.deploymentJpaSubsystem().as();
-                // TODO Map jpa properties
+                subsystem = deploymentJpaSubsystemEntityAdapter.fromDMR(subsystemNode);
                 break;
             case web:
-                subsystem = factory.deploymentWebSubsystem().as();
-                // TODO Map web properties
+                subsystem = deploymentWebSubsystemnEntityAdapter.fromDMR(subsystemNode);
                 break;
             case webservices:
-                subsystem = factory.deploymentWebserviceSubsystem().as();
+                subsystem = deploymentWebserviceSubsystemEntityAdapter.fromDMR(subsystemNode);
                 break;
         }
         subsystem.setName(name);
@@ -264,7 +278,7 @@ public class DeploymentStoreImpl implements DeploymentStore
     }
 
     @Override
-    public void loadServlets(final DeploymentWebSubsystemn subsystemn,
+    public void loadServlets(final DeploymentWebSubsystem subsystemn,
             final AsyncCallback<List<DeployedServlet>> callback)
     {
         //To change body of implemented methods use File | Settings | File Templates.

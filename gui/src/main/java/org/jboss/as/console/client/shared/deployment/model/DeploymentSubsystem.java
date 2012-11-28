@@ -24,12 +24,12 @@ package org.jboss.as.console.client.shared.deployment.model;
 */
 public interface DeploymentSubsystem
 {
-   public String getName();
-    public void setName(String name);
+    String getName();
+    void setName(String name);
 
-    public SubsystemType getType();
-    public void setType(SubsystemType type);
+    SubsystemType getType();
+    void setType(SubsystemType type);
 
-    public DeploymentRecord getDeployment();
-    public void setDeployment(DeploymentRecord deployment);
+    DeploymentRecord getDeployment();
+    void setDeployment(DeploymentRecord deployment);
 }

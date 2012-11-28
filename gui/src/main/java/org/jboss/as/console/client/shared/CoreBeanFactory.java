@@ -37,7 +37,7 @@ import org.jboss.as.console.client.shared.deployment.model.DeployedPersistenceUn
 import org.jboss.as.console.client.shared.deployment.model.DeployedServlet;
 import org.jboss.as.console.client.shared.deployment.model.DeploymentEjbSubsystem;
 import org.jboss.as.console.client.shared.deployment.model.DeploymentJpaSubsystem;
-import org.jboss.as.console.client.shared.deployment.model.DeploymentWebSubsystemn;
+import org.jboss.as.console.client.shared.deployment.model.DeploymentWebSubsystem;
 import org.jboss.as.console.client.shared.deployment.model.DeploymentWebserviceSubsystem;
 import org.jboss.as.console.client.shared.general.model.Interface;
 import org.jboss.as.console.client.shared.general.model.LocalSocketBinding;
@@ -160,7 +160,7 @@ public interface CoreBeanFactory {
     AutoBean<DeployedEjb> deployedEjb();
     AutoBean<DeploymentJpaSubsystem> deploymentJpaSubsystem();
     AutoBean<DeployedPersistenceUnit> deployedPersistenceUnit();
-    AutoBean<DeploymentWebSubsystemn> deploymentWebSubsystem();
+    AutoBean<DeploymentWebSubsystem> deploymentWebSubsystem();
     AutoBean<DeployedServlet> deployedServlet();
     AutoBean<DeploymentWebserviceSubsystem> deploymentWebserviceSubsystem();
     AutoBean<DeployedEndpoint> deployedEndpoint();

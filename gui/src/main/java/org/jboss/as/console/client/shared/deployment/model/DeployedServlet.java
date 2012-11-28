@@ -18,12 +18,15 @@
  */
 package org.jboss.as.console.client.shared.deployment.model;
 
+import org.jboss.as.console.client.widgets.forms.Binding;
+
 /**
 * @author Harald Pehl
 * @date 11/28/2012
 */
 public interface DeployedServlet extends DeploymentSubsystemElement
 {
-    public String getServletClass();
-    public void setServletClass(String servletClass);
+    @Binding(detypedName = "servlet-class")
+    String getServletClass();
+    void setServletClass(String servletClass);
 }

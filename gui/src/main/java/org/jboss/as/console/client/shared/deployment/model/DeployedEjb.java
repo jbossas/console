@@ -18,6 +18,8 @@
  */
 package org.jboss.as.console.client.shared.deployment.model;
 
+import org.jboss.as.console.client.widgets.forms.Binding;
+
 import java.util.List;
 
 /**
@@ -26,15 +28,19 @@ import java.util.List;
 */
 public interface DeployedEjb extends DeploymentSubsystemElement
 {
-    public String getComponentClassname();
-    public void setComponentClassname(String componentClassname);
+    @Binding(detypedName = "component-class-name")
+    String getComponentClassname();
+    void setComponentClassname(String componentClassname);
 
-    public List<String> getDeclaredRoles();
-    public void setDeclaredRoles(List<String> declaredRoles);
+    @Binding(detypedName = "declared-roles", listType = "java.lang.String")
+    List<String> getDeclaredRoles();
+    void setDeclaredRoles(List<String> declaredRoles);
 
-    public String getRunAsRole();
-    public void setRunAsRole(String runAsRole);
+    @Binding(detypedName = "run-as-role")
+    String getRunAsRole();
+    void setRunAsRole(String runAsRole);
 
-    public String getSecurityDomain();
-    public void setSecurityDomain(String securityDomain);
+    @Binding(detypedName = "security-domain")
+    String getSecurityDomain();
+    void setSecurityDomain(String securityDomain);
 }

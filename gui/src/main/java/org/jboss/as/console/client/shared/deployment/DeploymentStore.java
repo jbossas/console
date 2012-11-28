@@ -28,7 +28,7 @@ import org.jboss.as.console.client.shared.deployment.model.DeploymentEjbSubsyste
 import org.jboss.as.console.client.shared.deployment.model.DeploymentJpaSubsystem;
 import org.jboss.as.console.client.shared.deployment.model.DeploymentRecord;
 import org.jboss.as.console.client.shared.deployment.model.DeploymentSubsystem;
-import org.jboss.as.console.client.shared.deployment.model.DeploymentWebSubsystemn;
+import org.jboss.as.console.client.shared.deployment.model.DeploymentWebSubsystem;
 import org.jboss.as.console.client.shared.deployment.model.DeploymentWebserviceSubsystem;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 
@@ -50,7 +50,7 @@ public interface DeploymentStore {
     void loadSubsystems(DeploymentRecord deployment, AsyncCallback<List<DeploymentSubsystem>> callback);
     void loadEjbs(DeploymentEjbSubsystem subsystem, AsyncCallback<List<DeployedEjb>> callback);
     void loadPersistenceUnits(DeploymentJpaSubsystem subsystem, AsyncCallback<List<DeployedPersistenceUnit>> callback);
-    void loadServlets(DeploymentWebSubsystemn subsystemn, AsyncCallback<List<DeployedServlet>> callback);
+    void loadServlets(DeploymentWebSubsystem subsystemn, AsyncCallback<List<DeployedServlet>> callback);
     void loadEndpoints(DeploymentWebserviceSubsystem subsystem, AsyncCallback<List<DeployedEndpoint>> callback);
     void addToServerGroups( Set<String> serverGroups, boolean enable, DeploymentRecord deploymentRecord, AsyncCallback<DMRResponse> callback);
     void removeContent(DeploymentRecord deploymentRecord, AsyncCallback<DMRResponse> callback);

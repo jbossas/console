@@ -18,18 +18,23 @@
  */
 package org.jboss.as.console.client.shared.deployment.model;
 
+import org.jboss.as.console.client.widgets.forms.Binding;
+
 /**
 * @author Harald Pehl
 * @date 11/28/2012
 */
 public interface DeploymentJpaSubsystem extends DeploymentSubsystem
 {
-    public String getDefaultDataSource();
-    public void setDefaultDataSource(String defaultDataSource);
+    @Binding(detypedName = "default-datasource")
+    String getDefaultDataSource();
+    void setDefaultDataSource(String defaultDataSource);
 
-    public PersistenceInheritance getDefaultInheritance();
-    public void setDefaultInheritance(PersistenceInheritance persistenceInheritance);
+    @Binding(detypedName = "default-extended-persistence-inheritance")
+    String getDefaultInheritance();
+    void setDefaultInheritance(String defaultInheritance);
 
-    public boolean isDefaultVfs();
-    public void setDefaultVfs(boolean defaultVfs);
+    @Binding(detypedName = "default-vfs")
+    boolean isDefaultVfs();
+    void setDefaultVfs(boolean defaultVfs);
 }

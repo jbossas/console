@@ -24,9 +24,9 @@ package org.jboss.as.console.client.shared.deployment.model;
 */
 public interface DeploymentSubsystemElement
 {
-    public String getName();
-    public void setName(String name);
+    String getName();
+    void setName(String name);
 
-    public DeploymentSubsystem getSubsystem();
-    public void setSubsystem(DeploymentSubsystem subsystem);
+    DeploymentSubsystem getSubsystem();
+    void setSubsystem(DeploymentSubsystem subsystem);
 }

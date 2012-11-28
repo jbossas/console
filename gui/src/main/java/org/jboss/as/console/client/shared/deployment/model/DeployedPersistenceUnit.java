@@ -18,6 +18,8 @@
  */
 package org.jboss.as.console.client.shared.deployment.model;
 
+import org.jboss.as.console.client.widgets.forms.Binding;
+
 import java.util.List;
 
 /**
@@ -26,9 +28,10 @@ import java.util.List;
 */
 public interface DeployedPersistenceUnit extends DeploymentSubsystemElement
 {
-    public boolean isEnabled();
-    public void setEnabled(boolean enabled);
+    boolean isEnabled();
+    void setEnabled(boolean enabled);
 
-    public List<String> getEntities();
-    public void setEntities(List<String> entities);
+    @Binding(skip = true)
+    List<String> getEntities();
+    void setEntities(List<String> entities);
 }
