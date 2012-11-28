@@ -37,6 +37,7 @@ import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.as.console.client.shared.model.ModelAdapter;
+import org.jboss.as.console.client.shared.runtime.RuntimeBaseAddress;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.as.console.client.widgets.forms.EntityAdapter;
 import org.jboss.dmr.client.ModelNode;
@@ -99,10 +100,9 @@ public class DeploymentStoreImpl implements DeploymentStore
     @Override
     public void loadDeployments(final AsyncCallback<List<DeploymentRecord>> callback)
     {
-        // TODO Domain mode
         // /:read-children-resources(child-type=deployment)
-
         ModelNode operation = new ModelNode();
+        operation.get(ADDRESS).add(RuntimeBaseAddress.get());
         operation.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
         operation.get(CHILD_TYPE).set("deployment");
         loadDeployments(operation, null, callback);
@@ -112,10 +112,9 @@ public class DeploymentStoreImpl implements DeploymentStore
     public void loadSubdeployments(final DeploymentRecord deployment,
             final AsyncCallback<List<DeploymentRecord>> callback)
     {
-        // TODO Domain mode
         // /deployment=<deployment.getName()>:read-children-resources(child-type=subdeployment)
-
         ModelNode operation = new ModelNode();
+        operation.get(ADDRESS).add(RuntimeBaseAddress.get());
         operation.get(ADDRESS).add("deployment", deployment.getName());
         operation.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
         operation.get(CHILD_TYPE).set("subdeployment");
@@ -138,7 +137,7 @@ public class DeploymentStoreImpl implements DeploymentStore
             public void onSuccess(DMRResponse result)
             {
                 ModelNode response = result.get();
-                if (response.get(RESULT).isDefined())
+                if (ModelAdapter.wasSuccess(response))
                 {
                     List<ModelNode> nodes = response.get(RESULT).asList();
                     for (ModelNode node : nodes)
@@ -193,10 +192,10 @@ public class DeploymentStoreImpl implements DeploymentStore
     public void loadSubsystems(final DeploymentRecord deployment,
             final AsyncCallback<List<DeploymentSubsystem>> callback)
     {
-        // TODO Domain mode!
         final List<DeploymentSubsystem> subsystems = new ArrayList<DeploymentSubsystem>();
 
         ModelNode operation = new ModelNode();
+        operation.get(ADDRESS).add(RuntimeBaseAddress.get());
         if (deployment.isSubdeployment())
         {
             // /deployment=<deployment>/subdeployment=<subdeployment>:read-children-resources(child-type=subsystems)
@@ -223,12 +222,35 @@ public class DeploymentStoreImpl implements DeploymentStore
             public void onSuccess(DMRResponse result)
             {
                 ModelNode response = result.get();
-                if (response.get(RESULT).isDefined())
+                if (ModelAdapter.wasSuccess(response))
                 {
                     List<ModelNode> nodes = response.get(RESULT).asList();
                     for (ModelNode node : nodes)
                     {
-                        DeploymentSubsystem subsystem = mapSubsystem(deployment, node);
+                        DeploymentSubsystem subsystem1 = null;
+                        Property property = node.asProperty();
+                        String name = property.getName();
+                        ModelNode subsystemNode = property.getValue().asObject();
+                        SubsystemType type = SubsystemType.valueOf(name);
+                        switch (type)
+                        {
+                            case ejb3:
+                                subsystem1 = deploymentEjbSubsystemEntityAdapter.fromDMR(subsystemNode);
+                                break;
+                            case jpa:
+                                subsystem1 = deploymentJpaSubsystemEntityAdapter.fromDMR(subsystemNode);
+                                break;
+                            case web:
+                                subsystem1 = deploymentWebSubsystemnEntityAdapter.fromDMR(subsystemNode);
+                                break;
+                            case webservices:
+                                subsystem1 = deploymentWebserviceSubsystemEntityAdapter.fromDMR(subsystemNode);
+                                break;
+                        }
+                        subsystem1.setName(name);
+                        subsystem1.setType(type);
+                        subsystem1.setDeployment(deployment);
+                        DeploymentSubsystem subsystem = subsystem1;
                         subsystems.add(subsystem);
                     }
                 }
@@ -237,38 +259,9 @@ public class DeploymentStoreImpl implements DeploymentStore
         });
     }
 
-    private DeploymentSubsystem mapSubsystem(final DeploymentRecord deployment, ModelNode node)
-    {
-        DeploymentSubsystem subsystem = null;
-        Property property = node.asProperty();
-        String name = property.getName();
-        ModelNode subsystemNode = property.getValue().asObject();
-        SubsystemType type = SubsystemType.valueOf(name);
-        switch (type)
-        {
-            case ejb3:
-                subsystem = deploymentEjbSubsystemEntityAdapter.fromDMR(subsystemNode);
-                break;
-            case jpa:
-                subsystem = deploymentJpaSubsystemEntityAdapter.fromDMR(subsystemNode);
-                break;
-            case web:
-                subsystem = deploymentWebSubsystemnEntityAdapter.fromDMR(subsystemNode);
-                break;
-            case webservices:
-                subsystem = deploymentWebserviceSubsystemEntityAdapter.fromDMR(subsystemNode);
-                break;
-        }
-        subsystem.setName(name);
-        subsystem.setType(type);
-        subsystem.setDeployment(deployment);
-        return subsystem;
-    }
-
     @Override
     public void loadEjbs(final DeploymentSubsystem subsystem, final AsyncCallback<List<DeployedEjb>> callback)
     {
-        // TODO Domain mode!
         final int stepCount = 5;
         final List<DeployedEjb> ejbs = new ArrayList<DeployedEjb>();
 
@@ -296,19 +289,19 @@ public class DeploymentStoreImpl implements DeploymentStore
             public void onSuccess(DMRResponse result)
             {
                 ModelNode response = result.get();
-                if (response.get(RESULT).isDefined())
+                if (ModelAdapter.wasSuccess(response))
                 {
                     ModelNode steps = response.get(RESULT);
                     for (int i = 1; i <= stepCount; i++)
                     {
-                        List<ModelNode> ejbNodes = steps.get("step-" + i).get(RESULT).asList();
-                        for (ModelNode ejbNode : ejbNodes)
+                        List<ModelNode> nodes = steps.get("step-" + i).get(RESULT).asList();
+                        for (ModelNode node : nodes)
                         {
-                            if (ModelAdapter.wasSuccess(ejbNode))
+                            if (ModelAdapter.wasSuccess(node))
                             {
-                                List<ModelNode> address = ejbNode.get(ADDRESS).asList();
+                                List<ModelNode> address = node.get(ADDRESS).asList();
                                 String name = address.get(address.size() - 1).asProperty().getValue().asString();
-                                DeployedEjb ejb = deployedEjbEntityAdapter.fromDMR(ejbNode.get(RESULT));
+                                DeployedEjb ejb = deployedEjbEntityAdapter.fromDMR(node.get(RESULT));
                                 ejb.setName(name);
                                 ejbs.add(ejb);
                             }
@@ -323,6 +316,7 @@ public class DeploymentStoreImpl implements DeploymentStore
     private ModelNode ejbOp(final DeploymentSubsystem subsystem, final String name)
     {
         ModelNode operation = new ModelNode();
+        operation.get(ADDRESS).add(RuntimeBaseAddress.get());
         DeploymentRecord deployment = subsystem.getDeployment();
         if (deployment.isSubdeployment())
         {
@@ -344,21 +338,181 @@ public class DeploymentStoreImpl implements DeploymentStore
     public void loadPersistenceUnits(final DeploymentSubsystem subsystem,
             final AsyncCallback<List<DeployedPersistenceUnit>> callback)
     {
-        //To change body of implemented methods use File | Settings | File Templates.
+        final List<DeployedPersistenceUnit> pus = new ArrayList<DeployedPersistenceUnit>();
+
+        ModelNode operation = new ModelNode();
+        operation.get(ADDRESS).add(RuntimeBaseAddress.get());
+        DeploymentRecord deployment = subsystem.getDeployment();
+        if (deployment.isSubdeployment())
+        {
+            // /deployment=<deployment>/subdeployment=<subdeployment>/subsystem=jpa/hibernate-persistence-unit=*:read-resource
+            operation.get(ADDRESS).add("deployment", deployment.getParent().getName())
+                    .add("subdeployment", deployment.getName());
+        }
+        else
+        {
+            // /deployment=<deployment>/subsystem=jpa/hibernate-persistence-unit=*:read-resource
+            operation.get(ADDRESS).add("deployment", deployment.getName());
+        }
+        operation.get(ADDRESS).add("subsystem", "jpa").add("hibernate-persistence-unit", "*");
+        operation.get(OP).set(READ_RESOURCE_OPERATION);
+        operation.get(INCLUDE_RUNTIME).set(true);
+
+        dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>()
+        {
+            @Override
+            public void onFailure(Throwable caught)
+            {
+                callback.onFailure(caught);
+            }
+
+            @Override
+            public void onSuccess(DMRResponse result)
+            {
+                ModelNode response = result.get();
+                if (ModelAdapter.wasSuccess(response))
+                {
+                    List<ModelNode> nodes = response.get(RESULT).asList();
+                    for (ModelNode node : nodes)
+                    {
+                        if (ModelAdapter.wasSuccess(node))
+                        {
+                            List<ModelNode> address = node.get(ADDRESS).asList();
+                            String name = address.get(address.size() - 1).asProperty().getValue().asString();
+                            int index = name.indexOf("#");
+                            if (index != -1)
+                            {
+                                name = name.substring(index + 1);
+                            }
+                            ModelNode puNode = node.get(RESULT);
+                            DeployedPersistenceUnit pu = deployedPersistenceUnitEntityAdapter.fromDMR(puNode);
+                            pu.setName(name);
+                            if (puNode.get("entity").isDefined())
+                            {
+                                List<ModelNode> entityNodes = puNode.get("entity").asList();
+                                List<String> names = new ArrayList<String>(entityNodes.size());
+                                for (ModelNode entityNode : entityNodes)
+                                {
+                                    String entityName = entityNode.asProperty().getName();
+                                    names.add(entityName);
+                                }
+                                pu.setEntities(names);
+                            }
+                            pus.add(pu);
+                        }
+                    }
+                }
+                callback.onSuccess(pus);
+            }
+        });
     }
 
     @Override
-    public void loadServlets(final DeploymentSubsystem subsystemn,
+    public void loadServlets(final DeploymentSubsystem subsystem,
             final AsyncCallback<List<DeployedServlet>> callback)
     {
-        //To change body of implemented methods use File | Settings | File Templates.
+        final List<DeployedServlet> servlets = new ArrayList<DeployedServlet>();
+
+        ModelNode operation = new ModelNode();
+        operation.get(ADDRESS).add(RuntimeBaseAddress.get());
+        DeploymentRecord deployment = subsystem.getDeployment();
+        if (deployment.isSubdeployment())
+        {
+            // /deployment=<deployment>/subdeployment=<subdeployment>/subsystem=web/servlet=*:read-resource
+            operation.get(ADDRESS).add("deployment", deployment.getParent().getName())
+                    .add("subdeployment", deployment.getName());
+        }
+        else
+        {
+            // /deployment=<deployment>/subsystem=web/servlet=*:read-resource
+            operation.get(ADDRESS).add("deployment", deployment.getName());
+        }
+        operation.get(ADDRESS).add("subsystem", "web").add("servlet", "*");
+        operation.get(OP).set(READ_RESOURCE_OPERATION);
+
+        dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>()
+        {
+            @Override
+            public void onFailure(Throwable caught)
+            {
+                callback.onFailure(caught);
+            }
+
+            @Override
+            public void onSuccess(DMRResponse result)
+            {
+                ModelNode response = result.get();
+                if (ModelAdapter.wasSuccess(response))
+                {
+                    List<ModelNode> nodes = response.get(RESULT).asList();
+                    for (ModelNode node : nodes)
+                    {
+                        if (ModelAdapter.wasSuccess(node))
+                        {
+                            ModelNode servletNode = node.get(RESULT);
+                            DeployedServlet servlet = deployedServletEntityAdapter.fromDMR(servletNode);
+                            servlet.setName(servletNode.get("servlet-name").asString());
+                            servlets.add(servlet);
+                        }
+                    }
+                }
+                callback.onSuccess(servlets);
+            }
+        });
     }
 
     @Override
     public void loadEndpoints(final DeploymentSubsystem subsystem,
             final AsyncCallback<List<DeployedEndpoint>> callback)
     {
-        //To change body of implemented methods use File | Settings | File Templates.
+        final List<DeployedEndpoint> endpoints = new ArrayList<DeployedEndpoint>();
+
+        ModelNode operation = new ModelNode();
+        operation.get(ADDRESS).add(RuntimeBaseAddress.get());
+        DeploymentRecord deployment = subsystem.getDeployment();
+        if (deployment.isSubdeployment())
+        {
+            // /deployment=<deployment>/subdeployment=<subdeployment>/subsystem=webservices/servlet=*:read-resource
+            operation.get(ADDRESS).add("deployment", deployment.getParent().getName())
+                    .add("subdeployment", deployment.getName());
+        }
+        else
+        {
+            // /deployment=<deployment>/subsystem=web/servlet=*:read-resource
+            operation.get(ADDRESS).add("deployment", deployment.getName());
+        }
+        operation.get(ADDRESS).add("subsystem", "webservices").add("endpoint", "*");
+        operation.get(OP).set(READ_RESOURCE_OPERATION);
+
+        dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>()
+        {
+            @Override
+            public void onFailure(Throwable caught)
+            {
+                callback.onFailure(caught);
+            }
+
+            @Override
+            public void onSuccess(DMRResponse result)
+            {
+                ModelNode response = result.get();
+                if (ModelAdapter.wasSuccess(response))
+                {
+                    List<ModelNode> nodes = response.get(RESULT).asList();
+                    for (ModelNode node : nodes)
+                    {
+                        if (ModelAdapter.wasSuccess(node))
+                        {
+                            ModelNode endpointNode = node.get(RESULT);
+                            DeployedEndpoint endpoint = deployedEndpointEntityAdapter.fromDMR(endpointNode);
+                            //endpoint.setName(endpointNode.get("endpoint-name").asString());
+                            endpoints.add(endpoint);
+                        }
+                    }
+                }
+                callback.onSuccess(endpoints);
+            }
+        });
     }
 
     @Override

@@ -30,6 +30,7 @@ import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.TreeViewModel;
 import org.jboss.as.console.client.shared.deployment.DeploymentStore;
 import org.jboss.as.console.client.shared.deployment.model.DeploymentRecord;
+import org.jboss.as.console.client.shared.deployment.model.DeploymentSubsystemElement;
 import org.jboss.ballroom.client.widgets.icons.Icons;
 
 import java.util.List;
@@ -71,7 +72,7 @@ public class DeploymentTreeModel implements TreeViewModel
     @Override
     public boolean isLeaf(final Object value)
     {
-        return false;
+        return value instanceof DeploymentSubsystemElement;
     }
 
     public void updateDeployments(List<DeploymentRecord> deployments)
