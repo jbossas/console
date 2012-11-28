@@ -21,7 +21,7 @@ package org.jboss.as.console.client.shared.deployment;
 
 import org.jboss.as.console.client.domain.groups.deployment.ServerGroupSelection;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
-import org.jboss.as.console.client.shared.model.DeploymentRecord;
+import org.jboss.as.console.client.shared.deployment.model.DeploymentRecord;
 
 import java.util.List;
 import java.util.Set;

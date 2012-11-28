@@ -32,14 +32,10 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.BootstrapContext;
-import org.jboss.as.console.client.core.message.Message;
 import org.jboss.as.console.client.shared.BeanFactory;
-import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
-import org.jboss.as.console.client.shared.model.DeploymentRecord;
-import org.jboss.as.console.client.standalone.deployment.DeploymentListPresenter;
+import org.jboss.as.console.client.shared.deployment.model.DeploymentRecord;
 import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 import org.jboss.ballroom.client.widgets.window.Feedback;
-import org.jboss.dmr.client.ModelNode;
 
 /**
  * @author Heiko Braun

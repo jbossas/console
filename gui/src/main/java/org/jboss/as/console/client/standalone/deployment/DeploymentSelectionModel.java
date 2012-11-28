@@ -21,7 +21,7 @@ package org.jboss.as.console.client.standalone.deployment;
 import com.google.gwt.view.client.ProvidesKey;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
-import org.jboss.as.console.client.shared.model.DeploymentRecord;
+import org.jboss.as.console.client.shared.deployment.model.DeploymentRecord;
 
 /**
  * @author Harald Pehl

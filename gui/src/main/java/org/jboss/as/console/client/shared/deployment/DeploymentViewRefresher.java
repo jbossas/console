@@ -19,7 +19,7 @@
 
 package org.jboss.as.console.client.shared.deployment;
 
-import org.jboss.as.console.client.shared.model.DeploymentRecord;
+import org.jboss.as.console.client.shared.deployment.model.DeploymentRecord;
 
 import java.util.List;
 

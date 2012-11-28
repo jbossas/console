@@ -31,8 +31,9 @@ import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.shared.deployment.DeploymentCommand;
 import org.jboss.as.console.client.shared.deployment.DeploymentCommandDelegate;
 import org.jboss.as.console.client.shared.deployment.DeploymentFilter;
-import org.jboss.as.console.client.shared.model.DeploymentRecord;
-import org.jboss.as.console.client.shared.model.DeploymentStore;
+import org.jboss.as.console.client.shared.deployment.model.DeploymentRecord;
+import org.jboss.as.console.client.shared.deployment.DeploymentStore;
+import org.jboss.as.console.client.shared.deployment.model.DeploymentSubsystem;
 import org.jboss.as.console.client.shared.viewframework.builder.OneToOneLayout;
 import org.jboss.as.console.client.widgets.browser.DefaultCellBrowser;
 import org.jboss.ballroom.client.widgets.forms.Form;
@@ -185,9 +186,9 @@ public class DeploymentBrowserView extends SuspendableViewImpl implements Deploy
             deploymentForm.edit(deployment);
             contextPanel.showWidget(1);
         }
-        else if (selectedContext instanceof DeploymentRecord.Subsystem)
+        else if (selectedContext instanceof DeploymentSubsystem)
         {
-            DeploymentRecord.Subsystem subsystem = (DeploymentRecord.Subsystem) selectedContext;
+            DeploymentSubsystem subsystem = (DeploymentSubsystem) selectedContext;
             switch (subsystem.getType())
             {
                 case ejb3:

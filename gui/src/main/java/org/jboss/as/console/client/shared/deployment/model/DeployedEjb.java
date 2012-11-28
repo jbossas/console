@@ -16,23 +16,25 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.as.console.client.standalone.deployment;
+package org.jboss.as.console.client.shared.deployment.model;
 
-import com.google.gwt.view.client.ProvidesKey;
-import org.jboss.as.console.client.shared.deployment.model.DeploymentRecord;
+import java.util.List;
 
 /**
- * @author Harald Pehl
- * @date 11/26/2012
- */
-public class DeploymentsKeyProvider
+* @author Harald Pehl
+* @date 11/28/2012
+*/
+public interface DeployedEjb extends DeploymentSubsystemElement
 {
-    static class DeploymentKeyProvider implements ProvidesKey<DeploymentRecord>
-    {
-        @Override
-        public Object getKey(DeploymentRecord item)
-        {
-            return item.getName();
-        }
-    }
+    public String getComponentClassname();
+    public void setComponentClassname(String componentClassname);
+
+    public List<String> getDeclaredRoles();
+    public void setDeclaredRoles(List<String> declaredRoles);
+
+    public String getRunAsRole();
+    public void setRunAsRole(String runAsRole);
+
+    public String getSecurityDomain();
+    public void setSecurityDomain(String securityDomain);
 }

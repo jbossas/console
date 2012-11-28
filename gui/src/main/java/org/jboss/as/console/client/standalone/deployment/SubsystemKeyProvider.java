@@ -19,17 +19,17 @@
 package org.jboss.as.console.client.standalone.deployment;
 
 import com.google.gwt.view.client.ProvidesKey;
-import org.jboss.as.console.client.shared.model.DeploymentRecord;
+import org.jboss.as.console.client.shared.deployment.model.DeploymentSubsystem;
 
 
 /**
 * @author Harald Pehl
 * @date 11/26/2012
 */
-class SubsystemKeyProvider implements ProvidesKey<DeploymentRecord.Subsystem>
+class SubsystemKeyProvider implements ProvidesKey<DeploymentSubsystem>
 {
     @Override
-    public Object getKey(final DeploymentRecord.Subsystem item)
+    public Object getKey(final DeploymentSubsystem item)
     {
         return item.getName();
     }

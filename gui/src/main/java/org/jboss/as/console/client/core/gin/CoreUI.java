@@ -19,14 +19,10 @@
 
 package org.jboss.as.console.client.core.gin;
 
-import com.google.inject.Singleton;
 import com.google.web.bindery.event.shared.EventBus;
 import com.google.gwt.inject.client.AsyncProvider;
 import com.google.inject.Provider;
-import com.gwtplatform.mvp.client.annotations.GaAccount;
 import com.gwtplatform.mvp.client.googleanalytics.GoogleAnalytics;
-import com.gwtplatform.mvp.client.googleanalytics.GoogleAnalyticsImpl;
-import com.gwtplatform.mvp.client.googleanalytics.GoogleAnalyticsNavigationTracker;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.TokenFormatter;
 import org.jboss.as.console.client.analytics.NavigationTracker;
@@ -68,7 +64,7 @@ import org.jboss.as.console.client.shared.general.PathManagementPresenter;
 import org.jboss.as.console.client.shared.general.PropertiesPresenter;
 import org.jboss.as.console.client.shared.general.SocketBindingPresenter;
 import org.jboss.as.console.client.shared.help.HelpSystem;
-import org.jboss.as.console.client.shared.model.DeploymentStore;
+import org.jboss.as.console.client.shared.deployment.DeploymentStore;
 import org.jboss.as.console.client.shared.model.SubsystemStore;
 import org.jboss.as.console.client.shared.runtime.RuntimeBaseAddress;
 import org.jboss.as.console.client.shared.runtime.ds.DataSourceMetricPresenter;

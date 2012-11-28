@@ -20,13 +20,13 @@ package org.jboss.as.console.client.standalone.deployment;
 
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
-import org.jboss.as.console.client.shared.model.DeploymentRecord;
+import org.jboss.as.console.client.shared.deployment.model.DeploymentSubsystem;
 
 /**
  * @author Harald Pehl
  * @date 11/26/2012
  */
-public class SubsystemSelectionModel extends SingleSelectionModel<DeploymentRecord.Subsystem>
+public class SubsystemSelectionModel extends SingleSelectionModel<DeploymentSubsystem>
 {
     private final DeploymentBrowserPresenter presenter;
 

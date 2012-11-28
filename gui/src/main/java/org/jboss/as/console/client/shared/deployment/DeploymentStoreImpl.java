@@ -16,12 +16,23 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.as.console.client.shared.model;
+package org.jboss.as.console.client.shared.deployment;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import org.jboss.as.console.client.core.ApplicationProperties;
 import org.jboss.as.console.client.shared.BeanFactory;
+import org.jboss.as.console.client.shared.deployment.model.DeployedEjb;
+import org.jboss.as.console.client.shared.deployment.model.DeployedEndpoint;
+import org.jboss.as.console.client.shared.deployment.model.DeployedPersistenceUnit;
+import org.jboss.as.console.client.shared.deployment.model.DeployedServlet;
+import org.jboss.as.console.client.shared.deployment.model.DeploymentEjbSubsystem;
+import org.jboss.as.console.client.shared.deployment.model.DeploymentJpaSubsystem;
+import org.jboss.as.console.client.shared.deployment.model.DeploymentRecord;
+import org.jboss.as.console.client.shared.deployment.model.DeploymentSubsystem;
+import org.jboss.as.console.client.shared.deployment.model.DeploymentWebSubsystemn;
+import org.jboss.as.console.client.shared.deployment.model.DeploymentWebserviceSubsystem;
+import org.jboss.as.console.client.shared.deployment.model.SubsystemType;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
@@ -164,10 +175,10 @@ public class DeploymentStoreImpl implements DeploymentStore
 
     @Override
     public void loadSubsystems(final DeploymentRecord deployment,
-            final AsyncCallback<List<DeploymentRecord.Subsystem>> callback)
+            final AsyncCallback<List<DeploymentSubsystem>> callback)
     {
         // TODO Domain mode!
-        final List<DeploymentRecord.Subsystem> subsystems = new ArrayList<DeploymentRecord.Subsystem>();
+        final List<DeploymentSubsystem> subsystems = new ArrayList<DeploymentSubsystem>();
 
         ModelNode operation = new ModelNode();
         if (deployment.isSubdeployment())
@@ -201,7 +212,7 @@ public class DeploymentStoreImpl implements DeploymentStore
                     List<ModelNode> nodes = response.get("result").asList();
                     for (ModelNode node : nodes)
                     {
-                        DeploymentRecord.Subsystem subsystem = mapSubsystem(deployment, node);
+                        DeploymentSubsystem subsystem = mapSubsystem(deployment, node);
                         subsystems.add(subsystem);
                     }
                 }
@@ -210,11 +221,11 @@ public class DeploymentStoreImpl implements DeploymentStore
         });
     }
 
-    private DeploymentRecord.Subsystem mapSubsystem(final DeploymentRecord deployment, ModelNode node)
+    private DeploymentSubsystem mapSubsystem(final DeploymentRecord deployment, ModelNode node)
     {
-        DeploymentRecord.Subsystem subsystem = null;
+        DeploymentSubsystem subsystem = null;
         String name = node.asProperty().getName();
-        DeploymentRecord.Subsystem.Type type = DeploymentRecord.Subsystem.Type.valueOf(name);
+        SubsystemType type = SubsystemType.valueOf(name);
         switch (type)
         {
             case ejb3:
@@ -239,29 +250,29 @@ public class DeploymentStoreImpl implements DeploymentStore
     }
 
     @Override
-    public void loadEjbs(final DeploymentRecord.EjbSubsystem subsystem,
-            final AsyncCallback<List<DeploymentRecord.Ejb>> callback)
+    public void loadEjbs(final DeploymentEjbSubsystem subsystem,
+            final AsyncCallback<List<DeployedEjb>> callback)
     {
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override
-    public void loadPersistenceUnits(final DeploymentRecord.JpaSubsystem subsystem,
-            final AsyncCallback<List<DeploymentRecord.PersistenceUnit>> callback)
+    public void loadPersistenceUnits(final DeploymentJpaSubsystem subsystem,
+            final AsyncCallback<List<DeployedPersistenceUnit>> callback)
     {
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override
-    public void loadServlets(final DeploymentRecord.WebSubsystemn subsystemn,
-            final AsyncCallback<List<DeploymentRecord.Servlet>> callback)
+    public void loadServlets(final DeploymentWebSubsystemn subsystemn,
+            final AsyncCallback<List<DeployedServlet>> callback)
     {
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override
-    public void loadEndpoints(final DeploymentRecord.WebserviceSubsystem subsystem,
-            final AsyncCallback<List<DeploymentRecord.Endpoint>> callback)
+    public void loadEndpoints(final DeploymentWebserviceSubsystem subsystem,
+            final AsyncCallback<List<DeployedEndpoint>> callback)
     {
         //To change body of implemented methods use File | Settings | File Templates.
     }

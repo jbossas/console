@@ -1,7 +1,7 @@
 package org.jboss.as.console.client.shared.deployment;
 
 import com.google.gwt.view.client.ListDataProvider;
-import org.jboss.as.console.client.shared.model.DeploymentRecord;
+import org.jboss.as.console.client.shared.deployment.model.DeploymentRecord;
 import org.jboss.as.console.client.widgets.tables.DataProviderFilter;
 
 /**

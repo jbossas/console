@@ -16,23 +16,19 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.as.console.client.standalone.deployment;
+package org.jboss.as.console.client.shared.deployment.model;
 
-import com.google.gwt.view.client.ProvidesKey;
-import org.jboss.as.console.client.shared.deployment.model.DeploymentRecord;
+import java.util.List;
 
 /**
- * @author Harald Pehl
- * @date 11/26/2012
- */
-public class DeploymentsKeyProvider
+* @author Harald Pehl
+* @date 11/28/2012
+*/
+public interface DeployedPersistenceUnit extends DeploymentSubsystemElement
 {
-    static class DeploymentKeyProvider implements ProvidesKey<DeploymentRecord>
-    {
-        @Override
-        public Object getKey(DeploymentRecord item)
-        {
-            return item.getName();
-        }
-    }
+    public boolean isEnabled();
+    public void setEnabled(boolean enabled);
+
+    public List<String> getEntities();
+    public void setEntities(List<String> entities);
 }

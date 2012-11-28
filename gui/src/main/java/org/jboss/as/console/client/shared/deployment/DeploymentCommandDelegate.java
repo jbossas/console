@@ -19,7 +19,7 @@
 package org.jboss.as.console.client.shared.deployment;
 
 import com.google.gwt.cell.client.ActionCell;
-import org.jboss.as.console.client.shared.model.DeploymentRecord;
+import org.jboss.as.console.client.shared.deployment.model.DeploymentRecord;
 
 /**
  * The delegate that is activated when the DeploymentCommandCell is clicked.

@@ -20,14 +20,12 @@
 package org.jboss.as.console.client.shared.deployment;
 
 import com.google.gwt.cell.client.ActionCell;
-import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
-import org.jboss.as.console.client.Console;
-import org.jboss.as.console.client.shared.model.DeploymentRecord;
+import org.jboss.as.console.client.shared.deployment.model.DeploymentRecord;
 
 /**
  * Cell that renders a button capable of firing off a DeploymentCommand.

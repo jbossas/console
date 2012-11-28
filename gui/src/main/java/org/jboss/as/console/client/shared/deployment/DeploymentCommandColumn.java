@@ -20,7 +20,7 @@
 package org.jboss.as.console.client.shared.deployment;
 
 import com.google.gwt.user.cellview.client.Column;
-import org.jboss.as.console.client.shared.model.DeploymentRecord;
+import org.jboss.as.console.client.shared.deployment.model.DeploymentRecord;
 
 /**
  * A column that renders cells giving the user the ability to fire off a

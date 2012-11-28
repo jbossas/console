@@ -32,8 +32,9 @@ import com.google.gwt.view.client.HasData;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.TreeViewModel;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
-import org.jboss.as.console.client.shared.model.DeploymentRecord;
-import org.jboss.as.console.client.shared.model.DeploymentStore;
+import org.jboss.as.console.client.shared.deployment.model.DeploymentRecord;
+import org.jboss.as.console.client.shared.deployment.DeploymentStore;
+import org.jboss.as.console.client.shared.deployment.model.DeploymentSubsystem;
 import org.jboss.ballroom.client.widgets.icons.Icons;
 
 import java.util.List;
@@ -101,16 +102,16 @@ public class DeploymentTreeModel implements TreeViewModel
             else if (deployment.isHasSubsystems())
             {
                 // level 1 or 2: return the subsystems
-                AsyncDataProvider<DeploymentRecord.Subsystem> dataProvider = new AsyncDataProvider<DeploymentRecord.Subsystem>()
+                AsyncDataProvider<DeploymentSubsystem> dataProvider = new AsyncDataProvider<DeploymentSubsystem>()
                 {
                     @Override
-                    protected void onRangeChanged(final HasData<DeploymentRecord.Subsystem> display)
+                    protected void onRangeChanged(final HasData<DeploymentSubsystem> display)
                     {
                         deploymentStore
-                                .loadSubsystems(deployment, new SimpleCallback<List<DeploymentRecord.Subsystem>>()
+                                .loadSubsystems(deployment, new SimpleCallback<List<DeploymentSubsystem>>()
                                 {
                                     @Override
-                                    public void onSuccess(final List<DeploymentRecord.Subsystem> result)
+                                    public void onSuccess(final List<DeploymentSubsystem> result)
                                     {
                                         updateRowCount(result.size(), true);
                                         updateRowData(0, result);
@@ -118,15 +119,15 @@ public class DeploymentTreeModel implements TreeViewModel
                                 });
                     }
                 };
-                Cell<DeploymentRecord.Subsystem> cell = new SubsystemCell();
-                return new DefaultNodeInfo<DeploymentRecord.Subsystem>(dataProvider, cell, subsystemSelectionModel,
+                Cell<DeploymentSubsystem> cell = new SubsystemCell();
+                return new DefaultNodeInfo<DeploymentSubsystem>(dataProvider, cell, subsystemSelectionModel,
                         null);
             }
         }
-        else if (value instanceof DeploymentRecord.Subsystem)
+        else if (value instanceof DeploymentSubsystem)
         {
             // level 2/3: return the contents of the selected subsystem
-            DeploymentRecord.Subsystem subsystem = (DeploymentRecord.Subsystem) value;
+            DeploymentSubsystem subsystem = (DeploymentSubsystem) value;
             switch (subsystem.getType())
             {
                 case ejb3:
@@ -200,10 +201,10 @@ public class DeploymentTreeModel implements TreeViewModel
     }
 
 
-    private static class SubsystemCell extends AbstractCell<DeploymentRecord.Subsystem>
+    private static class SubsystemCell extends AbstractCell<DeploymentSubsystem>
     {
         @Override
-        public void render(final Context context, final DeploymentRecord.Subsystem value, final SafeHtmlBuilder sb)
+        public void render(final Context context, final DeploymentSubsystem value, final SafeHtmlBuilder sb)
         {
             sb.appendEscaped(value.getName());
         }
