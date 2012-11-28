@@ -16,6 +16,7 @@ import org.jboss.as.console.client.shared.model.SubsystemRecord;
 import org.jboss.as.console.client.shared.state.CurrentServerSelection;
 import org.jboss.as.console.client.shared.state.ServerSelectionEvent;
 import org.jboss.as.console.client.widgets.nav.Predicate;
+import org.jboss.as.console.client.widgets.tree.GroupItem;
 import org.jboss.ballroom.client.layout.LHSNavTree;
 import org.jboss.ballroom.client.layout.LHSNavTreeItem;
 import org.jboss.ballroom.client.layout.LHSTreeSection;
@@ -160,9 +161,15 @@ class DomainRuntimeNavigation implements ServerSelectionEvent.ServerSelectionLis
         metricLeaf.removeItems();
         runtimeLeaf.removeItems();
 
-        metricLeaf.addItem(new LHSNavTreeItem("JVM", NameTokens.HostVMMetricPresenter));
-        metricLeaf.addItem(new LHSNavTreeItem("Environment", NameTokens.EnvironmentPresenter));
+        final GroupItem platformGroup = new GroupItem("Platform");
 
+        platformGroup.addItem(new LHSNavTreeItem("JVM", NameTokens.HostVMMetricPresenter));
+        platformGroup.addItem(new LHSNavTreeItem("Environment", NameTokens.EnvironmentPresenter));
+
+        metricLeaf.addItem(platformGroup);
+        //platformGroup.setState(true);
+
+        final GroupItem subsystemGroup = new GroupItem("Subsystems");
         // match subsystems
         for(SubsystemRecord subsys : subsystems)
         {
@@ -170,7 +177,7 @@ class DomainRuntimeNavigation implements ServerSelectionEvent.ServerSelectionLis
             for(Predicate predicate : metricPredicates)
             {
                 if(predicate.matches(subsys.getKey()))
-                    metricLeaf.addItem(predicate.getNavItem());
+                    subsystemGroup.addItem(predicate.getNavItem());
             }
 
             for(Predicate predicate : runtimePredicates)
@@ -181,7 +188,10 @@ class DomainRuntimeNavigation implements ServerSelectionEvent.ServerSelectionLis
         }
 
         final LHSNavTreeItem webservices = new LHSNavTreeItem("Webservices", NameTokens.WebServiceRuntimePresenter);
-        metricLeaf.addItem(webservices);
+        subsystemGroup.addItem(webservices);
+
+        metricLeaf.addItem(subsystemGroup);
+        subsystemGroup.setState(true);
 
         navigation.expandTopLevel();
 

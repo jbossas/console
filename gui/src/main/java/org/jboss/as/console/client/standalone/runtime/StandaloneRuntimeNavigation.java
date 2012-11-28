@@ -12,6 +12,7 @@ import org.jboss.as.console.client.plugins.RuntimeExtensionRegistry;
 import org.jboss.as.console.client.shared.model.SubsystemRecord;
 import org.jboss.as.console.client.widgets.nav.Predicate;
 import org.jboss.as.console.client.plugins.RuntimeGroup;
+import org.jboss.as.console.client.widgets.tree.GroupItem;
 import org.jboss.ballroom.client.layout.LHSNavTree;
 import org.jboss.ballroom.client.layout.LHSNavTreeItem;
 import org.jboss.ballroom.client.layout.LHSTreeSection;
@@ -145,10 +146,15 @@ public class StandaloneRuntimeNavigation {
         metricLeaf.removeItems();
         runtimeLeaf.removeItems();
 
-        metricLeaf.addItem(new LHSNavTreeItem("JVM", NameTokens.VirtualMachine));
-        metricLeaf.addItem(new LHSNavTreeItem("Environment", NameTokens.EnvironmentPresenter));
-        metricLeaf.addItem(new LHSNavTreeItem("Extensions", NameTokens.ExtensionsPresenter));
+        final GroupItem platformGroup = new GroupItem("Platform");
 
+        platformGroup.addItem(new LHSNavTreeItem("JVM", NameTokens.VirtualMachine));
+        platformGroup.addItem(new LHSNavTreeItem("Environment", NameTokens.EnvironmentPresenter));
+        platformGroup.addItem(new LHSNavTreeItem("Extensions", NameTokens.ExtensionsPresenter));
+
+        metricLeaf.addItem(platformGroup);
+
+        final GroupItem subsystemGroup = new GroupItem("Subsystems");
         // match subsystems
         for(SubsystemRecord subsys : subsystems)
         {
@@ -156,7 +162,7 @@ public class StandaloneRuntimeNavigation {
             for(Predicate predicate : metricPredicates)
             {
                 if(predicate.matches(subsys.getKey()))
-                    metricLeaf.addItem(predicate.getNavItem());
+                    subsystemGroup.addItem(predicate.getNavItem());
             }
 
             for(Predicate predicate : runtimePredicates)
@@ -165,6 +171,9 @@ public class StandaloneRuntimeNavigation {
                     runtimeLeaf.addItem(predicate.getNavItem());
             }
         }
+
+        metricLeaf.addItem(subsystemGroup);
+        subsystemGroup.setState(true);
 
         navigation.expandTopLevel();
     }
