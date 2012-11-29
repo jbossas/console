@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="utf-8">
     <title>AS7 Web Console</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,94 +9,180 @@
 
     <!-- Le styles -->
     <link href="css/bootstrap.css" rel="stylesheet">
-    <link href="css/pages.css" rel="stylesheet">    
+    <link href="css/pages.css" rel="stylesheet">
     <link href="css/bootstrap-responsive.css" rel="stylesheet">
 
     <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
-      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
-    
-  </head>
 
-  <body>
+</head>
 
-    <div class="container-narrow">
+<body>
 
-      <div class="masthead">
+<div class="container-narrow">
+
+    <div class="masthead">
 
         <ul class="nav nav-pills pull-right">
-          <li><a href="index.html">Home</a></li>
-          <li class="active"><a href="docs.html">Documentation</a></li>
-          <li><a href="https://github.com/jbossas/console">Source Code</a></li>
-          <li><a href="https://community.jboss.org/en/jbossas7?view=discussions">Get Involved</a></li>
+            <li><a href="index.html">Home</a></li>
+            <li class="active"><a href="docs.html">Documentation</a></li>
+            <li><a href="https://github.com/jbossas/console">Source Code</a></li>
+            <li><a href="https://community.jboss.org/en/jbossas7?view=discussions">Get Involved</a></li>
         </ul>
-        <h3>AS7 Web Console</h3>        
-      </div>
+        <h3>AS7 Web Console</h3>
+    </div>
 
-      <hr>
- <!-- Docs nav
-    ================================================== -->
+    <hr>
+    <!-- Docs nav
+   ================================================== -->
     <div class="row-fluid">
-      <div class="span3 bs-docs-sidebar">
-        <ul class="nav nav-list bs-docs-sidenav">
-          <li><a href="#releases"><i class="icon-chevron-right"></i> Releases</a></li>
-          <li><a href="#build"><i class="icon-chevron-right"></i> Build &amp; Deploy</a></li>
-          <li><a href="#extend"><i class="icon-chevron-right"></i> Extensions</a></li>          
-          <li><a href="#bugs"><i class="icon-chevron-right"></i> Issues</a></li>          
-        </ul>
-      </div>
-      <div class="span9">
-      
-      <section id="releases">
-          <div>
-            <h3>Releases</h3>
-          </div>
-        </section>
+        <div class="span3 bs-docs-sidebar">
+            <ul class="nav nav-list bs-docs-sidenav">
+                <li><a href="#releases"><i class="icon-chevron-right"></i> Roadmap</a></li>
+                <li><a href="#build"><i class="icon-chevron-right"></i> Build &amp; Deploy</a></li>
+                <!--li><a href="#extend"><i class="icon-chevron-right"></i> Extensions</a></li-->
+                <li><a href="#bugs"><i class="icon-chevron-right"></i> Problems</a></li>
+            </ul>
+        </div>
+        <div class="span9">
 
-        <section id="build">
-          <div>
-            <h3>Build &amp; Deploy</h3>
-          </div>
-        </section>        
+            <section id="releases">
+                <div>
+                    <h3>Roadmap &amp; Releases</h3>
+                    <p>
+                        The web console shipped with the JBossAS 7 application server and tight to it's release cycle. Although we maintain out own roadmaps, any release will be coupled to a JBossAS version.
+                    </p>
+                    <p>
+                        If you are looking for the web console roadmap, you need to look at issues assinged to the <a href="https://issues.jboss.org/browse/AS7/component/12313823">"console" component</a> and scheduled for the next <a href="https://issues.jboss.org/browse/AS7#selectedTab=com.atlassian.jira.plugin.system.project%3Aroadmap-panel">server version</a>.
+                    </p>
+                    <p>
+                        However you can find the release notes for <a href="releases.html">previous releases here</a>
+                    </p>
+                </div>
+            </section>
 
-        <section id="extend">
-          <div>
-            <h3>Extensions</h3>
-          </div>
-        </section>
+            <section id="build">
+                <div>
+                    <h3>Build &amp; Deploy</h3>
+                </div>
 
-        <section id="bugs">
-          <div>
-            <h3>Issues</h3>
-          </div>
-        </section>
-      </div>
+                <article class="markdown-body entry-content" itemprop="mainContentOfPage">
+
+                    <h4>
+                        <a name="prerequisites" class="anchor" href="#prerequisites"><span class="mini-icon mini-icon-link"></span></a>Prerequisites</h4>
+
+                    <p>In order to work on the console you a need running JBoss 7
+                        instance on your local host. You can download it here:</p>
+
+                    <p><a href="http://www.jboss.org/jbossas/downloads">http://www.jboss.org/jbossas/downloads</a></p>
+
+                    <p>You can run JBoss in either the 'domain' or 'standalone' mode.</p>
+
+                    <h4>
+                        <a name="running-in-hosted-mode" class="anchor" href="#running-in-hosted-mode"><span class="mini-icon mini-icon-link"></span></a>Running in hosted mode</h4>
+
+                    <ol>
+                        <li>Make sure JBoss 7 is started</li>
+                        <li>Make sure you build the top level module first (mvn -Pdev clean install).</li>
+                        <li>cd 'build/app'</li>
+                    </ol><p>Start the GWT shell with</p>
+
+<pre><code>mvn gwt:&lt;run|debug&gt;
+</code></pre>
+
+                    <p>When the hosted browser is started, it's enough to hit the 'refresh' button to recompile
+                        and verify changes. You can get the OOPHM Plugin, required for attaching your browser to the
+                        hosted mode execution here: <a href="http://gwt.google.com/samples/MissingPlugin/MissingPlugin.html">http://gwt.google.com/samples/MissingPlugin/MissingPlugin.html</a></p>
+
+                    <h4>
+                        <a name="running-in-web-mode" class="anchor" href="#running-in-web-mode"><span class="mini-icon mini-icon-link"></span></a>Running in web mode</h4>
+
+<pre><code>cd build/app
+    mvn package
+</code></pre>
+
+                    <p>Produces a war file in target/*-resources.jar, which needs to be deployed as a JBoss Module.</p>
+
+                    <h4>
+                        <a name="eap-build-profile" class="anchor" href="#eap-build-profile"><span class="mini-icon mini-icon-link"></span></a>EAP Build Profile</h4>
+
+                    <p>To run a customised EAP build (L&amp;F) follow these steps:</p>
+
+                    <p>1.) Create a dedicated version number (i.e. 1.0.0.EAP.CR2)
+                        2.) Rebuild with the EAP profile enabled:</p>
+
+<pre><code>mvn -Peap clean install
+</code></pre>
+
+                    <h4>
+                        <a name="development-profile" class="anchor" href="#development-profile"><span class="mini-icon mini-icon-link"></span></a>Development Profile</h4>
+
+                    <p>Due to the increased number of permutations (additional languages) the full compile times have increased quiet drastically. To work around this problem during development, we've added a development build profile that restricts the languages to english and the browser permutations to firefox:</p>
+
+<pre><code>mvn -Pdev clean install
+</code></pre>
+
+                    <h4>
+                        <a name="bind-address" class="anchor" href="#bind-address"><span class="mini-icon mini-icon-link"></span></a>Bind Address</h4>
+
+                    <p>In some cases you may want to bind both the AS and the hosted mode to a specific address. A typical scenario is running a different OS (i.e windows) in a virtual machine. To make such a setup work you need to bind the hosted mode environment and the application server to a specific inet address that can be access from the virtual machine:</p>
+
+                    <p>1.) start the AS on a specific address:</p>
+
+<pre><code>./bin/standalone.sh -Djboss.bind.address=192.168.2.126 -Djboss.bind.address.management=192.168.2.126`
+</code></pre>
+
+                    <p>2.) launch hosted mode on a specific address:</p>
+
+<pre><code>mvn clean -Dgwt.bindAddress=192.168.2.126 gwt:run
+</code></pre>
+
+                    <p>Have fun.</p></article>
+
+            </section>
+
+            <!--section id="extend">
+                <div>
+                    <h3>Extensions</h3>
+                </div>
+            </section-->
+
+            <section id="bugs">
+                <div>
+                    <h3>Problems</h3>
+                    <p>Please post any questions to the jboss as 7 mailing list:
+                    <a href="mailto:jboss-as7-dev@lists.jboss.org">jboss-as7-dev@lists.jboss.org</a></p>
+
+                </div>
+            </section>
+        </div>
     </div><!--/row-->
-      <hr>
+    <hr>
 
-      <div class="footer">
+    <div class="footer">
         <p>&copy; JBoss 2012</p>
-      </div>
+    </div>
 
-    </div> <!-- /container -->
+</div> <!-- /container -->
 
-    <!-- Le javascript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script src="js/jquery-1.8.3-min.js"></script>
-    <script src="js/bootstrap-transition.js"></script>
-    <script src="js/bootstrap-alert.js"></script>
-    <script src="js/bootstrap-modal.js"></script>
-    <script src="js/bootstrap-dropdown.js"></script>
-    <script src="js/bootstrap-scrollspy.js"></script>
-    <script src="js/bootstrap-tab.js"></script>
-    <script src="js/bootstrap-tooltip.js"></script>
-    <script src="js/bootstrap-popover.js"></script>
-    <script src="js/bootstrap-button.js"></script>
-    <script src="js/bootstrap-collapse.js"></script>
-    <script src="js/bootstrap-carousel.js"></script>
-    <script src="js/bootstrap-typeahead.js"></script>
+<!-- Le javascript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="js/jquery-1.8.3-min.js"></script>
+<script src="js/bootstrap-transition.js"></script>
+<script src="js/bootstrap-alert.js"></script>
+<script src="js/bootstrap-modal.js"></script>
+<script src="js/bootstrap-dropdown.js"></script>
+<script src="js/bootstrap-scrollspy.js"></script>
+<script src="js/bootstrap-tab.js"></script>
+<script src="js/bootstrap-tooltip.js"></script>
+<script src="js/bootstrap-popover.js"></script>
+<script src="js/bootstrap-button.js"></script>
+<script src="js/bootstrap-collapse.js"></script>
+<script src="js/bootstrap-carousel.js"></script>
+<script src="js/bootstrap-typeahead.js"></script>
 
-  </body>
+</body>
 </html>
