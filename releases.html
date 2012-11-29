@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>AS7 Web Console</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="JBoss AS7 web console management operations tasks">
+    <meta name="author" content="Heiko Braun">
+
+    <!-- Le styles -->
+    <link href="css/bootstrap.css" rel="stylesheet">
+    <link href="css/pages.css" rel="stylesheet">
+    <!--link href="css/docs.css" rel="stylesheet"-->
+    <link href="css/bootstrap-responsive.css" rel="stylesheet">
+
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    
+  </head>
+
+  <body>
+
+    <!--
+    Top Level Navigation -->
+
+    <div class="container-narrow">
+
+
+       <div class="masthead">
+
+        <ul class="nav nav-pills pull-right">
+          <li class="active"><a href="index.html">Home</a></li>
+          <!--li><a href="docs.html">Documentation</a></li-->
+          <li><a href="https://github.com/jbossas/console">Source Code</a></li>
+          <li><a href="https://community.jboss.org/en/jbossas7?view=discussions">Get Involved</a></li>
+        </ul>
+        <h3>AS7 Web Console</h3>        
+      </div>
+
+      <hr>
+
+      <!-- 
+      Actual contents-->
+
+      <div class="row-fluid">
+        <div class="span3 bs-docs-sidebar">
+        <ul class="nav nav-list bs-docs-sidenav">
+          <li><a href="#1.4.0"><i class="icon-chevron-right"></i> 1.4.0</a></li>        
+          <li><a href="#1.3.0"><i class="icon-chevron-right"></i> 1.3.0</a></li>          
+        </ul>
+      </div>
+        <div class="span9">
+          
+          <div>
+
+
+<section id="1.4.0">
+          <div>
+            <h2>Release_Notes_1.4.0</h2>
+          </div>
+            <ul>
+<li>AS7-4853  Should the deployments list show where an application is loaded from</li>
+<li>AS7-5155  Wrong spelling of session in JPA details</li>
+<li>AS7-3417  Problem with long deployment names</li>
+<li>AS7-5285  AS7-2355 Provide the ability to filter deployment tables</li>
+<li>AS7-5165  Ability to change jvm options from within console</li>
+<li>AS7-5292  SuggestBox doesn't show error indication</li>
+<li>AS7-2949  DMR Browser</li>
+<li>AS7-5152  Transaction subsystem expression support</li>
+<li>AS7-5298  Provide ability to resolve expressions within console</li>
+<li>AS7-5240  The naming subsystem is not shown in domain mode</li>
+<li>AS7-5238  Cannot see more than 8 XADatasources in console.</li>
+</ul>
+</section>
+
+<section id="1.3.0">
+          <div>
+            <h2>Release_Notes_1.3.0</h2>
+          </div>
+
+      <h4>New Features</h4>
+
+  <ul>
+  <li>AS7-4338  Extended information/operations for HornetQ in the web console</li>
+  <li>AS7-4558  Ability to configure outbound socket bindings</li>
+  <li>AS7-4561  Localize help system</li>
+  <li>AS7-4193  Support modification of xa-datasource-class in the web console</li>
+  <li>AS7-4045  Accessibility improvements: keyboard navigation and main aria attributes core widgets and overall layout</li>
+  </ul>
+
+  <h4>Bugfixes</h4>
+
+  <ul>
+  <li>AS7-3446  If you remove a thread factory when the factory is assigned to a pool, you get strange errors.</li>
+  <li>AS7-4505  Management console https fails with IBM JVM when SSL enabled.</li>
+  <li>AS7-3042  IPv6: Invalid redirect to Admin console (wrong IP address)</li>
+  <li>AS7-4605  Deployment error</li>
+  <li>AS7-4570  Update domain response processor to reflect new composite response structure</li>
+  <li>AS7-4519  Implicit ports (https) are not handled correctly</li>
+  <li>AS7-4363  Failed to configure mail session</li>
+  <li>AS7-4318  Environment properties for server instances not loading properly</li>
+  <li>AS7-4263  Admin console: does not allow spaces in properties even when they are valid</li>
+  <li>AS7-4255  Help Panels can not be closed on IE9</li>
+  <li>AS7-4233  Interface editor doesn't cancel operation upon click</li>
+  <li>AS7-4231  Admin console: unable to remove security module if it has properties defined</li>
+  <li>AS7-4227  Fix network interface management problems</li>
+  <li>AS7-4164  Aria attributes on CellTables</li>
+  <li>AS7-4126  double values cannot be read from dmr response</li>
+  <li>AS7-3743  Sporadic IE 8&amp;9 failure: stylesheets do not load</li>
+  <li>AS7-2643  Hosts and Runtime tabs, host listings still do not clip appropiately, see screen shots</li>
+  <li>AS7-2431  Poor error handling when slave host controller dies / stops</li>
+  <li>AS7-2300  Console usability: main menu items are not clickable</li>
+  <li>AS7-2218  Delay management-console startup until the server is started</li>
+  <li>AS7-4167  Admin console: cannot set attribute max-attempts of modcluster subsystem</li>
+  <li>AS7-4166  Admin console: cannot set attribute auto-enable-contexts of modcluster subsystem</li>
+  <li>AS7-4234  Timeout when uploading large deployment through the console</li>
+  <li>AS7-4319  Admin console: Modcluster ProxyList field cannot be set back to empty.</li>
+  <li>AS7-4186  Connectors for web module are not refreshing its view state as different profiles are selected</li>
+  <li>AS7-4021  Console: add option to configure jboss web's instance-id</li>
+  <li>AS7-3363  Admin console: Creating a web connector should show a list of available socket bindings</li>
+  <li>AS7-4390  Upgrade an application via Web Console</li>
+  <li>AS7-4250  Failed to modify cache container transport settings</li>
+  <li>AS7-4235  Error adding deployment to a domain</li>
+  <li>AS7-3930  Infinispan screens require descriptions</li>
+  <li>AS7-3067  unable to jndi-name attribute for default cache container</li>
+  <li>AS7-3066  help text missing on infinispan screens</li>
+  </ul>
+</section>
+
+          </div>
+          
+        </div><!--/span-->
+      </div><!--/row-->
+
+      <hr>
+
+      <footer>
+        <p>&copy; JBoss 2012</p>
+      </footer>
+
+    </div><!--/.fluid-container-->
+
+
+    <!-- Le javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="js/jquery-1.8.3-min.js"></script>
+    <script src="js/bootstrap-transition.js"></script>
+    <script src="js/bootstrap-alert.js"></script>
+    <script src="js/bootstrap-modal.js"></script>
+    <script src="js/bootstrap-dropdown.js"></script>
+    <script src="js/bootstrap-scrollspy.js"></script>
+    <script src="js/bootstrap-tab.js"></script>
+    <script src="js/bootstrap-tooltip.js"></script>
+    <script src="js/bootstrap-popover.js"></script>
+    <script src="js/bootstrap-button.js"></script>
+    <script src="js/bootstrap-collapse.js"></script>
+    <script src="js/bootstrap-carousel.js"></script>
+    <script src="js/bootstrap-typeahead.js"></script>
+
+  </body>
+</html>
