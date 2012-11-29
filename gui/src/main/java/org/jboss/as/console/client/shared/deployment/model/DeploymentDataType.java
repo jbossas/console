@@ -22,7 +22,20 @@ package org.jboss.as.console.client.shared.deployment.model;
  * @author Harald Pehl
  * @date 11/28/2012
  */
-public enum SubsystemType
+public enum DeploymentDataType
 {
-    ejb3, jpa, web, webservices
+    deployment,
+    subdeployment,
+    ejb3,
+    jpa,
+    web,
+    webservices,
+    entityBean,
+    messageDrivenBean,
+    singletonBean,
+    statefulSessionBean,
+    statelessSessionBean,
+    persistenceUnit,
+    servlet,
+    webserviceEndpoint
 }

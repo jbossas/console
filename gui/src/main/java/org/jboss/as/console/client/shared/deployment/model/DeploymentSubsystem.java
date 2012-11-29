@@ -24,9 +24,6 @@ package org.jboss.as.console.client.shared.deployment.model;
 */
 public interface DeploymentSubsystem extends DeploymentData
 {
-    SubsystemType getType();
-    void setType(SubsystemType type);
-
     DeploymentRecord getDeployment();
     void setDeployment(DeploymentRecord deployment);
 }

@@ -20,13 +20,13 @@ package org.jboss.as.console.client.standalone.deployment;
 
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.cell.client.ValueUpdater;
-import com.google.gwt.dom.client.BrowserEvents;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import org.jboss.as.console.client.shared.deployment.model.DeploymentData;
 
 import static com.google.gwt.dom.client.BrowserEvents.CLICK;
+import static com.google.gwt.dom.client.BrowserEvents.KEYUP;
 
 /**
 * @author Harald Pehl
@@ -38,7 +38,7 @@ class DeploymentDataCell<T extends DeploymentData> extends AbstractCell<T>
 
     DeploymentDataCell(final DeploymentBrowserPresenter presenter)
     {
-        super(CLICK);
+        super(CLICK, KEYUP);
         this.presenter = presenter;
     }
 
@@ -53,7 +53,12 @@ class DeploymentDataCell<T extends DeploymentData> extends AbstractCell<T>
             final ValueUpdater<T> valueUpdater)
     {
         super.onBrowserEvent(context, parent, value, event, valueUpdater);
-        if (BrowserEvents.CLICK.equals(event.getType()))
+        String type = event.getType();
+        if (CLICK.equals(type))
+        {
+            presenter.getView().updateContext(value);
+        }
+        else if (KEYUP.equals(type) && event.getKeyCode() == 32) // space
         {
             presenter.getView().updateContext(value);
         }

@@ -26,4 +26,6 @@ import com.google.gwt.user.client.ui.HasName;
  */
 public interface DeploymentData extends HasName
 {
+    DeploymentDataType getType();
+    void setType(DeploymentDataType type);
 }

@@ -57,11 +57,12 @@ public class DeploymentNodeInfoFactory
         DeploymentNodeInfo<T> nodeInfo = (DeploymentNodeInfo<T>) nodeInfos.get(node.getClass().getName());
         if (nodeInfo == null)
         {
-            // lazily create the node infos
+            // lazily create the node infos together with the data providers and cells
             nodeInfo = createNodeInfo(node);
         }
 
-        // set the command for the specified node. the command must not be cached!
+        // set the command which executes the relevant DeploymentStore methid for the selected node.
+        // the command must not be cached!
         final DeploymentNodeInfo<T> finalNodeInfo = nodeInfo;
         if (node instanceof DeploymentRecord)
         {

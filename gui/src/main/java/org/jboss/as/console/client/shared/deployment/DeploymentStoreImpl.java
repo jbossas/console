@@ -26,13 +26,13 @@ import org.jboss.as.console.client.shared.deployment.model.DeployedEjb;
 import org.jboss.as.console.client.shared.deployment.model.DeployedEndpoint;
 import org.jboss.as.console.client.shared.deployment.model.DeployedPersistenceUnit;
 import org.jboss.as.console.client.shared.deployment.model.DeployedServlet;
+import org.jboss.as.console.client.shared.deployment.model.DeploymentDataType;
 import org.jboss.as.console.client.shared.deployment.model.DeploymentEjbSubsystem;
 import org.jboss.as.console.client.shared.deployment.model.DeploymentJpaSubsystem;
 import org.jboss.as.console.client.shared.deployment.model.DeploymentRecord;
 import org.jboss.as.console.client.shared.deployment.model.DeploymentSubsystem;
 import org.jboss.as.console.client.shared.deployment.model.DeploymentWebSubsystem;
 import org.jboss.as.console.client.shared.deployment.model.DeploymentWebserviceSubsystem;
-import org.jboss.as.console.client.shared.deployment.model.SubsystemType;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
@@ -49,6 +49,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import static org.jboss.as.console.client.shared.deployment.model.DeploymentDataType.*;
 import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 
 /**
@@ -155,6 +156,7 @@ public class DeploymentStoreImpl implements DeploymentStore
         ModelNode deploymentNode = node.asProperty().getValue().asObject();
         DeploymentRecord deployment = deploymentEntityAdapter.fromDMR(deploymentNode);
         deployment.setName(node.asProperty().getName()); // for subdeployments
+        deployment.setType(parent == null ? DeploymentDataType.deployment : subdeployment);
         try
         {
             if (!isStandalone)
@@ -227,30 +229,29 @@ public class DeploymentStoreImpl implements DeploymentStore
                     List<ModelNode> nodes = response.get(RESULT).asList();
                     for (ModelNode node : nodes)
                     {
-                        DeploymentSubsystem subsystem1 = null;
+                        DeploymentSubsystem subsystem = null;
                         Property property = node.asProperty();
                         String name = property.getName();
                         ModelNode subsystemNode = property.getValue().asObject();
-                        SubsystemType type = SubsystemType.valueOf(name);
+                        DeploymentDataType type = DeploymentDataType.valueOf(name);
                         switch (type)
                         {
                             case ejb3:
-                                subsystem1 = deploymentEjbSubsystemEntityAdapter.fromDMR(subsystemNode);
+                                subsystem = deploymentEjbSubsystemEntityAdapter.fromDMR(subsystemNode);
                                 break;
                             case jpa:
-                                subsystem1 = deploymentJpaSubsystemEntityAdapter.fromDMR(subsystemNode);
+                                subsystem = deploymentJpaSubsystemEntityAdapter.fromDMR(subsystemNode);
                                 break;
                             case web:
-                                subsystem1 = deploymentWebSubsystemnEntityAdapter.fromDMR(subsystemNode);
+                                subsystem = deploymentWebSubsystemnEntityAdapter.fromDMR(subsystemNode);
                                 break;
                             case webservices:
-                                subsystem1 = deploymentWebserviceSubsystemEntityAdapter.fromDMR(subsystemNode);
+                                subsystem = deploymentWebserviceSubsystemEntityAdapter.fromDMR(subsystemNode);
                                 break;
                         }
-                        subsystem1.setName(name);
-                        subsystem1.setType(type);
-                        subsystem1.setDeployment(deployment);
-                        DeploymentSubsystem subsystem = subsystem1;
+                        subsystem.setName(name);
+                        subsystem.setType(type);
+                        subsystem.setDeployment(deployment);
                         subsystems.add(subsystem);
                     }
                 }
@@ -298,10 +299,33 @@ public class DeploymentStoreImpl implements DeploymentStore
                         {
                             if (ModelAdapter.wasSuccess(node))
                             {
-                                List<ModelNode> address = node.get(ADDRESS).asList();
-                                String name = address.get(address.size() - 1).asProperty().getValue().asString();
                                 DeployedEjb ejb = deployedEjbEntityAdapter.fromDMR(node.get(RESULT));
-                                ejb.setName(name);
+                                List<ModelNode> address = node.get(ADDRESS).asList();
+                                Property property = address.get(address.size() - 1).asProperty();
+                                String ejbName = property.getValue().asString();
+                                ejb.setName(ejbName);
+                                ejb.setSubsystem(subsystem);
+                                String beanType = property.getName();
+                                if ("entity-bean".equals(beanType))
+                                {
+                                    ejb.setType(entityBean);
+                                }
+                                else if ("message-driven-bean".equals(beanType))
+                                {
+                                    ejb.setType(messageDrivenBean);
+                                }
+                                else if ("singleton-bean".equals(beanType))
+                                {
+                                    ejb.setType(singletonBean);
+                                }
+                                else if ("stateless-session-bean".equals(beanType))
+                                {
+                                    ejb.setType(statelessSessionBean);
+                                }
+                                else if ("stateful-session-bean".equals(beanType))
+                                {
+                                    ejb.setType(statefulSessionBean);
+                                }
                                 ejbs.add(ejb);
                             }
                         }
@@ -387,6 +411,8 @@ public class DeploymentStoreImpl implements DeploymentStore
                             ModelNode puNode = node.get(RESULT);
                             DeployedPersistenceUnit pu = deployedPersistenceUnitEntityAdapter.fromDMR(puNode);
                             pu.setName(name);
+                            pu.setType(persistenceUnit);
+                            pu.setSubsystem(subsystem);
                             if (puNode.get("entity").isDefined())
                             {
                                 List<ModelNode> entityNodes = puNode.get("entity").asList();
@@ -452,6 +478,8 @@ public class DeploymentStoreImpl implements DeploymentStore
                             ModelNode servletNode = node.get(RESULT);
                             DeployedServlet servlet = deployedServletEntityAdapter.fromDMR(servletNode);
                             servlet.setName(servletNode.get("servlet-name").asString());
+                            servlet.setType(DeploymentDataType.servlet);
+                            servlet.setSubsystem(subsystem);
                             servlets.add(servlet);
                         }
                     }
@@ -505,7 +533,8 @@ public class DeploymentStoreImpl implements DeploymentStore
                         {
                             ModelNode endpointNode = node.get(RESULT);
                             DeployedEndpoint endpoint = deployedEndpointEntityAdapter.fromDMR(endpointNode);
-                            //endpoint.setName(endpointNode.get("endpoint-name").asString());
+                            endpoint.setType(webserviceEndpoint);
+                            endpoint.setSubsystem(subsystem);
                             endpoints.add(endpoint);
                         }
                     }

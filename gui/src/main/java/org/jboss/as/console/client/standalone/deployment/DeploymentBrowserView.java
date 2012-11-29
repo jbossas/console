@@ -23,28 +23,31 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.SingleSelectionModel;
 import com.google.inject.Inject;
 import com.google.web.bindery.autobean.shared.AutoBean;
 import com.google.web.bindery.autobean.shared.AutoBeanUtils;
 import org.jboss.as.console.client.Console;
+import org.jboss.as.console.client.core.EnumLabelLookup;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.shared.deployment.DeploymentCommand;
 import org.jboss.as.console.client.shared.deployment.DeploymentCommandDelegate;
-import org.jboss.as.console.client.shared.deployment.DeploymentFilter;
 import org.jboss.as.console.client.shared.deployment.DeploymentStore;
 import org.jboss.as.console.client.shared.deployment.model.DeployedEjb;
 import org.jboss.as.console.client.shared.deployment.model.DeployedEndpoint;
 import org.jboss.as.console.client.shared.deployment.model.DeployedPersistenceUnit;
 import org.jboss.as.console.client.shared.deployment.model.DeployedServlet;
 import org.jboss.as.console.client.shared.deployment.model.DeploymentData;
+import org.jboss.as.console.client.shared.deployment.model.DeploymentEjbSubsystem;
 import org.jboss.as.console.client.shared.deployment.model.DeploymentJpaSubsystem;
 import org.jboss.as.console.client.shared.deployment.model.DeploymentRecord;
 import org.jboss.as.console.client.shared.deployment.model.DeploymentWebSubsystem;
-import org.jboss.as.console.client.shared.viewframework.builder.OneToOneLayout;
+import org.jboss.as.console.client.shared.deployment.model.DeploymentWebserviceSubsystem;
+import org.jboss.as.console.client.shared.viewframework.builder.SimpleLayout;
 import org.jboss.as.console.client.widgets.browser.DefaultCellBrowser;
+import org.jboss.ballroom.client.widgets.ContentGroupLabel;
 import org.jboss.ballroom.client.widgets.forms.CheckBoxItem;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.FormItem;
@@ -67,11 +70,12 @@ import java.util.Map;
  */
 public class DeploymentBrowserView extends SuspendableViewImpl implements DeploymentBrowserPresenter.MyView
 {
-    private DeploymentFilter filter;
     private DeploymentStore deploymentStore;
     private DeploymentBrowserPresenter presenter;
     private DeploymentTreeModel deploymentTreeModel;
+    private DeploymentBreadcrumb breadcrumb;
     private DeckPanel contextPanel;
+    private Map<String, TabPanel> tabPanels;
     private Map<String, Form<DeploymentData>> forms;
     private Map<String, Integer> indexes;
 
@@ -80,6 +84,7 @@ public class DeploymentBrowserView extends SuspendableViewImpl implements Deploy
     public DeploymentBrowserView(final DeploymentStore deploymentStore)
     {
         this.deploymentStore = deploymentStore;
+        this.tabPanels = new HashMap<String, TabPanel>();
         this.forms = new HashMap<String, Form<DeploymentData>>();
         this.indexes = new HashMap<String, Integer>();
     }
@@ -120,8 +125,6 @@ public class DeploymentBrowserView extends SuspendableViewImpl implements Deploy
                     }
                 }));
         toolStrip.addToolButtonRight(new ToolButton(Console.CONSTANTS.common_label_enOrDisable(), new
-
-
                 ClickHandler()
                 {
                     @Override
@@ -139,8 +142,6 @@ public class DeploymentBrowserView extends SuspendableViewImpl implements Deploy
                     }
                 }));
         toolStrip.addToolButtonRight(new ToolButton("Update", new
-
-
                 ClickHandler()
                 {
                     @Override
@@ -158,81 +159,95 @@ public class DeploymentBrowserView extends SuspendableViewImpl implements Deploy
                     }
                 }));
 
-        ListDataProvider<DeploymentRecord> dataProvider = new ListDataProvider<DeploymentRecord>(keyProvider);
-        filter = new DeploymentFilter(dataProvider);
-        toolStrip.addToolWidget(filter.asWidget());
+        deploymentTreeModel = new DeploymentTreeModel(presenter, deploymentStore);
+        DefaultCellBrowser cellBrowser = new DefaultCellBrowser.Builder(deploymentTreeModel, null).build();
 
-        int index = 1;
+        breadcrumb = new DeploymentBreadcrumb();
+        breadcrumb.getElement().setAttribute("style", "margin-top:30px;");
+
+        int index = 0;
         contextPanel = new DeckPanel();
-        contextPanel.add(new Label("No information available."));
-
-        addContextForm(DeploymentRecord.class, index++,
+        contextPanel.getElement().setAttribute("style", "margin-top:30px;");
+        addContext(DeploymentRecord.class, index++,
                 new TextAreaItem("name", "Name"),
                 new TextAreaItem("path", "Path"),
                 new TextAreaItem("runtimeName", "Runtime Name"),
                 new TextBoxItem("relativeTo", "Relative To"));
 
-        addContextForm(DeploymentJpaSubsystem.class, index++,
+        addContext(DeploymentEjbSubsystem.class, index++);
+
+        addContext(DeploymentJpaSubsystem.class, index++,
                 new TextAreaItem("name", "Name"),
                 new TextBoxItem("defaultDataSource", "Default Datasource"),
                 new TextBoxItem("defaultInheritance", "Default Inheritance"),
                 new CheckBoxItem("defaultVfs", "Default VFS"));
 
-        // TODO Add link for context-root
-        addContextForm(DeploymentWebSubsystem.class, index++,
+        addContext(DeploymentWebSubsystem.class, index++,
                 new TextAreaItem("name", "Name"),
                 new TextBoxItem("contextRoot", "Context Root"),
                 new NumberBoxItem("maxActiveSessions", "Max Active Sessions"),
                 new TextBoxItem("virtualHost", "Virtual Host"));
 
-        addContextForm(DeployedEjb.class, index++,
+        addContext(DeploymentWebserviceSubsystem.class, index++);
+
+        addContext(DeployedEjb.class, index++,
                 new TextAreaItem("name", "Name"),
                 new TextBoxItem("componentClassname", "Component Classname"),
                 new ListItem("declaredRoles", "Declared Roles"),
                 new TextBoxItem("runAsRole", "Run As Role"),
                 new TextBoxItem("securityDomain", "Security Domain"));
 
-        addContextForm(DeployedPersistenceUnit.class, index++,
+        addContext(DeployedPersistenceUnit.class, index++,
                 new TextAreaItem("name", "Name"),
                 new CheckBoxItem("enabled", "Enabled"),
                 new ListItem("entities", "Entities"));
 
-        addContextForm(DeployedServlet.class, index++,
+        addContext(DeployedServlet.class, index++,
                 new TextAreaItem("name", "Name"),
                 new TextBoxItem("servletClass", "Servlet Class"));
 
-        addContextForm(DeployedEndpoint.class, index++,
+        addContext(DeployedEndpoint.class, index++,
                 new TextAreaItem("name", "Name"),
                 new TextBoxItem("classname", "Classname"),
                 new TextBoxItem("context", "Context"),
-                new TextBoxItem("type", "Type"),
+                new TextBoxItem("endpointType", "Type"),
                 new TextBoxItem("wsdl", "WSDL"));
 
-        contextPanel.showWidget(0);
-
-        deploymentTreeModel = new DeploymentTreeModel(presenter, deploymentStore);
-        DefaultCellBrowser cellBrowser = new DefaultCellBrowser.Builder(deploymentTreeModel, null).build();
-
-        OneToOneLayout layout = new OneToOneLayout()
+        SimpleLayout layout = new SimpleLayout()
                 .setTitle(Console.CONSTANTS.common_label_deployments())
                 .setHeadline(Console.CONSTANTS.common_label_deployments())
                 .setDescription("Currently deployed application components.")
-                .setMaster(Console.MESSAGES.available("Deployments"), cellBrowser)
-                .setMasterTools(toolStrip)
-                .setDetail("Properties", contextPanel);
+                .addContent("title", new ContentGroupLabel(Console.MESSAGES.available("Deployments")))
+                .addContent("tools", toolStrip)
+                .addContent("browser", cellBrowser)
+                .addContent("breadcrumb", breadcrumb)
+                .addContent("context", contextPanel);
         return layout.build();
     }
 
-    private <T extends DeploymentData> void addContextForm(Class<T> clazz, int index, FormItem... formItems)
+    private <T extends DeploymentData> void addContext(Class<T> clazz, int index, FormItem... formItems)
     {
-        Form<T> form = new Form<T>(clazz);
-        form.setNumColumns(1);
-        form.setEnabled(false);
-        form.setFields(formItems);
+        String classname = clazz.getName();
+        TabPanel tabPanel = new TabPanel();
+        tabPanel.setStyleName("default-tabpanel");
 
-        forms.put(clazz.getName(), (Form<DeploymentData>) form);
-        indexes.put(clazz.getName(), index);
-        contextPanel.add(form.asWidget());
+        if (formItems != null && formItems.length != 0)
+        {
+            Form<T> form = new Form<T>(clazz);
+            form.setNumColumns(1);
+            form.setEnabled(false);
+            form.setFields(formItems);
+            tabPanel.add(form.asWidget(), classname);
+            forms.put(classname, (Form<DeploymentData>) form);
+        }
+        else
+        {
+            tabPanel.add(new Label("No information available."), classname);
+        }
+
+        tabPanels.put(classname, tabPanel);
+        indexes.put(classname, index);
+        contextPanel.add(tabPanel);
     }
 
     @Override
@@ -250,18 +265,23 @@ public class DeploymentBrowserView extends SuspendableViewImpl implements Deploy
     @Override
     public <T extends DeploymentData> void updateContext(final T selectedContext)
     {
+        breadcrumb.setDeploymentData(selectedContext);
+
         AutoBean<T> autoBean = AutoBeanUtils.getAutoBean(selectedContext);
         String classname = autoBean.getType().getName();
-        Form<DeploymentData> form = forms.get(classname);
+        TabPanel tabPanel = tabPanels.get(classname);
         Integer index = indexes.get(classname);
-        if (form != null && index != null && index > 0 && index < contextPanel.getWidgetCount())
+        if (tabPanel != null && index != null && index > -1 && index < contextPanel.getWidgetCount())
         {
-            form.edit(selectedContext);
+            tabPanel.selectTab(0);
+            String tabTitle = EnumLabelLookup.labelFor(selectedContext.getType());
+            tabPanel.getTabBar().setTabText(0, tabTitle);
+            Form<DeploymentData> form = forms.get(classname);
+            if (form != null)
+            {
+                form.edit(selectedContext);
+            }
             contextPanel.showWidget(index);
-        }
-        else
-        {
-            contextPanel.showWidget(0);
         }
     }
 }

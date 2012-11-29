@@ -407,3 +407,57 @@ body {
     width: 1px;
     overflow: hidden;
 }
+
+.console-DeploymentBreadcrumb {
+    overflow: hidden;
+}
+.console-DeploymentBreadcrumb-label {
+    background: rgb(240, 240, 240);
+    padding: 10px 0 10px 55px;
+    position: relative;
+    display: block;
+    float: left;
+}
+
+.console-DeploymentBreadcrumb-label:after {
+    content: " ";
+    display: block;
+    width: 0;
+    height: 0;
+    border-top: 50px solid transparent;
+    border-bottom: 50px solid transparent;
+    border-left: 30px solid rgb(240, 240, 240);
+    position: absolute;
+    top: 50%;
+    margin-top: -50px;
+    left: 100%;
+    z-index: 2;
+}
+
+.console-DeploymentBreadcrumb-label:before {
+    content: " ";
+    display: block;
+    width: 0;
+    height: 0;
+    border-top: 50px solid transparent;
+    border-bottom: 50px solid transparent;
+    border-left: 30px solid white;
+    position: absolute;
+    top: 50%;
+    margin-top: -50px;
+    margin-left: 4px;
+    left: 100%;
+    z-index: 1;
+}
+
+.console-DeploymentBreadcrumb-label:first-child {
+    padding-left: 10px;
+}
+
+.console-DeploymentBreadcrumb-label:last-child {
+    background-color:rgb(238, 244, 249);
+}
+
+.console-DeploymentBreadcrumb-label:last-child:after {
+    border-left-color: rgb(238, 244, 249);
+}

@@ -33,8 +33,9 @@ public interface DeployedEndpoint extends DeploymentSubsystemElement
     String getContext();
     void setContext(String context);
 
-    String getType();
-    void setType(String type);
+    @Binding(detypedName = "type")
+    String getEndpointType();
+    void setEndpointType(String endpointType);
 
     @Binding(detypedName = "wsdl-url")
     String getWsdl();
