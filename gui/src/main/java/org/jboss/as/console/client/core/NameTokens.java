@@ -187,7 +187,12 @@ public class NameTokens {
         return InstancesPresenter;
     }
 
-    public static final String DeploymentListPresenter = "deployments";
+    public static final String DeploymentBrowserPresenter = "deployments";
+    public static String getDeploymentBrowserPresenter() {
+        return DeploymentBrowserPresenter;
+    }
+
+    public static final String DeploymentListPresenter = "deployments-deprecated";
     public static String getDeploymentListPresenter() {
         return DeploymentListPresenter;
     }

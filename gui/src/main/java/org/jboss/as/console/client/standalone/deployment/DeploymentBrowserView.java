@@ -62,8 +62,7 @@ import java.util.Map;
 
 
 /**
- * @author Heiko Braun
- * @author Stan Silvert
+ * @author Harald Pehl
  * @date 3/14/11
  */
 public class DeploymentBrowserView extends SuspendableViewImpl implements DeploymentBrowserPresenter.MyView
