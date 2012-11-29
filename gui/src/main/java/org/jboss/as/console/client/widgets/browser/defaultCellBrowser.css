@@ -10,8 +10,6 @@
 }
 
 .cellBrowserEvenItem, .cellBrowserOddItem {
-    box-sizing: border-box;
-    -moz-box-sizing: border-box;
     padding: 8px 8px 8px 12px;
     zoom: 1;
 }
@@ -22,15 +20,11 @@
 }
 
 .cellBrowserKeyboardSelectedItem {
-    box-sizing: border-box;
-    -moz-box-sizing: border-box;
     border: 1px dotted rgb(63, 63, 63);
     outline: medium none;
 }
 
 .cellBrowserSelectedItem {
-    box-sizing: border-box;
-    -moz-box-sizing: border-box;
     background-color: rgb(238, 244, 249);
     background-image: url("app/images/activerow.png");
     background-position: left center;
@@ -41,6 +35,4 @@
 }
 
 .cellBrowserOpenItem {
-    box-sizing: border-box;
-    -moz-box-sizing: border-box;
 }

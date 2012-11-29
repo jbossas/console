@@ -23,14 +23,12 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.SingleSelectionModel;
 import com.google.inject.Inject;
 import com.google.web.bindery.autobean.shared.AutoBean;
 import com.google.web.bindery.autobean.shared.AutoBeanUtils;
 import org.jboss.as.console.client.Console;
-import org.jboss.as.console.client.core.EnumLabelLookup;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.shared.deployment.DeploymentCommand;
 import org.jboss.as.console.client.shared.deployment.DeploymentCommandDelegate;
@@ -75,7 +73,6 @@ public class DeploymentBrowserView extends SuspendableViewImpl implements Deploy
     private DeploymentTreeModel deploymentTreeModel;
     private DeploymentBreadcrumb breadcrumb;
     private DeckPanel contextPanel;
-    private Map<String, TabPanel> tabPanels;
     private Map<String, Form<DeploymentData>> forms;
     private Map<String, Integer> indexes;
 
@@ -84,7 +81,6 @@ public class DeploymentBrowserView extends SuspendableViewImpl implements Deploy
     public DeploymentBrowserView(final DeploymentStore deploymentStore)
     {
         this.deploymentStore = deploymentStore;
-        this.tabPanels = new HashMap<String, TabPanel>();
         this.forms = new HashMap<String, Form<DeploymentData>>();
         this.indexes = new HashMap<String, Integer>();
     }
@@ -167,7 +163,6 @@ public class DeploymentBrowserView extends SuspendableViewImpl implements Deploy
 
         int index = 0;
         contextPanel = new DeckPanel();
-        contextPanel.getElement().setAttribute("style", "margin-top:30px;");
         addContext(DeploymentRecord.class, index++,
                 new TextAreaItem("name", "Name"),
                 new TextAreaItem("path", "Path"),
@@ -227,27 +222,25 @@ public class DeploymentBrowserView extends SuspendableViewImpl implements Deploy
 
     private <T extends DeploymentData> void addContext(Class<T> clazz, int index, FormItem... formItems)
     {
+        Widget widget;
         String classname = clazz.getName();
-        TabPanel tabPanel = new TabPanel();
-        tabPanel.setStyleName("default-tabpanel");
-
         if (formItems != null && formItems.length != 0)
         {
             Form<T> form = new Form<T>(clazz);
             form.setNumColumns(1);
             form.setEnabled(false);
             form.setFields(formItems);
-            tabPanel.add(form.asWidget(), classname);
             forms.put(classname, (Form<DeploymentData>) form);
+            widget = form.asWidget();
         }
         else
         {
-            tabPanel.add(new Label("No information available."), classname);
+            widget = new Label("No information available.");
+            widget.getElement().addClassName("console-DeploymentBreadcrumb-noinfo");
         }
-
-        tabPanels.put(classname, tabPanel);
+        widget.getElement().addClassName("console-DeploymentBreadcrumb-context");
         indexes.put(classname, index);
-        contextPanel.add(tabPanel);
+        contextPanel.add(widget);
     }
 
     @Override
@@ -266,16 +259,11 @@ public class DeploymentBrowserView extends SuspendableViewImpl implements Deploy
     public <T extends DeploymentData> void updateContext(final T selectedContext)
     {
         breadcrumb.setDeploymentData(selectedContext);
-
         AutoBean<T> autoBean = AutoBeanUtils.getAutoBean(selectedContext);
         String classname = autoBean.getType().getName();
-        TabPanel tabPanel = tabPanels.get(classname);
         Integer index = indexes.get(classname);
-        if (tabPanel != null && index != null && index > -1 && index < contextPanel.getWidgetCount())
+        if (index != null && index > -1 && index < contextPanel.getWidgetCount())
         {
-            tabPanel.selectTab(0);
-            String tabTitle = EnumLabelLookup.labelFor(selectedContext.getType());
-            tabPanel.getTabBar().setTabText(0, tabTitle);
             Form<DeploymentData> form = forms.get(classname);
             if (form != null)
             {
