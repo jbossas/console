@@ -17,11 +17,11 @@
     <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
 
-<style type="text/css">
-section {
-  margin-top:30px;
-}
-</style>
+    <style type="text/css">
+        section {
+            margin-top:30px;
+        }
+    </style>
 </head>
 
 <body>
@@ -34,7 +34,18 @@ section {
             <li><a href="index.html">Home</a></li>
             <li class="active"><a href="docs.html">Documentation</a></li>
             <li><a href="https://github.com/jbossas/console">Source Code</a></li>
-            <li><a href="https://community.jboss.org/en/jbossas7?view=discussions">Get Involved</a></li>
+            <li class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                    Community
+                    <b class="caret"></b>
+                </a>
+                <ul class="dropdown-menu">
+                    <li><a href="https://community.jboss.org/en/jbossas7?view=discussions">User Forum</a></li>
+                    <li><a href="http://hbraun.info/category/jboss-as7/">Blog</a></li>
+                    <li class="divider"></li>
+                    <li><a href="http://jboss.org/as7">JBoss AS 7</a></li>
+                </ul>
+            </li>
         </ul>
         <h3>AS7 Web Console</h3>
     </div>
@@ -63,7 +74,9 @@ section {
                         If you are looking for the web console roadmap, you need to look at issues assinged to the <a href="https://issues.jboss.org/browse/AS7/component/12313823">"console" component</a> and scheduled for the next <a href="https://issues.jboss.org/browse/AS7#selectedTab=com.atlassian.jira.plugin.system.project%3Aroadmap-panel">server version</a>.
                     </p>
                     <p>
-                        However you can find the release notes for <a href="releases.html">previous releases here</a>
+                    <blockquote>
+                        <i class="icon-tag"></i> Release notes for previous releases can be found <a href="releases.html">here</a>
+                    </blockquote>
                     </p>
                 </div>
             </section>
@@ -158,7 +171,7 @@ section {
                 <div>
                     <h3><i class="icon-comment" style="vertical-align:middle"></i> Problems</h3>
                     <p>Please post any questions to the jboss as 7 mailing list:
-                    <a href="mailto:jboss-as7-dev@lists.jboss.org">jboss-as7-dev@lists.jboss.org</a></p>
+                        <a href="mailto:jboss-as7-dev@lists.jboss.org">jboss-as7-dev@lists.jboss.org</a></p>
 
                 </div>
             </section>
