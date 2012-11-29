@@ -128,6 +128,7 @@ public class DeploymentBrowserView extends SuspendableViewImpl implements Deploy
                 }));
 
         deploymentBrowser = new DeploymentBrowser(deploymentStore, selectionModel);
+
         SimpleLayout layout = new SimpleLayout()
                 .setTitle(Console.CONSTANTS.common_label_deployments())
                 .setHeadline(Console.CONSTANTS.common_label_deployments())
