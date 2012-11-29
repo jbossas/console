@@ -155,7 +155,7 @@ public class DeploymentBrowserView extends SuspendableViewImpl implements Deploy
                     }
                 }));
 
-        deploymentTreeModel = new DeploymentTreeModel(presenter, deploymentStore);
+        deploymentTreeModel = new DeploymentTreeModel(presenter, deploymentStore, selectionModel);
         DefaultCellBrowser cellBrowser = new DefaultCellBrowser.Builder(deploymentTreeModel, null).build();
 
         breadcrumb = new DeploymentBreadcrumb();

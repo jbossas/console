@@ -48,12 +48,13 @@ public class DeploymentTreeModel implements TreeViewModel
     private final DefaultNodeInfo<DeploymentRecord> level0;
 
 
-    public DeploymentTreeModel(final DeploymentBrowserPresenter presenter, final DeploymentStore deploymentStore)
+    public DeploymentTreeModel(final DeploymentBrowserPresenter presenter, final DeploymentStore deploymentStore,
+            final SingleSelectionModel<DeploymentRecord> selectionModel)
     {
         this.nodeInfoFactory = new DeploymentNodeInfoFactory(presenter, deploymentStore);
         this.deploymentDataProvider = new ListDataProvider<DeploymentRecord>();
         this.level0 = new DefaultNodeInfo<DeploymentRecord>(deploymentDataProvider, new MainDeploymentCell(presenter),
-                new SingleSelectionModel<DeploymentRecord>(new DeploymentDataKeyProvider<DeploymentRecord>()), null);
+                selectionModel, null);
     }
 
     @Override
