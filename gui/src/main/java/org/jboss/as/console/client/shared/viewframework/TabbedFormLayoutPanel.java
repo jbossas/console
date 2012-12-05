@@ -333,6 +333,10 @@ public class TabbedFormLayoutPanel<T> implements FormAdapter<T>, SingleEntityVie
 
     public void setAdditionalViews(List<SingleEntityView<T>> additionalViews) {
         this.additionalViews = additionalViews;
+    }
 
+    @Override
+    public String getFormItemTitle(String ref) {
+        throw new RuntimeException("Not implemented!");
     }
 }

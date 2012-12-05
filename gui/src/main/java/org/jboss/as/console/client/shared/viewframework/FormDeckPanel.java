@@ -175,4 +175,9 @@ public class FormDeckPanel<T> extends NamedDeckPanel implements FormAdapter<T> {
     public void clearValues() {
         throw new RuntimeException("Not implemented");
     }
+
+    @Override
+    public String getFormItemTitle(String ref) {
+        return getVisibleForm().getFormItemTitle(ref);
+    }
 }

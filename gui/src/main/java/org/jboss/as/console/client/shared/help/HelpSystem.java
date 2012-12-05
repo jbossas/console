@@ -1,9 +1,7 @@
 package org.jboss.as.console.client.shared.help;
 
 import com.allen_sauer.gwt.log.client.Log;
-import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.HTML;
 import org.jboss.as.console.client.shared.Preferences;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
@@ -33,6 +31,44 @@ public class HelpSystem {
     private DispatchAsync dispatcher;
     private ApplicationMetaData propertyMetaData;
 
+    class Lookup
+    {
+        String detypedName;
+        String javaName;
+
+        Lookup(String detypedName, String javaName) {
+            this.detypedName = detypedName;
+            this.javaName = javaName;
+        }
+
+        public String getDetypedName() {
+            return detypedName;
+        }
+
+        public String getJavaName() {
+            return javaName;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (!(o instanceof Lookup)) return false;
+
+            Lookup lookup = (Lookup) o;
+
+            if (!detypedName.equals(lookup.detypedName)) return false;
+            if (!javaName.equals(lookup.javaName)) return false;
+
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            int result = detypedName.hashCode();
+            result = 31 * result + javaName.hashCode();
+            return result;
+        }
+    }
     @Inject
     public HelpSystem(DispatchAsync dispatcher, ApplicationMetaData propertyMetaData) {
         this.dispatcher = dispatcher;
@@ -42,7 +78,7 @@ public class HelpSystem {
     public void getAttributeDescriptions(
             ModelNode resourceAddress,
             final FormAdapter form,
-            final AsyncCallback<HTML> callback)
+            final AsyncCallback<List<FieldDesc>> callback)
     {
 
 
@@ -57,14 +93,16 @@ public class HelpSystem {
         List<String> formItemNames = form.getFormItemNames();
         BeanMetaData beanMetaData = propertyMetaData.getBeanMetaData(form.getConversionType());
         List<PropertyBinding> bindings = beanMetaData.getProperties();
-        final List<String> fieldNames = new ArrayList<String>();
+        final List<Lookup> fieldNames = new ArrayList<Lookup>();
 
         for(PropertyBinding binding : bindings)
         {
             if(!binding.isKey() && formItemNames.contains(binding.getJavaName())) {
                 String[] splitDetypedNames = binding.getDetypedName().split("/");
                 // last one in the path is the attribute name
-                fieldNames.add(splitDetypedNames[splitDetypedNames.length - 1]);
+                Lookup lookup = new Lookup(splitDetypedNames[splitDetypedNames.length - 1], binding.getJavaName());
+                if(!fieldNames.contains(lookup))
+                    fieldNames.add(lookup);
             }
         }
 
@@ -80,10 +118,7 @@ public class HelpSystem {
                 }
                 else
                 {
-
-                    final SafeHtmlBuilder html = new SafeHtmlBuilder();
-                    html.appendHtmlConstant("<table class='help-attribute-descriptions'>");
-
+                    List<FieldDesc> fields = new ArrayList<FieldDesc>();
                     ModelNode payload = response.get(RESULT);
 
                     ModelNode descriptionModel = null;
@@ -92,10 +127,10 @@ public class HelpSystem {
                     else
                         descriptionModel = payload;
 
-                    matchSubElements(descriptionModel, fieldNames, html);
+                    matchSubElements(descriptionModel, fieldNames, fields);
 
-                    html.appendHtmlConstant("</table>");
-                    callback.onSuccess(new HTML(html.toSafeHtml()));
+
+                    callback.onSuccess(fields);
 
                 }
             }
@@ -121,12 +156,12 @@ public class HelpSystem {
     public void getMetricDescriptions(
             AddressCallback address,
             Column[] columns,
-            final AsyncCallback<HTML> callback)
+            final AsyncCallback<List<FieldDesc>> callback)
     {
 
-        final List<String> attributeNames = new LinkedList<String>();
+        final List<Lookup> attributeNames = new LinkedList<Lookup>();
         for(Column c : columns)
-            attributeNames.add(c.getDeytpedName());
+            attributeNames.add(new Lookup(c.getDeytpedName(), c.getLabel()));
 
         final ModelNode operation = address.getAddress();
         operation.get(OP).set(READ_RESOURCE_DESCRIPTION_OPERATION);
@@ -146,8 +181,7 @@ public class HelpSystem {
                 }
                 else
                 {
-                    final SafeHtmlBuilder html = new SafeHtmlBuilder();
-                    html.appendHtmlConstant("<table class='help-attribute-descriptions'>");
+                    List<FieldDesc> fields = new ArrayList<FieldDesc>();
 
                     ModelNode payload = response.get(RESULT);
 
@@ -158,11 +192,9 @@ public class HelpSystem {
                         descriptionModel = payload;
 
 
-                    matchSubElements(descriptionModel, attributeNames, html);
+                    matchSubElements(descriptionModel, attributeNames, fields);
 
-                    html.appendHtmlConstant("</table>");
-
-                    callback.onSuccess(new HTML(html.toSafeHtml()));
+                    callback.onSuccess(fields);
                 }
 
             }
@@ -175,7 +207,7 @@ public class HelpSystem {
     }
 
 
-    private static void matchSubElements(ModelNode descriptionModel, List<String> fieldNames, SafeHtmlBuilder html) {
+    private static void matchSubElements(ModelNode descriptionModel, List<Lookup> fieldNames, List<FieldDesc> fields) {
 
         if (descriptionModel.hasDefined(RESULT))
             descriptionModel = descriptionModel.get(RESULT).asObject();
@@ -186,7 +218,6 @@ public class HelpSystem {
             // match attributes
             if(descriptionModel.hasDefined(ATTRIBUTES))
             {
-
                 List<Property> elements = descriptionModel.get(ATTRIBUTES).asPropertyList();
 
                 for(Property element : elements)
@@ -194,29 +225,17 @@ public class HelpSystem {
                     String childName = element.getName();
                     ModelNode value = element.getValue();
 
-                    if(fieldNames.contains(childName))
+                    for(Lookup lookup : fieldNames)
                     {
-                        // make sure it's not processed twice
-                        fieldNames.remove(childName);
-
-                        html.appendHtmlConstant("<tr class='help-field-row'>");
-                        html.appendHtmlConstant("<td class='help-field-name'>");
-                        html.appendEscaped(childName).appendEscaped(": ");
-                        html.appendHtmlConstant("</td>");
-                        html.appendHtmlConstant("<td class='help-field-desc'>");
-                        try {
-                            html.appendHtmlConstant(value.get("description").asString());
-                        } catch (Throwable e) {
-                            // ignore parse errors
-                            html.appendHtmlConstant("<i>Failed to parse description</i>");
+                        if(lookup.getDetypedName().equals(childName))
+                        {
+                            FieldDesc desc = new FieldDesc(lookup.getJavaName(), value.get("description").asString());
+                            if(!fields.contains(desc))
+                                fields.add(desc);
                         }
-                        html.appendHtmlConstant("</td>");
-                        html.appendHtmlConstant("</tr>");
-
                     }
                 }
             }
-
 
             if(fieldNames.isEmpty())
                 return;
@@ -230,7 +249,7 @@ public class HelpSystem {
                     ModelNode childDesc = child.getValue();
                     for (Property modDescProp : childDesc.get(MODEL_DESCRIPTION).asPropertyList()) {
 
-                        matchSubElements(childDesc.get(MODEL_DESCRIPTION, modDescProp.getName()), fieldNames, html);
+                        matchSubElements(childDesc.get(MODEL_DESCRIPTION, modDescProp.getName()), fieldNames, fields);
 
                         // exit early
                         if(fieldNames.isEmpty())
