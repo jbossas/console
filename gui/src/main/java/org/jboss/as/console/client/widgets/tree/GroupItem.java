@@ -11,4 +11,8 @@ public class GroupItem extends TreeItem {
         getElement().setAttribute("style", "cursor:pointer;");
     }
 
+    @Override
+    public void setSelected(boolean selected) {
+        super.setSelected(selected);
+    }
 }
