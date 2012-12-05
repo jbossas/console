@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.as.console.client.standalone.deployment;
+package org.jboss.as.console.client.shared.deployment;
 
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.cell.client.ValueUpdater;
@@ -32,14 +32,14 @@ import static com.google.gwt.dom.client.BrowserEvents.KEYUP;
 * @author Harald Pehl
 * @date 11/28/2012
 */
-class DeploymentDataCell<T extends DeploymentData> extends AbstractCell<T>
+public class DeploymentDataCell<T extends DeploymentData> extends AbstractCell<T>
 {
-    private final DeploymentBrowserPresenter presenter;
+    private final DeploymentBrowser deploymentBrowser;
 
-    DeploymentDataCell(final DeploymentBrowserPresenter presenter)
+    DeploymentDataCell(final DeploymentBrowser deploymentBrowser)
     {
         super(CLICK, KEYUP);
-        this.presenter = presenter;
+        this.deploymentBrowser = deploymentBrowser;
     }
 
     @Override
@@ -56,11 +56,11 @@ class DeploymentDataCell<T extends DeploymentData> extends AbstractCell<T>
         String type = event.getType();
         if (CLICK.equals(type))
         {
-            presenter.getView().updateContext(value);
+            deploymentBrowser.updateContext(value);
         }
         else if (KEYUP.equals(type) && event.getKeyCode() == 32) // space
         {
-            presenter.getView().updateContext(value);
+            deploymentBrowser.updateContext(value);
         }
     }
 }

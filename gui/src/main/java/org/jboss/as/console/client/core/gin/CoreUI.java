@@ -19,21 +19,28 @@
 
 package org.jboss.as.console.client.core.gin;
 
-import com.google.web.bindery.event.shared.EventBus;
 import com.google.gwt.inject.client.AsyncProvider;
 import com.google.inject.Provider;
+import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.googleanalytics.GoogleAnalytics;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.TokenFormatter;
 import org.jboss.as.console.client.analytics.NavigationTracker;
 import org.jboss.as.console.client.auth.CurrentUser;
 import org.jboss.as.console.client.auth.SignInPagePresenter;
-import org.jboss.as.console.client.core.*;
+import org.jboss.as.console.client.core.ApplicationProperties;
+import org.jboss.as.console.client.core.BootstrapContext;
+import org.jboss.as.console.client.core.DomainGateKeeper;
+import org.jboss.as.console.client.core.Footer;
+import org.jboss.as.console.client.core.Header;
+import org.jboss.as.console.client.core.MainLayoutPresenter;
+import org.jboss.as.console.client.core.StandaloneGateKeeper;
 import org.jboss.as.console.client.core.message.MessageBar;
 import org.jboss.as.console.client.core.message.MessageCenter;
 import org.jboss.as.console.client.core.message.MessageCenterView;
 import org.jboss.as.console.client.core.settings.SettingsPresenter;
 import org.jboss.as.console.client.core.settings.SettingsPresenterWidget;
+import org.jboss.as.console.client.domain.DomainPresenter;
 import org.jboss.as.console.client.domain.groups.ServerGroupMgmtPresenter;
 import org.jboss.as.console.client.domain.groups.ServerGroupPresenter;
 import org.jboss.as.console.client.domain.groups.deployment.DeploymentsPresenter;
@@ -47,13 +54,13 @@ import org.jboss.as.console.client.domain.hosts.general.HostPropertiesPresenter;
 import org.jboss.as.console.client.domain.model.HostInformationStore;
 import org.jboss.as.console.client.domain.model.ProfileStore;
 import org.jboss.as.console.client.domain.model.ServerGroupStore;
-import org.jboss.as.console.client.domain.DomainPresenter;
-import org.jboss.as.console.client.domain.topology.TopologyPresenter;
 import org.jboss.as.console.client.domain.profiles.CurrentProfileSelection;
 import org.jboss.as.console.client.domain.profiles.ProfileMgmtPresenter;
 import org.jboss.as.console.client.domain.runtime.DomainRuntimePresenter;
+import org.jboss.as.console.client.domain.topology.TopologyPresenter;
 import org.jboss.as.console.client.plugins.RuntimeExtensionRegistry;
 import org.jboss.as.console.client.plugins.SubsystemRegistry;
+import org.jboss.as.console.client.shared.deployment.DeploymentStore;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.HandlerMapping;
 import org.jboss.as.console.client.shared.dispatch.InvocationMetrics;
@@ -64,7 +71,6 @@ import org.jboss.as.console.client.shared.general.PathManagementPresenter;
 import org.jboss.as.console.client.shared.general.PropertiesPresenter;
 import org.jboss.as.console.client.shared.general.SocketBindingPresenter;
 import org.jboss.as.console.client.shared.help.HelpSystem;
-import org.jboss.as.console.client.shared.deployment.DeploymentStore;
 import org.jboss.as.console.client.shared.model.SubsystemStore;
 import org.jboss.as.console.client.shared.runtime.RuntimeBaseAddress;
 import org.jboss.as.console.client.shared.runtime.ds.DataSourceMetricPresenter;
@@ -83,7 +89,11 @@ import org.jboss.as.console.client.shared.subsys.configadmin.ConfigAdminPresente
 import org.jboss.as.console.client.shared.subsys.deploymentscanner.ScannerPresenter;
 import org.jboss.as.console.client.shared.subsys.ejb3.EEPresenter;
 import org.jboss.as.console.client.shared.subsys.ejb3.EJB3Presenter;
-import org.jboss.as.console.client.shared.subsys.infinispan.*;
+import org.jboss.as.console.client.shared.subsys.infinispan.CacheContainerPresenter;
+import org.jboss.as.console.client.shared.subsys.infinispan.DistributedCachePresenter;
+import org.jboss.as.console.client.shared.subsys.infinispan.InvalidationCachePresenter;
+import org.jboss.as.console.client.shared.subsys.infinispan.LocalCachePresenter;
+import org.jboss.as.console.client.shared.subsys.infinispan.ReplicatedCachePresenter;
 import org.jboss.as.console.client.shared.subsys.infinispan.model.CacheContainerStore;
 import org.jboss.as.console.client.shared.subsys.infinispan.model.LocalCacheStore;
 import org.jboss.as.console.client.shared.subsys.jacorb.JacOrbPresenter;
@@ -117,7 +127,6 @@ import org.jboss.as.console.client.shared.subsys.ws.WebServicePresenter;
 import org.jboss.as.console.client.standalone.ServerMgmtApplicationPresenter;
 import org.jboss.as.console.client.standalone.StandaloneServerPresenter;
 import org.jboss.as.console.client.standalone.deployment.DeploymentBrowserPresenter;
-import org.jboss.as.console.client.standalone.deployment.DeploymentListPresenter;
 import org.jboss.as.console.client.standalone.runtime.StandaloneRuntimePresenter;
 import org.jboss.as.console.client.standalone.runtime.VMMetricsPresenter;
 import org.jboss.as.console.client.tools.BrowserPresenter;
@@ -198,7 +207,6 @@ public interface CoreUI {
 
     // ----------------------------------------------------------------------
     AsyncProvider<ServerMgmtApplicationPresenter> getServerManagementAppPresenter();
-    AsyncProvider<DeploymentListPresenter> getDeploymentListPresenter();
     AsyncProvider<DeploymentBrowserPresenter> getDeploymentBrowserPresenter();
 
     DeploymentStore getDeploymentStore();

@@ -16,12 +16,16 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.as.console.client.standalone.deployment;
+package org.jboss.as.console.client.shared.deployment;
 
 import com.google.gwt.cell.client.Cell;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.view.client.SingleSelectionModel;
 import com.google.gwt.view.client.TreeViewModel;
+import org.jboss.as.console.client.shared.deployment.DeploymentBrowser;
+import org.jboss.as.console.client.shared.deployment.DeploymentDataCell;
+import org.jboss.as.console.client.shared.deployment.DeploymentDataKeyProvider;
+import org.jboss.as.console.client.shared.deployment.DeploymentDataProvider;
 import org.jboss.as.console.client.shared.deployment.DeploymentStore;
 import org.jboss.as.console.client.shared.deployment.model.DeployedEjb;
 import org.jboss.as.console.client.shared.deployment.model.DeployedEndpoint;
@@ -40,14 +44,14 @@ import java.util.Map;
  */
 public class DeploymentNodeInfoFactory
 {
-    private final DeploymentBrowserPresenter presenter;
+    private final DeploymentBrowser deploymentBrowser;
     private final DeploymentStore deploymentStore;
     private final Map<String, DeploymentNodeInfo<? extends DeploymentData>> nodeInfos;
 
 
-    public DeploymentNodeInfoFactory(final DeploymentBrowserPresenter presenter, final DeploymentStore deploymentStore)
+    public DeploymentNodeInfoFactory(final DeploymentBrowser deploymentBrowser, final DeploymentStore deploymentStore)
     {
-        this.presenter = presenter;
+        this.deploymentBrowser = deploymentBrowser;
         this.deploymentStore = deploymentStore;
         this.nodeInfos = new HashMap<String, DeploymentNodeInfo<? extends DeploymentData>>();
     }
@@ -154,14 +158,14 @@ public class DeploymentNodeInfoFactory
             {
                 nodeInfo = (DeploymentNodeInfo<T>) new DeploymentNodeInfo<DeploymentRecord>(
                         new DeploymentDataProvider<DeploymentRecord>(),
-                        new DeploymentDataCell<DeploymentRecord>(presenter));
+                        new DeploymentDataCell<DeploymentRecord>(deploymentBrowser));
                 cache(nodeInfo, node.getClass().getName() + "#subdeployments");
             }
             else if (deployment.isHasSubsystems())
             {
                 nodeInfo = (DeploymentNodeInfo<T>) new DeploymentNodeInfo<DeploymentSubsystem>(
                         new DeploymentDataProvider<DeploymentSubsystem>(),
-                        new DeploymentDataCell<DeploymentSubsystem>(presenter));
+                        new DeploymentDataCell<DeploymentSubsystem>(deploymentBrowser));
                 cache(nodeInfo, node.getClass().getName() + "#subsystems");
             }
         }
@@ -174,22 +178,22 @@ public class DeploymentNodeInfoFactory
                 case ejb3:
                     nodeInfo = (DeploymentNodeInfo<T>) new DeploymentNodeInfo<DeployedEjb>(
                             new DeploymentDataProvider<DeployedEjb>(),
-                            new DeploymentDataCell<DeployedEjb>(presenter));
+                            new DeploymentDataCell<DeployedEjb>(deploymentBrowser));
                     break;
                 case jpa:
                     nodeInfo = (DeploymentNodeInfo<T>) new DeploymentNodeInfo<DeployedPersistenceUnit>(
                             new DeploymentDataProvider<DeployedPersistenceUnit>(),
-                            new DeploymentDataCell<DeployedPersistenceUnit>(presenter));
+                            new DeploymentDataCell<DeployedPersistenceUnit>(deploymentBrowser));
                     break;
                 case web:
                     nodeInfo = (DeploymentNodeInfo<T>) new DeploymentNodeInfo<DeployedServlet>(
                             new DeploymentDataProvider<DeployedServlet>(),
-                            new DeploymentDataCell<DeployedServlet>(presenter));
+                            new DeploymentDataCell<DeployedServlet>(deploymentBrowser));
                     break;
                 case webservices:
                     nodeInfo = (DeploymentNodeInfo<T>) new DeploymentNodeInfo<DeployedEndpoint>(
                             new DeploymentDataProvider<DeployedEndpoint>(),
-                            new DeploymentDataCell<DeployedEndpoint>(presenter));
+                            new DeploymentDataCell<DeployedEndpoint>(deploymentBrowser));
                     break;
             }
             cache(nodeInfo, node);

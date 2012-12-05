@@ -576,22 +576,16 @@ public class DeploymentStoreImpl implements DeploymentStore
                 {
                     String serverGroup = deployment.get("address").asList().get(0).get("server-group").asString();
                     ModelNode resultNode = deployment.get(RESULT);
-                    try
-                    {
-                        DeploymentRecord rec = factory.deployment().as();
-                        rec.setName(resultNode.get("name").asString());
-                        rec.setServerGroup(serverGroup);
-                        rec.setRuntimeName(resultNode.get("runtime-name").asString());
-                        rec.setEnabled(resultNode.get("enabled").asBoolean());
-                        rec.setPersistent(true);
-                        deployments.add(rec);
-                    }
-                    catch (IllegalArgumentException e)
-                    {
-                        Log.error("Failed to parse data source representation", e);
-                    }
+                    DeploymentRecord rec = factory.deployment().as();
+                    rec.setName(resultNode.get("name").asString());
+                    rec.setType(DeploymentDataType.deployment);
+                    rec.setSubdeployment(false);
+                    rec.setServerGroup(serverGroup);
+                    rec.setRuntimeName(resultNode.get("runtime-name").asString());
+                    rec.setEnabled(resultNode.get("enabled").asBoolean());
+                    rec.setPersistent(true);
+                    deployments.add(rec);
                 }
-
                 callback.onSuccess(deployments);
             }
         });

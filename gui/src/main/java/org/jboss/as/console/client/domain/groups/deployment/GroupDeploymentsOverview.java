@@ -10,6 +10,7 @@ import com.google.gwt.view.client.ProvidesKey;
 import com.google.gwt.view.client.SingleSelectionModel;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
+import org.jboss.as.console.client.shared.deployment.DeploymentStore;
 import org.jboss.as.console.client.shared.deployment.model.DeploymentRecord;
 import org.jboss.as.console.client.shared.viewframework.builder.SimpleLayout;
 import org.jboss.as.console.client.widgets.pages.PagedView;
@@ -27,14 +28,17 @@ import java.util.Map;
 public class GroupDeploymentsOverview {
 
     private ServerGroupDeploymentView groupDeployments;
+//    private ServerGroupDeploymentBrowser groupDeployments;
     private DeploymentsPresenter presenter;
+    private DeploymentStore deploymentStore;
     private DefaultCellTable<ServerGroupRecord> serverGroupTable;
     private ListDataProvider<ServerGroupRecord> dataProvider;
     private PagedView panel;
     private Map<String, List<DeploymentRecord>> deploymentPerGroup;
 
-    public GroupDeploymentsOverview(DeploymentsPresenter presenter) {
+    public GroupDeploymentsOverview(DeploymentsPresenter presenter, DeploymentStore deploymentStore) {
         this.presenter = presenter;
+        this.deploymentStore = deploymentStore;
     }
 
     Widget asWidget() {
@@ -76,6 +80,7 @@ public class GroupDeploymentsOverview {
                     public void execute(ServerGroupRecord selection) {
                         groupDeployments.setGroup(selection);
                         groupDeployments.setDeploymentInfo(deploymentPerGroup.get(selection.getGroupName()));
+//                        groupDeployments.updateDeployments(deploymentPerGroup.get(selection.getGroupName()));
                         panel.showPage(1);
                     }
                 })
@@ -96,6 +101,7 @@ public class GroupDeploymentsOverview {
         // --
 
         groupDeployments = new ServerGroupDeploymentView(presenter);
+//        groupDeployments = new ServerGroupDeploymentBrowser(presenter, deploymentStore);
 
         panel.addPage(Console.CONSTANTS.common_label_back(), overviewPanel.build());
         panel.addPage("Group Deployments", groupDeployments.asWidget());
@@ -125,6 +131,7 @@ public class GroupDeploymentsOverview {
             if(currentSelection!=null)
             {
                 groupDeployments.setDeploymentInfo(deploymentPerGroup.get(currentSelection.getGroupName()));
+//                groupDeployments.updateDeployments(deploymentPerGroup.get(currentSelection.getGroupName()));
             }
 
         }

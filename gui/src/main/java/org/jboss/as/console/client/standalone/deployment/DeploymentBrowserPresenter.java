@@ -42,7 +42,6 @@ import org.jboss.as.console.client.shared.deployment.DeployCommandExecutor;
 import org.jboss.as.console.client.shared.deployment.DeploymentCommand;
 import org.jboss.as.console.client.shared.deployment.DeploymentStore;
 import org.jboss.as.console.client.shared.deployment.NewDeploymentWizard;
-import org.jboss.as.console.client.shared.deployment.model.DeploymentData;
 import org.jboss.as.console.client.shared.deployment.model.DeploymentRecord;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
@@ -78,13 +77,12 @@ public class DeploymentBrowserPresenter
     public interface MyView extends View
     {
         void setPresenter(DeploymentBrowserPresenter presenter);
-        void updateDeploymentInfo(List<DeploymentRecord> deployments);
-        <T extends DeploymentData> void updateContext(T selectedContext);
+        void updateDeployments(List<DeploymentRecord> deployments);
     }
 
 
     private final PlaceManager placeManager;
-    private StandaloneDeploymentInfo2 deploymentInfo;
+    private StandaloneDeploymentInfo deploymentInfo;
     private DeploymentStore deploymentStore;
     private DefaultWindow window;
     private DispatchAsync dispatcher;
@@ -96,7 +94,7 @@ public class DeploymentBrowserPresenter
     {
         super(eventBus, view, proxy);
         this.placeManager = placeManager;
-        this.deploymentInfo = new StandaloneDeploymentInfo2(this, deploymentStore);
+        this.deploymentInfo = new StandaloneDeploymentInfo(this, deploymentStore);
         this.deploymentStore = deploymentStore;
         this.dispatcher = dispatcher;
     }

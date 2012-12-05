@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.as.console.client.standalone.deployment;
+package org.jboss.as.console.client.shared.deployment;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.ImageResource;
@@ -28,7 +28,6 @@ import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.SingleSelectionModel;
 import com.google.gwt.view.client.TreeViewModel;
-import org.jboss.as.console.client.shared.deployment.DeploymentStore;
 import org.jboss.as.console.client.shared.deployment.model.DeploymentData;
 import org.jboss.as.console.client.shared.deployment.model.DeploymentRecord;
 import org.jboss.as.console.client.shared.deployment.model.DeploymentSubsystemElement;
@@ -48,12 +47,12 @@ public class DeploymentTreeModel implements TreeViewModel
     private final DefaultNodeInfo<DeploymentRecord> level0;
 
 
-    public DeploymentTreeModel(final DeploymentBrowserPresenter presenter, final DeploymentStore deploymentStore,
+    public DeploymentTreeModel(final DeploymentBrowser deplymentBrowser, final DeploymentStore deploymentStore,
             final SingleSelectionModel<DeploymentRecord> selectionModel)
     {
-        this.nodeInfoFactory = new DeploymentNodeInfoFactory(presenter, deploymentStore);
+        this.nodeInfoFactory = new DeploymentNodeInfoFactory(deplymentBrowser, deploymentStore);
         this.deploymentDataProvider = new ListDataProvider<DeploymentRecord>();
-        this.level0 = new DefaultNodeInfo<DeploymentRecord>(deploymentDataProvider, new MainDeploymentCell(presenter),
+        this.level0 = new DefaultNodeInfo<DeploymentRecord>(deploymentDataProvider, new MainDeploymentCell(deplymentBrowser),
                 selectionModel, null);
     }
 
@@ -90,17 +89,17 @@ public class DeploymentTreeModel implements TreeViewModel
     }
 
 
-    private static class MainDeploymentCell extends DeploymentDataCell<DeploymentRecord>
+    static class MainDeploymentCell extends DeploymentDataCell<DeploymentRecord>
     {
-        MainDeploymentCell(final DeploymentBrowserPresenter presenter)
+        MainDeploymentCell(final DeploymentBrowser deploymentBrowser)
         {
-            super(presenter);
+            super(deploymentBrowser);
         }
 
         @Override
         public void render(final Context context, final DeploymentRecord value, final SafeHtmlBuilder sb)
         {
-            ImageResource res = null;
+            ImageResource res;
             if ("FAILED".equalsIgnoreCase(value.getStatus()))
             {
                 res = Icons.INSTANCE.status_warn();

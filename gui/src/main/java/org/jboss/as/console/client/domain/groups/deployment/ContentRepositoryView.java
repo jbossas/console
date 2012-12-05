@@ -32,12 +32,14 @@ import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.ProvidesKey;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
+import com.google.inject.Inject;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.shared.deployment.DeploymentCommand;
 import org.jboss.as.console.client.shared.deployment.DeploymentCommandDelegate;
 import org.jboss.as.console.client.shared.deployment.DeploymentFilter;
+import org.jboss.as.console.client.shared.deployment.DeploymentStore;
 import org.jboss.as.console.client.shared.deployment.TitleColumn;
 import org.jboss.as.console.client.shared.deployment.model.DeploymentRecord;
 import org.jboss.as.console.client.shared.viewframework.builder.MultipleToOneLayout;
@@ -63,6 +65,7 @@ import java.util.Map;
 public class ContentRepositoryView extends SuspendableViewImpl implements DeploymentsPresenter.MyView {
 
     private DeploymentsPresenter presenter;
+    private DeploymentStore deploymentStore;
 
     private ListDataProvider<DeploymentRecord> domainDeploymentProvider = new ListDataProvider<DeploymentRecord>();
 
@@ -70,6 +73,12 @@ public class ContentRepositoryView extends SuspendableViewImpl implements Deploy
     private Map<String,List<String>> currentAssignments = new HashMap<String, List<String>>();
     private DefaultCellTable<DeploymentRecord> contentTable;
     private DeploymentFilter filter;
+
+    @Inject
+    public ContentRepositoryView(final DeploymentStore deploymentStore)
+    {
+        this.deploymentStore = deploymentStore;
+    }
 
     @Override
     public void setPresenter(DeploymentsPresenter presenter) {
@@ -81,7 +90,7 @@ public class ContentRepositoryView extends SuspendableViewImpl implements Deploy
         DefaultTabLayoutPanel tabLayoutPanel = new DefaultTabLayoutPanel(40, Style.Unit.PX);
         tabLayoutPanel.addStyleName("default-tabpanel");
 
-        groupOverview = new GroupDeploymentsOverview(presenter);
+        groupOverview = new GroupDeploymentsOverview(presenter, deploymentStore);
 
         tabLayoutPanel.add(makeDeploymentsPanel(), "Content Repository", true);
         tabLayoutPanel.add(groupOverview.asWidget(), "Server Groups", true);

@@ -137,7 +137,6 @@ public class DomainDeploymentInfo implements DeploymentViewRefresher {
 
                         deploymentStore.loadDeployments(new SimpleCallback<List<DeploymentRecord>>()
                         {
-
                             @Override
                             public void onSuccess(List<DeploymentRecord> result)
                             {

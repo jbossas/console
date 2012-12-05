@@ -94,6 +94,8 @@ import org.jboss.as.console.client.plugins.RuntimeExtensionRegistry;
 import org.jboss.as.console.client.plugins.RuntimeLHSItemExtensionRegistryImpl;
 import org.jboss.as.console.client.plugins.SubsystemRegistry;
 import org.jboss.as.console.client.plugins.SubsystemRegistryImpl;
+import org.jboss.as.console.client.shared.deployment.DeploymentStore;
+import org.jboss.as.console.client.shared.deployment.DeploymentStoreImpl;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.HandlerMapping;
 import org.jboss.as.console.client.shared.dispatch.InvocationMetrics;
@@ -112,8 +114,6 @@ import org.jboss.as.console.client.shared.general.PropertiesView;
 import org.jboss.as.console.client.shared.general.SocketBindingPresenter;
 import org.jboss.as.console.client.shared.general.SocketBindingView;
 import org.jboss.as.console.client.shared.help.HelpSystem;
-import org.jboss.as.console.client.shared.deployment.DeploymentStore;
-import org.jboss.as.console.client.shared.deployment.DeploymentStoreImpl;
 import org.jboss.as.console.client.shared.model.SubsystemStore;
 import org.jboss.as.console.client.shared.model.SubsystemStoreImpl;
 import org.jboss.as.console.client.shared.runtime.RuntimeBaseAddress;
@@ -216,8 +216,6 @@ import org.jboss.as.console.client.standalone.StandaloneServerPresenter;
 import org.jboss.as.console.client.standalone.StandaloneServerView;
 import org.jboss.as.console.client.standalone.deployment.DeploymentBrowserPresenter;
 import org.jboss.as.console.client.standalone.deployment.DeploymentBrowserView;
-import org.jboss.as.console.client.standalone.deployment.DeploymentListPresenter;
-import org.jboss.as.console.client.standalone.deployment.DeploymentListView;
 import org.jboss.as.console.client.standalone.runtime.StandaloneRuntimePresenter;
 import org.jboss.as.console.client.standalone.runtime.StandaloneRuntimeView;
 import org.jboss.as.console.client.tools.BrowserPresenter;
@@ -346,10 +344,6 @@ public class CoreUIModule extends AbstractPresenterModule {
                 ServerMgmtApplicationView.class,
                 ServerMgmtApplicationPresenter.ServerManagementProxy.class);
 
-        bindPresenter(DeploymentListPresenter.class,
-                DeploymentListPresenter.MyView.class,
-                DeploymentListView.class,
-                DeploymentListPresenter.MyProxy.class);
         bindPresenter(DeploymentBrowserPresenter.class,
                 DeploymentBrowserPresenter.MyView.class,
                 DeploymentBrowserView.class,

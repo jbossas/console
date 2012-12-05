@@ -16,20 +16,42 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.as.console.client.standalone.deployment;
+package org.jboss.as.console.client.shared.deployment;
 
-import com.google.gwt.view.client.ProvidesKey;
+import com.google.gwt.user.client.Command;
+import com.google.gwt.view.client.AsyncDataProvider;
+import com.google.gwt.view.client.HasData;
+import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.shared.deployment.model.DeploymentData;
 
+import java.util.List;
+
 /**
-* @author Harald Pehl
-* @date 11/28/2012
-*/
-class DeploymentDataKeyProvider<T extends DeploymentData> implements ProvidesKey<T>
+ * @author Harald Pehl
+ * @date 11/28/2012
+ */
+public class DeploymentDataProvider<T extends DeploymentData> extends AsyncDataProvider<T>
 {
-    @Override
-    public Object getKey(final T item)
+    private Command command;
+
+    public void exec(Command command)
     {
-        return item.getName();
+        this.command = command;
+    }
+
+    @Override
+    protected void onRangeChanged(final HasData<T> display)
+    {
+        command.execute();
+    }
+
+    class UpdateRowsCallback extends SimpleCallback<List<T>>
+    {
+        @Override
+        public void onSuccess(final List<T> result)
+        {
+            updateRowCount(result.size(), true);
+            updateRowData(0, result);
+        }
     }
 }

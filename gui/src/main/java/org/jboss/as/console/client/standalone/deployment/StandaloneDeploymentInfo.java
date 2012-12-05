@@ -34,16 +34,18 @@ import java.util.List;
  */
 public class StandaloneDeploymentInfo implements DeploymentViewRefresher {
 
-  private DeploymentListPresenter presenter;
+  private DeploymentBrowserPresenter presenter;
   private DeploymentStore deploymentStore;
   private List<DeploymentRecord> allDeployments = Collections.EMPTY_LIST;
 
-  StandaloneDeploymentInfo(DeploymentListPresenter presenter, DeploymentStore deploymentStore) {
-    this.presenter = presenter;
-    this.deploymentStore = deploymentStore;
-  }
-  
-  @Override
+    public StandaloneDeploymentInfo(final DeploymentBrowserPresenter deploymentBrowserPresenter,
+            final DeploymentStore deploymentStore)
+    {
+        this.presenter = deploymentBrowserPresenter;
+        this.deploymentStore = deploymentStore;
+    }
+
+    @Override
   public List<String> getAllDeploymentNames() {
       List<String> deploymentNames = new ArrayList<String>(allDeployments.size());
       for (DeploymentRecord record : allDeployments) {
@@ -62,7 +64,7 @@ public class StandaloneDeploymentInfo implements DeploymentViewRefresher {
         public void onSuccess(List<DeploymentRecord> result)
         {
             allDeployments = result;
-            presenter.getView().updateDeploymentInfo(result);
+            presenter.getView().updateDeployments(result);
         }
     });
   }
