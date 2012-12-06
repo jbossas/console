@@ -24,6 +24,9 @@ import java.util.Map;
  */
 public class FormToolStrip<T> {
 
+    private static final String EDIT_LABEL = "<i class='icon-edit'></i>&nbsp;" + Console.CONSTANTS.common_label_edit();
+    private static final String SAVE_LABEL = "<i class='icon-save'></i>&nbsp;" +Console.CONSTANTS.common_label_save();
+
     private FormAdapter<T> form = null;
     private FormCallback<T> callback;
     private String deleteOpName = null;
@@ -35,6 +38,10 @@ public class FormToolStrip<T> {
     private ToolButton editBtn = null;
 
     private PreValidation preValidation = null;
+
+    private enum State {OPEN,CLOSE}
+
+    private State currentState = State.CLOSE;
 
     public interface PreValidation {
         boolean isValid();
@@ -68,7 +75,7 @@ public class FormToolStrip<T> {
 
         ToolStrip toolStrip = new ToolStrip();
         if (providesEditSaveOp) {
-            editBtn = new ToolButton(Console.CONSTANTS.common_label_edit());
+            editBtn = new ToolButton(EDIT_LABEL);
             ClickHandler editHandler = new ClickHandler() {
                 @Override
                 public void onClick(ClickEvent event) {
@@ -79,9 +86,10 @@ public class FormToolStrip<T> {
                         return;
                     }
 
-                    if(editBtn.getText().equals(Console.CONSTANTS.common_label_edit()))
+                    if(State.CLOSE == currentState)
                     {
-                        editBtn.setText(Console.CONSTANTS.common_label_save());
+                        editBtn.setHTML(SAVE_LABEL);
+                        currentState = State.OPEN;
                         form.setEnabled(true);
                         cancelBtn.setVisible(true);
                     }
@@ -94,7 +102,8 @@ public class FormToolStrip<T> {
                             if(preValidation==null || preValidationIsSuccess)
                             {
                                 cancelBtn.setVisible(false);
-                                editBtn.setText(Console.CONSTANTS.common_label_edit());
+                                editBtn.setHTML(EDIT_LABEL);
+                                currentState = State.CLOSE;
                                 form.setEnabled(false);
                                 Map<String, Object> changedValues = form.getChangedValues();
                                 if(!changedValues.isEmpty())
@@ -149,7 +158,7 @@ public class FormToolStrip<T> {
         final ClickHandler cancelHandler = new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-               doCancel();
+                doCancel();
             }
         };
 
@@ -178,8 +187,9 @@ public class FormToolStrip<T> {
     public void doCancel() {
         form.cancel();
         if (editBtn != null)
-            editBtn.setText(Console.CONSTANTS.common_label_edit());
+            editBtn.setHTML(EDIT_LABEL);
         form.setEnabled(false);
         cancelBtn.setVisible(false);
+        currentState = State.CLOSE;
     }
 }

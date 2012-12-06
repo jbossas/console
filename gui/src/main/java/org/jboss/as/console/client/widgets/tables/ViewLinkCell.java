@@ -22,6 +22,8 @@ public class ViewLinkCell<T> extends ActionCell<T> {
         SafeHtml html = new SafeHtmlBuilder()
                 .appendHtmlConstant("<a href='javascript:void(0)' tabindex=\"-1\" class='viewlink-cell'>")
                 .appendHtmlConstant(title)
+                .appendHtmlConstant("&nbsp;")
+                .appendHtmlConstant("<i class='icon-chevron-right'></i>")
                 .appendHtmlConstant("</a>")
                 .toSafeHtml();
 

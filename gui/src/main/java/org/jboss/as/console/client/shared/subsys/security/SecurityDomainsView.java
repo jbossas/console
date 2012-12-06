@@ -176,7 +176,7 @@ public class SecurityDomainsView extends AbstractEntityView<SecurityDomain>
         table = new DefaultCellTable<SecurityDomain>(5);
 
         Column<SecurityDomain, SecurityDomain> option = new Column<SecurityDomain, SecurityDomain>(
-                new ViewLinkCell<SecurityDomain>(Console.CONSTANTS.common_label_view(), new ActionCell.Delegate<SecurityDomain>() {
+                new ViewLinkCell<SecurityDomain>(Console.CONSTANTS.common_label_view()+"&nbsp;", new ActionCell.Delegate<SecurityDomain>() {
                     @Override
                     public void execute(SecurityDomain selection) {
                         presenter.getPlaceManager().revealPlace(

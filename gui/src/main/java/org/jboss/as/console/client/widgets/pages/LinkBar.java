@@ -1,6 +1,7 @@
 package org.jboss.as.console.client.widgets.pages;
 
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -44,6 +45,11 @@ public class LinkBar {
         if(numLinks==0)
         {
             html.addStyleName("link-bar-first");
+            SafeHtmlBuilder builder = new SafeHtmlBuilder();
+            builder.appendHtmlConstant("<i class='icon-chevron-left'></i>");
+            builder.appendHtmlConstant("&nbsp;");
+            builder.appendEscaped(text);
+            html.setHTML(builder.toSafeHtml());
         }
 
         links.add(html);

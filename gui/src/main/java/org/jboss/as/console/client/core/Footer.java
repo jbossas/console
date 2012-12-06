@@ -101,7 +101,7 @@ public class Footer {
         }
         toolsPopup.setWidget(toolsList);
 
-        final HTML toolsLink = new HTML("Tools");
+        final HTML toolsLink = new HTML("<i class='icon-caret-up'></i>&nbsp;"+"Tools");
         toolsLink.addStyleName("footer-link");
         toolsLink.addClickHandler(new ClickHandler() {
             @Override
@@ -122,7 +122,7 @@ public class Footer {
             }
         });
 
-        HTML settings = new HTML(Console.CONSTANTS.common_label_settings());
+        HTML settings = new HTML("<i class='icon-wrench'></i>&nbsp;"+Console.CONSTANTS.common_label_settings());
         settings.addStyleName("footer-link");
         settings.addClickHandler(new ClickHandler() {
             @Override
@@ -134,7 +134,7 @@ public class Footer {
         });
 
 
-        HTML logout = new HTML(Console.CONSTANTS.common_label_logout());
+        HTML logout = new HTML("<i class='icon-signout'></i>&nbsp;"+Console.CONSTANTS.common_label_logout());
         logout.addStyleName("footer-link");
         logout.addClickHandler(new ClickHandler() {
             @Override
