@@ -192,6 +192,7 @@ class DomainRuntimeNavigation implements ServerSelectionEvent.ServerSelectionLis
 
         metricLeaf.addItem(subsystemGroup);
         subsystemGroup.setState(true);
+        platformGroup.setState(true);
 
         navigation.expandTopLevel();
 

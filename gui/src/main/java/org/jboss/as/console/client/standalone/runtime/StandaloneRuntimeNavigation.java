@@ -174,6 +174,7 @@ public class StandaloneRuntimeNavigation {
 
         metricLeaf.addItem(subsystemGroup);
         subsystemGroup.setState(true);
+        platformGroup.setState(true);
 
         navigation.expandTopLevel();
     }
