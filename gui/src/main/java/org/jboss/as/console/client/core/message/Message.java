@@ -42,7 +42,7 @@ public class Message {
         Blank("InfoBlank", "info/icn_info_blank.png", "&nbsp;"), //
         Info("InfoBlock", "info/icn_info_blue.png", "<i class='icon-ok'></i>"), //
         Warning("WarnBlock", "info/icn_info_orange.png", "<i class='icon-exclamation-sign'></i>"), //
-        Error("ErrorBlock", "info/icn_info_red.png", "<i class='icon-bolt'></i>"), //
+        Error("ErrorBlock", "info/icn_info_red.png", "<i class='icon-bolt' style='font-size:14px'></i>"), //
         Fatal("FatalBlock", "info/icn_info_red.png", "<i class='icon-bolt'></i>");
 
         private String style;
