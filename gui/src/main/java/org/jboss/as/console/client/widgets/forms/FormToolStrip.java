@@ -30,7 +30,6 @@ public class FormToolStrip<T> {
     private static final String EDIT_LABEL = Console.CONSTANTS.common_label_edit();
     private static final String SAVE_LABEL = Console.CONSTANTS.common_label_save();
 
-
     private FormAdapter<T> form = null;
     private FormCallback<T> callback;
     private String deleteOpName = null;

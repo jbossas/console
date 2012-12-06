@@ -488,7 +488,6 @@ input[type="checkbox"] {
     text-decoration: none!important;
 }
 
-
 .hint-box {
     font-size: 16px;
     border: 1px solid #A7ABB4;
@@ -500,4 +499,3 @@ input[type="checkbox"] {
     display: inline-block;
     background-color: #FFFD99;
 }
-
