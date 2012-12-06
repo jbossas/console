@@ -367,17 +367,9 @@ public class MessageCenterView implements MessageListener, ReloadEvent.ReloadLis
                 message.getConciseMessage();
 
         // TODO: beware of XSS
-        final HTML label = new HTML(" "+actualMessage);
+        final HTML label = new HTML(message.getSeverity().getTag()+"&nbsp;"+actualMessage);
 
-        //final ImageResource iconSrc = getSeverityIcon(message.severity);
-
-        //Image icon = new Image(iconSrc);
-        HTML icon = new HTML(message.getSeverity().getTag());
-        panel.add(icon);
         panel.add(label);
-
-        icon.getElement().getParentElement().setAttribute("style", "padding-right:5px;");
-
 
         label.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent clickEvent) {

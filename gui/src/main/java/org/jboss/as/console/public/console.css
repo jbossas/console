@@ -281,6 +281,7 @@ body {
     width: 100%;
     color: black;
     font-size:10px!important;
+    padding:4px;
 }
 
 .table-picker {
