@@ -62,7 +62,7 @@ public class ExtensionPresenter  extends Presenter<ExtensionPresenter.MyView,
     {
         void setPresenter(ExtensionPresenter extensionPresenter);
 
-        void setExtensions(List<String> extensions);
+        void setExtensions(List<Extension> extensions);
     }
 
 
@@ -109,6 +109,7 @@ public class ExtensionPresenter  extends Presenter<ExtensionPresenter.MyView,
         fetchExtensions.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
         fetchExtensions.get(ADDRESS).setEmptyList();
         fetchExtensions.get(CHILD_TYPE).set("extension");
+        fetchExtensions.get(RECURSIVE).set(true);
 
         dispatcher.execute(new DMRAction(fetchExtensions), new SimpleCallback<DMRResponse>()
         {
@@ -116,12 +117,29 @@ public class ExtensionPresenter  extends Presenter<ExtensionPresenter.MyView,
             public void onSuccess(DMRResponse result)
             {
                 ModelNode response = result.get();
+
                 List<Property> properties = response.get(RESULT).asPropertyList();
-                List<String> extensions = new ArrayList<String>(properties.size());
+                List<Extension> extensions = new ArrayList<Extension>(properties.size());
+
                 for (Property property : properties)
                 {
-                    extensions.add(property.getName());
+                    ModelNode model = property.getValue().asObject();
+                    Extension extensionBean = factory.extension().as();
+                    extensionBean.setName(property.getName());
+                    extensionBean.setModule(model.get("module").asString());
+
+                    Property subsystem = model.get("subsystem").asPropertyList().get(0);
+                    extensionBean.setSubsystem(subsystem.getName());
+
+                    String major = subsystem.getValue().get("management-major-version").asString();
+                    String minor = subsystem.getValue().get("management-minor-version").asString();
+                    String micro = subsystem.getValue().get("management-micro-version").asString();
+
+                    extensionBean.setVersion(major+"."+minor+"."+micro);
+
+                    extensions.add(extensionBean);
                 }
+
                 getView().setExtensions(extensions);
             }
         });

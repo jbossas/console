@@ -54,6 +54,7 @@ import org.jboss.as.console.client.shared.deployment.model.DeploymentRecord;
 import org.jboss.as.console.client.shared.model.SubsystemRecord;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.shared.properties.PropertyRecordCategory;
+import org.jboss.as.console.client.shared.runtime.ext.Extension;
 import org.jboss.as.console.client.shared.runtime.jpa.model.JPADeployment;
 import org.jboss.as.console.client.shared.subsys.configadmin.model.ConfigAdminData;
 import org.jboss.as.console.client.shared.subsys.deploymentscanner.model.DeploymentScanner;
@@ -288,4 +289,6 @@ public interface CoreBeanFactory {
     AutoBean<JGroupsTransport> jGroupsTransport();
 
     AutoBean<Path> path();
+
+    AutoBean<Extension> extension();
 }
