@@ -175,13 +175,13 @@ public class MessageCenterView implements MessageListener, ReloadEvent.ReloadLis
         window.setGlassEnabled(true);
 
 
-        ImageResource icon = MessageCenterView.getSeverityIcon(msg.getSeverity());
-        AbstractImagePrototype prototype = AbstractImagePrototype.create(icon);
+        //ImageResource icon = MessageCenterView.getSeverityIcon(msg.getSeverity());
+        //AbstractImagePrototype prototype = AbstractImagePrototype.create(icon);
 
         SafeHtmlBuilder html = new SafeHtmlBuilder();
 
         // TODO: XSS prevention?
-        html.appendHtmlConstant(prototype.getHTML());
+        html.appendHtmlConstant(msg.getSeverity().getTag());
         html.appendHtmlConstant("&nbsp;");
         html.appendHtmlConstant(msg.getFired().toString());
         html.appendHtmlConstant("<h3 id='consise-message'>");
@@ -352,7 +352,7 @@ public class MessageCenterView implements MessageListener, ReloadEvent.ReloadLis
 
     private void reflectMessageCount() {
         int numMessages = messageCenter.getNewMessageCount();
-        messageButton.setHTML("("+ numMessages +") " +MESSAGE_LABEL);
+        messageButton.setHTML("(" + numMessages + ") " + MESSAGE_LABEL);
     }
 
     private void displayNotification(final Message message) {
@@ -369,9 +369,10 @@ public class MessageCenterView implements MessageListener, ReloadEvent.ReloadLis
         // TODO: beware of XSS
         final HTML label = new HTML(" "+actualMessage);
 
-        final ImageResource iconSrc = getSeverityIcon(message.severity);
+        //final ImageResource iconSrc = getSeverityIcon(message.severity);
 
-        Image icon = new Image(iconSrc);
+        //Image icon = new Image(iconSrc);
+        HTML icon = new HTML(message.getSeverity().getTag());
         panel.add(icon);
         panel.add(label);
 
@@ -426,6 +427,7 @@ public class MessageCenterView implements MessageListener, ReloadEvent.ReloadLis
         }
         return iconSrc;
     }
+
 
     @Override
     public void onReload() {

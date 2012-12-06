@@ -39,18 +39,20 @@ public class Message {
 
     // TODO: Add Debug severity?
     public enum Severity {
-        Blank("InfoBlank", "info/icn_info_blank.png"), //
-        Info("InfoBlock", "info/icn_info_blue.png"), //
-        Warning("WarnBlock", "info/icn_info_orange.png"), //
-        Error("ErrorBlock", "info/icn_info_red.png"), //
-        Fatal("FatalBlock", "info/icn_info_red.png");
+        Blank("InfoBlank", "info/icn_info_blank.png", "&nbsp;"), //
+        Info("InfoBlock", "info/icn_info_blue.png", "<i class='icon-ok'></i>"), //
+        Warning("WarnBlock", "info/icn_info_orange.png", "<i class='icon-exclamation-sign'></i>"), //
+        Error("ErrorBlock", "info/icn_info_red.png", "<i class='icon-bolt'></i>"), //
+        Fatal("FatalBlock", "info/icn_info_red.png", "<i class='icon-bolt'></i>");
 
         private String style;
         private String icon;
+        private String tag;
 
-        private Severity(String style, String icon) {
+        private Severity(String style, String icon, String tag) {
             this.style = style;
             this.icon = icon;
+            this.tag = tag;
         }
 
         public String getStyle() {
@@ -59,6 +61,10 @@ public class Message {
 
         public String getIcon() {
             return icon;
+        }
+
+        public String getTag() {
+            return tag;
         }
     }
 
