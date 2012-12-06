@@ -61,7 +61,7 @@ import java.util.List;
 public class MessageCenterView implements MessageListener, ReloadEvent.ReloadListener {
 
     private static final String MESSAGE_LABEL = Console.CONSTANTS.common_label_messages()
-            + "&nbsp;<i class='icon-envelope'></i>";
+            + "&nbsp;<i class='icon-caret-down'></i>";
     private MessageCenter messageCenter;
     private HorizontalPanel messageDisplay;
     final MessageListPopup messagePopup = new MessageListPopup();
