@@ -474,3 +474,27 @@ input[type="checkbox"] {
 .serverGroup4_light:hover {
     background-color: rgb(179,202,87);
 }
+
+/* link bar*/
+
+.link-bar-first {
+    background-image: url(images/buttons/left.png);
+    background-repeat: no-repeat;
+    padding-left: 16px!important;
+    background-position: left 0px top 8px;
+    margin-right:10px!important;
+    text-decoration: none!important;
+}
+
+.link-bar-first a {
+    text-decoration: none!important;
+}
+
+.viewlink-cell {
+    background-image: url(images/buttons/right.png);
+    background-repeat: no-repeat;
+    padding-right: 16px!important;
+    background-position: right 0px top 2px;
+    text-decoration: none!important;
+}
+

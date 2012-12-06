@@ -18,6 +18,7 @@ import org.jboss.as.console.client.shared.runtime.jpa.model.JPADeployment;
 import org.jboss.as.console.client.shared.viewframework.builder.MultipleToOneLayout;
 import org.jboss.as.console.client.widgets.forms.FormToolStrip;
 import org.jboss.as.console.client.widgets.tables.TextLinkCell;
+import org.jboss.as.console.client.widgets.tables.ViewLinkCell;
 import org.jboss.ballroom.client.widgets.forms.CheckBoxItem;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.TextItem;
@@ -87,7 +88,7 @@ public class PersistenceUnitList {
 
 
         Column<JPADeployment, JPADeployment> option = new Column<JPADeployment, JPADeployment>(
-                new TextLinkCell<JPADeployment>(Console.CONSTANTS.common_label_view(), new ActionCell.Delegate<JPADeployment>() {
+                new ViewLinkCell<JPADeployment>(Console.CONSTANTS.common_label_view(), new ActionCell.Delegate<JPADeployment>() {
                     @Override
                     public void execute(JPADeployment selection) {
                         presenter.getPlaceManager().revealPlace(

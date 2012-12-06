@@ -45,6 +45,7 @@ import org.jboss.as.console.client.shared.viewframework.TabbedFormLayoutPanel;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.as.console.client.widgets.pages.PagedView;
 import org.jboss.as.console.client.widgets.tables.TextLinkCell;
+import org.jboss.as.console.client.widgets.tables.ViewLinkCell;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.FormAdapter;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
@@ -175,7 +176,7 @@ public class SecurityDomainsView extends AbstractEntityView<SecurityDomain>
         table = new DefaultCellTable<SecurityDomain>(5);
 
         Column<SecurityDomain, SecurityDomain> option = new Column<SecurityDomain, SecurityDomain>(
-                new TextLinkCell<SecurityDomain>(Console.CONSTANTS.common_label_view(), new ActionCell.Delegate<SecurityDomain>() {
+                new ViewLinkCell<SecurityDomain>(Console.CONSTANTS.common_label_view(), new ActionCell.Delegate<SecurityDomain>() {
                     @Override
                     public void execute(SecurityDomain selection) {
                         presenter.getPlaceManager().revealPlace(

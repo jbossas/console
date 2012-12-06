@@ -26,6 +26,7 @@ import org.jboss.as.console.client.shared.subsys.jca.model.ResourceAdapter;
 import org.jboss.as.console.client.shared.viewframework.builder.MultipleToOneLayout;
 import org.jboss.as.console.client.widgets.forms.FormToolStrip;
 import org.jboss.as.console.client.widgets.tables.TextLinkCell;
+import org.jboss.as.console.client.widgets.tables.ViewLinkCell;
 import org.jboss.ballroom.client.widgets.forms.ComboBoxItem;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.TextItem;
@@ -121,7 +122,7 @@ public class AdapterList implements PropertyManagement {
         };
 
         Column<ResourceAdapter, ResourceAdapter> option = new Column<ResourceAdapter, ResourceAdapter>(
-                new TextLinkCell<ResourceAdapter>(Console.CONSTANTS.common_label_view(), new ActionCell.Delegate<ResourceAdapter>() {
+                new ViewLinkCell<ResourceAdapter>(Console.CONSTANTS.common_label_view(), new ActionCell.Delegate<ResourceAdapter>() {
                     @Override
                     public void execute(ResourceAdapter selection) {
                         presenter.getPlaceManager().revealPlace(

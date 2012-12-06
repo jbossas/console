@@ -15,6 +15,7 @@ import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.shared.viewframework.builder.MultipleToOneLayout;
 import org.jboss.as.console.client.widgets.tables.TextLinkCell;
+import org.jboss.as.console.client.widgets.tables.ViewLinkCell;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
@@ -56,7 +57,7 @@ public class StackOverview {
         };
 
         Column<JGroupsStack, JGroupsStack> option = new Column<JGroupsStack, JGroupsStack>(
-                new TextLinkCell<JGroupsStack>(Console.CONSTANTS.common_label_view(), new ActionCell.Delegate<JGroupsStack>() {
+                new ViewLinkCell<JGroupsStack>(Console.CONSTANTS.common_label_view(), new ActionCell.Delegate<JGroupsStack>() {
                     @Override
                     public void execute(JGroupsStack selection) {
                         presenter.getPlaceManager().revealPlace(

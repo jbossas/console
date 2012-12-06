@@ -17,6 +17,7 @@ import org.jboss.as.console.client.shared.viewframework.builder.FormLayout;
 import org.jboss.as.console.client.shared.viewframework.builder.MultipleToOneLayout;
 import org.jboss.as.console.client.widgets.forms.FormToolStrip;
 import org.jboss.as.console.client.widgets.tables.TextLinkCell;
+import org.jboss.as.console.client.widgets.tables.ViewLinkCell;
 import org.jboss.ballroom.client.widgets.forms.CheckBoxItem;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
@@ -64,7 +65,7 @@ public class MailSessionEditor {
         };
 
         Column<MailSession, MailSession> option = new Column<MailSession, MailSession>(
-                new TextLinkCell<MailSession>(Console.CONSTANTS.common_label_view(), new ActionCell.Delegate<MailSession>() {
+                new ViewLinkCell<MailSession>(Console.CONSTANTS.common_label_view(), new ActionCell.Delegate<MailSession>() {
                     @Override
                     public void execute(MailSession selection) {
                         presenter.getPlaceManager().revealPlace(

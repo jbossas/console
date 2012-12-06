@@ -14,6 +14,7 @@ import org.jboss.as.console.client.shared.deployment.model.DeploymentRecord;
 import org.jboss.as.console.client.shared.viewframework.builder.SimpleLayout;
 import org.jboss.as.console.client.widgets.pages.PagedView;
 import org.jboss.as.console.client.widgets.tables.TextLinkCell;
+import org.jboss.as.console.client.widgets.tables.ViewLinkCell;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 
 import java.util.List;
@@ -70,7 +71,7 @@ public class GroupDeploymentsOverview {
         serverGroupTable.addColumn(profileColumn, Console.CONSTANTS.common_label_profile());
 
         Column<ServerGroupRecord, ServerGroupRecord> option = new Column<ServerGroupRecord, ServerGroupRecord>(
-                new TextLinkCell<ServerGroupRecord>(Console.CONSTANTS.common_label_view(), new ActionCell.Delegate<ServerGroupRecord>() {
+                new ViewLinkCell<ServerGroupRecord>(Console.CONSTANTS.common_label_view(), new ActionCell.Delegate<ServerGroupRecord>() {
                     @Override
                     public void execute(ServerGroupRecord selection) {
                         groupDeployments.setGroup(selection);

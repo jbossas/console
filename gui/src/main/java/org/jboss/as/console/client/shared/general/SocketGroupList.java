@@ -12,6 +12,7 @@ import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.shared.viewframework.builder.SimpleLayout;
 import org.jboss.as.console.client.widgets.tables.TextLinkCell;
+import org.jboss.as.console.client.widgets.tables.ViewLinkCell;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 
 import java.util.List;
@@ -46,7 +47,7 @@ public class SocketGroupList {
         };
 
         Column<String, String> option = new Column<String, String>(
-                new TextLinkCell<String>(Console.CONSTANTS.common_label_view(), new ActionCell.Delegate<String>() {
+                new ViewLinkCell<String>(Console.CONSTANTS.common_label_view(), new ActionCell.Delegate<String>() {
                     @Override
                     public void execute(String selection) {
                         presenter.getPlaceManager().revealPlace(
