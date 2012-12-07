@@ -25,6 +25,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
+import com.google.gwt.view.client.ProvidesKey;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 import org.jboss.as.console.client.Console;
@@ -64,7 +65,12 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
     private String preselection;
 
     public ServerConfigView() {
-        serverConfigTable = new DefaultCellTable<Server>(8);
+        serverConfigTable = new DefaultCellTable<Server>(8, new ProvidesKey<Server>() {
+            @Override
+            public Object getKey(Server server) {
+                return server.getName();
+            }
+        });
         serverConfigProvider = new ListDataProvider<Server>();
         serverConfigProvider.addDataDisplay(serverConfigTable);
     }
@@ -231,22 +237,25 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
     public void setConfigurations(String selectedHost, List<Server> servers, String selectedConfigName) {
         serverConfigProvider.getList().clear();
         serverConfigProvider.getList().addAll(servers);
+        serverConfigProvider.flush();
 
         jvmEditor.clearValues();
         propertyEditor.clearValues();
 
-        if(!servers.isEmpty())
+        /*if(!servers.isEmpty())
         {
             if(preselection!=null){
                 getSelectionModel().setSelected(findSelectedServer(servers, preselection), true);
             }
             else if(selectedConfigName == null || selectedConfigName.equals("")) {
-                getSelectionModel().setSelected(servers.get(0), true);
+                serverConfigTable.selectDefaultEntity();
             }
             else {
                 getSelectionModel().setSelected(findSelectedServer(servers, selectedConfigName), true);
             }
         }
+        */
+        serverConfigTable.selectDefaultEntity();
 
     }
 

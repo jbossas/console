@@ -210,8 +210,9 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
 
         serverGroupProvider.getList().clear();
         serverGroupProvider.getList().addAll(groups);
+        serverGroupProvider.flush();
 
-        boolean matchedPreselection = false;
+        /*boolean matchedPreselection = false;
         for(ServerGroupRecord group : groups)
         {
             if(group.getGroupName().equals(preselection))
@@ -224,6 +225,8 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
 
         if(!matchedPreselection)
             serverGroupTable.selectDefaultEntity();
+            */
+        serverGroupTable.selectDefaultEntity();
     }
 
     @Override
