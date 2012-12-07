@@ -9,6 +9,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.SelectionChangeEvent;
+import com.google.gwt.view.client.SelectionModel;
 import com.google.gwt.view.client.SingleSelectionModel;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.help.HelpSystem;
@@ -24,6 +25,7 @@ import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 import org.jboss.ballroom.client.widgets.tables.DefaultPager;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
 import org.jboss.ballroom.client.widgets.tools.ToolStrip;
+import org.jboss.ballroom.client.widgets.window.Feedback;
 import org.jboss.dmr.client.ModelDescriptionConstants;
 import org.jboss.dmr.client.ModelNode;
 
@@ -36,7 +38,7 @@ import java.util.List;
  */
 public class QueueMetrics {
 
-    
+
     private JMSMetricPresenter presenter;
     private CellTable<Queue> queueTable;
     private ListDataProvider<Queue> dataProvider;
@@ -103,7 +105,6 @@ public class QueueMetrics {
 
             }
         });
-        queueTable.getElement().setAttribute("style", "margin-top:15px;margin-bottom:0px;");
 
         // ----
 
@@ -115,7 +116,7 @@ public class QueueMetrics {
 
         String title = "In-Flight Messages";
 
-         final HelpSystem.AddressCallback addressCallback = new HelpSystem.AddressCallback() {
+        final HelpSystem.AddressCallback addressCallback = new HelpSystem.AddressCallback() {
             @Override
             public ModelNode getAddress() {
                 ModelNode address = new ModelNode();
@@ -165,8 +166,27 @@ public class QueueMetrics {
         DefaultPager pager = new DefaultPager();
         pager.setDisplay(queueTable);
 
+        ToolStrip queueTools = new ToolStrip();
+        queueTools.addToolButtonRight(new ToolButton("Flush", new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent clickEvent) {
+                SingleSelectionModel<Queue> selectionModel =
+                        (SingleSelectionModel<Queue>)queueTable.getSelectionModel();
+
+                final Queue queue = selectionModel.getSelectedObject();
+                Feedback.confirm("Flush Queue", "Do you really want to flush queue "+queue.getName(),
+                        new Feedback.ConfirmationHandler(){
+                            @Override
+                            public void onConfirmation(boolean isConfirmed) {
+                                presenter.onFlushQueue(queue);
+                            }
+                        });
+            }
+        }));
+
         VerticalPanel tablePanel = new VerticalPanel();
         tablePanel.setStyleName("fill-layout-width");
+        tablePanel.add(queueTools.asWidget());
         tablePanel.add(queueTable);
         tablePanel.add(pager);
 

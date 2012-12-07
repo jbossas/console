@@ -1,8 +1,8 @@
 package org.jboss.as.console.client.shared.runtime.jms;
 
 import com.google.gwt.core.client.Scheduler;
-import com.google.web.bindery.event.shared.EventBus;
 import com.google.inject.Inject;
+import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.View;
 import com.gwtplatform.mvp.client.annotations.NameToken;
@@ -26,6 +26,7 @@ import org.jboss.as.console.client.shared.subsys.messaging.AggregatedJMSModel;
 import org.jboss.as.console.client.shared.subsys.messaging.LoadJMSCmd;
 import org.jboss.as.console.client.shared.subsys.messaging.model.JMSEndpoint;
 import org.jboss.as.console.client.shared.subsys.messaging.model.Queue;
+import org.jboss.as.console.client.shared.subsys.messaging.model.Topic;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.dmr.client.ModelNode;
 
@@ -48,6 +49,7 @@ public class JMSMetricPresenter extends Presenter<JMSMetricPresenter.MyView, JMS
     private BeanFactory factory;
     private LoadJMSCmd loadJMSCmd;
     private Queue selectedQueue;
+
 
     @ProxyCodeSplit
     @NameToken(NameTokens.JmsMetricPresenter)
@@ -94,10 +96,10 @@ public class JMSMetricPresenter extends Presenter<JMSMetricPresenter.MyView, JMS
 
     }
 
-     public void setSelectedQueue(Queue queue) {
-         this.selectedQueue = queue;
-         if(queue!=null)
-             loadQueueMetrics();
+    public void setSelectedQueue(Queue queue) {
+        this.selectedQueue = queue;
+        if(queue!=null)
+            loadQueueMetrics();
 
     }
 
@@ -139,7 +141,7 @@ public class JMSMetricPresenter extends Presenter<JMSMetricPresenter.MyView, JMS
     }
 
     private void loadQueueMetrics() {
-          if(null==selectedQueue)
+        if(null==selectedQueue)
             throw new RuntimeException("Queue selection is null!");
 
         getView().clearSamples();
@@ -181,7 +183,7 @@ public class JMSMetricPresenter extends Presenter<JMSMetricPresenter.MyView, JMS
                     );
 
                     Metric queueConsumer = new Metric(
-                        result.get("consumer-count").asLong()
+                            result.get("consumer-count").asLong()
                     );
 
                     getView().setQueueInflight(queueInflight);
@@ -267,5 +269,61 @@ public class JMSMetricPresenter extends Presenter<JMSMetricPresenter.MyView, JMS
     @Override
     protected void revealInParent() {
         revealStrategy.revealInRuntimeParent(this);
+    }
+
+    public void onFlushQueue(final Queue queue) {
+        ModelNode operation = new ModelNode();
+        operation.get(ADDRESS).set(RuntimeBaseAddress.get());
+        operation.get(ADDRESS).add("subsystem", "messaging");
+        operation.get(ADDRESS).add("hornetq-server", "default");
+        operation.get(ADDRESS).add("jms-queue", queue.getName());
+
+        operation.get(OP).set("remove-messages");
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+            @Override
+            public void onSuccess(DMRResponse dmrResponse) {
+                ModelNode response = dmrResponse.get();
+                if(response.isFailure())
+                {
+                    Console.error("Failed to flush queue "+queue.getName());
+                }
+                else
+                {
+                    Console.info("Successfully flushed queue " + queue.getName());
+                }
+
+                refresh();
+            }
+        });
+
+    }
+
+    public void onFlushTopic(final JMSEndpoint topic) {
+        ModelNode operation = new ModelNode();
+        operation.get(ADDRESS).set(RuntimeBaseAddress.get());
+        operation.get(ADDRESS).add("subsystem", "messaging");
+        operation.get(ADDRESS).add("hornetq-server", "default");
+        operation.get(ADDRESS).add("jms-topic", topic.getName());
+
+        operation.get(OP).set("remove-messages");
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+            @Override
+            public void onSuccess(DMRResponse dmrResponse) {
+                ModelNode response = dmrResponse.get();
+                if(response.isFailure())
+                {
+                    Console.error("Failed to flush topic "+topic.getName());
+                }
+                else
+                {
+                    Console.info("Successfully flushed topic "+topic.getName());
+                }
+
+                refresh();
+            }
+        });
+
     }
 }

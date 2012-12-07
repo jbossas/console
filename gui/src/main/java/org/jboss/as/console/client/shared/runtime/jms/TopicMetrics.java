@@ -19,11 +19,14 @@ import org.jboss.as.console.client.shared.runtime.charts.Column;
 import org.jboss.as.console.client.shared.runtime.charts.NumberColumn;
 import org.jboss.as.console.client.shared.runtime.plain.PlainColumnView;
 import org.jboss.as.console.client.shared.subsys.messaging.model.JMSEndpoint;
+import org.jboss.as.console.client.shared.subsys.messaging.model.Queue;
+import org.jboss.as.console.client.shared.subsys.messaging.model.Topic;
 import org.jboss.as.console.client.shared.viewframework.builder.OneToOneLayout;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 import org.jboss.ballroom.client.widgets.tables.DefaultPager;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
 import org.jboss.ballroom.client.widgets.tools.ToolStrip;
+import org.jboss.ballroom.client.widgets.window.Feedback;
 import org.jboss.dmr.client.ModelDescriptionConstants;
 import org.jboss.dmr.client.ModelNode;
 
@@ -36,7 +39,7 @@ import java.util.List;
  */
 public class TopicMetrics {
 
-    
+
     private JMSMetricPresenter presenter;
     private CellTable<JMSEndpoint> topicTable;
     private ListDataProvider<JMSEndpoint> dataProvider;
@@ -103,7 +106,6 @@ public class TopicMetrics {
 
             }
         });
-        topicTable.getElement().setAttribute("style", "margin-top:15px;margin-bottom:0px;");
 
         // ----
 
@@ -115,7 +117,7 @@ public class TopicMetrics {
 
         String title = "In-Flight Messages";
 
-         final HelpSystem.AddressCallback addressCallback = new HelpSystem.AddressCallback() {
+        final HelpSystem.AddressCallback addressCallback = new HelpSystem.AddressCallback() {
             @Override
             public ModelNode getAddress() {
                 ModelNode address = new ModelNode();
@@ -170,8 +172,28 @@ public class TopicMetrics {
         DefaultPager pager = new DefaultPager();
         pager.setDisplay(topicTable);
 
+
+        ToolStrip topicTools = new ToolStrip();
+        topicTools.addToolButtonRight(new ToolButton("Flush", new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent clickEvent) {
+                SingleSelectionModel<JMSEndpoint> selectionModel =
+                        (SingleSelectionModel<JMSEndpoint>) topicTable.getSelectionModel();
+
+                final JMSEndpoint topic = selectionModel.getSelectedObject();
+                Feedback.confirm("Flush Topic", "Do you really want to flush topic " + topic.getName(),
+                        new Feedback.ConfirmationHandler() {
+                            @Override
+                            public void onConfirmation(boolean isConfirmed) {
+                                presenter.onFlushTopic(topic);
+                            }
+                        });
+            }
+        }));
+
         VerticalPanel tablePanel = new VerticalPanel();
         tablePanel.setStyleName("fill-layout-width");
+        tablePanel.add(topicTools);
         tablePanel.add(topicTable);
         tablePanel.add(pager);
 
