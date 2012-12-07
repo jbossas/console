@@ -47,7 +47,7 @@ public interface CacheContainer extends NamedEntity {
     @FormItem(defaultValue="",
             localLabel="subsys_infinispan_default_cache",
             required=true,
-            formItemTypeForEdit="TEXT",
+            formItemTypeForEdit="TEXT_BOX",
             formItemTypeForAdd="TEXT_BOX",
             order=2)
     String getDefaultCache();
