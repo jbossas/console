@@ -46,6 +46,9 @@ import org.jboss.as.console.client.domain.model.impl.ServerGroupLifecycleCallbac
 import org.jboss.as.console.client.domain.model.impl.ServerInstanceLifecycleCallback;
 import org.jboss.as.console.client.domain.runtime.DomainRuntimePresenter;
 import org.jboss.as.console.client.shared.BeanFactory;
+import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
+import org.jboss.as.console.client.shared.runtime.ext.Extension;
+import org.jboss.as.console.client.shared.runtime.ext.LoadExtensionCmd;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -67,6 +70,8 @@ import static org.jboss.as.console.client.domain.model.ServerFlag.RESTART_REQUIR
 public class TopologyPresenter extends
         Presenter<TopologyPresenter.MyView, TopologyPresenter.MyProxy>
 {
+    private LoadExtensionCmd loadExtensionCmd;
+
     @ProxyCodeSplit
     @NameToken(NameTokens.Topology)
     @UseGatekeeper(DomainGateKeeper.class)
@@ -79,6 +84,8 @@ public class TopologyPresenter extends
     {
         void setPresenter(TopologyPresenter presenter);
         void updateHosts(final SortedSet<ServerGroup> groups, final int hostIndex);
+
+        void setExtensions(List<Extension> extensions);
     }
 
 
@@ -97,13 +104,15 @@ public class TopologyPresenter extends
     public TopologyPresenter(final EventBus eventBus, final MyView view,
             final MyProxy proxy, final PlaceManager placeManager,
             final HostInformationStore hostInfoStore, final ServerGroupStore serverGroupStore,
-            final BeanFactory beanFactory)
+            final BeanFactory beanFactory, DispatchAsync dispatcher)
     {
         super(eventBus, view, proxy);
         this.placeManager = placeManager;
         this.serverGroupStore = serverGroupStore;
         this.hostInfoStore = hostInfoStore;
         this.beanFactory = beanFactory;
+
+        this.loadExtensionCmd = new LoadExtensionCmd(dispatcher, beanFactory);
 
         this.serverGroups = new HashMap<String, ServerGroup>();
         this.fake = false;
@@ -118,6 +127,7 @@ public class TopologyPresenter extends
     {
         super.onBind();
         getView().setPresenter(this);
+
     }
 
     @Override
@@ -125,6 +135,7 @@ public class TopologyPresenter extends
     {
         super.onReset();
         loadTopology();
+        loadExtensions();
     }
 
     @Override
@@ -364,4 +375,15 @@ public class TopologyPresenter extends
         }
         return hostInfos;
     }
+
+    public void loadExtensions()
+    {
+        loadExtensionCmd.execute(new SimpleCallback<List<Extension>>() {
+            @Override
+            public void onSuccess(List<Extension> extensions) {
+                getView().setExtensions(extensions);
+            }
+        });
+    }
+
 }

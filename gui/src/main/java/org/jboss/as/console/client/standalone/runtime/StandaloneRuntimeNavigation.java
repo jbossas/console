@@ -150,7 +150,6 @@ public class StandaloneRuntimeNavigation {
 
         platformGroup.addItem(new LHSNavTreeItem("JVM", NameTokens.VirtualMachine));
         platformGroup.addItem(new LHSNavTreeItem("Environment", NameTokens.EnvironmentPresenter));
-        platformGroup.addItem(new LHSNavTreeItem("Extensions", NameTokens.ExtensionsPresenter));
 
         metricLeaf.addItem(platformGroup);
 

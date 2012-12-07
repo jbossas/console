@@ -19,6 +19,7 @@
 package org.jboss.as.console.client.domain.topology;
 
 import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.GwtEvent;
@@ -37,7 +38,10 @@ import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.domain.model.ServerInstance;
 import org.jboss.as.console.client.domain.model.impl.LifecycleOperation;
+import org.jboss.as.console.client.shared.runtime.ext.Extension;
+import org.jboss.as.console.client.shared.runtime.ext.ExtensionView;
 import org.jboss.as.console.client.shared.viewframework.builder.SimpleLayout;
+import org.jboss.as.console.client.widgets.tabs.DefaultTabLayoutPanel;
 import org.jboss.ballroom.client.widgets.tables.DefaultPager;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
 import org.jboss.ballroom.client.widgets.tools.ToolStrip;
@@ -71,6 +75,7 @@ public class TopologyView extends SuspendableViewImpl implements TopologyPresent
     private HostsDisplay display;
     private LifecycleLinkListener lifecycleLinkListener;
     private FlowPanel container;
+    private ExtensionView extensions;
 
 
     @Override
@@ -92,8 +97,10 @@ public class TopologyView extends SuspendableViewImpl implements TopologyPresent
         SimpleLayout layout = new SimpleLayout()
                 .setTopLevelTools(topLevelTools)
                 .setTitle("Topology")
+                .setPlain(true)
                 .setHeadline("Hosts, groups and server instances")
                 .setDescription("An overview of all hosts, groups and server instances in the domain.");
+
         container = new FlowPanel();
         display = new HostsDisplay();
         HostsPager pager = new HostsPager();
@@ -101,7 +108,22 @@ public class TopologyView extends SuspendableViewImpl implements TopologyPresent
         pager.setPageSize(TopologyPresenter.VISIBLE_HOSTS_COLUMNS);
         container.add(pager);
         layout.addContent("topology", container);
-        return layout.build();
+
+        // ---------------------
+
+        extensions = new ExtensionView();
+
+        // ---------------------
+
+        DefaultTabLayoutPanel tabLayoutpanel = new DefaultTabLayoutPanel(40, Style.Unit.PX);
+        tabLayoutpanel.addStyleName("default-tabpanel");
+
+        tabLayoutpanel.add(layout.build(), "Topology", true);
+        tabLayoutpanel.add(extensions.asWidget(), "Extensions", true);
+
+        tabLayoutpanel.selectTab(0);
+
+        return tabLayoutpanel;
     }
 
     @Override
@@ -389,5 +411,10 @@ public class TopologyView extends SuspendableViewImpl implements TopologyPresent
         {
             container.fireEvent(event);
         }
+    }
+
+    @Override
+    public void setExtensions(List<Extension> result) {
+        extensions.setExtensions(result);
     }
 }

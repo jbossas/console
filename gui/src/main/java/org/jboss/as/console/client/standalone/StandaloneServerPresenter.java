@@ -1,9 +1,8 @@
 package org.jboss.as.console.client.standalone;
 
-import com.google.gwt.core.client.Scheduler;
-import com.google.web.bindery.event.shared.EventBus;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
+import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.View;
 import com.gwtplatform.mvp.client.annotations.NameToken;
@@ -23,11 +22,15 @@ import org.jboss.as.console.client.shared.dispatch.AsyncCommand;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
+import org.jboss.as.console.client.shared.runtime.ext.Extension;
+import org.jboss.as.console.client.shared.runtime.ext.LoadExtensionCmd;
 import org.jboss.as.console.client.shared.schedule.LongRunningTask;
 import org.jboss.as.console.client.shared.state.ReloadEvent;
 import org.jboss.as.console.client.shared.state.ReloadState;
 import org.jboss.as.console.client.standalone.runtime.StandaloneRuntimePresenter;
 import org.jboss.dmr.client.ModelNode;
+
+import java.util.List;
 
 import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 
@@ -42,6 +45,7 @@ public class StandaloneServerPresenter extends Presenter<StandaloneServerPresent
     private BeanFactory factory;
     private ReloadState reloadState;
     private BootstrapContext bootstrap;
+    private LoadExtensionCmd loadExtensionCmd;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.StandaloneServerPresenter)
@@ -53,6 +57,7 @@ public class StandaloneServerPresenter extends Presenter<StandaloneServerPresent
         void setPresenter(StandaloneServerPresenter presenter);
         void updateFrom(StandaloneServer server);
         void setReloadRequired(boolean reloadRequired);
+        void setExtensions(List<Extension> extensions);
     }
 
     @Inject
@@ -67,6 +72,7 @@ public class StandaloneServerPresenter extends Presenter<StandaloneServerPresent
         this.factory = factory;
         this.reloadState = reloadState;
         this.bootstrap = bootstrap;
+        this.loadExtensionCmd = new LoadExtensionCmd(dispatcher, factory);
     }
 
     @Override
@@ -115,6 +121,7 @@ public class StandaloneServerPresenter extends Presenter<StandaloneServerPresent
         }); */
 
         loadConfig();
+        loadExtensions();
 
         getView().setReloadRequired(reloadState.isStaleModel());
     }
@@ -199,6 +206,16 @@ public class StandaloneServerPresenter extends Presenter<StandaloneServerPresent
                     getView().setReloadRequired(reloadState.isStaleModel());
                     getEventBus().fireEvent(new ReloadEvent());
                 }
+            }
+        });
+    }
+
+    public void loadExtensions()
+    {
+        loadExtensionCmd.execute(new SimpleCallback<List<Extension>>() {
+            @Override
+            public void onSuccess(List<Extension> extensions) {
+                getView().setExtensions(extensions);
             }
         });
     }

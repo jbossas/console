@@ -2,6 +2,8 @@ package org.jboss.as.console.client.shared.runtime.ext;
 
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.user.cellview.client.Column;
+import com.google.gwt.user.client.ui.LayoutPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.ProvidesKey;
@@ -19,15 +21,13 @@ import java.util.List;
  * Created with IntelliJ IDEA. User: pehlh Date: 15.10.12 Time: 17:04 To change this template use File | Settings | File
  * Templates.
  */
-public class ExtensionView extends SuspendableViewImpl implements ExtensionPresenter.MyView
+public class ExtensionView
 {
-    private ExtensionPresenter presenter;
     private DefaultCellTable<Extension> extensionTable;
     private ListDataProvider<Extension> dataProvider;
     private Form<Extension> form;
 
-    @Override
-    public Widget createWidget()
+    public Widget asWidget()
     {
         extensionTable = new DefaultCellTable<Extension>(8, new ProvidesKey<Extension>() {
             @Override
@@ -77,6 +77,7 @@ public class ExtensionView extends SuspendableViewImpl implements ExtensionPrese
 
         MultipleToOneLayout layout = new MultipleToOneLayout()
                 .setTitle("Extensions")
+                .setPlain(true)
                 .setHeadline("Subsystem Extensions")
                 .setDescription("The list of installed extensions. Each extension reflects a subsystem.")
                 .setMaster(Console.MESSAGES.available("Extensions"), extensionTable)
@@ -85,13 +86,6 @@ public class ExtensionView extends SuspendableViewImpl implements ExtensionPrese
         return layout.build();
     }
 
-    @Override
-    public void setPresenter(final ExtensionPresenter presenter)
-    {
-        this.presenter = presenter;
-    }
-
-    @Override
     public void setExtensions(final List<Extension> extensions)
     {
         dataProvider.setList(extensions);

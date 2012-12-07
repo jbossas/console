@@ -21,12 +21,8 @@ public class EnvironmentView extends SuspendableViewImpl implements EnvironmentP
     public Widget createWidget()
     {
         properties = new EnvironmentProperties();
-        SimpleLayout layout = new SimpleLayout()
-                .setTitle("Environment")
-                .setHeadline("Environment Properties")
-                .setDescription("A map of names and values of all system properties.")
-                .addContent("Environment Properties", properties.asWidget());
-        return layout.build();
+
+        return properties.asWidget();
     }
 
     @Override

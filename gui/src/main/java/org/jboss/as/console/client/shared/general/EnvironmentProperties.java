@@ -14,6 +14,7 @@ import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.ColumnSortEvent;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -22,6 +23,7 @@ import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.ProvidesKey;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
+import org.jboss.as.console.client.shared.viewframework.builder.MultipleToOneLayout;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.TextAreaItem;
 import org.jboss.ballroom.client.widgets.forms.TextItem;
@@ -51,8 +53,6 @@ public class EnvironmentProperties {
                 return item.getKey();
             }
         });
-
-        propertyTable.getElement().setAttribute("style", "margin-top:15px;");
 
         propertyProvider = new ListDataProvider<PropertyRecord>();
         propertyProvider.addDataDisplay(propertyTable);
@@ -115,9 +115,6 @@ public class EnvironmentProperties {
 
         // --
 
-        VerticalPanel layout = new VerticalPanel();
-        layout.setStyleName("fill-layout-width");
-
 
         final TextBox filter = new TextBox();
         filter.setMaxLength(30);
@@ -140,22 +137,20 @@ public class EnvironmentProperties {
         });
 
         ToolStrip toolStrip = new ToolStrip();
-        final Label label = new Label("Filter: ");
+        final HTML label = new HTML("<i class='icon-filter'></i>&nbsp;Filter:&nbsp;");
         label.getElement().setAttribute("style", "padding-top:8px;");
-        toolStrip.addToolWidgetRight(label);
-        toolStrip.addToolWidgetRight(filter);
-        layout.add(toolStrip.asWidget());
+        toolStrip.addToolWidget(label);
+        toolStrip.addToolWidget(filter);
 
-        layout.add(propertyTable);
+        MultipleToOneLayout layout = new MultipleToOneLayout()
+                .setTitle("Environment")
+                .setHeadline("Environment Properties")
+                .setDescription("A map of names and values of all system properties.")
+                .setMaster("", propertyTable)
+                .setMasterTools(toolStrip.asWidget())
+                .addDetail(Console.CONSTANTS.common_label_attributes(), form.asWidget());
 
-        DefaultPager pager = new DefaultPager();
-        pager.setDisplay(propertyTable);
-
-        layout.add(pager);
-
-        layout.add(form.asWidget());
-
-        return layout;
+        return layout.build();
     }
 
     public void setProperties(List<PropertyRecord> environment) {
@@ -169,6 +164,7 @@ public class EnvironmentProperties {
 
         // Make sure the new values are properly sorted
         ColumnSortEvent.fire(propertyTable, propertyTable.getColumnSortList());
+
 
     }
 

@@ -64,7 +64,7 @@ class DomainRuntimeNavigation implements ServerSelectionEvent.ServerSelectionLis
         domainNavigation.getElement().setAttribute("aria-label", "Domain Tasks");
 
         LHSTreeSection domainLeaf = new LHSTreeSection("Domain", true);
-        domainLeaf.addItem(new LHSNavTreeItem("Topology", NameTokens.Topology));
+        domainLeaf.addItem(new LHSNavTreeItem("Overview", NameTokens.Topology));
         domainLeaf.addItem(new LHSNavTreeItem("Manage Deployments", NameTokens.DeploymentsPresenter));
 
         domainNavigation.addItem(domainLeaf);

@@ -69,7 +69,6 @@ import org.jboss.as.console.client.shared.model.SubsystemStore;
 import org.jboss.as.console.client.shared.runtime.RuntimeBaseAddress;
 import org.jboss.as.console.client.shared.runtime.ds.DataSourceMetricPresenter;
 import org.jboss.as.console.client.shared.runtime.env.EnvironmentPresenter;
-import org.jboss.as.console.client.shared.runtime.ext.ExtensionPresenter;
 import org.jboss.as.console.client.shared.runtime.jms.JMSMetricPresenter;
 import org.jboss.as.console.client.shared.runtime.jpa.JPAMetricPresenter;
 import org.jboss.as.console.client.shared.runtime.naming.JndiPresenter;
@@ -316,7 +315,6 @@ public interface CoreUI {
 
     AsyncProvider<EnvironmentPresenter> getEnvironmentPresenter();
 
-    AsyncProvider<ExtensionPresenter> getExtensionPresenter();
 
     AsyncProvider<JGroupsPresenter> JGroupsPresenter();
 
