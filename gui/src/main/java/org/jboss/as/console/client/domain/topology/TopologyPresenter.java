@@ -130,7 +130,6 @@ public class TopologyPresenter extends
         super.onBind();
         getView().setPresenter(this);
         getEventBus().addHandler(StaleModelEvent.TYPE, this);
-
     }
 
     @Override
