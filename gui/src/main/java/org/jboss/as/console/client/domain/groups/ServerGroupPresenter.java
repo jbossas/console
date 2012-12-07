@@ -186,6 +186,7 @@ public class ServerGroupPresenter
         serverGroupStore.loadServerGroups(new SimpleCallback<List<ServerGroupRecord>>() {
             @Override
             public void onSuccess(List<ServerGroupRecord> result) {
+
                 getView().setServerGroups(result);
             }
         });

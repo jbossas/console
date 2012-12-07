@@ -208,7 +208,8 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
         jvmEditor.clearValues();
         propertyEditor.clearValues();
 
-        serverGroupProvider.setList(groups);
+        serverGroupProvider.getList().clear();
+        serverGroupProvider.getList().addAll(groups);
 
         boolean matchedPreselection = false;
         for(ServerGroupRecord group : groups)
