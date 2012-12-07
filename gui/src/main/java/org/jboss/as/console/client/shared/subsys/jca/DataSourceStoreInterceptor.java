@@ -129,13 +129,7 @@ public class DataSourceStoreInterceptor implements DataSourceStore {
     @Override
     public void savePoolConfig(final boolean isXA, final String dsName, final Map<String, Object> changeset, final AsyncCallback<ResponseWrapper<Boolean>> simpleCallback) {
 
-        assertDisabled(dsName, isXA, new Command() {
-            @Override
-            public void execute() {
-                delegate.savePoolConfig(isXA, dsName, changeset, simpleCallback);
-            }
-        });
-
+        delegate.savePoolConfig(isXA, dsName, changeset, simpleCallback);
 
     }
 
