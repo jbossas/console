@@ -48,13 +48,13 @@ import org.jboss.ballroom.client.widgets.forms.ResolveExpressionEvent;
 public class MainLayoutPresenter
         extends Presenter<MainLayoutPresenter.MainLayoutView,
         MainLayoutPresenter.MainLayoutProxy>
-        implements ServerSelectionEvent.ServerSelectionListener, HostSelectionEvent.HostSelectionListener,
+        implements ServerSelectionEvent.ServerSelectionListener,
         ResolveExpressionEvent.ExpressionResolveListener {
 
     boolean revealDefault = true;
     private BootstrapContext bootstrap;
     private CurrentServerSelection serverSelection;
-    private CurrentHostSelection hostSelection;
+
     private ExpressionTool expressionTool;
     private InvocationMetrics metrics;
     private PlaceManager placeManager;
@@ -74,11 +74,10 @@ public class MainLayoutPresenter
             EventBus eventBus,
             MainLayoutView view,
             MainLayoutProxy proxy, BootstrapContext bootstrap,
-            CurrentServerSelection serverSelection, CurrentHostSelection hostSelection,
+            CurrentServerSelection serverSelection,
             ExpressionResolver resolver, InvocationMetrics metrics, PlaceManager placeManager) {
         super(eventBus, view, proxy);
         this.bootstrap = bootstrap;
-        this.hostSelection = hostSelection;
         this.serverSelection = serverSelection;
         this.expressionTool = new ExpressionTool(resolver);
         this.metrics = metrics;
@@ -89,17 +88,11 @@ public class MainLayoutPresenter
     @Override
     protected void onBind() {
         super.onBind();
-        getEventBus().addHandler(HostSelectionEvent.TYPE, this);
         getEventBus().addHandler(ServerSelectionEvent.TYPE, this);
         getEventBus().addHandler(ResolveExpressionEvent.TYPE, this);
 
         //getEventBus().addHandler(LockInteractionEvent.getType(), this);
 
-    }
-
-    @Override
-    public void onHostSelection(String hostName) {
-        hostSelection.setName(hostName);
     }
 
     @Override

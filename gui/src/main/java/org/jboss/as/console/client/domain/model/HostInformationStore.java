@@ -35,6 +35,7 @@ public interface HostInformationStore {
     void getServerConfigurations(String name, AsyncCallback<List<Server>> callback);
     void getServerConfiguration(String host, String server, final AsyncCallback<Server> callback);
     void getServerInstances(String host, AsyncCallback<List<ServerInstance>> callback);
+
     void updateServerInstance(String host, final Server handle, final AsyncCallback<ServerInstance> callback);
     void getVirtualMachines(String host, final AsyncCallback<List<String>> callback) ;
 

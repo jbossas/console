@@ -27,6 +27,7 @@ import com.google.gwt.event.shared.GwtEvent;
  * @author Heiko Braun
  * @date 2/7/11
  */
+@Deprecated
 public class HostSelectionEvent extends GwtEvent<HostSelectionEvent.HostSelectionListener> {
 
     public static final Type TYPE = new Type<HostSelectionListener>();

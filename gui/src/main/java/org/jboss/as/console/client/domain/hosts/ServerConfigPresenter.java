@@ -64,6 +64,9 @@ import org.jboss.as.console.client.shared.properties.NewPropertyWizard;
 import org.jboss.as.console.client.shared.properties.PropertyManagement;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.shared.state.CurrentHostSelection;
+import org.jboss.as.console.client.shared.state.DomainEntityManager;
+import org.jboss.as.console.client.shared.state.HostList;
+import org.jboss.as.console.client.shared.state.ServerConfigList;
 import org.jboss.as.console.client.shared.util.DMRUtil;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.as.console.client.widgets.forms.PropertyBinding;
@@ -84,14 +87,11 @@ import static org.jboss.dmr.client.ModelDescriptionConstants.*;
  * @date 3/3/11
  */
 public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyView, ServerConfigPresenter.MyProxy>
-        implements HostSelectionEvent.HostSelectionListener,
-        ServerWizardEvent.ServerWizardListener,
+        implements  ServerWizardEvent.ServerWizardListener,
         JvmManagement, PropertyManagement {
 
     private HostInformationStore hostInfoStore;
     private ServerGroupStore serverGroupStore;
-
-    private CurrentHostSelection hostSelection;
 
     private DefaultWindow window = null;
     private List<ServerGroupRecord> serverGroups;
@@ -103,6 +103,7 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
     private PlaceManager placeManager;
 
     private LoadSocketBindingsCmd loadSocketCmd;
+    private final DomainEntityManager domainManager;
 
 
     @ProxyCodeSplit
@@ -117,7 +118,7 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
         void setJvm(String reference, Jvm jvm);
         void setProperties(String reference, List<PropertyRecord> properties);
         void setPorts(String socketBinding, Server selectedRecord, List<SocketBinding> result);
-        void setConfigurations(String selectedHost, List<Server> servers, String selectedConfigName);
+        void setConfigurations(ServerConfigList serverList);
 
         void setGroups(List<ServerGroupRecord> result);
 
@@ -131,7 +132,7 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
             ServerGroupStore serverGroupStore,
             DispatchAsync dispatcher,
             ApplicationMetaData propertyMetaData, BeanFactory factory,
-            PlaceManager placeManager, CurrentHostSelection hostSelection) {
+            PlaceManager placeManager, DomainEntityManager domainManager) {
         super(eventBus, view, proxy);
 
         this.hostInfoStore = hostInfoStore;
@@ -140,7 +141,7 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
         this.propertyMetaData = propertyMetaData;
         this.factory = factory;
         this.placeManager = placeManager;
-        this.hostSelection = hostSelection;
+        this.domainManager = domainManager;
 
         this.loadSocketCmd = new LoadSocketBindingsCmd(
                 dispatcher, factory, propertyMetaData
@@ -151,7 +152,6 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
     protected void onBind() {
         super.onBind();
         getView().setPresenter(this);
-        getEventBus().addHandler(HostSelectionEvent.TYPE, this);
         getEventBus().addHandler(ServerWizardEvent.TYPE, this);
     }
 
@@ -184,27 +184,25 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
                 getView().updateSocketBindings(result);
 
                 // step2
-                loadServerConfigurations(null);
+                loadServerConfigurations();
             }
         });
     }
 
-    private void loadServerConfigurations(final String selectedConfigName) {
+    private void loadServerConfigurations() {
 
-
-        if(!hostSelection.isSet())
-        {
-            Log.debug("Host selection not set!");
-            return;
-        }
-
-        hostInfoStore.getServerConfigurations(hostSelection.getName(), new SimpleCallback<List<Server>>() {
+        domainManager.getHosts(new SimpleCallback<HostList>() {
             @Override
-            public void onSuccess(List<Server> result) {
-                getView().setConfigurations(hostSelection.getName(), result, selectedConfigName);
+            public void onSuccess(HostList hostList) {
+                domainManager.getServerConfigurations(hostList.getSelectedHost().getName(),
+                        new SimpleCallback<ServerConfigList>() {
+                            @Override
+                            public void onSuccess(ServerConfigList serverList) {
+                                getView().setConfigurations(serverList);
+                            }
+                        });
             }
         });
-
 
         serverGroupStore.loadServerGroups(new SimpleCallback<List<ServerGroupRecord>>() {
             @Override
@@ -219,19 +217,6 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
     @Override
     protected void revealInParent() {
         RevealContentEvent.fire(this, HostMgmtPresenter.TYPE_MainContent, this);
-    }
-
-    @Override
-    public void onHostSelection(final String hostName) {
-
-        if(isVisible()) {
-            Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
-                @Override
-                public void execute() {
-                    loadServerConfigurations(null);
-                }
-            });
-        }
     }
 
     public void launchNewConfigDialoge() {
@@ -284,7 +269,7 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
                         }
                     });
 
-                    loadServerConfigurations(newServerName);
+                    loadServerConfigurations();
 
                 } else {
                     closeDialoge();
@@ -326,7 +311,7 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
 
         ModelNode proto = new ModelNode();
         proto.get(OP).set(WRITE_ATTRIBUTE_OPERATION);
-        proto.get(ADDRESS).add("host", hostSelection.getName());
+        proto.get(ADDRESS).add("host", domainManager.getSelectedHost());
         proto.get(ADDRESS).add(ModelDescriptionConstants.SERVER_CONFIG, name);
 
         List<PropertyBinding> bindings = propertyMetaData.getBindingsForType(Server.class);
@@ -350,7 +335,7 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
                     Console.info(Console.MESSAGES.modified("Server Configuration ") +name);
                 }
 
-                loadServerConfigurations(name);
+                loadServerConfigurations();
             }
         });
 
@@ -361,7 +346,7 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
 
         // check if instance exist
         ModelNode operation = new ModelNode();
-        operation.get(ADDRESS).add("host", hostSelection.getName());
+        operation.get(ADDRESS).add("host", domainManager.getSelectedHost());
         operation.get(ADDRESS).add("server", server.getName());
         operation.get(OP).set(READ_RESOURCE_OPERATION);
 
@@ -393,7 +378,7 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
 
     private void performDeleteOperation(final Server server) {
 
-        hostInfoStore.deleteServerConfig(hostSelection.getName(), server, new AsyncCallback<Boolean>() {
+        hostInfoStore.deleteServerConfig(domainManager.getSelectedHost(), server, new AsyncCallback<Boolean>() {
             @Override
             public void onFailure(Throwable caught) {
                 Console.getMessageCenter().notify(
@@ -407,7 +392,7 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
                 {
                     Console.info(Console.MESSAGES.deleted("Server Configuration ")+server.getName());
 
-                    loadServerConfigurations(null);
+                    loadServerConfigurations();
                 }
                 else
                 {
@@ -420,14 +405,14 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
     }
 
     public String getSelectedHost() {
-        return hostSelection.getName();
+        return domainManager.getSelectedHost();
     }
 
 
     @Override
     public void onCreateJvm(String reference, Jvm jvm) {
         ModelNode address = new ModelNode();
-        address.add("host", hostSelection.getName());
+        address.add("host", domainManager.getSelectedHost());
         address.add("server-config", reference);
         address.add(JVM, jvm.getName());
         final String selectedConfigName = reference;
@@ -436,7 +421,7 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
         cmd.execute(jvm, new SimpleCallback<Boolean>() {
             @Override
             public void onSuccess(Boolean result) {
-                loadServerConfigurations(selectedConfigName);
+                loadServerConfigurations();
             }
         });
     }
@@ -445,7 +430,7 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
     public void onDeleteJvm(String reference, Jvm jvm) {
 
         ModelNode address = new ModelNode();
-        address.add("host", hostSelection.getName());
+        address.add("host", domainManager.getSelectedHost());
         address.add("server-config", reference);
         address.add(JVM, jvm.getName());
         final String selectedConfigName = reference;
@@ -454,7 +439,7 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
         cmd.execute(new SimpleCallback<Boolean>() {
             @Override
             public void onSuccess(Boolean result) {
-                loadServerConfigurations(selectedConfigName);
+                loadServerConfigurations();
             }
         });
 
@@ -466,7 +451,7 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
         if(changedValues.size()>0)
         {
             ModelNode address = new ModelNode();
-            address.add("host", hostSelection.getName());
+            address.add("host", domainManager.getSelectedHost());
             address.add("server-config", reference);
             address.add(JVM, jvmName);
             final String selectedConfigName = reference;
@@ -475,7 +460,7 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
             cmd.execute(changedValues, new SimpleCallback<Boolean>() {
                 @Override
                 public void onSuccess(Boolean result) {
-                    loadServerConfigurations(selectedConfigName);
+                    loadServerConfigurations();
                 }
             });
         }
@@ -489,7 +474,7 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
         }
 
         ModelNode address = new ModelNode();
-        address.add("host", hostSelection.getName());
+        address.add("host", domainManager.getSelectedHost());
         address.add("server-config", reference);
         address.add("system-property", prop.getKey());
         final String selectedConfigName = reference;
@@ -498,7 +483,7 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
         cmd.execute(prop, new SimpleCallback<Boolean>() {
             @Override
             public void onSuccess(Boolean result) {
-                loadServerConfigurations(selectedConfigName);
+                loadServerConfigurations();
             }
         });
     }
@@ -507,7 +492,7 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
     public void onDeleteProperty(String reference, final PropertyRecord prop) {
 
         ModelNode address = new ModelNode();
-        address.add("host", hostSelection.getName());
+        address.add("host", domainManager.getSelectedHost());
         address.add("server-config", reference);
         address.add("system-property", prop.getKey());
         final String selectedConfigName = reference;
@@ -516,7 +501,7 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
         cmd.execute(prop, new SimpleCallback<Boolean>() {
             @Override
             public void onSuccess(Boolean result) {
-                loadServerConfigurations(selectedConfigName);
+                loadServerConfigurations();
             }
         });
     }
@@ -570,7 +555,7 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
     }
 
     public void loadJVMConfiguration(final Server server) {
-        hostInfoStore.loadJVMConfiguration(hostSelection.getName(), server, new SimpleCallback<Jvm>() {
+        hostInfoStore.loadJVMConfiguration(domainManager.getSelectedHost(), server, new SimpleCallback<Jvm>() {
             @Override
             public void onSuccess(Jvm jvm) {
 
@@ -580,7 +565,7 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
     }
 
     public void loadProperties(final Server server) {
-        hostInfoStore.loadProperties(hostSelection.getName(), server, new SimpleCallback<List<PropertyRecord>>() {
+        hostInfoStore.loadProperties(domainManager.getSelectedHost(), server, new SimpleCallback<List<PropertyRecord>>() {
             @Override
             public void onSuccess(List<PropertyRecord> properties) {
                 getView().setProperties(server.getName(), properties);
@@ -600,7 +585,7 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
             public void onSuccess(List<Host> result) {
 
                 window.trapWidget(
-                        new CopyServerWizard(ServerConfigPresenter.this, orig, result, hostSelection.getName()).asWidget()
+                        new CopyServerWizard(ServerConfigPresenter.this, orig, result, domainManager.getSelectedHost()).asWidget()
                 );
 
                 window.setGlassEnabled(true);
@@ -613,12 +598,10 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
     public void onSaveCopy(final String targetHost, final Server original, final Server newServer) {
         window.hide();
 
-        assert hostSelection.isSet();
-
         final ModelNode operation = new ModelNode();
         operation.get(OP).set(READ_RESOURCE_OPERATION);
         operation.get(ADDRESS).setEmptyList();
-        operation.get(ADDRESS).add("host", hostSelection.getName());
+        operation.get(ADDRESS).add("host", domainManager.getSelectedHost());
         operation.get(ADDRESS).add("server-config", original.getName());
         operation.get(RECURSIVE).set(true);
 
@@ -665,27 +648,23 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
                     compositeOp.get(STEPS).set(steps);
 
                     dispatcher.execute(new DMRAction(compositeOp), new SimpleCallback<DMRResponse>() {
-                       @Override
-                       public void onSuccess(DMRResponse dmrResponse) {
-                           ModelNode response = dmrResponse.get();
+                        @Override
+                        public void onSuccess(DMRResponse dmrResponse) {
+                            ModelNode response = dmrResponse.get();
 
-                           if(response.isFailure())
-                           {
-                               Console.error("Failed to copy server-config", response.getFailureDescription());
-                           }
-                           else
-                           {
-                               Console.info("Successfully copied server-config '"+newServer.getName()+"'");
-                           }
+                            if(response.isFailure())
+                            {
+                                Console.error("Failed to copy server-config", response.getFailureDescription());
+                            }
+                            else
+                            {
+                                Console.info("Successfully copied server-config '"+newServer.getName()+"'");
+                            }
 
-                           loadServerConfigurations(null);
+                            loadServerConfigurations();
 
-                           if(!hostSelection.getName().equals(targetHost))
-                           {
-                               //TODO: hostSelection.setName(targetHost);
-                           }
-                       }
-                   });
+                        }
+                    });
 
                 }
 

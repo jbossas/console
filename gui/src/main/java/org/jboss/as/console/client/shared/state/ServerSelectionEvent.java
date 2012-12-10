@@ -31,6 +31,7 @@ import org.jboss.as.console.client.domain.model.ServerInstance;
  * @author Heiko Braun
  * @date 2/7/11
  */
+@Deprecated
 public class ServerSelectionEvent extends GwtEvent<ServerSelectionEvent.ServerSelectionListener> {
 
     public static final Type TYPE = new Type<ServerSelectionListener>();

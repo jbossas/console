@@ -45,6 +45,8 @@ import org.jboss.as.console.client.domain.model.Host;
 import org.jboss.as.console.client.domain.model.HostInformationStore;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.shared.state.CurrentHostSelection;
+import org.jboss.as.console.client.shared.state.DomainEntityManager;
+import org.jboss.as.console.client.shared.state.HostList;
 import org.jboss.ballroom.client.layout.LHSHighlightEvent;
 
 import java.util.List;
@@ -59,7 +61,7 @@ public class HostMgmtPresenter
     private final PlaceManager placeManager;
 
     private HostInformationStore hostInfoStore;
-    private CurrentHostSelection hostSelection;
+
     private boolean hasBeenRevealed;
 
     @ContentSlot
@@ -67,6 +69,7 @@ public class HostMgmtPresenter
     private BootstrapContext bootstrap;
     private String lastSubPlace;
     private Header header;
+    private final DomainEntityManager domainManager;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.HostMgmtPresenter)
@@ -75,22 +78,22 @@ public class HostMgmtPresenter
 
     public interface MyView extends View {
         void setPresenter(HostMgmtPresenter presenter);
-        void updateHosts(List<Host> hosts);
+        void updateHosts(HostList hosts);
     }
 
     @Inject
     public HostMgmtPresenter(
             EventBus eventBus, MyView view, MyProxy proxy,
             PlaceManager placeManager,
-            HostInformationStore hostInfoStore, CurrentHostSelection hostSelection,
-            BootstrapContext bootstrap, Header header) {
+            HostInformationStore hostInfoStore,
+            BootstrapContext bootstrap, Header header, DomainEntityManager domainManager) {
         super(eventBus, view, proxy);
 
         this.placeManager = placeManager;
         this.hostInfoStore = hostInfoStore;
-        this.hostSelection = hostSelection;
         this.bootstrap = bootstrap;
         this.header = header;
+        this.domainManager = domainManager;
     }
 
     @Override
@@ -104,14 +107,10 @@ public class HostMgmtPresenter
         super.onReset();
 
         // first thing: update host data
-        hostInfoStore.getHosts(new SimpleCallback<List<Host>>() {
+        domainManager.getHosts(new SimpleCallback<HostList>() {
             @Override
-            public void onSuccess(List<Host> hosts) {
-
-                if(!hostSelection.isSet())
-                    selectDefaultHost(hosts);
-
-                getView().updateHosts(hosts);
+            public void onSuccess(HostList hostList) {
+                getView().updateHosts(hostList);
                 loadViews();
             }
         });
@@ -155,13 +154,6 @@ public class HostMgmtPresenter
             hasBeenRevealed = true;
 
         }
-    }
-
-    private void selectDefaultHost(List<Host> hosts) {
-        String name = hosts.get(0).getName();
-        Log.debug("Default host selection: " + name);
-        hostSelection.setName(name);
-        getEventBus().fireEvent(new HostSelectionEvent(name));
     }
 
     @Override

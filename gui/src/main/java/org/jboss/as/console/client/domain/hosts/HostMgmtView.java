@@ -24,6 +24,7 @@ import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.domain.model.Host;
+import org.jboss.as.console.client.shared.state.HostList;
 
 import java.util.List;
 
@@ -77,7 +78,7 @@ public class HostMgmtView extends SuspendableViewImpl implements HostMgmtPresent
     }
 
     @Override
-    public void updateHosts(List<Host> hosts) {
+    public void updateHosts(HostList hosts) {
         lhsNavigation.setHosts(hosts);
     }
 }

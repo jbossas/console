@@ -8,9 +8,11 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.domain.events.HostSelectionEvent;
-import org.jboss.as.console.client.shared.state.CurrentHostSelection;
+import org.jboss.as.console.client.domain.model.Host;
+import org.jboss.as.console.client.shared.state.HostList;
 import org.jboss.ballroom.client.widgets.forms.ComboBox;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -59,31 +61,24 @@ public class HostSelector {
         return layout;
     }
 
-    public void setHosts(List<String> hostNames)
+    public void setHosts(HostList hostList)
     {
 
+        List<String> hostNames = new ArrayList<String>();
+        int selectedIndex = 0;
+        int i=0;
+        for(Host h : hostList.getHosts())
+        {
+            hostNames.add(h.getName());
+            if(h.getName().equals(hostList.getSelectedHost().getName()))
+                selectedIndex = i;
+            i++;
+        }
 
         hosts.clearSelection();
         hosts.setValues(hostNames);
 
-        CurrentHostSelection hostSelection = Console.MODULES.getCurrentSelectedHost();
-        if(hostSelection.isSet())
-        {
-            int i = 0;
-            for(String name : hostNames)
-            {
-                if(name.equals(hostSelection.getName()))
-                {
-                    hosts.setItemSelected(i, true);
-                    break;
-                }
-                i++;
-            }
-        }
-        else {
-            if(!hostNames.isEmpty())
-                hosts.setItemSelected(0, true);
-        }
+        hosts.setItemSelected(selectedIndex, true);
 
     }
 }

@@ -134,6 +134,7 @@ import org.jboss.as.console.client.shared.runtime.ws.WebServiceRuntimePresenter;
 import org.jboss.as.console.client.shared.runtime.ws.WebServiceRuntimeView;
 import org.jboss.as.console.client.shared.state.CurrentHostSelection;
 import org.jboss.as.console.client.shared.state.CurrentServerSelection;
+import org.jboss.as.console.client.shared.state.DomainEntityManager;
 import org.jboss.as.console.client.shared.state.ReloadState;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.configadmin.ConfigAdminPresenter;
@@ -289,6 +290,8 @@ public class CoreUIModule extends AbstractPresenterModule {
         bind(BootstrapContext.class).in(Singleton.class);
         bind(ApplicationProperties.class).to(BootstrapContext.class).in(Singleton.class);
         bind(ApplicationMetaData.class).in(Singleton.class);
+
+        bind(DomainEntityManager.class).in(Singleton.class);
 
         // sign in
         bindPresenter(SignInPagePresenter.class, SignInPagePresenter.MyView.class,

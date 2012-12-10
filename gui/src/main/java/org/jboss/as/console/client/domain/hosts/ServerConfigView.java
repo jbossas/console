@@ -38,6 +38,7 @@ import org.jboss.as.console.client.shared.jvm.Jvm;
 import org.jboss.as.console.client.shared.jvm.JvmEditor;
 import org.jboss.as.console.client.shared.properties.PropertyEditor;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
+import org.jboss.as.console.client.shared.state.ServerConfigList;
 import org.jboss.as.console.client.shared.viewframework.builder.MultipleToOneLayout;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
@@ -234,27 +235,14 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
     }
 
     @Override
-    public void setConfigurations(String selectedHost, List<Server> servers, String selectedConfigName) {
+    public void setConfigurations(ServerConfigList serverList) {
         serverConfigProvider.getList().clear();
-        serverConfigProvider.getList().addAll(servers);
+        serverConfigProvider.getList().addAll(serverList.getServer());
         serverConfigProvider.refresh();
 
         jvmEditor.clearValues();
         propertyEditor.clearValues();
 
-        /*if(!servers.isEmpty())
-        {
-            if(preselection!=null){
-                getSelectionModel().setSelected(findSelectedServer(servers, preselection), true);
-            }
-            else if(selectedConfigName == null || selectedConfigName.equals("")) {
-                serverConfigTable.selectDefaultEntity();
-            }
-            else {
-                getSelectionModel().setSelected(findSelectedServer(servers, selectedConfigName), true);
-            }
-        }
-        */
         serverConfigTable.selectDefaultEntity();
 
     }
