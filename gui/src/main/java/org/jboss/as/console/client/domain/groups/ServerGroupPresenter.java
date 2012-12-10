@@ -211,10 +211,11 @@ public class ServerGroupPresenter
             public void onSuccess(Boolean wasSuccessful) {
                 if (wasSuccessful) {
                     Console.info(Console.MESSAGES.deleted(group.getGroupName()));
-                    getEventBus().fireEvent(new StaleModelEvent(StaleModelEvent.SERVER_GROUPS));
                 } else {
                     Console.error(Console.MESSAGES.deletionFailed(group.getGroupName()));
                 }
+
+                staleModel();
 
                 loadServerGroups();
             }
@@ -232,14 +233,13 @@ public class ServerGroupPresenter
                 if (success) {
 
                     Console.info(Console.MESSAGES.added(newGroup.getGroupName()));
-
-                    getEventBus().fireEvent(new StaleModelEvent(StaleModelEvent.SERVER_GROUPS));
-
                     loadServerGroups();
 
                 } else {
                     Console.error(Console.MESSAGES.addingFailed(newGroup.getGroupName()));
                 }
+
+                staleModel();
 
             }
         });

@@ -57,8 +57,6 @@ import org.jboss.as.console.client.core.settings.SettingsPresenterWidget;
 import org.jboss.as.console.client.core.settings.SettingsView;
 import org.jboss.as.console.client.domain.DomainPresenter;
 import org.jboss.as.console.client.domain.DomainView;
-import org.jboss.as.console.client.domain.groups.ServerGroupMgmtPresenter;
-import org.jboss.as.console.client.domain.groups.ServerGroupMgmtView;
 import org.jboss.as.console.client.domain.groups.ServerGroupPresenter;
 import org.jboss.as.console.client.domain.groups.ServerGroupView;
 import org.jboss.as.console.client.domain.groups.deployment.ContentRepositoryView;
@@ -395,12 +393,6 @@ public class CoreUIModule extends AbstractPresenterModule {
 
         bind(CurrentProfileSelection.class).in(Singleton.class);
         bind(ReloadState.class).in(Singleton.class);
-
-        // domain/server-group
-        bindPresenter(ServerGroupMgmtPresenter.class,
-                ServerGroupMgmtPresenter.MyView.class,
-                ServerGroupMgmtView.class,
-                ServerGroupMgmtPresenter.MyProxy.class);
 
         // domain/server-group
         bindPresenter(ServerGroupPresenter.class,

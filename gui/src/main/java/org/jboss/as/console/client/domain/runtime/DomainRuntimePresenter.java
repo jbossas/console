@@ -227,12 +227,12 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
                 || StaleModelEvent.SERVER_CONFIGURATIONS.equals(modelName))
         {
 
-            /*Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+            Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
                 @Override
                 public void execute() {
                     loadHostData();
                 }
-            });*/
+            });
 
         }
     }

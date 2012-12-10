@@ -41,7 +41,6 @@ import org.jboss.as.console.client.core.message.MessageCenterView;
 import org.jboss.as.console.client.core.settings.SettingsPresenter;
 import org.jboss.as.console.client.core.settings.SettingsPresenterWidget;
 import org.jboss.as.console.client.domain.DomainPresenter;
-import org.jboss.as.console.client.domain.groups.ServerGroupMgmtPresenter;
 import org.jboss.as.console.client.domain.groups.ServerGroupPresenter;
 import org.jboss.as.console.client.domain.groups.deployment.DeploymentsPresenter;
 import org.jboss.as.console.client.domain.hosts.HostMgmtPresenter;
@@ -216,8 +215,6 @@ public interface CoreUI {
     AsyncProvider<ProfileMgmtPresenter> getProfileMgmtPresenter();
     CurrentProfileSelection getCurrentSelectedProfile();
     ReloadState getReloadState();
-
-    AsyncProvider<ServerGroupMgmtPresenter> getServerGroupMgmtPresenter();
 
     AsyncProvider<DomainPresenter> getProfileToolPresenter();
     AsyncProvider<TopologyPresenter> getServerGroupHostMatrixPresenter();

@@ -162,11 +162,6 @@ public class NameTokens {
         return ServerGroupPresenter;
     }
 
-    public static final String ServerGroupMgmtPresenter = "_server-groups";
-    public static String getServerGroupMgmtPresenter() {
-        return ServerGroupMgmtPresenter;
-    }
-
     public static final String DeploymentsPresenter  = "domain-deployments";
     public static String getDeploymentsPresenter() {
         return DeploymentsPresenter;

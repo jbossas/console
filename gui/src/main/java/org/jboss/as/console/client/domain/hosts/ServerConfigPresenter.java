@@ -257,13 +257,6 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
 
                     Console.info(Console.MESSAGES.added("Server Configuration ") + newServer.getName());
 
-                    Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
-                        @Override
-                        public void execute() {
-                            getEventBus().fireEvent(new StaleModelEvent(StaleModelEvent.SERVER_CONFIGURATIONS));
-                        }
-                    });
-
                     loadServerConfigurations();
 
                 } else {
