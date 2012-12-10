@@ -707,8 +707,6 @@ public class HostInfoStoreImpl implements HostInformationStore {
             public void onSuccess(DMRResponse result) {
                 ModelNode response = result.get();
                 Boolean wasSuccessful = !response.isFailure();
-                if(!wasSuccessful)
-                    Log.error("Failed to delete server config: "+response.getFailureDescription());
                 callback.onSuccess(wasSuccessful);
             }
         });

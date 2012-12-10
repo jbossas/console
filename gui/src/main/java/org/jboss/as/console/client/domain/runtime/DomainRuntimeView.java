@@ -91,4 +91,8 @@ public class DomainRuntimeView extends ViewImpl implements DomainRuntimePresente
         lhsNavigation.setSubsystems(result);
     }
 
+    @Override
+    public void resetHostSelection() {
+        lhsNavigation.resetHostSelection();
+    }
 }

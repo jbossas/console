@@ -23,6 +23,10 @@ public class ServerPicker implements HostServerManagement {
     private HostServerTable hostServerTable;
     private LoadServerCmd loadServerCmd;
 
+    public void resetHostSelection() {
+        hostServerTable.clearSelection();
+    }
+
     static class Preselection {
         private String host;
         private ServerInstance server;

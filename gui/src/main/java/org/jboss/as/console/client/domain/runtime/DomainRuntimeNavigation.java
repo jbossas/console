@@ -207,4 +207,9 @@ class DomainRuntimeNavigation implements ServerSelectionEvent.ServerSelectionLis
             serverPicker.setPreselection(hostName, server);
         }
     }
+
+    public void resetHostSelection() {
+        serverPicker.setPreselection(null, null);
+        serverPicker.resetHostSelection();
+    }
 }

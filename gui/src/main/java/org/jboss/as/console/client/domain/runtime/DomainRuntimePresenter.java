@@ -74,6 +74,8 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
         void setSubsystems(List<SubsystemRecord> result);
 
         ServerSelectionEvent.ServerSelectionListener getLhsNavigation();
+
+        void resetHostSelection();
     }
 
     @Inject
@@ -253,6 +255,9 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
             // clear current selection
             serverSelection.setHost(null);
             serverSelection.setServer(null);
+
+            // clear views
+            getView().resetHostSelection();
 
             Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
                 @Override

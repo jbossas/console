@@ -335,7 +335,7 @@ public class HostServerTable {
 
         if(servers.isEmpty())
         {
-            currentDisplayedValue.setText("");
+            currentDisplayedValue.setText("No Server");
         }
     }
 
