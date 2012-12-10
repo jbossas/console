@@ -247,14 +247,19 @@ public class HelpSystem {
                 for(Property child : children )
                 {
                     ModelNode childDesc = child.getValue();
-                    for (Property modDescProp : childDesc.get(MODEL_DESCRIPTION).asPropertyList()) {
+                    ModelNode desc = childDesc.get(MODEL_DESCRIPTION);
 
-                        matchSubElements(childDesc.get(MODEL_DESCRIPTION, modDescProp.getName()), fieldNames, fields);
+                    if(desc.isDefined()) // TOOD: How can this happen?
+                    {
+                        for (Property modDescProp : desc.asPropertyList()) {
 
-                        // exit early
-                        if(fieldNames.isEmpty())
-                            return;
+                            matchSubElements(childDesc.get(MODEL_DESCRIPTION, modDescProp.getName()), fieldNames, fields);
 
+                            // exit early
+                            if(fieldNames.isEmpty())
+                                return;
+
+                        }
                     }
                 }
             }
