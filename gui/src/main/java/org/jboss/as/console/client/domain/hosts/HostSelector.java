@@ -7,8 +7,8 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
-import org.jboss.as.console.client.domain.events.HostSelectionEvent;
 import org.jboss.as.console.client.domain.model.Host;
+import org.jboss.as.console.client.shared.state.GlobalHostSelection;
 import org.jboss.as.console.client.shared.state.HostList;
 import org.jboss.ballroom.client.widgets.forms.ComboBox;
 
@@ -41,7 +41,7 @@ public class HostSelector {
                                 @Override
                                 public void execute() {
                                     Console.getEventBus().fireEvent(
-                                            new HostSelectionEvent(event.getValue())
+                                            new GlobalHostSelection(event.getValue())
                                     );
                                 }
                             });

@@ -1,10 +1,8 @@
 package org.jboss.as.console.client.analytics;
 
-import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.core.client.GWT;
 import com.google.inject.Provider;
 import com.gwtplatform.mvp.client.googleanalytics.GoogleAnalytics;
-import com.gwtplatform.mvp.client.googleanalytics.GoogleAnalyticsImpl;
 import org.jboss.as.console.client.shared.Preferences;
 
 /**

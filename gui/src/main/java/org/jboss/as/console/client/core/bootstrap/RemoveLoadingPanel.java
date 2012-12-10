@@ -3,7 +3,6 @@ package org.jboss.as.console.client.core.bootstrap;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
-import org.jboss.as.console.client.shared.dispatch.AsyncCommand;
 
 import java.util.Iterator;
 

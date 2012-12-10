@@ -1,7 +1,7 @@
 package org.jboss.as.console.client;
 
-import com.google.web.bindery.autobean.shared.AutoBeanFactory;
 import com.google.gwt.core.client.GWT;
+import com.google.web.bindery.autobean.shared.AutoBeanFactory;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import org.jboss.as.console.client.shared.BeanFactory;

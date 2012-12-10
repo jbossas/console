@@ -29,7 +29,6 @@ import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.general.HeapBoxItem;
 import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.shared.jvm.Jvm;
-import org.jboss.as.console.client.shared.state.CurrentHostSelection;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.FormValidation;
 import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
@@ -42,11 +41,11 @@ import org.jboss.dmr.client.ModelNode;
  */
 public class NewHostJvmWizard {
     private HostJVMPresenter presenter;
-    private CurrentHostSelection currentHost;
+    private final String hostName;
 
-    public NewHostJvmWizard(HostJVMPresenter presenter, CurrentHostSelection currentHost) {
+    public NewHostJvmWizard(HostJVMPresenter presenter, String hostName ) {
         this.presenter = presenter;
-        this.currentHost = currentHost;
+        this.hostName = hostName;
     }
 
     Widget asWidget() {
@@ -96,7 +95,7 @@ public class NewHostJvmWizard {
                         FormValidation validation = form.validate();
                         if(!validation.hasErrors())
                         {
-                            presenter.onCreateJvm(currentHost.getName(), form.getUpdatedEntity());
+                            presenter.onCreateJvm(hostName, form.getUpdatedEntity());
                         }
                     }
                 },

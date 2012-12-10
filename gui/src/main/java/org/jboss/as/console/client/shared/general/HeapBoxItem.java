@@ -5,7 +5,6 @@ import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.ballroom.client.widgets.forms.SuggestBoxItem;
-import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
 
 /**
  * @author Heiko Braun

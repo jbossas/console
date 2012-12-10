@@ -37,7 +37,6 @@ import org.jboss.ballroom.client.widgets.window.DialogueOptions;
 import org.jboss.ballroom.client.widgets.window.WindowContentBuilder;
 import org.jboss.dmr.client.ModelNode;
 
-import java.util.Collections;
 import java.util.List;
 
 /**

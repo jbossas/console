@@ -7,7 +7,6 @@ import org.jboss.as.console.client.domain.model.ProfileRecord;
 import org.jboss.as.console.client.domain.model.ProfileStore;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.domain.profiles.CurrentProfileSelection;
-import org.jboss.as.console.client.shared.dispatch.AsyncCommand;
 
 import java.util.Iterator;
 import java.util.List;

@@ -3,7 +3,6 @@ package org.jboss.as.console.client.core.bootstrap;
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
-import org.jboss.as.console.client.shared.dispatch.AsyncCommand;
 
 import java.util.Iterator;
 import java.util.LinkedList;

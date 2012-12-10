@@ -22,10 +22,10 @@ package org.jboss.as.console.client.shared.subsys.infinispan;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.subsys.infinispan.model.LocalCache;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
-
-import javax.inject.Inject;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.FormAdapter;
+
+import javax.inject.Inject;
 
 /**
  * Only difference between local and non-local cache view is that non-local caches require the mode

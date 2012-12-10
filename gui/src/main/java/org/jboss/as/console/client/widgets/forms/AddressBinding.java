@@ -2,8 +2,6 @@ package org.jboss.as.console.client.widgets.forms;
 
 import org.jboss.dmr.client.ModelNode;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.NoSuchElementException;

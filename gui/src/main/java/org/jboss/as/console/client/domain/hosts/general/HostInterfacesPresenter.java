@@ -19,8 +19,8 @@
 
 package org.jboss.as.console.client.domain.hosts.general;
 
-import com.google.web.bindery.event.shared.EventBus;
 import com.google.inject.Inject;
+import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.View;
 import com.gwtplatform.mvp.client.annotations.NameToken;
@@ -32,7 +32,6 @@ import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import org.jboss.as.console.client.core.DomainGateKeeper;
 import org.jboss.as.console.client.core.NameTokens;
-import org.jboss.as.console.client.domain.events.HostSelectionEvent;
 import org.jboss.as.console.client.domain.hosts.HostMgmtPresenter;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.shared.BeanFactory;
@@ -42,6 +41,7 @@ import org.jboss.as.console.client.shared.general.InterfaceManagementImpl;
 import org.jboss.as.console.client.shared.general.model.Interface;
 import org.jboss.as.console.client.shared.general.model.LoadInterfacesCmd;
 import org.jboss.as.console.client.shared.state.CurrentHostSelection;
+import org.jboss.as.console.client.shared.state.HostSelectionChanged;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.as.console.client.widgets.forms.EntityAdapter;
 import org.jboss.dmr.client.ModelNode;
@@ -53,7 +53,7 @@ import java.util.List;
  * @date 5/18/11
  */
 public class HostInterfacesPresenter extends Presenter<HostInterfacesPresenter.MyView, HostInterfacesPresenter.MyProxy>
-    implements HostSelectionEvent.HostSelectionListener, InterfaceManagement.Callback {
+    implements InterfaceManagement.Callback, HostSelectionChanged.ChangeListener {
 
     private final PlaceManager placeManager;
     private LoadInterfacesCmd loadInterfacesCmd;
@@ -101,7 +101,7 @@ public class HostInterfacesPresenter extends Presenter<HostInterfacesPresenter.M
     }
 
     @Override
-    public void onHostSelection(String hostName) {
+    public void onHostSelectionChanged() {
         if(isVisible())
             loadInterfaces();
     }
@@ -111,8 +111,7 @@ public class HostInterfacesPresenter extends Presenter<HostInterfacesPresenter.M
         super.onBind();
         getView().setPresenter(this);
         getView().setDelegate(this.delegate);
-        getEventBus().addHandler(HostSelectionEvent.TYPE, this);
-
+        getEventBus().addHandler(HostSelectionChanged.TYPE, this);
     }
 
 

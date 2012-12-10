@@ -37,6 +37,7 @@ import org.jboss.as.console.client.shared.deployment.model.DeployedPersistenceUn
 import org.jboss.as.console.client.shared.deployment.model.DeployedServlet;
 import org.jboss.as.console.client.shared.deployment.model.DeploymentEjbSubsystem;
 import org.jboss.as.console.client.shared.deployment.model.DeploymentJpaSubsystem;
+import org.jboss.as.console.client.shared.deployment.model.DeploymentRecord;
 import org.jboss.as.console.client.shared.deployment.model.DeploymentWebSubsystem;
 import org.jboss.as.console.client.shared.deployment.model.DeploymentWebserviceSubsystem;
 import org.jboss.as.console.client.shared.general.model.Interface;
@@ -50,7 +51,6 @@ import org.jboss.as.console.client.shared.jvm.model.HeapMetric;
 import org.jboss.as.console.client.shared.jvm.model.OSMetric;
 import org.jboss.as.console.client.shared.jvm.model.RuntimeMetric;
 import org.jboss.as.console.client.shared.jvm.model.ThreadMetric;
-import org.jboss.as.console.client.shared.deployment.model.DeploymentRecord;
 import org.jboss.as.console.client.shared.model.SubsystemRecord;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.shared.properties.PropertyRecordCategory;

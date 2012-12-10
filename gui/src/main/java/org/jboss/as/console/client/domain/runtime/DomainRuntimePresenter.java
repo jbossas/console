@@ -1,9 +1,9 @@
 package org.jboss.as.console.client.domain.runtime;
 
 import com.google.gwt.core.client.Scheduler;
-import com.google.web.bindery.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.inject.Inject;
+import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.View;
 import com.gwtplatform.mvp.client.annotations.ContentSlot;
@@ -20,7 +20,6 @@ import org.jboss.as.console.client.core.BootstrapContext;
 import org.jboss.as.console.client.core.Header;
 import org.jboss.as.console.client.core.MainLayoutPresenter;
 import org.jboss.as.console.client.core.NameTokens;
-import org.jboss.as.console.client.domain.events.HostSelectionEvent;
 import org.jboss.as.console.client.domain.events.StaleModelEvent;
 import org.jboss.as.console.client.domain.model.Host;
 import org.jboss.as.console.client.domain.model.HostInformationStore;
@@ -43,8 +42,7 @@ import java.util.List;
  */
 public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyView, DomainRuntimePresenter.MyProxy>
         implements ServerSelectionEvent.ServerSelectionListener,
-        StaleModelEvent.StaleModelListener,
-        HostSelectionEvent.HostSelectionListener {
+        StaleModelEvent.StaleModelListener{
 
     private final PlaceManager placeManager;
     private boolean hasBeenRevealed = false;
@@ -104,7 +102,6 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
 
         getEventBus().addHandler(StaleModelEvent.TYPE, this);
         getEventBus().addHandler(ServerSelectionEvent.TYPE, DomainRuntimePresenter.this);
-        getEventBus().addHandler(HostSelectionEvent.TYPE, DomainRuntimePresenter.this);
         getEventBus().addHandler(ServerSelectionEvent.TYPE, getView().getLhsNavigation());
 
         // check if server has been preselected
@@ -165,10 +162,6 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
 
     }
 
-    @Override
-    public void onHostSelection(String hostName) {
-        // TODO: necessary ?
-    }
 
     private void loadHostData() {
 

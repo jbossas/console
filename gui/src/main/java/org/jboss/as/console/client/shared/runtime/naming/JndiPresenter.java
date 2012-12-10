@@ -18,10 +18,10 @@
  */
 package org.jboss.as.console.client.shared.runtime.naming;
 
-import com.google.web.bindery.event.shared.EventBus;
 import com.google.gwt.user.cellview.client.CellTree;
 import com.google.gwt.view.client.SingleSelectionModel;
 import com.google.inject.Inject;
+import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.View;
 import com.gwtplatform.mvp.client.annotations.NameToken;
@@ -42,8 +42,6 @@ import org.jboss.as.console.client.shared.state.CurrentServerSelection;
 import org.jboss.as.console.client.shared.state.ServerSelectionEvent;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
 import org.jboss.dmr.client.ModelNode;
-
-import java.util.Collections;
 
 import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 

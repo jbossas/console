@@ -18,12 +18,12 @@
  */
 package org.jboss.as.console.client.shared.subsys.security;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.subsys.security.model.AuthenticationLoginModule;
 import org.jboss.as.console.client.shared.subsys.security.wizard.NewAuthPolicyModuleWizard;
+
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * @author David Bosschaert

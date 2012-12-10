@@ -19,10 +19,7 @@
 
 package org.jboss.as.console.client.shared.subsys.infinispan.model;
 
-import static org.jboss.dmr.client.ModelDescriptionConstants.OP;
-
-import javax.inject.Inject;
-
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
@@ -33,7 +30,9 @@ import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.as.console.client.widgets.forms.BeanMetaData;
 import org.jboss.dmr.client.ModelNode;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
+import javax.inject.Inject;
+
+import static org.jboss.dmr.client.ModelDescriptionConstants.OP;
 
 /**
  * @author Guillaume Grossetie

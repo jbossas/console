@@ -21,9 +21,9 @@ package org.jboss.as.console.client.domain.hosts.general;
 
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
-import com.google.web.bindery.event.shared.EventBus;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.inject.Inject;
+import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.View;
 import com.gwtplatform.mvp.client.annotations.NameToken;
@@ -36,7 +36,6 @@ import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.DomainGateKeeper;
 import org.jboss.as.console.client.core.NameTokens;
-import org.jboss.as.console.client.domain.events.HostSelectionEvent;
 import org.jboss.as.console.client.domain.hosts.HostMgmtPresenter;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.shared.BeanFactory;
@@ -45,7 +44,8 @@ import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.as.console.client.shared.jvm.Jvm;
 import org.jboss.as.console.client.shared.jvm.JvmManagement;
-import org.jboss.as.console.client.shared.state.CurrentHostSelection;
+import org.jboss.as.console.client.shared.state.DomainEntityManager;
+import org.jboss.as.console.client.shared.state.HostSelectionChanged;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.as.console.client.widgets.forms.EntityAdapter;
 import org.jboss.ballroom.client.widgets.window.DefaultWindow;
@@ -63,16 +63,16 @@ import static org.jboss.dmr.client.ModelDescriptionConstants.*;
  * @date 5/18/11
  */
 public class HostJVMPresenter extends Presenter<HostJVMPresenter.MyView, HostJVMPresenter.MyProxy>
-        implements JvmManagement , HostSelectionEvent.HostSelectionListener{
+        implements JvmManagement , HostSelectionChanged.ChangeListener {
 
     private final PlaceManager placeManager;
     private DispatchAsync dispatcher;
     private DefaultWindow propertyWindow;
-    private CurrentHostSelection currentHost;
     private BeanFactory factory;
     private ApplicationMetaData propertyMetaData;
     private DefaultWindow window;
     private EntityAdapter<Jvm> adapter;
+    private final DomainEntityManager domainManager;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.HostJVMPresenter)
@@ -89,13 +89,13 @@ public class HostJVMPresenter extends Presenter<HostJVMPresenter.MyView, HostJVM
     public HostJVMPresenter(
             EventBus eventBus, MyView view, MyProxy proxy,
             PlaceManager placeManager, DispatchAsync dispatcher,
-            BeanFactory factory, CurrentHostSelection currentHost,
+            BeanFactory factory, DomainEntityManager domainManager,
             ApplicationMetaData metaData) {
         super(eventBus, view, proxy);
 
         this.placeManager = placeManager;
         this.dispatcher = dispatcher;
-        this.currentHost = currentHost;
+        this.domainManager = domainManager;
         this.factory = factory;
         this.propertyMetaData = metaData;
 
@@ -104,8 +104,8 @@ public class HostJVMPresenter extends Presenter<HostJVMPresenter.MyView, HostJVM
     }
 
     @Override
-    public void onHostSelection(String hostName) {
-        if(isVisible() && currentHost.isSet())
+    public void onHostSelectionChanged() {
+        if(isVisible())
             loadJVMConfig();
     }
 
@@ -113,16 +113,14 @@ public class HostJVMPresenter extends Presenter<HostJVMPresenter.MyView, HostJVM
     protected void onBind() {
         super.onBind();
         getView().setPresenter(this);
-        getEventBus().addHandler(HostSelectionEvent.TYPE, this);
+        getEventBus().addHandler(HostSelectionChanged.TYPE, this);
     }
 
 
     @Override
     protected void onReset() {
         super.onReset();
-
-        if(currentHost.isSet())
-            loadJVMConfig();
+        loadJVMConfig();
     }
 
     @Override
@@ -136,7 +134,7 @@ public class HostJVMPresenter extends Presenter<HostJVMPresenter.MyView, HostJVM
         closeDialogue();
 
         ModelNode address = new ModelNode();
-        address.add("host", currentHost.getName());
+        address.add("host", domainManager.getSelectedHost());
         address.add(JVM, jvm.getName());
 
         ModelNode operation = adapter.fromEntity(jvm);
@@ -166,12 +164,9 @@ public class HostJVMPresenter extends Presenter<HostJVMPresenter.MyView, HostJVM
 
     private void loadJVMConfig() {
 
-        if(!currentHost.isSet())
-            throw new RuntimeException("Host selection not set!");
-
         ModelNode operation = new ModelNode();
         operation.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
-        operation.get(ADDRESS).add("host", currentHost.getName());
+        operation.get(ADDRESS).add("host", domainManager.getSelectedHost());
         operation.get(CHILD_TYPE).set(JVM);
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
@@ -218,7 +213,7 @@ public class HostJVMPresenter extends Presenter<HostJVMPresenter.MyView, HostJVM
 
         ModelNode operation = new ModelNode();
         operation.get(OP).set(REMOVE);
-        operation.get(ADDRESS).add("host", currentHost.getName());
+        operation.get(ADDRESS).add("host", domainManager.getSelectedHost());
         operation.get(ADDRESS).add(JVM, jvm.getName());
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
@@ -246,7 +241,7 @@ public class HostJVMPresenter extends Presenter<HostJVMPresenter.MyView, HostJVM
 
         ModelNode address = new ModelNode();
         address.get(OP).set(WRITE_ATTRIBUTE_OPERATION);
-        address.get(ADDRESS).add("host", currentHost.getName());
+        address.get(ADDRESS).add("host", domainManager.getSelectedHost());
         address.get(ADDRESS).add(JVM, jvmName);
 
         ModelNode operation = adapter.fromChangeset(changedValues, address);
@@ -285,7 +280,7 @@ public class HostJVMPresenter extends Presenter<HostJVMPresenter.MyView, HostJVM
         });
 
         window.trapWidget(
-                new NewHostJvmWizard(this, currentHost).asWidget()
+                new NewHostJvmWizard(this, domainManager.getSelectedHost()).asWidget()
         );
 
         window.setGlassEnabled(true);

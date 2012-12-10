@@ -20,9 +20,7 @@
 package org.jboss.as.console.client.core.message;
 
 import com.google.gwt.cell.client.AbstractCell;
-import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
-import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
 public class MessageCell extends AbstractCell<Message> {
 

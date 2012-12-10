@@ -21,9 +21,9 @@ package org.jboss.as.console.client.domain.groups.deployment;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.domain.model.ServerGroupStore;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
+import org.jboss.as.console.client.shared.deployment.DeploymentStore;
 import org.jboss.as.console.client.shared.deployment.DeploymentViewRefresher;
 import org.jboss.as.console.client.shared.deployment.model.DeploymentRecord;
-import org.jboss.as.console.client.shared.deployment.DeploymentStore;
 
 import java.util.ArrayList;
 import java.util.Collections;

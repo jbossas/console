@@ -19,9 +19,8 @@
 
 package org.jboss.as.console.client.shared.subsys.infinispan.model;
 
-import org.jboss.as.console.client.shared.model.ResponseWrapper;
-
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import org.jboss.as.console.client.shared.model.ResponseWrapper;
 
 /**
  * @author Guillaume Grossetie

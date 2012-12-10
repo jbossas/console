@@ -31,8 +31,6 @@ import org.jboss.ballroom.client.widgets.forms.FormAdapter;
 import org.jboss.ballroom.client.widgets.forms.FormItem;
 import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
 
-import com.google.gwt.i18n.client.DateTimeFormat;
-
 /**
  * Subview for PeriodicRotatingFileHandler.
  *

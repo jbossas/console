@@ -1,7 +1,6 @@
 package org.jboss.as.console.client.shared.subsys.web;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
-
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.shared.BeanFactory;

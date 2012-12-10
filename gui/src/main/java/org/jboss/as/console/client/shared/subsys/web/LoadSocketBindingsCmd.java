@@ -19,14 +19,7 @@
 
 package org.jboss.as.console.client.shared.subsys.web;
 
-import static org.jboss.dmr.client.ModelDescriptionConstants.INCLUDE_RUNTIME;
-import static org.jboss.dmr.client.ModelDescriptionConstants.RECURSIVE;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
@@ -36,7 +29,13 @@ import org.jboss.as.console.client.shared.model.ModelAdapter;
 import org.jboss.dmr.client.ModelDescriptionConstants;
 import org.jboss.dmr.client.ModelNode;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.jboss.dmr.client.ModelDescriptionConstants.INCLUDE_RUNTIME;
+import static org.jboss.dmr.client.ModelDescriptionConstants.RECURSIVE;
 
 /**
  * @author Pavel Slegr

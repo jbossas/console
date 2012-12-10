@@ -66,10 +66,18 @@ public class DomainEntityManager implements
     }
 
     public String getSelectedHost() {
+
+        if(null==selectedHost)
+            throw new IllegalStateException("host should not be null");
+
         return selectedHost;
     }
 
     public String getSelectedServer() {
+
+        if(null==selectedServer)
+            throw new IllegalStateException("server should not be null");
+
         return selectedServer;
     }
 

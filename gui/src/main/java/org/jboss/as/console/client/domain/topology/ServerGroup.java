@@ -20,7 +20,10 @@ package org.jboss.as.console.client.domain.topology;
 
 import org.jboss.as.console.client.domain.model.ServerInstance;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 /**
  * Simple class for rendering a server group in {@link TopologyView}

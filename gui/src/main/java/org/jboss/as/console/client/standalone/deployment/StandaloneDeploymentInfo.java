@@ -19,9 +19,9 @@
 package org.jboss.as.console.client.standalone.deployment;
 
 import org.jboss.as.console.client.domain.model.SimpleCallback;
+import org.jboss.as.console.client.shared.deployment.DeploymentStore;
 import org.jboss.as.console.client.shared.deployment.DeploymentViewRefresher;
 import org.jboss.as.console.client.shared.deployment.model.DeploymentRecord;
-import org.jboss.as.console.client.shared.deployment.DeploymentStore;
 
 import java.util.ArrayList;
 import java.util.Collections;

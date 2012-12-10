@@ -21,9 +21,9 @@ package org.jboss.as.console.client.domain.hosts.general;
 
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
-import com.google.web.bindery.event.shared.EventBus;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.inject.Inject;
+import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.View;
 import com.gwtplatform.mvp.client.annotations.NameToken;
@@ -35,7 +35,6 @@ import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import org.jboss.as.console.client.core.DomainGateKeeper;
 import org.jboss.as.console.client.core.NameTokens;
-import org.jboss.as.console.client.domain.events.HostSelectionEvent;
 import org.jboss.as.console.client.domain.hosts.HostMgmtPresenter;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.shared.BeanFactory;
@@ -46,7 +45,8 @@ import org.jboss.as.console.client.shared.properties.LoadPropertiesCmd;
 import org.jboss.as.console.client.shared.properties.NewPropertyWizard;
 import org.jboss.as.console.client.shared.properties.PropertyManagement;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
-import org.jboss.as.console.client.shared.state.CurrentHostSelection;
+import org.jboss.as.console.client.shared.state.DomainEntityManager;
+import org.jboss.as.console.client.shared.state.HostSelectionChanged;
 import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 import org.jboss.dmr.client.ModelNode;
 
@@ -57,13 +57,13 @@ import java.util.List;
  * @date 5/17/11
  */
 public class HostPropertiesPresenter extends Presenter<HostPropertiesPresenter.MyView, HostPropertiesPresenter.MyProxy>
-        implements PropertyManagement, HostSelectionEvent.HostSelectionListener  {
+        implements PropertyManagement, HostSelectionChanged.ChangeListener {
 
     private final PlaceManager placeManager;
     private BeanFactory factory;
     private DispatchAsync dispatcher;
     private DefaultWindow propertyWindow;
-    private CurrentHostSelection currentHost;
+    private final DomainEntityManager domainManager;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.HostPropertiesPresenter)
@@ -80,17 +80,17 @@ public class HostPropertiesPresenter extends Presenter<HostPropertiesPresenter.M
     public HostPropertiesPresenter(
             EventBus eventBus, MyView view, MyProxy proxy,
             PlaceManager placeManager, DispatchAsync dispatcher,
-            BeanFactory factory, CurrentHostSelection currentHost) {
+            BeanFactory factory, DomainEntityManager domainManager) {
         super(eventBus, view, proxy);
 
         this.placeManager = placeManager;
         this.dispatcher = dispatcher;
-        this.currentHost = currentHost;
+        this.domainManager = domainManager;
         this.factory = factory;
     }
 
     @Override
-    public void onHostSelection(String hostName) {
+    public void onHostSelectionChanged() {
         if(isVisible())
             loadProperties();
     }
@@ -99,25 +99,20 @@ public class HostPropertiesPresenter extends Presenter<HostPropertiesPresenter.M
     protected void onBind() {
         super.onBind();
         getView().setPresenter(this);
-        getEventBus().addHandler(HostSelectionEvent.TYPE, this);
+        getEventBus().addHandler(HostSelectionChanged.TYPE, this);
     }
 
 
     @Override
     protected void onReset() {
         super.onReset();
-
-        if(currentHost.isSet())
-            loadProperties();
+        loadProperties();
     }
 
     private void loadProperties() {
 
-        if(!currentHost.isSet())
-            throw new RuntimeException("Host selection not set!");
-
         ModelNode address = new ModelNode();
-        address.add("host", currentHost.getName());
+        address.add("host", domainManager.getSelectedHost());
 
         LoadPropertiesCmd loadPropCmd = new LoadPropertiesCmd(dispatcher, factory, address);
         loadPropCmd.execute(new SimpleCallback<List<PropertyRecord>>() {
@@ -166,7 +161,7 @@ public class HostPropertiesPresenter extends Presenter<HostPropertiesPresenter.M
         }
 
         ModelNode address = new ModelNode();
-        address.add("host", currentHost.getName());
+        address.add("host", domainManager.getSelectedHost());
         address.add("system-property", prop.getKey());
 
         CreatePropertyCmd cmd = new CreatePropertyCmd(dispatcher, factory, address);
@@ -183,7 +178,7 @@ public class HostPropertiesPresenter extends Presenter<HostPropertiesPresenter.M
     public void onDeleteProperty(final String groupName, final PropertyRecord prop)
     {
         ModelNode address = new ModelNode();
-        address.add("host", currentHost.getName());
+        address.add("host", domainManager.getSelectedHost());
         address.add("system-property", prop.getKey());
 
         DeletePropertyCmd cmd = new DeletePropertyCmd(dispatcher, factory, address);

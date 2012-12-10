@@ -1,6 +1,5 @@
 package org.jboss.as.console.client.shared.dispatch;
 
-import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.state.ReloadState;
 import org.jboss.dmr.client.ModelNode;
 import org.jboss.dmr.client.Property;

@@ -4,8 +4,6 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.gwtplatform.mvp.client.googleanalytics.GoogleAnalytics;
 import org.jboss.as.console.client.Build;
 import org.jboss.as.console.client.core.BootstrapContext;
-import org.jboss.as.console.client.shared.dispatch.AsyncCommand;
-import org.jboss.as.console.client.shared.dispatch.ResponseProcessorFactory;
 
 import java.util.Iterator;
 

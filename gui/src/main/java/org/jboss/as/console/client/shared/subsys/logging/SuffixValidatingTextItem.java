@@ -18,9 +18,8 @@
  */
 package org.jboss.as.console.client.shared.subsys.logging;
 
-import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
-
 import com.google.gwt.i18n.client.DateTimeFormat;
+import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
 
 /**
  * @author Pavel Slegr
