@@ -101,7 +101,7 @@ public class JMSMetricPresenter extends Presenter<JMSMetricPresenter.MyView, JMS
     }
 
     @Override
-    public void onServerSelectionChanged() {
+    public void onServerSelectionChanged(boolean isRunning) {
 
         getView().clearSamples();
 

@@ -31,7 +31,6 @@ import org.jboss.as.console.client.shared.model.SubsystemStore;
 import org.jboss.as.console.client.shared.state.DomainEntityManager;
 import org.jboss.as.console.client.shared.state.HostList;
 import org.jboss.as.console.client.shared.state.HostSelectionChanged;
-import org.jboss.as.console.client.shared.state.ServerInstanceList;
 import org.jboss.as.console.client.shared.state.ServerSelectionChanged;
 import org.jboss.ballroom.client.layout.LHSHighlightEvent;
 
@@ -165,7 +164,10 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
     }
 
     @Override
-    public void onServerSelectionChanged() {
+    public void onServerSelectionChanged(boolean isRunning) {
+
+        // we can ignore if the server is running, it only requires configuration data
+
         Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
             @Override
             public void execute() {

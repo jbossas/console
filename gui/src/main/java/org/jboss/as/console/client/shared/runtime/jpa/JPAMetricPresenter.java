@@ -125,7 +125,7 @@ public class JPAMetricPresenter extends Presenter<JPAMetricPresenter.MyView, JPA
     }
 
     @Override
-    public void onServerSelectionChanged() {
+    public void onServerSelectionChanged(boolean isRunning) {
          Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
             @Override
             public void execute() {
@@ -135,6 +135,9 @@ public class JPAMetricPresenter extends Presenter<JPAMetricPresenter.MyView, JPA
     }
 
     public void refresh(final boolean paging) {
+
+        getView().clearValues();
+
 
         ModelNode operation = new ModelNode();
         operation.get(ADDRESS).setEmptyList();

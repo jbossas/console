@@ -74,7 +74,7 @@ public class WebMetricPresenter extends Presenter<WebMetricPresenter.MyView, Web
     }
 
     @Override
-    public void onServerSelectionChanged() {
+    public void onServerSelectionChanged(boolean isRunning) {
 
          Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
             @Override

@@ -67,7 +67,7 @@ public class TXMetricPresenter extends Presenter<TXMetricPresenter.MyView, TXMet
     }
 
     @Override
-    public void onServerSelectionChanged() {
+    public void onServerSelectionChanged(boolean isRunning) {
          Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
             @Override
             public void execute() {

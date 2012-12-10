@@ -111,7 +111,7 @@ public class EnvironmentPresenter extends Presenter<EnvironmentPresenter.MyView,
 
 
     @Override
-    public void onServerSelectionChanged() {
+    public void onServerSelectionChanged(boolean isRunning) {
         if(isVisible()) refresh();
     }
 

@@ -87,7 +87,7 @@ public class JndiPresenter extends Presenter<JndiPresenter.MyView, JndiPresenter
     }
 
     @Override
-    public void onServerSelectionChanged() {
+    public void onServerSelectionChanged(boolean isRunning) {
         if(isVisible())
         {
             loadJndiTree();

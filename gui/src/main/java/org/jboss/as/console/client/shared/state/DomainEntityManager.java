@@ -3,6 +3,7 @@ package org.jboss.as.console.client.shared.state;
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.web.bindery.event.shared.EventBus;
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.domain.model.Host;
 import org.jboss.as.console.client.domain.model.HostInformationStore;
 import org.jboss.as.console.client.domain.model.Server;
@@ -80,17 +81,17 @@ public class DomainEntityManager implements
         if(null==selectedServer)
             Log.warn("server selection is null");//throw new IllegalStateException("server should not be null");
 
-        return selectedServer!=null ? selectedServer : "*";
+        return selectedServer!=null ? selectedServer : "not-set";
     }
 
     @Override
     public void onStaleModel(String modelName) {
+
+        // TODO: Needed?
+
         if(StaleGlobalModel.SERVER_INSTANCES.equals(modelName))
         {
             // server instances carry started/stopped state
-            // a change event will instruct listening components to refresh/reset their state
-            eventBus.fireEvent(new ServerSelectionChanged());
-
         }
         else if(StaleGlobalModel.SERVER_GROUPS.equals(modelName))
         {
@@ -125,8 +126,12 @@ public class DomainEntityManager implements
         selectedHost = server.getHost();
         selectedServer = server.getName();
 
+        // check server state
+        if(!server.isRunning())
+            Console.warning("The selected server is not running: "+server.getName());
+
         // fire stale model
-        eventBus.fireEvent(new ServerSelectionChanged());
+        eventBus.fireEvent(new ServerSelectionChanged(server.isRunning()));
     }
 
     private Host getSelectedHost(List<Host> hosts) {

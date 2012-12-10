@@ -83,7 +83,7 @@ public class DataSourceMetricPresenter extends Presenter<DataSourceMetricPresent
     }
 
     @Override
-    public void onServerSelectionChanged() {
+    public void onServerSelectionChanged(boolean isRunning) {
         getView().clearSamples();
 
         Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {

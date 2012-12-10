@@ -383,22 +383,14 @@ public class HostServerTable {
         hostList.getSelectionModel().setSelected(host, true);
     }
 
-    public void selectServer(ServerInstance server) {
-
-        assert !hostProvider.getList().isEmpty() : "Hosts have not been loaded";
-        assert !serverProvider.getList().isEmpty() : "Servers have not been loaded";
-
-        serverList.getSelectionModel().setSelected(server, true);
-    }
-
     interface Template extends SafeHtmlTemplates {
         @Template("<div class='server-selection-host'>{0}</div>")
         SafeHtml message(String title);
     }
 
     interface ServerTemplate extends SafeHtmlTemplates {
-        @Template("<div class='server-selection-server'>{0}</div>")
-        SafeHtml message(String title);
+        @Template("<table class='server-selection-server' width='90%'><tr><td>{0}</td><td width='10%'><i class='{1}'></i></td></tr></table>")
+        SafeHtml message(String title, String icon);
     }
 
 
@@ -428,9 +420,9 @@ public class HostServerTable {
                 ServerInstance server,
                 SafeHtmlBuilder safeHtmlBuilder)
         {
-            // String state = server.isRunning() ? " (active)":"";
-            String state = "";
-            safeHtmlBuilder.append(SERVER_TEMPLATE.message(clip(server.getName(), clipAt)+state));
+            String icon = server.isRunning() ? "icon-ok":"icon-ban-circle";
+            String name = clip(server.getName(), clipAt);
+            safeHtmlBuilder.append(SERVER_TEMPLATE.message(name, icon));
         }
 
     }

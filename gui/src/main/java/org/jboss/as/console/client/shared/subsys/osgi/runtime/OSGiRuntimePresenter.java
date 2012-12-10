@@ -94,7 +94,7 @@ public class OSGiRuntimePresenter extends Presenter<OSGiRuntimePresenter.MyView,
     }
 
     @Override
-    public void onServerSelectionChanged() {
+    public void onServerSelectionChanged(boolean isRunning) {
          Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
             @Override
             public void execute() {

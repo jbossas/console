@@ -11,6 +11,12 @@ public class ServerSelectionChanged extends GwtEvent<ServerSelectionChanged.Chan
 
     public static final Type TYPE = new Type<ChangeListener>();
 
+    private boolean isRunning;
+
+    public ServerSelectionChanged(boolean running) {
+        isRunning = running;
+    }
+
     @Override
     public Type<ChangeListener> getAssociatedType() {
         return TYPE;
@@ -18,11 +24,11 @@ public class ServerSelectionChanged extends GwtEvent<ServerSelectionChanged.Chan
 
     @Override
     protected void dispatch(ChangeListener listener) {
-        listener.onServerSelectionChanged();
+        listener.onServerSelectionChanged(isRunning);
     }
 
     public interface ChangeListener extends EventHandler {
-        void onServerSelectionChanged();
+        void onServerSelectionChanged(boolean isRunning);
     }
 }
 

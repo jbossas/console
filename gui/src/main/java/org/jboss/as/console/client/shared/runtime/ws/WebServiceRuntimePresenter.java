@@ -53,7 +53,7 @@ public class WebServiceRuntimePresenter
     }
 
     @Override
-    public void onServerSelectionChanged() {
+    public void onServerSelectionChanged(boolean isRunning) {
         if(isVisible())
         {
             Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
