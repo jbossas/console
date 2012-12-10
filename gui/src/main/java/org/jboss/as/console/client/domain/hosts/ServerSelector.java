@@ -33,7 +33,7 @@ public class ServerSelector {
                 Scheduler.get().scheduleEntry(new Scheduler.ScheduledCommand() {
                     @Override
                     public void execute() {
-                        //Console.getEventBus().fireEvent(new ServerSelectionEvent(event.getValue()));
+
                     }
                 });
             }

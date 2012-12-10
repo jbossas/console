@@ -11,7 +11,6 @@ import com.gwtplatform.mvp.client.proxy.Place;
 import com.gwtplatform.mvp.client.proxy.Proxy;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
-import org.jboss.as.console.client.domain.model.ServerInstance;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
@@ -19,15 +18,13 @@ import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.as.console.client.shared.runtime.Metric;
 import org.jboss.as.console.client.shared.runtime.RuntimeBaseAddress;
-import org.jboss.as.console.client.shared.state.CurrentServerSelection;
-import org.jboss.as.console.client.shared.state.ServerSelectionEvent;
+import org.jboss.as.console.client.shared.state.ServerSelectionChanged;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
 import org.jboss.as.console.client.shared.subsys.web.LoadConnectorCmd;
 import org.jboss.as.console.client.shared.subsys.web.model.HttpConnector;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.dmr.client.ModelNode;
 
-import java.util.Collections;
 import java.util.List;
 
 import static org.jboss.dmr.client.ModelDescriptionConstants.*;
@@ -37,11 +34,10 @@ import static org.jboss.dmr.client.ModelDescriptionConstants.*;
  * @date 12/9/11
  */
 public class WebMetricPresenter extends Presenter<WebMetricPresenter.MyView, WebMetricPresenter.MyProxy>
-        implements ServerSelectionEvent.ServerSelectionListener {
+        implements ServerSelectionChanged.ChangeListener {
 
     private DispatchAsync dispatcher;
     private RevealStrategy revealStrategy;
-    private CurrentServerSelection serverSelection;
     private HttpConnector selectedConnector;
     private BeanFactory factory;
 
@@ -62,12 +58,11 @@ public class WebMetricPresenter extends Presenter<WebMetricPresenter.MyView, Web
             EventBus eventBus, MyView view, MyProxy proxy,
             DispatchAsync dispatcher,
             ApplicationMetaData metaData, RevealStrategy revealStrategy,
-            CurrentServerSelection serverSelection, BeanFactory factory) {
+            BeanFactory factory) {
         super(eventBus, view, proxy);
 
         this.dispatcher = dispatcher;
         this.revealStrategy = revealStrategy;
-        this.serverSelection = serverSelection;
         this.factory = factory;
     }
 
@@ -79,7 +74,7 @@ public class WebMetricPresenter extends Presenter<WebMetricPresenter.MyView, Web
     }
 
     @Override
-    public void onServerSelection(String hostName, ServerInstance server, ServerSelectionEvent.Source source) {
+    public void onServerSelectionChanged() {
 
          Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
             @Override
@@ -91,13 +86,6 @@ public class WebMetricPresenter extends Presenter<WebMetricPresenter.MyView, Web
     }
 
     public void refresh() {
-
-        if(!serverSelection.isActive()) {
-            Console.warning(Console.CONSTANTS.common_err_server_not_active());
-            getView().setConnectors(Collections.EMPTY_LIST);
-            getView().clearSamples();
-            return;
-        }
 
         LoadConnectorCmd cmd = new LoadConnectorCmd(dispatcher, factory);
         cmd.execute(new SimpleCallback<List<HttpConnector>>() {
@@ -154,7 +142,7 @@ public class WebMetricPresenter extends Presenter<WebMetricPresenter.MyView, Web
     protected void onBind() {
         super.onBind();
         getView().setPresenter(this);
-        getEventBus().addHandler(ServerSelectionEvent.TYPE, this);
+        getEventBus().addHandler(ServerSelectionChanged.TYPE, this);
     }
 
 

@@ -2,7 +2,6 @@ package org.jboss.as.console.client.shared.runtime;
 
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.BootstrapContext;
-import org.jboss.as.console.client.shared.state.CurrentServerSelection;
 import org.jboss.as.console.client.shared.state.DomainEntityManager;
 import org.jboss.dmr.client.ModelNode;
 

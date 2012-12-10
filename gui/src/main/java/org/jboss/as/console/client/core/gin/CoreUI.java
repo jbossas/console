@@ -47,7 +47,6 @@ import org.jboss.as.console.client.domain.groups.deployment.DeploymentsPresenter
 import org.jboss.as.console.client.domain.hosts.HostMgmtPresenter;
 import org.jboss.as.console.client.domain.hosts.HostVMMetricPresenter;
 import org.jboss.as.console.client.domain.hosts.ServerConfigPresenter;
-import org.jboss.as.console.client.domain.hosts.ServerInstancesPresenter;
 import org.jboss.as.console.client.domain.hosts.general.HostInterfacesPresenter;
 import org.jboss.as.console.client.domain.hosts.general.HostJVMPresenter;
 import org.jboss.as.console.client.domain.hosts.general.HostPropertiesPresenter;
@@ -80,7 +79,6 @@ import org.jboss.as.console.client.shared.runtime.naming.JndiPresenter;
 import org.jboss.as.console.client.shared.runtime.tx.TXMetricPresenter;
 import org.jboss.as.console.client.shared.runtime.web.WebMetricPresenter;
 import org.jboss.as.console.client.shared.runtime.ws.WebServiceRuntimePresenter;
-import org.jboss.as.console.client.shared.state.CurrentServerSelection;
 import org.jboss.as.console.client.shared.state.DomainEntityManager;
 import org.jboss.as.console.client.shared.state.ReloadState;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
@@ -217,7 +215,6 @@ public interface CoreUI {
     // domain config below
     AsyncProvider<ProfileMgmtPresenter> getProfileMgmtPresenter();
     CurrentProfileSelection getCurrentSelectedProfile();
-    CurrentServerSelection getCurrentSelectedServer();
     ReloadState getReloadState();
 
     AsyncProvider<ServerGroupMgmtPresenter> getServerGroupMgmtPresenter();
@@ -236,7 +233,6 @@ public interface CoreUI {
 
     AsyncProvider<HostMgmtPresenter> getHostMgmtPresenter();
     AsyncProvider<ServerConfigPresenter> getServerPresenter();
-    AsyncProvider<ServerInstancesPresenter> getInstancesPresenter();
 
     // ----------------------------------------------------------------------
     // shared subsystems

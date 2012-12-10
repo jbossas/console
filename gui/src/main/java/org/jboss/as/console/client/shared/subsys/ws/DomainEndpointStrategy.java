@@ -7,7 +7,7 @@ import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
-import org.jboss.as.console.client.shared.state.CurrentServerSelection;
+import org.jboss.as.console.client.shared.runtime.RuntimeBaseAddress;
 import org.jboss.as.console.client.shared.subsys.ws.model.WebServiceEndpoint;
 import org.jboss.dmr.client.ModelNode;
 
@@ -26,19 +26,16 @@ public class DomainEndpointStrategy extends BaseRegistry implements EndpointStra
     DispatchAsync dispatcher;
     BeanFactory factory;
 
-    private CurrentServerSelection serverSelection;
-
     @Inject
     public DomainEndpointStrategy(
             DispatchAsync dispatcher,
             BeanFactory factory,
-            HostInformationStore hostInformationStore, CurrentServerSelection serverSelection) {
+            HostInformationStore hostInformationStore) {
 
         super(factory, dispatcher);
 
         this.dispatcher = dispatcher;
         this.factory = factory;
-        this.serverSelection = serverSelection;
     }
 
     @Override
@@ -56,20 +53,22 @@ public class DomainEndpointStrategy extends BaseRegistry implements EndpointStra
 
         ModelNode deploymentsOp = new ModelNode();
         deploymentsOp.get(OP).set(READ_RESOURCE_OPERATION);
-        deploymentsOp.get(ADDRESS).add("host", serverSelection.getHost());
-        deploymentsOp.get(ADDRESS).add("server", serverSelection.getServer().getName());
-        deploymentsOp.get(ADDRESS).add("deployment", "*");
-        deploymentsOp.get(ADDRESS).add("subsystem", "webservices");
-        deploymentsOp.get(ADDRESS).add("endpoint", "*");
+
+        ModelNode addr = RuntimeBaseAddress.get();
+        addr.add("deployment", "*");
+        addr.add("subsystem", "webservices");
+        addr.add("endpoint", "*");
+        deploymentsOp.get(ADDRESS).set(addr);
 
         ModelNode subdeploymentOp = new ModelNode();
         subdeploymentOp.get(OP).set(READ_RESOURCE_OPERATION);
-        subdeploymentOp.get(ADDRESS).add("host", serverSelection.getHost());
-        subdeploymentOp.get(ADDRESS).add("server", serverSelection.getServer().getName());
-        subdeploymentOp.get(ADDRESS).add("deployment", "*");
-        subdeploymentOp.get(ADDRESS).add("subdeployment", "*");
-        subdeploymentOp.get(ADDRESS).add("subsystem", "webservices");
-        subdeploymentOp.get(ADDRESS).add("endpoint", "*");
+        ModelNode addr2 = RuntimeBaseAddress.get();
+
+        addr2.add("deployment", "*");
+        addr2.add("subdeployment", "*");
+        addr2.add("subsystem", "webservices");
+        addr2.add("endpoint", "*");
+        subdeploymentOp.get(ADDRESS).set(addr2);
 
         steps.add(deploymentsOp);
         steps.add(subdeploymentOp);

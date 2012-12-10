@@ -69,8 +69,6 @@ import org.jboss.as.console.client.domain.hosts.HostVMMetricPresenter;
 import org.jboss.as.console.client.domain.hosts.HostVMMetricView;
 import org.jboss.as.console.client.domain.hosts.ServerConfigPresenter;
 import org.jboss.as.console.client.domain.hosts.ServerConfigView;
-import org.jboss.as.console.client.domain.hosts.ServerInstancesPresenter;
-import org.jboss.as.console.client.domain.hosts.ServerInstancesView;
 import org.jboss.as.console.client.domain.hosts.general.HostInterfacesPresenter;
 import org.jboss.as.console.client.domain.hosts.general.HostInterfacesView;
 import org.jboss.as.console.client.domain.hosts.general.HostJVMPresenter;
@@ -132,7 +130,6 @@ import org.jboss.as.console.client.shared.runtime.web.WebMetricPresenter;
 import org.jboss.as.console.client.shared.runtime.web.WebMetricView;
 import org.jboss.as.console.client.shared.runtime.ws.WebServiceRuntimePresenter;
 import org.jboss.as.console.client.shared.runtime.ws.WebServiceRuntimeView;
-import org.jboss.as.console.client.shared.state.CurrentServerSelection;
 import org.jboss.as.console.client.shared.state.DomainEntityManager;
 import org.jboss.as.console.client.shared.state.ReloadState;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
@@ -397,7 +394,6 @@ public class CoreUIModule extends AbstractPresenterModule {
                 TopologyPresenter.MyProxy.class);
 
         bind(CurrentProfileSelection.class).in(Singleton.class);
-        bind(CurrentServerSelection.class).in(Singleton.class);
         bind(ReloadState.class).in(Singleton.class);
 
         // domain/server-group
@@ -434,10 +430,6 @@ public class CoreUIModule extends AbstractPresenterModule {
                 ServerConfigView.class,
                 ServerConfigPresenter.MyProxy.class);
 
-        bindPresenter(ServerInstancesPresenter.class,
-                ServerInstancesPresenter.MyView.class,
-                ServerInstancesView.class,
-                ServerInstancesPresenter.MyProxy.class);
 
 
         // -------

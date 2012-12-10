@@ -10,17 +10,13 @@ import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.Place;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.Proxy;
-import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
-import org.jboss.as.console.client.domain.model.ServerInstance;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
-import org.jboss.as.console.client.shared.state.CurrentServerSelection;
-import org.jboss.as.console.client.shared.state.ServerSelectionEvent;
+import org.jboss.as.console.client.shared.state.ServerSelectionChanged;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
 import org.jboss.as.console.client.shared.subsys.ws.EndpointRegistry;
 import org.jboss.as.console.client.shared.subsys.ws.model.WebServiceEndpoint;
 
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -29,11 +25,10 @@ import java.util.List;
  */
 public class WebServiceRuntimePresenter
         extends Presenter<WebServiceRuntimePresenter.MyView, WebServiceRuntimePresenter.MyProxy>
-        implements ServerSelectionEvent.ServerSelectionListener {
+        implements ServerSelectionChanged.ChangeListener {
 
     private EndpointRegistry endpointRegistry;
     private RevealStrategy revealStrategy;
-    private CurrentServerSelection serverSelection;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.WebServiceRuntimePresenter)
@@ -50,17 +45,15 @@ public class WebServiceRuntimePresenter
     public WebServiceRuntimePresenter(
             EventBus eventBus, MyView view, MyProxy proxy,
             PlaceManager placeManager, EndpointRegistry registry,
-            RevealStrategy revealStrategy, CurrentServerSelection serverSelection) {
+            RevealStrategy revealStrategy) {
         super(eventBus, view, proxy);
 
         this.endpointRegistry = registry;
-        this.serverSelection = serverSelection;
         this.revealStrategy = revealStrategy;
     }
 
     @Override
-    public void onServerSelection(String hostName, final ServerInstance server, ServerSelectionEvent.Source source) {
-
+    public void onServerSelectionChanged() {
         if(isVisible())
         {
             Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
@@ -78,7 +71,7 @@ public class WebServiceRuntimePresenter
     protected void onBind() {
         super.onBind();
         getView().setPresenter(this);
-        getEventBus().addHandler(ServerSelectionEvent.TYPE, this);
+        getEventBus().addHandler(ServerSelectionChanged.TYPE, this);
     }
 
 
@@ -90,12 +83,6 @@ public class WebServiceRuntimePresenter
     }
 
     private void loadEndpoints() {
-
-        if(!serverSelection.isActive()) {
-            Console.warning(Console.CONSTANTS.common_err_server_not_active());
-            getView().updateEndpoints(Collections.EMPTY_LIST);
-            return;
-        }
 
         endpointRegistry.create().refreshEndpoints(new SimpleCallback<List<WebServiceEndpoint>>() {
             @Override

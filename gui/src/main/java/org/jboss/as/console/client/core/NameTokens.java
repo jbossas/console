@@ -182,11 +182,6 @@ public class NameTokens {
         return ServerPresenter;
     }
 
-    public static final String InstancesPresenter = "server-instances";
-    public static String getInstancesPresenter() {
-        return InstancesPresenter;
-    }
-
     public static final String DeploymentBrowserPresenter = "deployments";
     public static String getDeploymentBrowserPresenter() {
         return DeploymentBrowserPresenter;

@@ -12,7 +12,6 @@ import org.jboss.as.console.client.domain.model.ServerInstance;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.shared.state.GlobalServerSelection;
 import org.jboss.as.console.client.shared.state.HostList;
-import org.jboss.as.console.client.shared.state.ServerSelectionEvent;
 
 import java.util.List;
 
