@@ -1,5 +1,6 @@
 package org.jboss.as.console.client.shared.state;
 
+import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.web.bindery.event.shared.EventBus;
 import org.jboss.as.console.client.domain.model.Host;
@@ -17,7 +18,7 @@ import java.util.List;
  */
 public class DomainEntityManager implements
         GlobalHostSelection.HostSelectionListener,
-        GlobalServerSelection.ServerSelectionListener {
+        GlobalServerSelection.ServerSelectionListener, StaleGlobalModel.StaleModelListener {
 
 
     private String selectedHost;
@@ -33,6 +34,7 @@ public class DomainEntityManager implements
 
         eventBus.addHandler(GlobalHostSelection.TYPE, this);
         eventBus.addHandler(GlobalServerSelection.TYPE, this);
+        eventBus.addHandler(StaleGlobalModel.TYPE, this);
     }
 
     public void getHosts(final AsyncCallback<HostList> callback) {
@@ -76,9 +78,28 @@ public class DomainEntityManager implements
     public String getSelectedServer() {
 
         if(null==selectedServer)
-            throw new IllegalStateException("server should not be null");
+            Log.warn("server selection is null");//throw new IllegalStateException("server should not be null");
 
-        return selectedServer;
+        return selectedServer!=null ? selectedServer : "*";
+    }
+
+    @Override
+    public void onStaleModel(String modelName) {
+        if(StaleGlobalModel.SERVER_INSTANCES.equals(modelName))
+        {
+            // server instances carry started/stopped state
+            // a change event will instruct listening components to refresh/reset their state
+            eventBus.fireEvent(new ServerSelectionChanged());
+
+        }
+        else if(StaleGlobalModel.SERVER_GROUPS.equals(modelName))
+        {
+            // do groups have relevant state?
+        }
+        else if(StaleGlobalModel.SERVER_CONFIGURATIONS.equals(modelName))
+        {
+            // do configs have relevant state?
+        }
     }
 
     /**
