@@ -12,9 +12,8 @@ import java.util.List;
  * Created with IntelliJ IDEA. User: pehlh Date: 15.10.12 Time: 17:04 To change this template use File | Settings | File
  * Templates.
  */
-public class EnvironmentView extends SuspendableViewImpl implements EnvironmentPresenter.MyView
+public class EnvironmentView extends SuspendableViewImpl
 {
-    private EnvironmentPresenter presenter;
     private EnvironmentProperties properties;
 
     @Override
@@ -25,19 +24,11 @@ public class EnvironmentView extends SuspendableViewImpl implements EnvironmentP
         return properties.asWidget();
     }
 
-    @Override
-    public void setPresenter(final EnvironmentPresenter environmentPresenter)
-    {
-        this.presenter = environmentPresenter;
-    }
-
-    @Override
     public void setEnvironment(final List<PropertyRecord> environment)
     {
         properties.setProperties(environment);
     }
 
-    @Override
     public void clearEnvironment()
     {
         properties.clearValues();

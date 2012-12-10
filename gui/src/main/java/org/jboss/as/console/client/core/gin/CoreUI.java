@@ -74,7 +74,6 @@ import org.jboss.as.console.client.shared.help.HelpSystem;
 import org.jboss.as.console.client.shared.model.SubsystemStore;
 import org.jboss.as.console.client.shared.runtime.RuntimeBaseAddress;
 import org.jboss.as.console.client.shared.runtime.ds.DataSourceMetricPresenter;
-import org.jboss.as.console.client.shared.runtime.env.EnvironmentPresenter;
 import org.jboss.as.console.client.shared.runtime.jms.JMSMetricPresenter;
 import org.jboss.as.console.client.shared.runtime.jpa.JPAMetricPresenter;
 import org.jboss.as.console.client.shared.runtime.naming.JndiPresenter;
@@ -320,9 +319,6 @@ public interface CoreUI {
     AsyncProvider<DataSourceMetricPresenter> DataSourceMetricPresenter();
 
     AsyncProvider<JPAMetricPresenter> JPAMetricPresenter();
-
-    AsyncProvider<EnvironmentPresenter> getEnvironmentPresenter();
-
 
     AsyncProvider<JGroupsPresenter> JGroupsPresenter();
 
