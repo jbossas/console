@@ -70,7 +70,6 @@ import static org.jboss.as.console.client.domain.model.ServerFlag.RESTART_REQUIR
  */
 public class TopologyPresenter extends
         Presenter<TopologyPresenter.MyView, TopologyPresenter.MyProxy>
-        implements StaleModelEvent.StaleModelListener
 {
     private LoadExtensionCmd loadExtensionCmd;
 
@@ -129,7 +128,7 @@ public class TopologyPresenter extends
     {
         super.onBind();
         getView().setPresenter(this);
-        getEventBus().addHandler(StaleModelEvent.TYPE, this);
+
     }
 
     @Override
@@ -157,15 +156,6 @@ public class TopologyPresenter extends
 
     // ------------------------------------------------------ public presenter API
 
-
-    @Override
-    public void onStaleModel(String modelName) {
-        if(StaleModelEvent.SERVER_GROUPS.equals(modelName)
-                || StaleModelEvent.SERVER_INSTANCES.equals(modelName))
-        {
-            // flush buffer
-        }
-    }
 
     public void loadTopology()
     {
