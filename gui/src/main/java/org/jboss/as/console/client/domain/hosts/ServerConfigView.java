@@ -237,7 +237,7 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
     public void setConfigurations(String selectedHost, List<Server> servers, String selectedConfigName) {
         serverConfigProvider.getList().clear();
         serverConfigProvider.getList().addAll(servers);
-        serverConfigProvider.flush();
+        serverConfigProvider.refresh();
 
         jvmEditor.clearValues();
         propertyEditor.clearValues();

@@ -19,6 +19,7 @@
 
 package org.jboss.as.console.client.domain.model.impl;
 
+import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -705,9 +706,9 @@ public class HostInfoStoreImpl implements HostInformationStore {
             @Override
             public void onSuccess(DMRResponse result) {
                 ModelNode response = result.get();
-                String outcome = response.get("outcome").asString();
-
-                Boolean wasSuccessful = outcome.equals("success") ? Boolean.TRUE : Boolean.FALSE;
+                Boolean wasSuccessful = !response.isFailure();
+                if(!wasSuccessful)
+                    Log.error("Failed to delete server config: "+response.getFailureDescription());
                 callback.onSuccess(wasSuccessful);
             }
         });

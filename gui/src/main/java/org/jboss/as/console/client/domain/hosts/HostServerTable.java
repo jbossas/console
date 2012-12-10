@@ -118,12 +118,7 @@ public class HostServerTable {
 
         hostList = new DefaultCellList<Host>(new HostCell());
         hostList.setPageSize(6);
-        hostSelectionModel = new SingleSelectionModel<Host>(new ProvidesKey<Host>() {
-            @Override
-            public Object getKey(Host host) {
-                return host.getName();
-            }
-        });
+        hostSelectionModel = new SingleSelectionModel<Host>();
         hostList.setSelectionModel(hostSelectionModel);
         hostList.addStyleName("fill-layout-width");
         hostList.addStyleName("clip-text") ;

@@ -210,7 +210,7 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
 
         serverGroupProvider.getList().clear();
         serverGroupProvider.getList().addAll(groups);
-        serverGroupProvider.flush();
+        serverGroupProvider.refresh();
 
         /*boolean matchedPreselection = false;
         for(ServerGroupRecord group : groups)

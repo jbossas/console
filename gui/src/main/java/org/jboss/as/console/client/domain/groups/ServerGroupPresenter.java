@@ -182,6 +182,10 @@ public class ServerGroupPresenter
 
     }
 
+    private void staleModel() {
+        fireEvent(new StaleModelEvent(StaleModelEvent.SERVER_GROUPS));
+    }
+
     private void loadServerGroups() {
         serverGroupStore.loadServerGroups(new SimpleCallback<List<ServerGroupRecord>>() {
             @Override

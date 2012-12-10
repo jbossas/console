@@ -292,6 +292,8 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
 
                 }
 
+                staleModel();
+
             }
 
             @Override
@@ -303,6 +305,11 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
 
             }
         });
+
+    }
+
+    private void staleModel() {
+        fireEvent(new StaleModelEvent(StaleModelEvent.SERVER_CONFIGURATIONS));
     }
 
     public void onSaveChanges(final Server entity, Map<String, Object> changedValues) {
@@ -398,26 +405,16 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
             public void onSuccess(Boolean wasSuccessful) {
                 if(wasSuccessful)
                 {
-                    Console.getMessageCenter().notify(
-                            new Message(Console.MESSAGES.deleted("Server Configuration ")+server.getName())
-                    );
-
-                    Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
-                        @Override
-                        public void execute() {
-                            getEventBus().fireEvent(new StaleModelEvent(StaleModelEvent.SERVER_CONFIGURATIONS));
-                        }
-                    });
-
+                    Console.info(Console.MESSAGES.deleted("Server Configuration ")+server.getName());
 
                     loadServerConfigurations(null);
                 }
                 else
                 {
-                    Console.getMessageCenter().notify(
-                            new Message(Console.MESSAGES.deleted("Server Configuration ")+server.getName(), Message.Severity.Error)
-                    );
+                    Console.error(Console.MESSAGES.deletionFailed("Server Configuration ")+server.getName());
                 }
+
+                staleModel();
             }
         });
     }
