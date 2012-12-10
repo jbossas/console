@@ -128,7 +128,7 @@ public class EnvironmentProperties {
         });
 
         ToolStrip toolStrip = new ToolStrip();
-        final HTML label = new HTML("<i class='icon-filter'></i>&nbsp;Filter:&nbsp;");
+        final HTML label = new HTML("Filter:&nbsp;");
         label.getElement().setAttribute("style", "padding-top:8px;");
         toolStrip.addToolWidget(label);
         toolStrip.addToolWidget(filter);
