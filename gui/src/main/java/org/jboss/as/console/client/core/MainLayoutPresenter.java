@@ -46,12 +46,10 @@ import org.jboss.ballroom.client.widgets.forms.ResolveExpressionEvent;
 public class MainLayoutPresenter
         extends Presenter<MainLayoutPresenter.MainLayoutView,
         MainLayoutPresenter.MainLayoutProxy>
-        implements ServerSelectionEvent.ServerSelectionListener,
-        ResolveExpressionEvent.ExpressionResolveListener {
+        implements ResolveExpressionEvent.ExpressionResolveListener {
 
     boolean revealDefault = true;
     private BootstrapContext bootstrap;
-    private CurrentServerSelection serverSelection;
 
     private ExpressionTool expressionTool;
     private InvocationMetrics metrics;
@@ -72,11 +70,9 @@ public class MainLayoutPresenter
             EventBus eventBus,
             MainLayoutView view,
             MainLayoutProxy proxy, BootstrapContext bootstrap,
-            CurrentServerSelection serverSelection,
             ExpressionResolver resolver, InvocationMetrics metrics, PlaceManager placeManager) {
         super(eventBus, view, proxy);
         this.bootstrap = bootstrap;
-        this.serverSelection = serverSelection;
         this.expressionTool = new ExpressionTool(resolver);
         this.metrics = metrics;
         this.placeManager = placeManager;
@@ -86,17 +82,7 @@ public class MainLayoutPresenter
     @Override
     protected void onBind() {
         super.onBind();
-        getEventBus().addHandler(ServerSelectionEvent.TYPE, this);
         getEventBus().addHandler(ResolveExpressionEvent.TYPE, this);
-
-        //getEventBus().addHandler(LockInteractionEvent.getType(), this);
-
-    }
-
-    @Override
-    public void onServerSelection(String hostName, ServerInstance server, ServerSelectionEvent.Source source) {
-        serverSelection.setHost(hostName);
-        serverSelection.setServer(server);
     }
 
     @Override
@@ -116,32 +102,4 @@ public class MainLayoutPresenter
     protected void onHide() {
         super.onHide();
     }
-
-    // -- debug tools
-
-   /* @Override
-    public void onLockInteraction(final  LockInteractionEvent lockInteractionEvent) {
-
-        if(lockInteractionEvent.shouldLock())
-        {
-            metrics.reset();
-        }
-        else
-        {
-            Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
-                @Override
-                public void execute() {
-
-                    if(metrics.hasMetrics())
-                    {
-                        System.out.println("--- reset stats: "+placeManager.getCurrentPlaceRequest().getNameToken()+" ---");
-                        metrics.dump();
-                        System.out.println("--- /reset stats ---");
-                    }
-                }
-            });
-
-        }
-    }  */
-
 }

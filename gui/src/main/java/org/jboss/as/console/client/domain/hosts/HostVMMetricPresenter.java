@@ -14,7 +14,6 @@ import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.DomainGateKeeper;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.domain.model.HostInformationStore;
-import org.jboss.as.console.client.domain.model.ServerInstance;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.domain.runtime.DomainRuntimePresenter;
 import org.jboss.as.console.client.shared.BeanFactory;
@@ -22,10 +21,11 @@ import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.jvm.LoadJVMMetricsCmd;
 import org.jboss.as.console.client.shared.jvm.model.CompositeVMMetric;
 import org.jboss.as.console.client.shared.runtime.Metric;
+import org.jboss.as.console.client.shared.runtime.RuntimeBaseAddress;
 import org.jboss.as.console.client.shared.runtime.vm.VMMetricsManagement;
 import org.jboss.as.console.client.shared.runtime.vm.VMView;
-import org.jboss.as.console.client.shared.state.CurrentServerSelection;
-import org.jboss.as.console.client.shared.state.ServerSelectionEvent;
+import org.jboss.as.console.client.shared.state.DomainEntityManager;
+import org.jboss.as.console.client.shared.state.ServerSelectionChanged;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.dmr.client.ModelNode;
 
@@ -34,7 +34,7 @@ import org.jboss.dmr.client.ModelNode;
  * @date 10/7/11
  */
 public class HostVMMetricPresenter extends Presenter<VMView, HostVMMetricPresenter.MyProxy>
-        implements VMMetricsManagement, ServerSelectionEvent.ServerSelectionListener  {
+        implements VMMetricsManagement, ServerSelectionChanged.ChangeListener {
 
 
     private DispatchAsync dispatcher;
@@ -45,7 +45,7 @@ public class HostVMMetricPresenter extends Presenter<VMView, HostVMMetricPresent
     private Scheduler.RepeatingCommand pollCmd = null;
     private static final int POLL_INTERVAL = 5000;
     private HostInformationStore hostInfoStore;
-    CurrentServerSelection serverSelection;
+    private final DomainEntityManager domainManager;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.HostVMMetricPresenter)
@@ -59,13 +59,13 @@ public class HostVMMetricPresenter extends Presenter<VMView, HostVMMetricPresent
     @Inject
     public HostVMMetricPresenter(
             EventBus eventBus, MyView view, MyProxy proxy,
-            CurrentServerSelection serverSelection,
+            DomainEntityManager domainManager,
             DispatchAsync dispatcher, BeanFactory factory,
             ApplicationMetaData metaData, HostInformationStore hostInfoStore
             ) {
         super(eventBus, view, proxy);
 
-        this.serverSelection = serverSelection;
+        this.domainManager = domainManager;
         this.dispatcher = dispatcher;
         this.factory = factory;
         this.metaData = metaData;
@@ -73,9 +73,8 @@ public class HostVMMetricPresenter extends Presenter<VMView, HostVMMetricPresent
     }
 
     @Override
-    public void onServerSelection(String hostName, ServerInstance server, ServerSelectionEvent.Source source) {
-
-         Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+    public void onServerSelectionChanged() {
+        Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
             @Override
             public void execute() {
                 if(isVisible()) refresh();
@@ -87,7 +86,7 @@ public class HostVMMetricPresenter extends Presenter<VMView, HostVMMetricPresent
     protected void onBind() {
         super.onBind();
         getView().setPresenter(this);
-        getEventBus().addHandler(ServerSelectionEvent.TYPE, this);
+        getEventBus().addHandler(ServerSelectionChanged.TYPE, this);
     }
 
     @Override
@@ -97,26 +96,12 @@ public class HostVMMetricPresenter extends Presenter<VMView, HostVMMetricPresent
 
     @Override
     public void refresh() {
-
-        if(!serverSelection.isActive()) {
-            Console.warning(Console.CONSTANTS.common_err_server_not_active());
-            getView().clearSamples();
-            return;
-        }
-
-        loadVMStatus(serverSelection.getServer().getName());
+        loadVMStatus();
     }
 
     private LoadJVMMetricsCmd createLoadMetricCmd() {
 
-        if(!serverSelection.isSet())
-            throw new RuntimeException("Server selection not set!");
-
-
-        ModelNode address = new ModelNode();
-        address.add("host", serverSelection.getHost());
-        address.add("server", serverSelection.getServer().getName());
-
+        ModelNode address = RuntimeBaseAddress.get();
         return new LoadJVMMetricsCmd(
                 dispatcher, factory,
                 address,
@@ -129,20 +114,14 @@ public class HostVMMetricPresenter extends Presenter<VMView, HostVMMetricPresent
         RevealContentEvent.fire(this, DomainRuntimePresenter.TYPE_MainContent, this);
     }
 
-    public void loadVMStatus(final String serverName) {
-
-
-        if(!serverSelection.isActive()) {
-            Console.warning(Console.CONSTANTS.common_err_server_not_active());
-            return;
-        }
+    public void loadVMStatus() {
 
         createLoadMetricCmd().execute(new SimpleCallback<CompositeVMMetric>() {
 
 
             @Override
             public void onFailure(Throwable caught) {
-                Console.error(Console.MESSAGES.failed("JVM Status ")+serverName, caught.getMessage());
+                Console.error(Console.MESSAGES.failed("JVM Status "), caught.getMessage());
             }
 
             @Override

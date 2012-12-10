@@ -10,6 +10,7 @@ import org.jboss.as.console.client.domain.hosts.HostSelector;
 import org.jboss.as.console.client.domain.model.Host;
 import org.jboss.as.console.client.shared.model.SubsystemRecord;
 import org.jboss.as.console.client.shared.state.CurrentServerSelection;
+import org.jboss.as.console.client.shared.state.HostList;
 import org.jboss.as.console.client.shared.state.ServerSelectionEvent;
 
 import javax.inject.Inject;
@@ -76,7 +77,7 @@ public class DomainRuntimeView extends ViewImpl implements DomainRuntimePresente
     }
 
     @Override
-    public void setHosts(List<Host> hosts) {
+    public void setHosts(HostList hosts) {
         lhsNavigation.setHosts(hosts);
     }
 

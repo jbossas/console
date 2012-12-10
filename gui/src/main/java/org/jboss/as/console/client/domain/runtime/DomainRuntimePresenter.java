@@ -31,6 +31,8 @@ import org.jboss.as.console.client.shared.model.SubsystemRecord;
 import org.jboss.as.console.client.shared.model.SubsystemStore;
 import org.jboss.as.console.client.shared.state.CurrentServerSelection;
 import org.jboss.as.console.client.shared.state.DomainEntityManager;
+import org.jboss.as.console.client.shared.state.HostList;
+import org.jboss.as.console.client.shared.state.HostSelectionChanged;
 import org.jboss.as.console.client.shared.state.ServerSelectionChanged;
 import org.jboss.ballroom.client.layout.LHSHighlightEvent;
 
@@ -41,7 +43,9 @@ import java.util.List;
  * @date 11/2/11
  */
 public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyView, DomainRuntimePresenter.MyProxy>
-        implements StaleModelEvent.StaleModelListener, ServerSelectionChanged.ChangeListener {
+        implements StaleModelEvent.StaleModelListener,
+        ServerSelectionChanged.ChangeListener,
+        HostSelectionChanged.ChangeListener  {
 
     private final PlaceManager placeManager;
     private boolean hasBeenRevealed = false;
@@ -67,7 +71,7 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
 
     public interface MyView extends View {
         void setPresenter(DomainRuntimePresenter presenter);
-        void setHosts(List<Host> hosts);
+        void setHosts(HostList hosts);
         void setSubsystems(List<SubsystemRecord> result);
         void resetHostSelection();
     }
@@ -95,6 +99,8 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
         super.onBind();
         getView().setPresenter(this);
 
+        getEventBus().addHandler(HostSelectionChanged.TYPE, this);
+        getEventBus().addHandler(ServerSelectionChanged.TYPE, this);
         getEventBus().addHandler(StaleModelEvent.TYPE, this);
 
     }
@@ -145,15 +151,9 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
     private void loadHostData() {
 
         // load host and server data
-        hostInfoStore.getHosts(new SimpleCallback<List<Host>>() {
+        domainManager.getHosts(new SimpleCallback<HostList>() {
             @Override
-            public void onSuccess(final List<Host> hosts) {
-
-
-                if (hosts.isEmpty()) {
-                    Console.warning("No hosts found!");
-                    return;
-                }
+            public void onSuccess(final HostList hosts) {
 
                 getView().setHosts(hosts);
 
@@ -168,6 +168,7 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
 
     @Override
     public void onServerSelectionChanged() {
+        System.out.println("serverSelection changed");
         Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
             @Override
             public void execute() {
@@ -177,13 +178,18 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
 
     }
 
+    @Override
+    public void onHostSelectionChanged() {
+
+    }
+
     private void loadSubsystems() {
 
         // load subsystems for selected server
 
         hostInfoStore.getServerConfiguration(
 
-                domainManager.getSelectedHost(),domainManager.getSelectedServer(),
+                domainManager.getSelectedHost(), domainManager.getSelectedServer(),
                 new SimpleCallback<Server>() {
                     @Override
                     public void onSuccess(Server server) {

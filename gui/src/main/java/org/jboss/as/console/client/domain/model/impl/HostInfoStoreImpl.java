@@ -355,6 +355,7 @@ public class HostInfoStoreImpl implements HostInformationStore {
                                     ModelNode compositeResponse = response.get(RESULT);
 
                                     ServerInstance instance = createInstanceModel(handle);
+                                    instance.setHost(host);
                                     instance.setInterfaces(new HashMap<String, String>());
                                     instance.setSocketBindings(new HashMap<String, String>());
                                     instanceList.add(instance);

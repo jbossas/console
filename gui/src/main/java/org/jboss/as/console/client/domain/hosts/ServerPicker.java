@@ -10,6 +10,8 @@ import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.domain.model.Host;
 import org.jboss.as.console.client.domain.model.ServerInstance;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
+import org.jboss.as.console.client.shared.state.GlobalServerSelection;
+import org.jboss.as.console.client.shared.state.HostList;
 import org.jboss.as.console.client.shared.state.ServerSelectionEvent;
 
 import java.util.List;
@@ -26,34 +28,6 @@ public class ServerPicker implements HostServerManagement {
     public void resetHostSelection() {
         hostServerTable.clearSelection();
     }
-
-    static class Preselection {
-        private String host;
-        private ServerInstance server;
-
-        public String getHost() {
-            return host;
-        }
-
-        public void setHost(String host) {
-            this.host = host;
-        }
-
-        public ServerInstance getServer() {
-            return server;
-        }
-
-        public void setServer(ServerInstance server) {
-            this.server = server;
-        }
-
-        public void clear() {
-            this.host=null;
-            this.server=null;
-        }
-    }
-
-    static Preselection preselection = new Preselection();
 
     public ServerPicker() {
         this.loadServerCmd = new LoadServerCmd(Console.MODULES.getHostInfoStore());
@@ -91,34 +65,8 @@ public class ServerPicker implements HostServerManagement {
      *
      * @param hosts
      */
-    public void setHosts(List<Host> hosts) {
+    public void setHosts(HostList hosts) {
         hostServerTable.setHosts(hosts);
-
-        if(preselection.getHost()!=null)
-        {
-
-            final Command applySelection = new Command() {
-                @Override
-                public void execute() {
-                    hostServerTable.pickHost(preselection.getHost());
-                    hostServerTable.selectServer(preselection.getServer());
-                }
-            };
-
-
-            Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
-                @Override
-                public void execute() {
-                    loadServer(preselection.getHost(), applySelection);
-                }
-            });
-
-
-        }
-        else
-        {
-            hostServerTable.defaultHostSelection();
-        }
     }
 
     @Override
@@ -130,16 +78,6 @@ public class ServerPicker implements HostServerManagement {
 
                 hostServerTable.setServer(result);
 
-                // apply selection policy
-                if(preselection.getServer()!=null)
-                {
-                    hostServerTable.selectServer(preselection.getServer());
-                }
-                else if(result.size()>0)
-                {
-                    hostServerTable.selectServer(result.get(0));
-                }
-
                 // execute post loading commands
                 for(Command c : commands)
                     c.execute();
@@ -150,31 +88,14 @@ public class ServerPicker implements HostServerManagement {
     @Override
     public void onServerSelected(final Host host, final ServerInstance server) {
 
-        assert host!=null : "No host set";
-
-        // update the preselection
-        preselection.setHost(host.getName());
-        preselection.setServer(server);
-
-
         Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
             @Override
             public void execute() {
                 Console.getEventBus().fireEvent(
-                        new ServerSelectionEvent(host.getName(), server, ServerSelectionEvent.Source.Picker)
+                        new GlobalServerSelection(server)
                 );
             }
         });
 
-    }
-
-    /**
-     * invoked by event bus
-     * @param hostName
-     * @param server
-     */
-    public void setPreselection(String hostName, ServerInstance server) {
-        preselection.setHost(hostName);
-        preselection.setServer(server);
     }
 }

@@ -7,14 +7,12 @@ import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.domain.hosts.ServerPicker;
-import org.jboss.as.console.client.domain.model.Host;
-import org.jboss.as.console.client.domain.model.ServerInstance;
 import org.jboss.as.console.client.plugins.RuntimeExtensionMetaData;
 import org.jboss.as.console.client.plugins.RuntimeExtensionRegistry;
 import org.jboss.as.console.client.plugins.RuntimeGroup;
 import org.jboss.as.console.client.shared.model.SubsystemRecord;
 import org.jboss.as.console.client.shared.state.CurrentServerSelection;
-import org.jboss.as.console.client.shared.state.ServerSelectionEvent;
+import org.jboss.as.console.client.shared.state.HostList;
 import org.jboss.as.console.client.widgets.nav.Predicate;
 import org.jboss.as.console.client.widgets.tree.GroupItem;
 import org.jboss.ballroom.client.layout.LHSNavTree;
@@ -28,7 +26,7 @@ import java.util.List;
  * @author Heiko Braun
  * @date 11/2/11
  */
-class DomainRuntimeNavigation implements ServerSelectionEvent.ServerSelectionListener {
+class DomainRuntimeNavigation {
 
     private VerticalPanel stack;
     private VerticalPanel layout;
@@ -150,7 +148,7 @@ class DomainRuntimeNavigation implements ServerSelectionEvent.ServerSelectionLis
         return scroll;
     }
 
-    public void setHosts(List<Host> hosts) {
+    public void setHosts(HostList hosts) {
 
         serverPicker.setHosts(hosts);
 
@@ -198,18 +196,7 @@ class DomainRuntimeNavigation implements ServerSelectionEvent.ServerSelectionLis
 
     }
 
-    @Override
-    public void onServerSelection(String hostName, ServerInstance server, ServerSelectionEvent.Source source) {
-
-        if(!source.equals(ServerSelectionEvent.Source.Picker))
-        {
-            // triggered external to this view
-            serverPicker.setPreselection(hostName, server);
-        }
-    }
-
     public void resetHostSelection() {
-        serverPicker.setPreselection(null, null);
         serverPicker.resetHostSelection();
     }
 }

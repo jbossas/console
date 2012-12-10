@@ -86,7 +86,7 @@ public class DomainEntityManager implements
         selectedHost = hostName;
 
         // fire stale model event
-        eventBus.fireEvent(new StaleGlobalModel(StaleGlobalModel.HOSTS));
+        eventBus.fireEvent(new HostSelectionChanged());
     }
 
     @Override
@@ -96,7 +96,7 @@ public class DomainEntityManager implements
         selectedServer = server.getName();
 
         // fire stale model
-        eventBus.fireEvent(new StaleGlobalModel(StaleGlobalModel.SERVER_INSTANCES));
+        eventBus.fireEvent(new ServerSelectionChanged());
     }
 
     private Host getSelectedHost(List<Host> hosts) {

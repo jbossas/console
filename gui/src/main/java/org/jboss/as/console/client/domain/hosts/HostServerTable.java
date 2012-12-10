@@ -26,6 +26,7 @@ import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 import org.jboss.as.console.client.domain.model.Host;
 import org.jboss.as.console.client.domain.model.ServerInstance;
+import org.jboss.as.console.client.shared.state.HostList;
 import org.jboss.as.console.client.widgets.icons.ConsoleIcons;
 import org.jboss.as.console.client.widgets.lists.DefaultCellList;
 import org.jboss.as.console.client.widgets.popups.DefaultPopup;
@@ -338,19 +339,15 @@ public class HostServerTable {
         }
     }
 
-    public void setHosts(List<Host> hosts) {
+    public void setHosts(HostList hosts) {
 
         ratio.setText("");
 
-        hostPager.setVisible(hosts.size()>=5);
+        hostPager.setVisible(hosts.getHosts().size()>=5);
 
-        hostProvider.setList(hosts);
+        hostProvider.setList(hosts.getHosts());
 
-
-        // i think it's safe to skip this part:
-        // either the pre- or the default selection should kick in
-        //serverProvider.setList(Collections.EMPTY_LIST);
-
+        hostList.getSelectionModel().setSelected(hosts.getSelectedHost(), true);
 
     }
 
