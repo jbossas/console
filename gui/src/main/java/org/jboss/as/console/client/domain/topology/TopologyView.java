@@ -41,6 +41,7 @@ import org.jboss.as.console.client.domain.model.impl.LifecycleOperation;
 import org.jboss.as.console.client.shared.runtime.ext.Extension;
 import org.jboss.as.console.client.shared.runtime.ext.ExtensionView;
 import org.jboss.as.console.client.shared.viewframework.builder.SimpleLayout;
+import org.jboss.as.console.client.widgets.Hint;
 import org.jboss.as.console.client.widgets.tabs.DefaultTabLayoutPanel;
 import org.jboss.ballroom.client.widgets.tables.DefaultPager;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
@@ -76,7 +77,6 @@ public class TopologyView extends SuspendableViewImpl implements TopologyPresent
     private LifecycleLinkListener lifecycleLinkListener;
     private FlowPanel container;
     private ExtensionView extensions;
-
 
     @Override
     public Widget createWidget()
@@ -139,9 +139,13 @@ public class TopologyView extends SuspendableViewImpl implements TopologyPresent
         HtmlGenerator html = new HtmlGenerator();
         if (groups == null || groups.isEmpty())
         {
-            // TODO Add "no data" html
+            // no server/groups available ...
+            Hint blank = new Hint("No server available!");
+            container.clear();
+            container.insert(blank, 0);
             return;
         }
+
 
         // initialization
         assignColors(groups);
@@ -216,6 +220,10 @@ public class TopologyView extends SuspendableViewImpl implements TopologyPresent
         {
             container.remove(0);
         }
+        else {
+            container.clear();
+        }
+
         container.insert(panel, 0);
 
         // update navigation

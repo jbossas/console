@@ -488,3 +488,16 @@ input[type="checkbox"] {
     text-decoration: none!important;
 }
 
+
+.hint-box {
+    font-size: 16px;
+    border: 1px solid #A7ABB4;
+    background-color: #ffffff;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+    padding-top:15px;
+    padding:10px;
+    display: inline-block;
+    background-color: #FFFD99;
+}
+
