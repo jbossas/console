@@ -3,7 +3,6 @@ package org.jboss.as.console.client.domain.hosts;
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
@@ -27,6 +26,7 @@ import com.google.gwt.view.client.SingleSelectionModel;
 import org.jboss.as.console.client.domain.model.Host;
 import org.jboss.as.console.client.domain.model.ServerInstance;
 import org.jboss.as.console.client.shared.state.HostList;
+import org.jboss.as.console.client.shared.state.ServerInstanceList;
 import org.jboss.as.console.client.widgets.icons.ConsoleIcons;
 import org.jboss.as.console.client.widgets.lists.DefaultCellList;
 import org.jboss.as.console.client.widgets.popups.DefaultPopup;
@@ -70,7 +70,6 @@ public class HostServerTable {
 
     private SingleSelectionModel<Host> hostSelectionModel;
     private SingleSelectionModel<ServerInstance> serverSelectionModel;
-    private boolean preventRefreshServerList = false;
 
 
     public HostServerTable(HostServerManagement presenter) {
@@ -144,12 +143,12 @@ public class HostServerTable {
         hostList.getSelectionModel().addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
             @Override
             public void onSelectionChange(SelectionChangeEvent event) {
+
                 Host selectedHost = getSelectedHost();
 
                 if(selectedHost!=null)
                 {
-                    if(!preventRefreshServerList)
-                        presenter.loadServer(selectedHost.getName());
+                    presenter.loadServer(selectedHost.getName());
                 }
                 else if(selectedHost==null)
                 {
@@ -325,18 +324,21 @@ public class HostServerTable {
 
     /**
      * Display the currently active servers for selection
-     * @param servers
+     * @param serverList
      */
-    public void setServer(List<ServerInstance> servers) {
+    public void setServer(ServerInstanceList serverList) {
 
-        serverProvider.setList(servers);
+        List<ServerInstance> server = serverList.getServer();
+        serverProvider.setList(server);
 
-        serverPager.setVisible(servers.size() >= 5);
+        serverPager.setVisible(server.size() >= 5);
 
-        if(servers.isEmpty())
+        if(server.isEmpty())
         {
             currentDisplayedValue.setText("No Server");
         }
+
+        this.serverList.getSelectionModel().setSelected(serverList.getSelectedServer(), true);
     }
 
     public void setHosts(HostList hosts) {
@@ -387,18 +389,6 @@ public class HostServerTable {
         assert !serverProvider.getList().isEmpty() : "Servers have not been loaded";
 
         serverList.getSelectionModel().setSelected(server, true);
-    }
-
-    public void pickHost(String host) {
-        preventRefreshServerList = true;
-        selectHost(host);
-
-        Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
-            @Override
-            public void execute() {
-                preventRefreshServerList = false;
-            }
-        });
     }
 
     interface Template extends SafeHtmlTemplates {

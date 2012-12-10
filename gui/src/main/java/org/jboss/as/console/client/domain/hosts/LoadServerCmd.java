@@ -4,6 +4,8 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import org.jboss.as.console.client.domain.model.HostInformationStore;
 import org.jboss.as.console.client.domain.model.ServerInstance;
 import org.jboss.as.console.client.shared.dispatch.AsyncCommand;
+import org.jboss.as.console.client.shared.state.DomainEntityManager;
+import org.jboss.as.console.client.shared.state.ServerInstanceList;
 
 import java.util.List;
 
@@ -11,22 +13,16 @@ import java.util.List;
  * @author Heiko Braun
  * @date 12/9/11
  */
-public class LoadServerCmd implements AsyncCommand<List<ServerInstance>> {
+public class LoadServerCmd implements AsyncCommand<ServerInstanceList> {
 
-    private HostInformationStore hostInfoStore;
 
-    public LoadServerCmd(HostInformationStore hostInfoStore) {
-        this.hostInfoStore = hostInfoStore;
+    private final DomainEntityManager domainManager;
+
+    public LoadServerCmd(DomainEntityManager domainManager) {
+        this.domainManager = domainManager;
     }
 
-    @Override
-    public void execute(final AsyncCallback<List<ServerInstance>> callback) {
-
-        throw new IllegalArgumentException("Use the overridden method instead");
-
-    }
-
-    public void execute(final String hostName, final AsyncCallback<List<ServerInstance>> callback) {
-        hostInfoStore.getServerInstances(hostName, callback);
+    public void execute(final AsyncCallback<ServerInstanceList> callback) {
+        domainManager.getServerInstances(domainManager.getSelectedHost(), callback);
     }
 }

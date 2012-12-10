@@ -12,8 +12,7 @@ import org.jboss.as.console.client.domain.model.ServerInstance;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.shared.state.GlobalServerSelection;
 import org.jboss.as.console.client.shared.state.HostList;
-
-import java.util.List;
+import org.jboss.as.console.client.shared.state.ServerInstanceList;
 
 /**
  * @author Heiko Braun
@@ -29,7 +28,7 @@ public class ServerPicker implements HostServerManagement {
     }
 
     public ServerPicker() {
-        this.loadServerCmd = new LoadServerCmd(Console.MODULES.getHostInfoStore());
+        this.loadServerCmd = new LoadServerCmd(Console.MODULES.getDomainEntityManager());
     }
 
     public Widget asWidget() {
@@ -65,9 +64,9 @@ public class ServerPicker implements HostServerManagement {
     @Override
     public void loadServer(final String selectedHost, final Command... commands) {
 
-        loadServerCmd.execute(selectedHost, new SimpleCallback<List<ServerInstance>>() {
+        loadServerCmd.execute(new SimpleCallback<ServerInstanceList>() {
             @Override
-            public void onSuccess(List<ServerInstance> result) {
+            public void onSuccess(ServerInstanceList result) {
 
                 hostServerTable.setServer(result);
 

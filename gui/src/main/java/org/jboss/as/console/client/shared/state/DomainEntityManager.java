@@ -100,9 +100,6 @@ public class DomainEntityManager implements
      */
     @Override
     public void onServerSelection(ServerInstance server) {
-
-        System.out.println("selected "+server.getName());
-
         // replace host selection, server selection has precedence
         selectedHost = server.getHost();
         selectedServer = server.getName();
