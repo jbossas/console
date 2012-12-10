@@ -7,7 +7,6 @@ import org.jboss.as.console.client.core.BootstrapContext;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.shared.state.DomainEntityManager;
 import org.jboss.as.console.client.shared.state.HostList;
-import org.jboss.as.console.client.shared.state.ServerInstanceList;
 
 import java.util.Iterator;
 

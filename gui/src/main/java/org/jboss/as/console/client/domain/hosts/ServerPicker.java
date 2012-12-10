@@ -59,12 +59,6 @@ public class ServerPicker implements HostServerManagement {
         return layout;
     }
 
-    /**
-     * Update the host list and applies a selection.
-     * Either default (first one) or preselected (if given)
-     *
-     * @param hosts
-     */
     public void setHosts(HostList hosts) {
         hostServerTable.setHosts(hosts);
     }

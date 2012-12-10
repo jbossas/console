@@ -31,6 +31,7 @@ import org.jboss.as.console.client.shared.model.SubsystemStore;
 import org.jboss.as.console.client.shared.state.DomainEntityManager;
 import org.jboss.as.console.client.shared.state.HostList;
 import org.jboss.as.console.client.shared.state.HostSelectionChanged;
+import org.jboss.as.console.client.shared.state.ServerInstanceList;
 import org.jboss.as.console.client.shared.state.ServerSelectionChanged;
 import org.jboss.ballroom.client.layout.LHSHighlightEvent;
 
@@ -165,14 +166,12 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
 
     @Override
     public void onServerSelectionChanged() {
-        System.out.println("serverSelection changed");
         Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
             @Override
             public void execute() {
                 loadSubsystems();
             }
         });
-
     }
 
     @Override

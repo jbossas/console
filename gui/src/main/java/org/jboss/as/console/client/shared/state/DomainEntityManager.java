@@ -81,6 +81,10 @@ public class DomainEntityManager implements
         return selectedServer;
     }
 
+    /**
+     * Entry point for explicit host selection (user initiated)
+     * @param hostName
+     */
     @Override
     public void onHostSelection(String hostName) {
         selectedHost = hostName;
@@ -89,6 +93,11 @@ public class DomainEntityManager implements
         eventBus.fireEvent(new HostSelectionChanged());
     }
 
+
+    /**
+     * Entry point for explicit server selection (user initiated)
+     * @param server
+     */
     @Override
     public void onServerSelection(ServerInstance server) {
         // replace host selection, server selection has precedence
