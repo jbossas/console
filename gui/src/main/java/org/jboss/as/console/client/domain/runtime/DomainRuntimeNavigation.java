@@ -11,7 +11,6 @@ import org.jboss.as.console.client.plugins.RuntimeExtensionMetaData;
 import org.jboss.as.console.client.plugins.RuntimeExtensionRegistry;
 import org.jboss.as.console.client.plugins.RuntimeGroup;
 import org.jboss.as.console.client.shared.model.SubsystemRecord;
-import org.jboss.as.console.client.shared.state.CurrentServerSelection;
 import org.jboss.as.console.client.shared.state.HostList;
 import org.jboss.as.console.client.widgets.nav.Predicate;
 import org.jboss.as.console.client.widgets.tree.GroupItem;
@@ -41,10 +40,8 @@ class DomainRuntimeNavigation {
     private LHSTreeSection metricLeaf;
     private LHSTreeSection runtimeLeaf;
 
-    private CurrentServerSelection serverSelection;
+    public DomainRuntimeNavigation() {
 
-    public DomainRuntimeNavigation(CurrentServerSelection serverSelection) {
-        this.serverSelection = serverSelection;
     }
 
     public Widget asWidget()

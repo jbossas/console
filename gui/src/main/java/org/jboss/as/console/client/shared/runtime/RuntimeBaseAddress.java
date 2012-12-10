@@ -1,6 +1,9 @@
 package org.jboss.as.console.client.shared.runtime;
 
+import org.jboss.as.console.client.Console;
+import org.jboss.as.console.client.core.BootstrapContext;
 import org.jboss.as.console.client.shared.state.CurrentServerSelection;
+import org.jboss.as.console.client.shared.state.DomainEntityManager;
 import org.jboss.dmr.client.ModelNode;
 
 import javax.inject.Inject;
@@ -11,27 +14,27 @@ import javax.inject.Inject;
  */
 public class RuntimeBaseAddress {
 
-    @Inject private static CurrentServerSelection serverSelection;
     @Inject private static RuntimeBaseAddress instance;
 
-    @Inject
-    public RuntimeBaseAddress(
-            CurrentServerSelection serverSelection) {
-        this.serverSelection = serverSelection;
-    }
+    @Inject private static BootstrapContext bootstrap;
 
     public static ModelNode get() {
         return instance.getAddress();
     }
 
+
+
     public ModelNode getAddress() {
+
+        final DomainEntityManager domainManager = Console.MODULES.getDomainEntityManager();
+
         ModelNode baseAddress = new ModelNode();
         baseAddress.setEmptyList();
 
-        if(serverSelection.isSet())
+        if(!bootstrap.isStandalone())
         {
-            baseAddress.add("host", serverSelection.getHost());
-            baseAddress.add("server", serverSelection.getServer().getName());
+            baseAddress.add("host", domainManager.getSelectedHost());
+            baseAddress.add("server", domainManager.getSelectedServer());
         }
 
         return baseAddress;

@@ -7,11 +7,8 @@ import com.gwtplatform.mvp.client.ViewImpl;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.message.Message;
 import org.jboss.as.console.client.domain.hosts.HostSelector;
-import org.jboss.as.console.client.domain.model.Host;
 import org.jboss.as.console.client.shared.model.SubsystemRecord;
-import org.jboss.as.console.client.shared.state.CurrentServerSelection;
 import org.jboss.as.console.client.shared.state.HostList;
-import org.jboss.as.console.client.shared.state.ServerSelectionEvent;
 
 import javax.inject.Inject;
 import java.util.List;
@@ -30,16 +27,14 @@ public class DomainRuntimeView extends ViewImpl implements DomainRuntimePresente
 
     private HostSelector hostSelector;
 
-    private CurrentServerSelection serverSelectionState;
-
     @Inject
-    public DomainRuntimeView(CurrentServerSelection serverSelectionState) {
+    public DomainRuntimeView() {
         super();
 
         layout = new SplitLayoutPanel(10);
 
         contentCanvas = new LayoutPanel();
-        lhsNavigation = new DomainRuntimeNavigation(serverSelectionState);
+        lhsNavigation = new DomainRuntimeNavigation();
 
         layout.addWest(lhsNavigation.asWidget(), 197);
 

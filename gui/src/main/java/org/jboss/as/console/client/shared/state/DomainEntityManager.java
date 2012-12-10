@@ -143,6 +143,7 @@ public class DomainEntityManager implements
         if(null==matched)
             matched = ServerInstances.get(0);
 
+        selectedHost = matched.getHost();
         selectedServer = matched.getName();
 
         return matched;
