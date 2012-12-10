@@ -49,6 +49,7 @@ import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.runtime.ext.Extension;
 import org.jboss.as.console.client.shared.runtime.ext.LoadExtensionCmd;
+import org.jboss.as.console.client.shared.state.StaleGlobalModel;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -268,6 +269,8 @@ public class TopologyPresenter extends
             case RESTART:
                 break;
         }
+
+        getEventBus().fireEvent(new StaleGlobalModel(StaleGlobalModel.SERVER_INSTANCES));
     }
 
     public void onGroupLifecycle(final String group, final LifecycleOperation op)
@@ -299,6 +302,8 @@ public class TopologyPresenter extends
                     break;
             }
         }
+
+        getEventBus().fireEvent(new StaleGlobalModel(StaleGlobalModel.SERVER_GROUPS));
     }
 
 
