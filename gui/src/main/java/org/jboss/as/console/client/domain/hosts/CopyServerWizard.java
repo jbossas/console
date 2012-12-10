@@ -120,7 +120,7 @@ public class CopyServerWizard {
                     @Override
                     public ModelNode getAddress() {
                         ModelNode address = new ModelNode();
-                        address.add("host", Console.MODULES.getCurrentSelectedHost().getName());
+                        address.add("host", Console.MODULES.getDomainEntityManager().getSelectedHost());
                         address.add("server-config", "*");
                         return address;
                     }

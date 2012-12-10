@@ -23,15 +23,15 @@ import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.domain.events.StaleModelEvent;
 import org.jboss.as.console.client.domain.model.Host;
 import org.jboss.as.console.client.domain.model.HostInformationStore;
+import org.jboss.as.console.client.domain.model.Server;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.domain.model.ServerGroupStore;
-import org.jboss.as.console.client.domain.model.ServerInstance;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.shared.model.SubsystemRecord;
 import org.jboss.as.console.client.shared.model.SubsystemStore;
-import org.jboss.as.console.client.shared.state.CurrentHostSelection;
 import org.jboss.as.console.client.shared.state.CurrentServerSelection;
-import org.jboss.as.console.client.shared.state.ServerSelectionEvent;
+import org.jboss.as.console.client.shared.state.DomainEntityManager;
+import org.jboss.as.console.client.shared.state.ServerSelectionChanged;
 import org.jboss.ballroom.client.layout.LHSHighlightEvent;
 
 import java.util.List;
@@ -41,20 +41,19 @@ import java.util.List;
  * @date 11/2/11
  */
 public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyView, DomainRuntimePresenter.MyProxy>
-        implements ServerSelectionEvent.ServerSelectionListener,
-        StaleModelEvent.StaleModelListener{
+        implements StaleModelEvent.StaleModelListener, ServerSelectionChanged.ChangeListener {
 
     private final PlaceManager placeManager;
     private boolean hasBeenRevealed = false;
     private HostInformationStore hostInfoStore;
     private CurrentServerSelection serverSelection;
-    private CurrentHostSelection hostSelection;
     private SubsystemStore subsysStore;
     private BootstrapContext bootstrap;
     private ServerGroupStore serverGroupStore;
     private String previousServerSelection = null;
     private Header header;
     private PlaceRequest lastSubRequest = null;
+    private final DomainEntityManager domainManager;
 
 
     @ProxyCodeSplit
@@ -70,9 +69,6 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
         void setPresenter(DomainRuntimePresenter presenter);
         void setHosts(List<Host> hosts);
         void setSubsystems(List<SubsystemRecord> result);
-
-        ServerSelectionEvent.ServerSelectionListener getLhsNavigation();
-
         void resetHostSelection();
     }
 
@@ -80,15 +76,14 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
     public DomainRuntimePresenter(
             EventBus eventBus, MyView view, MyProxy proxy,
             PlaceManager placeManager,  HostInformationStore hostInfoStore,
-            CurrentServerSelection serverSelection, CurrentHostSelection hostSelection,
+            DomainEntityManager domainManager,
             SubsystemStore subsysStore, BootstrapContext bootstrap,
             ServerGroupStore serverGroupStore, Header header) {
         super(eventBus, view, proxy);
 
         this.placeManager = placeManager;
         this.hostInfoStore = hostInfoStore;
-        this.serverSelection = serverSelection;
-        this.hostSelection = hostSelection;
+        this.domainManager = domainManager;
         this.subsysStore = subsysStore;
         this.bootstrap = bootstrap;
         this.serverGroupStore = serverGroupStore;
@@ -101,22 +96,6 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
         getView().setPresenter(this);
 
         getEventBus().addHandler(StaleModelEvent.TYPE, this);
-        getEventBus().addHandler(ServerSelectionEvent.TYPE, DomainRuntimePresenter.this);
-        getEventBus().addHandler(ServerSelectionEvent.TYPE, getView().getLhsNavigation());
-
-        // check if server has been preselected
-        /*if(serverSelection.isSet())
-        {
-            Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
-                @Override
-                public void execute() {
-                    System.out.println("Force preselection: "+serverSelection.getServer().getName());
-                    getEventBus().fireEvent(
-                            new ServerSelectionEvent(serverSelection.getHost(), serverSelection.getServer())
-                    );
-                }
-            });
-        } */
 
     }
 
@@ -171,8 +150,7 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
             public void onSuccess(final List<Host> hosts) {
 
 
-                if(hosts.isEmpty())
-                {
+                if (hosts.isEmpty()) {
                     Console.warning("No hosts found!");
                     return;
                 }
@@ -189,53 +167,55 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
     }
 
     @Override
-    public void onServerSelection(final String hostName, final ServerInstance server, ServerSelectionEvent.Source source) {
-
-        //System.out.println("Server selection: "+server.getName() + "("+source+")");
-
+    public void onServerSelectionChanged() {
         Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
             @Override
             public void execute() {
-                if (server != null) {
-                    loadSubsystems(server);
-                }
+                loadSubsystems();
             }
         });
 
     }
 
-    private void loadSubsystems(ServerInstance server) {
-        if(!server.getName().equals(previousServerSelection))
-        {
-            previousServerSelection = server.getName();
+    private void loadSubsystems() {
 
-            // load subsystems for selected server
+        // load subsystems for selected server
 
-            serverGroupStore.loadServerGroup(server.getGroup(), new SimpleCallback<ServerGroupRecord>() {
-                @Override
-                public void onSuccess(ServerGroupRecord group)
-                {
-                    subsysStore.loadSubsystems(group.getProfileName(), new SimpleCallback<List<SubsystemRecord>>() {
-                        @Override
-                        public void onSuccess(List<SubsystemRecord> result) {
-                            getView().setSubsystems(result);
+        hostInfoStore.getServerConfiguration(
+
+                domainManager.getSelectedHost(),domainManager.getSelectedServer(),
+                new SimpleCallback<Server>() {
+                    @Override
+                    public void onSuccess(Server server) {
+                        serverGroupStore.loadServerGroup(server.getGroup(),
+                                new SimpleCallback<ServerGroupRecord>() {
+                                    @Override
+                                    public void onSuccess(ServerGroupRecord group)
+                                    {
+                                        subsysStore.loadSubsystems(group.getProfileName(), new SimpleCallback<List<SubsystemRecord>>() {
+                                            @Override
+                                            public void onSuccess(List<SubsystemRecord> result) {
+                                                getView().setSubsystems(result);
 
 
-                            Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
-                                @Override
-                                public void execute() {
-                                    Console.getEventBus().fireEvent(
-                                            new LHSHighlightEvent(
-                                                    placeManager.getCurrentPlaceRequest().getNameToken()
-                                            )
-                                    );
-                                }
-                            });
-                        }
-                    });
+                                                Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+                                                    @Override
+                                                    public void execute() {
+                                                        Console.getEventBus().fireEvent(
+                                                                new LHSHighlightEvent(
+                                                                        placeManager.getCurrentPlaceRequest().getNameToken()
+                                                                )
+                                                        );
+                                                    }
+                                                });
+                                            }
+                                        });
+                                    }
+                                });
+
+                    }
                 }
-            });
-        }
+        );
     }
 
 
@@ -245,19 +225,12 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
                 || StaleModelEvent.SERVER_CONFIGURATIONS.equals(modelName))
         {
 
-            // clear current selection
-            serverSelection.setHost(null);
-            serverSelection.setServer(null);
-
-            // clear views
-            getView().resetHostSelection();
-
-            Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+            /*Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
                 @Override
                 public void execute() {
                     loadHostData();
                 }
-            });
+            });*/
 
         }
     }

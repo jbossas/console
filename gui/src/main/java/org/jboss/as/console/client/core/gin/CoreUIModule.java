@@ -132,7 +132,6 @@ import org.jboss.as.console.client.shared.runtime.web.WebMetricPresenter;
 import org.jboss.as.console.client.shared.runtime.web.WebMetricView;
 import org.jboss.as.console.client.shared.runtime.ws.WebServiceRuntimePresenter;
 import org.jboss.as.console.client.shared.runtime.ws.WebServiceRuntimeView;
-import org.jboss.as.console.client.shared.state.CurrentHostSelection;
 import org.jboss.as.console.client.shared.state.CurrentServerSelection;
 import org.jboss.as.console.client.shared.state.DomainEntityManager;
 import org.jboss.as.console.client.shared.state.ReloadState;
@@ -398,7 +397,6 @@ public class CoreUIModule extends AbstractPresenterModule {
                 TopologyPresenter.MyProxy.class);
 
         bind(CurrentProfileSelection.class).in(Singleton.class);
-        bind(CurrentHostSelection.class).in(Singleton.class);
         bind(CurrentServerSelection.class).in(Singleton.class);
         bind(ReloadState.class).in(Singleton.class);
 

@@ -7,7 +7,7 @@ import com.google.gwt.event.shared.GwtEvent;
  * @author Heiko Braun
  * @date 12/10/12
  */
-public class HostSelectionChanged extends GwtEvent<HostSelectionChanged.ChangeListener> {
+public class ServerSelectionChanged extends GwtEvent<ServerSelectionChanged.ChangeListener> {
 
     public static final Type TYPE = new Type<ChangeListener>();
 
@@ -18,11 +18,11 @@ public class HostSelectionChanged extends GwtEvent<HostSelectionChanged.ChangeLi
 
     @Override
     protected void dispatch(ChangeListener listener) {
-        listener.onHostSelectionChanged();
+        listener.onServerSelectionChanged();
     }
 
     public interface ChangeListener extends EventHandler {
-        void onHostSelectionChanged();
+        void onServerSelectionChanged();
     }
 }
 

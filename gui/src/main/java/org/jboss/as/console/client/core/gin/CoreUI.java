@@ -80,8 +80,8 @@ import org.jboss.as.console.client.shared.runtime.naming.JndiPresenter;
 import org.jboss.as.console.client.shared.runtime.tx.TXMetricPresenter;
 import org.jboss.as.console.client.shared.runtime.web.WebMetricPresenter;
 import org.jboss.as.console.client.shared.runtime.ws.WebServiceRuntimePresenter;
-import org.jboss.as.console.client.shared.state.CurrentHostSelection;
 import org.jboss.as.console.client.shared.state.CurrentServerSelection;
+import org.jboss.as.console.client.shared.state.DomainEntityManager;
 import org.jboss.as.console.client.shared.state.ReloadState;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.configadmin.ConfigAdminPresenter;
@@ -182,6 +182,8 @@ public interface CoreUI {
     Baseadress getBaseadress();
     RuntimeBaseAddress getRuntimeBaseAddress();
 
+    DomainEntityManager getDomainEntityManager();
+
     // ----------------------------------------------------------------------
 
     DispatchAsync getDispatchAsync();
@@ -215,7 +217,6 @@ public interface CoreUI {
     // domain config below
     AsyncProvider<ProfileMgmtPresenter> getProfileMgmtPresenter();
     CurrentProfileSelection getCurrentSelectedProfile();
-    CurrentHostSelection getCurrentSelectedHost();
     CurrentServerSelection getCurrentSelectedServer();
     ReloadState getReloadState();
 

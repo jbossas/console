@@ -47,11 +47,6 @@ public class DomainRuntimeView extends ViewImpl implements DomainRuntimePresente
     }
 
     @Override
-    public ServerSelectionEvent.ServerSelectionListener getLhsNavigation() {
-        return lhsNavigation;
-    }
-
-    @Override
     public Widget asWidget() {
         return layout;
     }

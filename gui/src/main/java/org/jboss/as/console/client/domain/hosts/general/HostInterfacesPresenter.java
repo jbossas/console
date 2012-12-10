@@ -40,7 +40,7 @@ import org.jboss.as.console.client.shared.general.InterfaceManagement;
 import org.jboss.as.console.client.shared.general.InterfaceManagementImpl;
 import org.jboss.as.console.client.shared.general.model.Interface;
 import org.jboss.as.console.client.shared.general.model.LoadInterfacesCmd;
-import org.jboss.as.console.client.shared.state.CurrentHostSelection;
+import org.jboss.as.console.client.shared.state.DomainEntityManager;
 import org.jboss.as.console.client.shared.state.HostSelectionChanged;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.as.console.client.widgets.forms.EntityAdapter;
@@ -59,9 +59,9 @@ public class HostInterfacesPresenter extends Presenter<HostInterfacesPresenter.M
     private LoadInterfacesCmd loadInterfacesCmd;
     private DispatchAsync dispatcher;
     private BeanFactory factory;
-    private CurrentHostSelection currentHost;
     private ApplicationMetaData metaData;
     private InterfaceManagement delegate;
+    private final DomainEntityManager domainManager;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.HostInterfacesPresenter)
@@ -79,7 +79,7 @@ public class HostInterfacesPresenter extends Presenter<HostInterfacesPresenter.M
     @Inject
     public HostInterfacesPresenter(
             EventBus eventBus, MyView view, MyProxy proxy,
-            PlaceManager placeManager, CurrentHostSelection currentHost,
+            PlaceManager placeManager, DomainEntityManager domainManager,
             DispatchAsync dispatcher, BeanFactory factory, ApplicationMetaData metaData
     ) {
         super(eventBus, view, proxy);
@@ -87,7 +87,7 @@ public class HostInterfacesPresenter extends Presenter<HostInterfacesPresenter.M
         this.placeManager = placeManager;
         this.dispatcher = dispatcher;
         this.factory = factory;
-        this.currentHost = currentHost;
+        this.domainManager= domainManager;
         this.metaData = metaData;
 
         EntityAdapter<Interface> entityAdapter = new EntityAdapter<Interface>(Interface.class, metaData);
@@ -118,26 +118,21 @@ public class HostInterfacesPresenter extends Presenter<HostInterfacesPresenter.M
     @Override
     protected void onReset() {
         super.onReset();
-
-        if(currentHost.isSet())
-            loadInterfaces();
+        loadInterfaces();
     }
 
     @Override
     public ModelNode getBaseAddress() {
         ModelNode address = new ModelNode();
         address.setEmptyList();
-        address.add("host", currentHost.getName());
+        address.add("host", domainManager.getSelectedHost());
         return address;
     }
 
     public void loadInterfaces() {
 
-        if(!currentHost.isSet())
-            throw new RuntimeException("Host selection not set!");
-
         ModelNode address = new ModelNode();
-        address.add("host", currentHost.getName());
+        address.add("host", domainManager.getSelectedHost());
 
         LoadInterfacesCmd loadInterfacesCmd = new LoadInterfacesCmd(dispatcher, address, metaData);
 

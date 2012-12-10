@@ -71,7 +71,7 @@ public class NewHostJvmWizard {
                     @Override
                     public ModelNode getAddress() {
                         ModelNode address = new ModelNode();
-                        address.add("host", Console.MODULES.getCurrentSelectedHost().getName());
+                        address.add("host", Console.MODULES.getDomainEntityManager().getSelectedHost());
                         address.add("jvm", "*");
                         return address;
                     }
