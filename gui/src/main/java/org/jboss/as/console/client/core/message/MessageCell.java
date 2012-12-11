@@ -48,9 +48,9 @@ public class MessageCell extends AbstractCell<Message> {
 
         safeHtmlBuilder.appendHtmlConstant("<table width='100%' cellpadding=4 cellspacing=0>");
         safeHtmlBuilder.appendHtmlConstant("<tr valign='middle' "+rowStyle+">");
-        safeHtmlBuilder.appendHtmlConstant("<td width=16>");
+        safeHtmlBuilder.appendHtmlConstant("<td width='10%'>");
         safeHtmlBuilder.appendHtmlConstant(message.getSeverity().getTag());
-        safeHtmlBuilder.appendHtmlConstant("</td><td width='100%'>");
+        safeHtmlBuilder.appendHtmlConstant("</td><td width='90%'>");
 
         safeHtmlBuilder.appendHtmlConstant("<div class='"+styles+"'>");
         String actualMessage = message.getConciseMessage().length()>30 ? message.getConciseMessage().substring(0, 30)+" ..." : message.getConciseMessage();
