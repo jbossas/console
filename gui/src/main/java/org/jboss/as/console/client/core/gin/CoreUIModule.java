@@ -92,7 +92,6 @@ import org.jboss.as.console.client.plugins.RuntimeLHSItemExtensionRegistryImpl;
 import org.jboss.as.console.client.plugins.SubsystemRegistry;
 import org.jboss.as.console.client.plugins.SubsystemRegistryImpl;
 import org.jboss.as.console.client.shared.deployment.DeploymentStore;
-import org.jboss.as.console.client.shared.deployment.DeploymentStoreImpl;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.HandlerMapping;
 import org.jboss.as.console.client.shared.dispatch.InvocationMetrics;
@@ -348,7 +347,7 @@ public class CoreUIModule extends AbstractPresenterModule {
                 DeploymentBrowserView.class,
                 DeploymentBrowserPresenter.MyProxy.class);
 
-        bind(DeploymentStore.class).to(DeploymentStoreImpl.class).in(Singleton.class);
+        bind(DeploymentStore.class).in(Singleton.class);
 
         // ------------------------------------------------
         // domain management application

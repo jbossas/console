@@ -53,6 +53,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import static org.jboss.dmr.client.ModelDescriptionConstants.*;
@@ -107,7 +108,13 @@ public class DeploymentsPresenter extends Presenter<DeploymentsPresenter.MyView,
 
     private void loadDeployedContent()
     {
-
+        deploymentStore.loadAssignedDeployments(new SimpleCallback<Map<String, List<DeploymentRecord>>>() {
+            @Override
+            public void onSuccess(final Map<String, List<DeploymentRecord>> result)
+            {
+                System.out.println("Assigned deployments: " + result);
+            }
+        });
     }
 
     @Override
