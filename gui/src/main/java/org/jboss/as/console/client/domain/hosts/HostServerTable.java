@@ -217,6 +217,8 @@ public class HostServerTable {
 
         lhs.getElement().getParentElement().setAttribute("style", "border-right:1px solid #A7ABB4");
         lhs.getElement().getParentElement().setAttribute("width", "50%");
+        lhs.getElement().getParentElement().setAttribute("valign", "top");
+        rhs.getElement().getParentElement().setAttribute("valign", "top");
         rhs.getElement().getParentElement().setAttribute("width", "50%");
 
         ScrollPanel scroll = new ScrollPanel(millerPanel);
