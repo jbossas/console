@@ -113,21 +113,21 @@ public class DeploymentStore
     // ------------------------------------------------------ content repository
 
     /**
-     * Maps the server groups to the assigned deployments. If there are no assigned deployment for a server group
+     * Maps the server groups to the assigned deployments. If there are no assigned deployments for a server group
      * an empty list is provided.
      *
      * @throws IllegalStateException if called in standalone mode
      */
-    public void loadAssignedDeployments(final AsyncCallback<Map<String, List<DeploymentRecord>>> callback)
+    public void loadServerGroupDeployments(final AsyncCallback<Map<String, List<DeploymentRecord>>> callback)
     {
         if (isStandalone)
         {
             throw new IllegalStateException(
-                    "DeploymentStore.loadAssignedDeployments() must not be called in standalone mode!");
+                    "DeploymentStore.loadServerGroupDeployments() must not be called in standalone mode!");
         }
-        final Map<String, List<DeploymentRecord>> assignments = new HashMap<String, List<DeploymentRecord>>();
+        final Map<String, List<DeploymentRecord>> groupDeployments = new HashMap<String, List<DeploymentRecord>>();
 
-        // load the server groups
+        // first load the server groups
         serverGroupStore.loadServerGroups(new SimpleCallback<List<ServerGroupRecord>>()
         {
             @Override
@@ -135,11 +135,11 @@ public class DeploymentStore
             {
                 for (ServerGroupRecord group : groups)
                 {
-                    assignments.put(group.getGroupName(), new ArrayList<DeploymentRecord>());
+                    groupDeployments.put(group.getGroupName(), new ArrayList<DeploymentRecord>());
                 }
 
                 // read top level deployments /:read-children-resources(child-type=deployment)
-                // to get the deployment names
+                // to get the deployments itself
                 ModelNode deploymentsOp = new ModelNode();
                 deploymentsOp.get(ADDRESS).setEmptyList();
                 deploymentsOp.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
@@ -149,7 +149,7 @@ public class DeploymentStore
                     @Override
                     public void onSuccess(final List<DeploymentRecord> deployments)
                     {
-                        // deployment name to DeploymentRecord is necessary below...
+                        // deployment name to DeploymentRecord is used below...
                         final Map<String, DeploymentRecord> nameToDeployment = new HashMap<String, DeploymentRecord>();
                         for (DeploymentRecord deployment : deployments)
                         {
@@ -162,7 +162,7 @@ public class DeploymentStore
                         assignmentOp.get(OP).set(COMPOSITE);
                         assignmentOp.get(ADDRESS).setEmptyList();
                         final List<ModelNode> steps = new LinkedList<ModelNode>();
-                        for (String group : assignments.keySet())
+                        for (String group : groupDeployments.keySet())
                         {
                             ModelNode stepOp = new ModelNode();
                             stepOp.get(ADDRESS).add("server-group", group);
@@ -179,24 +179,26 @@ public class DeploymentStore
                                 ModelNode response = result.get();
                                 if (ModelAdapter.wasSuccess(response))
                                 {
-                                    // check for matches
+                                    // finally check for matches between the top level deployments
+                                    // and the deployments of the current server group.
                                     ModelNode stepsNode = response.get(RESULT);
                                     for (int i = 1; i <= steps.size(); i++)
                                     {
                                         List<ModelNode> nodes = stepsNode.get("step-" + i).get(RESULT).asList();
                                         for (ModelNode node : nodes)
                                         {
-                                            String group = node.get(ADDRESS).asList().get(0).get("server-group").asString();
+                                            String groupName = node.get(ADDRESS).asList().get(0).get(
+                                                    "server-group").asString();
                                             String deploymentName = node.get(RESULT).get("name").asString();
-                                            List<DeploymentRecord> assignedDeployments = assignments.get(group);
+                                            List<DeploymentRecord> currentDeployments = groupDeployments.get(groupName);
                                             DeploymentRecord deployment = nameToDeployment.get(deploymentName);
-                                            if (assignedDeployments != null && deployment != null)
+                                            if (currentDeployments != null && deployment != null)
                                             {
-                                                assignedDeployments.add(deployment);
+                                                currentDeployments.add(deployment);
                                             }
                                         }
                                     }
-                                    callback.onSuccess(assignments);
+                                    callback.onSuccess(groupDeployments);
                                 }
                             }
                         });
@@ -615,7 +617,8 @@ public class DeploymentStore
 
     // ------------------------------------------------------ unrelated
 
-    public void loadServerGroupDeployments(final AsyncCallback<List<DeploymentRecord>> callback)
+    @Deprecated
+    public void loadServerGroupDeploymentsAsList(final AsyncCallback<List<DeploymentRecord>> callback)
     {
         // /server-group=*/deployment=*/:read-resource
         final List<DeploymentRecord> deployments = new ArrayList<DeploymentRecord>();

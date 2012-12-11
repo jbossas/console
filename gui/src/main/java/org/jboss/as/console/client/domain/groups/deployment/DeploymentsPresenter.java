@@ -108,7 +108,8 @@ public class DeploymentsPresenter extends Presenter<DeploymentsPresenter.MyView,
 
     private void loadDeployedContent()
     {
-        deploymentStore.loadAssignedDeployments(new SimpleCallback<Map<String, List<DeploymentRecord>>>() {
+        deploymentStore.loadServerGroupDeployments(new SimpleCallback<Map<String, List<DeploymentRecord>>>()
+        {
             @Override
             public void onSuccess(final Map<String, List<DeploymentRecord>> result)
             {

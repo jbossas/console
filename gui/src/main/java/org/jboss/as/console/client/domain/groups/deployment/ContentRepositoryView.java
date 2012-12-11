@@ -39,8 +39,8 @@ import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.shared.deployment.DeploymentCommand;
 import org.jboss.as.console.client.shared.deployment.DeploymentCommandDelegate;
 import org.jboss.as.console.client.shared.deployment.DeploymentFilter;
+import org.jboss.as.console.client.shared.deployment.DeploymentNameColumn;
 import org.jboss.as.console.client.shared.deployment.DeploymentStore;
-import org.jboss.as.console.client.shared.deployment.TitleColumn;
 import org.jboss.as.console.client.shared.deployment.model.DeploymentRecord;
 import org.jboss.as.console.client.shared.viewframework.builder.MultipleToOneLayout;
 import org.jboss.as.console.client.widgets.tabs.DefaultTabLayoutPanel;
@@ -299,7 +299,7 @@ public class ContentRepositoryView extends SuspendableViewImpl implements Deploy
     private List<Column> makeNameAndRuntimeColumns() {
         List<Column> columns = new ArrayList<Column>(2);
 
-        columns.add(new TitleColumn());
+        columns.add(new DeploymentNameColumn());
 
         TextColumn<DeploymentRecord> dplRuntimeColumn = new TextColumn<DeploymentRecord>() {
             @Override

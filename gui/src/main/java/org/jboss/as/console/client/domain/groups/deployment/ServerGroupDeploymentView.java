@@ -13,7 +13,7 @@ import com.google.gwt.view.client.SingleSelectionModel;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.shared.deployment.DeploymentFilter;
-import org.jboss.as.console.client.shared.deployment.TitleColumn;
+import org.jboss.as.console.client.shared.deployment.DeploymentNameColumn;
 import org.jboss.as.console.client.shared.deployment.model.DeploymentRecord;
 import org.jboss.as.console.client.shared.viewframework.builder.MultipleToOneLayout;
 import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
@@ -45,7 +45,7 @@ public class ServerGroupDeploymentView {
 
     Widget asWidget() {
 
-        final TitleColumn titleColumn = new TitleColumn();
+        final DeploymentNameColumn deploymentNameColumn = new DeploymentNameColumn();
 
         TextColumn<DeploymentRecord> dplRuntimeColumn = new TextColumn<DeploymentRecord>() {
             @Override
@@ -91,7 +91,7 @@ public class ServerGroupDeploymentView {
         final SingleSelectionModel<DeploymentRecord> selectionModel = new SingleSelectionModel<DeploymentRecord>();
         table.setSelectionModel(selectionModel);
 
-        table.addColumn(titleColumn, Console.CONSTANTS.common_label_name());
+        table.addColumn(deploymentNameColumn, Console.CONSTANTS.common_label_name());
         table.addColumn(dplRuntimeColumn, Console.CONSTANTS.common_label_runtimeName());
         table.addColumn(statusColumn, Console.CONSTANTS.common_label_enabled());
 

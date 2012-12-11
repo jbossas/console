@@ -116,19 +116,23 @@ public class DomainDeploymentInfo implements DeploymentViewRefresher {
                 DomainDeploymentInfo.this.serverGroupNames = groupNames;
 
                 // load deployments
-                deploymentStore.loadServerGroupDeployments(new SimpleCallback<List<DeploymentRecord>>() {
+                deploymentStore.loadServerGroupDeploymentsAsList(new SimpleCallback<List<DeploymentRecord>>()
+                {
 
                     @Override
-                    public void onSuccess(List<DeploymentRecord> result) {
+                    public void onSuccess(List<DeploymentRecord> result)
+                    {
 
                         // initialize HashMap
                         Map<String, List<DeploymentRecord>> serverGroupDeployments = new HashMap<String, List<DeploymentRecord>>();
-                        for (String groupName : DomainDeploymentInfo.this.serverGroupNames) {
+                        for (String groupName : DomainDeploymentInfo.this.serverGroupNames)
+                        {
                             serverGroupDeployments.put(groupName, new ArrayList());
                         }
 
                         // put each record into a list for its server group
-                        for (DeploymentRecord record : result) {
+                        for (DeploymentRecord record : result)
+                        {
                             List<DeploymentRecord> deploymentList = serverGroupDeployments.get(record.getServerGroup());
                             deploymentList.add(record);
                         }
