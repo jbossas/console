@@ -9,8 +9,10 @@ import org.jboss.as.console.client.domain.model.HostInformationStore;
 import org.jboss.as.console.client.domain.model.Server;
 import org.jboss.as.console.client.domain.model.ServerInstance;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
+import org.jboss.as.console.client.shared.BeanFactory;
 
 import javax.inject.Inject;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -27,11 +29,13 @@ public class DomainEntityManager implements
 
     private final HostInformationStore hostInfo;
     private final EventBus eventBus;
+    private final BeanFactory factory;
 
     @Inject
-    public DomainEntityManager(HostInformationStore hostInfo, EventBus eventBus) {
+    public DomainEntityManager(HostInformationStore hostInfo, EventBus eventBus, BeanFactory factory) {
         this.hostInfo = hostInfo;
         this.eventBus = eventBus;
+        this.factory = factory;
 
         eventBus.addHandler(GlobalHostSelection.TYPE, this);
         eventBus.addHandler(GlobalServerSelection.TYPE, this);
@@ -52,8 +56,19 @@ public class DomainEntityManager implements
         hostInfo.getServerInstances(hostName, new SimpleCallback<List<ServerInstance>>() {
             @Override
             public void onSuccess(List<ServerInstance> serverInstances) {
-                ServerInstance server = getSelectedServerInstance(serverInstances);
-                callback.onSuccess(new ServerInstanceList(server, serverInstances));
+
+                if(serverInstances.isEmpty())
+                {
+                    ServerInstance blank = factory.serverInstance().as();
+                    blank.setHost("not-set");
+                    blank.setName("not-set");
+                    callback.onSuccess(new ServerInstanceList(blank, Collections.EMPTY_LIST));
+                }
+                else
+                {
+                    ServerInstance server = getSelectedServerInstance(serverInstances);
+                    callback.onSuccess(new ServerInstanceList(server, serverInstances));
+                }
             }
         });
     }
@@ -62,8 +77,16 @@ public class DomainEntityManager implements
         hostInfo.getServerConfigurations(hostName, new SimpleCallback<List<Server>>() {
             @Override
             public void onSuccess(List<Server> serverConfigs) {
-                Server s = getSelectedServerConfig(serverConfigs);
-                callback.onSuccess(new ServerConfigList(s, serverConfigs));
+
+                if (serverConfigs.isEmpty()) {
+                    // no server at all on this host
+                    Server blank = factory.server().as();
+                    blank.setName("not-set");
+                    callback.onSuccess(new ServerConfigList(blank, Collections.EMPTY_LIST));
+                } else {
+                    Server s = getSelectedServerConfig(serverConfigs);
+                    callback.onSuccess(new ServerConfigList(s, serverConfigs));
+                }
             }
         });
     }
@@ -158,14 +181,13 @@ public class DomainEntityManager implements
         return matched;
     }
 
-    private ServerInstance getSelectedServerInstance(List<ServerInstance> ServerInstances) {
-        assert !ServerInstances.isEmpty();
-
+    private ServerInstance getSelectedServerInstance(List<ServerInstance> serverInstances) {
+        assert !serverInstances.isEmpty();
 
         ServerInstance matched = null;
 
         // match by preselection
-        for(ServerInstance ServerInstance : ServerInstances)
+        for(ServerInstance ServerInstance : serverInstances)
         {
             if(ServerInstance.getName().equals(selectedServer))
             {
@@ -176,7 +198,7 @@ public class DomainEntityManager implements
 
         // fallback match
         if(null==matched)
-            matched = ServerInstances.get(0);
+            matched = serverInstances.get(0);
 
         selectedHost = matched.getHost();
         selectedServer = matched.getName();
@@ -186,7 +208,6 @@ public class DomainEntityManager implements
 
     private Server getSelectedServerConfig(List<Server> serverConfigs) {
         assert !serverConfigs.isEmpty();
-
 
         Server matched = null;
 
