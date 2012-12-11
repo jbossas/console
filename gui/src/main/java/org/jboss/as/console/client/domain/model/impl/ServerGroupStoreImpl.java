@@ -21,6 +21,7 @@ package org.jboss.as.console.client.domain.model.impl;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.domain.model.ServerGroupStore;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
@@ -98,13 +99,15 @@ public class ServerGroupStoreImpl implements ServerGroupStore {
             public void onSuccess(DMRResponse result)
             {
                 ModelNode response = result.get();
-                if (response.get("outcome").asString().equals("success"))
+                if (response.isFailure())
                 {
-                    callback.onSuccess(Boolean.TRUE);
+                    callback.onSuccess(Boolean.FALSE);
+                    Console.error(Console.MESSAGES.modificationFailed("ServerGroup "+name));
                 }
                 else
                 {
-                    callback.onSuccess(Boolean.FALSE);
+                    callback.onSuccess(Boolean.TRUE);
+                    Console.info(Console.MESSAGES.modified("ServerGroup "+name));
                 }
             }
 

@@ -24,6 +24,7 @@ import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.inject.Inject;
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.domain.model.Host;
 import org.jboss.as.console.client.domain.model.HostInformationStore;
 import org.jboss.as.console.client.domain.model.Server;
@@ -577,13 +578,15 @@ public class HostInfoStoreImpl implements HostInformationStore {
             @Override
             public void onSuccess(DMRResponse result) {
                 ModelNode response = result.get();
-                if(response.get("outcome").asString().equals("success"))
+                if(response.isFailure())
                 {
-                    callback.onSuccess(Boolean.TRUE);
+                    callback.onSuccess(Boolean.FALSE);
+                    Console.error(Console.MESSAGES.modificationFailed("Server " + configName));
                 }
                 else
                 {
-                    callback.onSuccess(Boolean.FALSE);
+                    callback.onSuccess(Boolean.TRUE);
+                    Console.info(Console.MESSAGES.modified("Server " + configName));
                 }
             }
 
@@ -606,13 +609,15 @@ public class HostInfoStoreImpl implements HostInformationStore {
             @Override
             public void onSuccess(DMRResponse result) {
                 ModelNode response = result.get();
-                if(response.get("outcome").asString().equals("success"))
+                if(response.isFailure())
                 {
-                    callback.onSuccess(Boolean.TRUE);
+                    callback.onSuccess(Boolean.FALSE);
+                    Console.error(Console.MESSAGES.modificationFailed("Server " + configName));
                 }
                 else
                 {
-                    callback.onSuccess(Boolean.FALSE);
+                    callback.onSuccess(Boolean.TRUE);
+                    Console.info(Console.MESSAGES.modified("Server " + configName));
                 }
             }
 
