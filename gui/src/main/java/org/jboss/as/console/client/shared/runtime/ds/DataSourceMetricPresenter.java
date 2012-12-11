@@ -27,6 +27,7 @@ import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.as.console.client.widgets.forms.EntityAdapter;
 import org.jboss.dmr.client.ModelNode;
 
+import java.util.Collections;
 import java.util.List;
 
 import static org.jboss.dmr.client.ModelDescriptionConstants.*;
@@ -95,6 +96,10 @@ public class DataSourceMetricPresenter extends Presenter<DataSourceMetricPresent
     }
 
     public void refreshDatasources() {
+
+        getView().clearSamples();
+        getView().setDatasources(Collections.EMPTY_LIST, true);
+        getView().setDatasources(Collections.EMPTY_LIST, false);
 
         // Regular Datasources
         loadDSCmd.execute(new SimpleCallback<List<DataSource>>() {

@@ -118,6 +118,8 @@ public class EnvironmentPresenter extends Presenter<EnvironmentPresenter.MyView,
     public void refresh()
     {
 
+        getView().clearEnvironment();
+
         ModelNode operation = new ModelNode();
         operation.get(ADDRESS).set(RuntimeBaseAddress.get());
         operation.get(ADDRESS).add("core-service", "platform-mbean");

@@ -29,6 +29,7 @@ import org.jboss.dmr.client.ModelNode;
 import org.jboss.dmr.client.Property;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -137,7 +138,8 @@ public class JPAMetricPresenter extends Presenter<JPAMetricPresenter.MyView, JPA
     public void refresh(final boolean paging) {
 
         getView().clearValues();
-
+        getView().setJpaUnits(Collections.EMPTY_LIST);
+        getView().setSelectedUnit(null);
 
         ModelNode operation = new ModelNode();
         operation.get(ADDRESS).setEmptyList();

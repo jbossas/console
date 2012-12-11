@@ -163,7 +163,7 @@ public class LoadJVMMetricsCmd extends AddressableModelCmd implements AsyncComma
                 else
                 {
                     callback.onFailure(new RuntimeException("The server doesn't seem to be running: "+address));
-                    Log.error("Failed to load sever status: "+ response.getFailureDescription());
+                    Log.error("Failed to load server status: "+ response.getFailureDescription());
 
                     //callback.onFailure(new RuntimeException("Failed to load VM metrics: "+response.toString()));
                 }

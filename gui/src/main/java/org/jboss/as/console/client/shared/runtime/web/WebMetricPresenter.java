@@ -25,6 +25,7 @@ import org.jboss.as.console.client.shared.subsys.web.model.HttpConnector;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.dmr.client.ModelNode;
 
+import java.util.Collections;
 import java.util.List;
 
 import static org.jboss.dmr.client.ModelDescriptionConstants.*;
@@ -40,6 +41,7 @@ public class WebMetricPresenter extends Presenter<WebMetricPresenter.MyView, Web
     private RevealStrategy revealStrategy;
     private HttpConnector selectedConnector;
     private BeanFactory factory;
+    private final LoadConnectorCmd cmd;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.WebMetricPresenter)
@@ -64,6 +66,7 @@ public class WebMetricPresenter extends Presenter<WebMetricPresenter.MyView, Web
         this.dispatcher = dispatcher;
         this.revealStrategy = revealStrategy;
         this.factory = factory;
+        this.cmd = new LoadConnectorCmd(dispatcher, factory);
     }
 
     public void setSelectedConnector(HttpConnector selection) {
@@ -87,7 +90,8 @@ public class WebMetricPresenter extends Presenter<WebMetricPresenter.MyView, Web
 
     public void refresh() {
 
-        LoadConnectorCmd cmd = new LoadConnectorCmd(dispatcher, factory);
+        getView().setConnectors(Collections.EMPTY_LIST);
+
         cmd.execute(new SimpleCallback<List<HttpConnector>>() {
             @Override
             public void onSuccess(List<HttpConnector> result) {

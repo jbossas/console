@@ -41,9 +41,6 @@ public class HostVMMetricPresenter extends Presenter<VMView, HostVMMetricPresent
     private ApplicationMetaData metaData;
     private BeanFactory factory;
 
-    private boolean keepPolling = true;
-    private Scheduler.RepeatingCommand pollCmd = null;
-    private static final int POLL_INTERVAL = 5000;
     private HostInformationStore hostInfoStore;
     private final DomainEntityManager domainManager;
 
@@ -115,6 +112,8 @@ public class HostVMMetricPresenter extends Presenter<VMView, HostVMMetricPresent
     }
 
     public void loadVMStatus() {
+
+        getView().clearSamples();
 
         createLoadMetricCmd().execute(new SimpleCallback<CompositeVMMetric>() {
 

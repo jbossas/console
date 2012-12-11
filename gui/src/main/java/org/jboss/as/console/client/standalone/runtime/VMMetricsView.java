@@ -60,36 +60,14 @@ public class VMMetricsView extends SuspendableViewImpl implements VMMetricsPrese
 
         ToolStrip topLevelTools = new ToolStrip();
 
-        /*pauseBtn = new ToolButton("Stop Monitor");
-
-        //TODO - change all hardcoded text into localized properties
-        pauseBtn = new ToolButton("Stop Monitor");
-        ClickHandler clickHandler = new ClickHandler() {
-
-            @Override
-            public void onClick(ClickEvent event) {
-
-                boolean b = pauseBtn.getText().equals("Start Monitor");
-                presenter.keepPolling(b);
-
-                if(pauseBtn.getText().equals("Stop Monitor"))
-                    pauseBtn.setText("Start Monitor");
-                else
-                    pauseBtn.setText("Stop Monitor");
-
-            }
-        };
-
-        pauseBtn.addClickHandler(clickHandler);
-        topLevelTools.addToolButton(pauseBtn);      */
-        topLevelTools.addToolButtonRight(new ToolButton(Console.CONSTANTS.common_label_refresh(),
-                new ClickHandler() {
-                    @Override
+        topLevelTools.addToolButtonRight(
+                new ToolButton(Console.CONSTANTS.common_label_refresh(),
+                        new ClickHandler() {
+                            @Override
                     public void onClick(ClickEvent event) {
                         presenter.refresh();
                     }
                 }));
-
 
         // -------
 
@@ -203,11 +181,14 @@ public class VMMetricsView extends SuspendableViewImpl implements VMMetricsPrese
             osName.setHTML("<b style='color:#A7ABB4'>Operating System:</b>   "+osMetric.getName()+" "+osMetric.getVersion());
             processors.setHTML("<b style='color:#A7ABB4'>Processors:</b>   "+osMetric.getNumProcessors());
         }
-
     }
 
     @Override
     public void clearSamples() {
+
+        osName.setHTML("");
+        processors.setHTML("");
+
         heapChart.clearSamples();
         nonHeapChart.clearSamples();
         threadChart.clearSamples();

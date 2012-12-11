@@ -98,6 +98,8 @@ public class TXMetricPresenter extends Presenter<TXMetricPresenter.MyView, TXMet
     @Override
     public void refresh() {
 
+        getView().clearSamples();
+
         ModelNode operation = addressBinding.asResource(RuntimeBaseAddress.get());
         operation.get(OP).set(READ_RESOURCE_OPERATION);
         operation.get(INCLUDE_RUNTIME).set(true);

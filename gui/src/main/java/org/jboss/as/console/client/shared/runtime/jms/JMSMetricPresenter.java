@@ -28,6 +28,7 @@ import org.jboss.as.console.client.shared.subsys.messaging.model.Queue;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.dmr.client.ModelNode;
 
+import java.util.Collections;
 import java.util.List;
 
 import static org.jboss.dmr.client.ModelDescriptionConstants.*;
@@ -103,8 +104,6 @@ public class JMSMetricPresenter extends Presenter<JMSMetricPresenter.MyView, JMS
     @Override
     public void onServerSelectionChanged(boolean isRunning) {
 
-        getView().clearSamples();
-
         Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
             @Override
             public void execute() {
@@ -116,6 +115,10 @@ public class JMSMetricPresenter extends Presenter<JMSMetricPresenter.MyView, JMS
 
     public void refresh() {
 
+
+        getView().clearSamples();
+        getView().setTopics(Collections.EMPTY_LIST);
+        getView().setQueues(Collections.EMPTY_LIST);
 
         ModelNode address = RuntimeBaseAddress.get();
         address.add("subsystem", "messaging");
