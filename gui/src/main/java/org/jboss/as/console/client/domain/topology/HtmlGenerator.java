@@ -79,7 +79,7 @@ final class HtmlGenerator
         appendHtmlConstant("<th class='cellTableHeader'>");
         if (host.isController())
         {
-            appendIcon(ConsoleIcons.INSTANCE.star());
+            appendIcon(ConsoleIcons.INSTANCE.star(), "Domain Controller");
         }
         startLine().appendEscaped(host.getName()).endLine();
         startLine().appendHtmlConstant("Domain: ").appendHtmlConstant(host.isController() ? "Controller" : "Member").endLine();
@@ -151,7 +151,7 @@ final class HtmlGenerator
         appendHtmlConstant("<td class='cellTableCell domainOverviewCell " + group.cssClassname + "_light" +
                 "' title='" + tooltip + "'>");
 
-        startLine().appendIcon(icon).appendEscaped(server.getName()).endLine();
+        startLine().appendIcon(icon, "Server running?").appendEscaped(server.getName()).endLine();
         if (server.getSocketBindings().size() > 0)
         {
             Set<String> sockets = server.getSocketBindings().keySet();
@@ -178,9 +178,9 @@ final class HtmlGenerator
         return this;
     }
 
-    HtmlGenerator appendIcon(final ImageResource img)
+    HtmlGenerator appendIcon(final ImageResource img, String alt)
     {
-        appendHtmlConstant("<img src='" + new Image(img).getUrl() + "' width='16' " + "height='16' class='statusIcon'/>");
+        appendHtmlConstant("<img src='" + new Image(img).getUrl() + "' width='16' " + "height='16' class='statusIcon' alt='"+alt+"' title='"+alt+"'/>");
         return this;
     }
 
@@ -227,6 +227,7 @@ final class HtmlGenerator
 
     HtmlGenerator startLinks()
     {
+        appendHtmlConstant("<span style='color:#404040'><i class='icon-caret-down'></i></span>");
         appendHtmlConstant("<div class='lifecycleLinks'>");
         return this;
     }
