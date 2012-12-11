@@ -23,8 +23,10 @@ import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.ProvidesKey;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.domain.model.Host;
 import org.jboss.as.console.client.domain.model.ServerInstance;
+import org.jboss.as.console.client.shared.state.GlobalHostSelection;
 import org.jboss.as.console.client.shared.state.HostList;
 import org.jboss.as.console.client.shared.state.ServerInstanceList;
 import org.jboss.as.console.client.widgets.icons.ConsoleIcons;
@@ -144,18 +146,18 @@ public class HostServerTable {
             @Override
             public void onSelectionChange(SelectionChangeEvent event) {
 
+                serverProvider.setList(Collections.EMPTY_LIST);
+
                 Host selectedHost = getSelectedHost();
+
+                Console.MODULES.getEventBus().fireEvent(
+                        new GlobalHostSelection(selectedHost.getName())
+                );
 
                 if(selectedHost!=null)
                 {
                     presenter.loadServer(selectedHost.getName());
                 }
-                else if(selectedHost==null)
-                {
-                    serverProvider.setList(Collections.EMPTY_LIST);
-                }
-
-
 
             }
         });
