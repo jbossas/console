@@ -34,6 +34,7 @@ import org.jboss.as.console.client.shared.state.HostSelectionChanged;
 import org.jboss.as.console.client.shared.state.ServerSelectionChanged;
 import org.jboss.ballroom.client.layout.LHSHighlightEvent;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -182,6 +183,10 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
     }
 
     private void loadSubsystems() {
+
+        // clear view
+
+        getView().setSubsystems(Collections.EMPTY_LIST);
 
         // load subsystems for selected server
 

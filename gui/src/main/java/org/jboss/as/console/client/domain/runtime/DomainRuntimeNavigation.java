@@ -156,6 +156,8 @@ class DomainRuntimeNavigation {
         metricLeaf.removeItems();
         runtimeLeaf.removeItems();
 
+        if(subsystems.isEmpty()) return;
+
         final GroupItem platformGroup = new GroupItem("Platform");
 
         platformGroup.addItem(new LHSNavTreeItem("JVM", NameTokens.HostVMMetricPresenter));
