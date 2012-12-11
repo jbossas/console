@@ -39,7 +39,6 @@ import org.jboss.ballroom.client.widgets.forms.CheckBoxItem;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.FormItem;
 import org.jboss.ballroom.client.widgets.forms.ListItem;
-import org.jboss.ballroom.client.widgets.forms.NumberBoxItem;
 import org.jboss.ballroom.client.widgets.forms.TextAreaItem;
 import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
 
@@ -96,7 +95,6 @@ public class DeploymentBrowser
         addContext(DeploymentWebSubsystem.class, index++,
                 new TextAreaItem("name", "Name"),
                 new TextBoxItem("contextRoot", "Context Root"),
-                new NumberBoxItem("maxActiveSessions", "Max Active Sessions"),
                 new TextBoxItem("virtualHost", "Virtual Host"));
 
         addContext(DeploymentWebserviceSubsystem.class, index++);
