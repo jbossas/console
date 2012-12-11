@@ -26,4 +26,8 @@ public class HostList {
     public List<Host> getHosts(){
         return hosts;
     }
+
+    public boolean isEmpty() {
+        return hosts.isEmpty();
+    }
 }

@@ -26,4 +26,8 @@ public class ServerInstanceList {
     public List<ServerInstance> getServer() {
         return server;
     }
+
+    public boolean isEmpty() {
+        return server.isEmpty();
+    }
 }
