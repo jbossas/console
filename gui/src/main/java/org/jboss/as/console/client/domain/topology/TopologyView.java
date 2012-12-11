@@ -77,6 +77,7 @@ public class TopologyView extends SuspendableViewImpl implements TopologyPresent
     private LifecycleLinkListener lifecycleLinkListener;
     private FlowPanel container;
     private ExtensionView extensions;
+    private HostsPager pager;
 
     @Override
     public Widget createWidget()
@@ -103,10 +104,10 @@ public class TopologyView extends SuspendableViewImpl implements TopologyPresent
 
         container = new FlowPanel();
         display = new HostsDisplay();
-        HostsPager pager = new HostsPager();
+        pager = new HostsPager();
         pager.setDisplay(display);
         pager.setPageSize(TopologyPresenter.VISIBLE_HOSTS_COLUMNS);
-        container.add(pager);
+
         layout.addContent("topology", container);
 
         // ---------------------
@@ -220,11 +221,13 @@ public class TopologyView extends SuspendableViewImpl implements TopologyPresent
         {
             container.remove(0);
         }
-        else {
+        {
             container.clear();
         }
 
         container.insert(panel, 0);
+
+        container.add(pager);
 
         // update navigation
         RowCountChangeEvent.fire(display, hostSize, true);
