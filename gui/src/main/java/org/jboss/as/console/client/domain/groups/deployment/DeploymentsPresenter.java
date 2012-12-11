@@ -26,14 +26,12 @@ import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.annotations.UseGatekeeper;
 import com.gwtplatform.mvp.client.proxy.Place;
-import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.DomainGateKeeper;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.core.SuspendableView;
-import org.jboss.as.console.client.domain.model.EntityFilter;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.domain.model.ServerGroupStore;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
@@ -61,182 +59,173 @@ import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 
 /**
  * @author Heiko Braun
+ * @author Harald Pehl
  * @author Stan Silvert <ssilvert@redhat.com> (C) 2011 Red Hat Inc.
  * @date 3/1/11
  */
 public class DeploymentsPresenter extends Presenter<DeploymentsPresenter.MyView, DeploymentsPresenter.MyProxy>
-        implements DeployCommandExecutor {
-
-    private final PlaceManager placeManager;
+        implements DeployCommandExecutor
+{
+    private List<ServerGroupRecord> serverGroups;
     private DeploymentStore deploymentStore;
-    private EntityFilter<DeploymentRecord> filter = new EntityFilter<DeploymentRecord>();
-    public List<DeploymentRecord> deployments;
-    public List<ServerGroupRecord> serverGroups = new ArrayList<ServerGroupRecord>();
     private DefaultWindow window;
     private DispatchAsync dispatcher;
     private DomainDeploymentInfo domainDeploymentInfo;
 
 
-    @ProxyCodeSplit
-    @NameToken(NameTokens.DeploymentsPresenter)
-    @UseGatekeeper( DomainGateKeeper.class )
-    public interface MyProxy extends Proxy<DeploymentsPresenter>, Place {
-    }
-
-    public interface MyView extends SuspendableView {
-
-        void setPresenter(DeploymentsPresenter presenter);
-
-        void updateDeploymentInfo(DomainDeploymentInfo domainDeploymentInfo, DeploymentRecord... targets);
-    }
-
     @Inject
-    public DeploymentsPresenter(
-            EventBus eventBus, MyView view, MyProxy proxy,
-            PlaceManager placeManager,
-            DeploymentStore deploymentStore,
-            ServerGroupStore serverGroupStore, DispatchAsync dispatcher) {
+    public DeploymentsPresenter(EventBus eventBus, MyView view, MyProxy proxy, DeploymentStore deploymentStore,
+            ServerGroupStore serverGroupStore, DispatchAsync dispatcher)
+    {
         super(eventBus, view, proxy);
-
-        this.placeManager = placeManager;
         this.deploymentStore = deploymentStore;
         this.dispatcher = dispatcher;
-
-        domainDeploymentInfo = new DomainDeploymentInfo(this, serverGroupStore, deploymentStore);
+        this.serverGroups = new ArrayList<ServerGroupRecord>();
+        this.domainDeploymentInfo = new DomainDeploymentInfo(this, serverGroupStore, deploymentStore);
     }
 
     @Override
-    protected void onBind() {
+    protected void onBind()
+    {
         super.onBind();
         getView().setPresenter(this);
     }
 
     @Override
-    protected void onReset() {
-        super.onReset();
-        domainDeploymentInfo.refreshView();
-    }
-
-    @Override
-    protected void revealInParent() {
+    protected void revealInParent()
+    {
         RevealContentEvent.fire(this, DomainRuntimePresenter.TYPE_MainContent, this);
     }
 
     @Override
-    public void enableDisableDeployment(final DeploymentRecord record) {
+    protected void onReset()
+    {
+        super.onReset();
+        loadDeployedContent();
+        domainDeploymentInfo.refreshView();
+    }
 
+    private void loadDeployedContent()
+    {
 
+    }
+
+    @Override
+    public void enableDisableDeployment(final DeploymentRecord record)
+    {
         final PopupPanel loading = Feedback.loading(
                 Console.CONSTANTS.common_label_plaseWait(),
                 Console.CONSTANTS.common_label_requestProcessed(),
-                new Feedback.LoadingCallback() {
+                new Feedback.LoadingCallback()
+                {
                     @Override
-                    public void onCancel() {
+                    public void onCancel()
+                    {
 
                     }
                 });
 
-        deploymentStore.enableDisableDeployment(record, new SimpleCallback<DMRResponse>() {
-
+        deploymentStore.enableDisableDeployment(record, new SimpleCallback<DMRResponse>()
+        {
             @Override
-            public void onSuccess(DMRResponse response) {
+            public void onSuccess(DMRResponse response)
+            {
                 loading.hide();
 
                 ModelNode result = response.get();
 
-                if(result.isFailure())
+                if (result.isFailure())
                 {
-                    Console.error(Console.MESSAGES.modificationFailed("Deployment "+record.getRuntimeName()), result.getFailureDescription());
+                    Console.error(Console.MESSAGES.modificationFailed("Deployment " + record.getRuntimeName()),
+                            result.getFailureDescription());
                 }
                 else
                 {
-                    Console.info(Console.MESSAGES.modified("Deployment "+record.getRuntimeName()));
+                    Console.info(Console.MESSAGES.modified("Deployment " + record.getRuntimeName()));
                 }
-
                 domainDeploymentInfo.refreshView();
-
             }
-
         });
 
     }
 
     @Override
-    public void removeDeploymentFromGroup(final DeploymentRecord deployment) {
-        deploymentStore.removeDeploymentFromGroup(deployment, new SimpleCallback<DMRResponse>() {
-
+    public void removeDeploymentFromGroup(final DeploymentRecord deployment)
+    {
+        deploymentStore.removeDeploymentFromGroup(deployment, new SimpleCallback<DMRResponse>()
+        {
             @Override
-            public void onSuccess(DMRResponse response) {
+            public void onSuccess(DMRResponse response)
+            {
                 domainDeploymentInfo.refreshView(deployment);
                 DeploymentCommand.REMOVE_FROM_GROUP.displaySuccessMessage(DeploymentsPresenter.this, deployment);
             }
 
             @Override
-            public void onFailure(Throwable t) {
+            public void onFailure(Throwable t)
+            {
                 super.onFailure(t);
                 domainDeploymentInfo.refreshView(deployment);
                 DeploymentCommand.REMOVE_FROM_GROUP.displayFailureMessage(DeploymentsPresenter.this, deployment, t);
             }
         });
-
     }
 
     @Override
-    public void addToServerGroup(
-            final DeploymentRecord deployment,
-            final boolean enable,
-            Set<ServerGroupSelection> selection) {
-
+    public void addToServerGroup(final DeploymentRecord deployment, final boolean enable,
+            Set<ServerGroupSelection> selection)
+    {
         final PopupPanel loading = Feedback.loading(
                 Console.CONSTANTS.common_label_plaseWait(),
                 Console.CONSTANTS.common_label_requestProcessed(),
-                new Feedback.LoadingCallback() {
+                new Feedback.LoadingCallback()
+                {
                     @Override
-                    public void onCancel() {
+                    public void onCancel()
+                    {
 
                     }
                 });
 
-
         Set<String> names = new HashSet<String>();
-        for(ServerGroupSelection group : selection)
-            names.add(group.getName());
+        for (ServerGroupSelection group : selection)
+        { names.add(group.getName()); }
 
-        deploymentStore.addToServerGroups(names, enable, deployment, new SimpleCallback<DMRResponse>() {
-
+        deploymentStore.addToServerGroups(names, enable, deployment, new SimpleCallback<DMRResponse>()
+        {
             @Override
-            public void onSuccess(DMRResponse response) {
-
+            public void onSuccess(DMRResponse response)
+            {
                 loading.hide();
-
                 ModelNode result = response.get();
-
-                if(result.isFailure())
+                if (result.isFailure())
                 {
-                    Console.error(Console.MESSAGES.addingFailed("Deployment "+deployment.getRuntimeName()), result.getFailureDescription());
+                    Console.error(Console.MESSAGES.addingFailed("Deployment " + deployment.getRuntimeName()),
+                            result.getFailureDescription());
                 }
                 else
                 {
-                    Console.info(Console.MESSAGES.added("Deployment "+deployment.getRuntimeName()+ " to group "+serverGroups));
+                    Console.info(Console.MESSAGES
+                            .added("Deployment " + deployment.getRuntimeName() + " to group " + serverGroups));
                 }
-
                 domainDeploymentInfo.refreshView();
-
             }
         });
     }
 
     @Override
-    public void removeContent(final DeploymentRecord deployment) {
-
+    public void removeContent(final DeploymentRecord deployment)
+    {
         Set<String> assignedGroups = domainDeploymentInfo.getAssignedGroups(deployment);
 
         final PopupPanel loading = Feedback.loading(
                 Console.CONSTANTS.common_label_plaseWait(),
                 Console.CONSTANTS.common_label_requestProcessed(),
-                new Feedback.LoadingCallback() {
+                new Feedback.LoadingCallback()
+                {
                     @Override
-                    public void onCancel() {
+                    public void onCancel()
+                    {
 
                     }
                 });
@@ -246,8 +235,7 @@ public class DeploymentsPresenter extends Presenter<DeploymentsPresenter.MyView,
         operation.get(ADDRESS).setEmptyList();
 
         List<ModelNode> steps = new LinkedList<ModelNode>();
-
-        for(String group : assignedGroups)
+        for (String group : assignedGroups)
         {
             ModelNode groupOp = new ModelNode();
             groupOp.get(OP).set(REMOVE);
@@ -256,140 +244,142 @@ public class DeploymentsPresenter extends Presenter<DeploymentsPresenter.MyView,
             steps.add(groupOp);
         }
 
-
         ModelNode removeContentOp = new ModelNode();
         removeContentOp.get(OP).set(REMOVE);
         removeContentOp.get(ADDRESS).add("deployment", deployment.getName());
         steps.add(removeContentOp);
-
         operation.get(STEPS).set(steps);
-
-        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>()
+        {
             @Override
-            public void onSuccess(DMRResponse dmrResponse) {
+            public void onSuccess(DMRResponse dmrResponse)
+            {
                 loading.hide();
 
                 ModelNode result = dmrResponse.get();
 
-                if(result.isFailure())
+                if (result.isFailure())
                 {
                     Console.error(Console.MESSAGES.deletionFailed(
-                            "Deployment "+deployment.getRuntimeName()),
+                            "Deployment " + deployment.getRuntimeName()),
                             result.getFailureDescription()
                     );
                 }
                 else
                 {
-                    Console.info(Console.MESSAGES.deleted("Deployment "+deployment.getRuntimeName()));
+                    Console.info(Console.MESSAGES.deleted("Deployment " + deployment.getRuntimeName()));
                 }
 
 
                 domainDeploymentInfo.refreshView();
             }
         });
-
     }
 
     @Override
-    public List<ServerGroupRecord> getPossibleGroupAssignments(DeploymentRecord record) {
+    public List<ServerGroupRecord> getPossibleGroupAssignments(DeploymentRecord record)
+    {
         List<ServerGroupRecord> possibleGroupAssignments = new ArrayList<ServerGroupRecord>();
-        for (ServerGroupRecord group : getServerGroups()) {
-            if (!domainDeploymentInfo.isAssignedToGroup(group.getGroupName(), record)) {
+        for (ServerGroupRecord group : getServerGroups())
+        {
+            if (!domainDeploymentInfo.isAssignedToGroup(group.getGroupName(), record))
+            {
                 possibleGroupAssignments.add(group);
             }
         }
-
         return possibleGroupAssignments;
     }
 
     @Override
-    public void promptForGroupSelections(DeploymentRecord record) {
+    public void promptForGroupSelections(DeploymentRecord record)
+    {
         new ServerGroupSelector(this, record);
     }
 
     @Override
-    public void updateDeployment(DeploymentRecord record) {
+    public void updateDeployment(DeploymentRecord record)
+    {
         launchNewDeploymentDialoge(record, true);
     }
 
-
-    public void launchNewDeploymentDialoge(DeploymentRecord record, boolean isUpdate) {
+    public void launchNewDeploymentDialoge(DeploymentRecord record, boolean isUpdate)
+    {
         window = new DefaultWindow(Console.MESSAGES.createTitle("Deployment"));
         window.setWidth(480);
         window.setHeight(450);
-
         window.trapWidget(
                 new NewDeploymentWizard(this, window, domainDeploymentInfo, isUpdate, record).asWidget());
-
         window.setGlassEnabled(true);
         window.center();
     }
 
-    public List<ServerGroupRecord> getServerGroups() {
+    public List<ServerGroupRecord> getServerGroups()
+    {
         return serverGroups;
     }
 
-    void setServerGroups(List<ServerGroupRecord> serverGroups) {
+    void setServerGroups(List<ServerGroupRecord> serverGroups)
+    {
         this.serverGroups = serverGroups;
     }
 
-    public void onDisableDeploymentInGroup(DeploymentRecord selection) {
+    public void onDisableDeploymentInGroup(DeploymentRecord selection)
+    {
         new DeploymentCommandDelegate(this, DeploymentCommand.ENABLE_DISABLE).execute(
                 selection
         );
     }
 
-    public void onRemoveDeploymentInGroup(DeploymentRecord selection) {
+    public void onRemoveDeploymentInGroup(DeploymentRecord selection)
+    {
         new DeploymentCommandDelegate(this, DeploymentCommand.REMOVE_FROM_GROUP).execute(
                 selection
         );
     }
 
-    public void onAssignDeploymentToGroup(ServerGroupRecord serverGroup) {
-
-
+    public void onAssignDeploymentToGroup(ServerGroupRecord serverGroup)
+    {
         List<DeploymentRecord> available = new ArrayList<DeploymentRecord>();
-        for(DeploymentRecord deployment : domainDeploymentInfo.getDomainDeployments())
+        for (DeploymentRecord deployment : domainDeploymentInfo.getDomainDeployments())
         {
-            if(!domainDeploymentInfo.isAssignedToGroup(serverGroup.getGroupName(), deployment))
-                available.add(deployment);
+            if (!domainDeploymentInfo.isAssignedToGroup(serverGroup.getGroupName(), deployment))
+            { available.add(deployment); }
         }
 
-        if(available.isEmpty())
+        if (available.isEmpty())
         {
-            Console.warning("All contents assigned to group "+serverGroup.getGroupName());
+            Console.warning("All contents assigned to group " + serverGroup.getGroupName());
             return;
         }
 
         window = new DefaultWindow("Assign Content");
         window.setWidth(480);
         window.setHeight(360);
-
         window.trapWidget(
                 new AssignToGroupWizard(this, available, serverGroup).asWidget());
-
         window.setGlassEnabled(true);
         window.center();
     }
 
-    public void closeDialogue() {
+    public void closeDialogue()
+    {
         window.hide();
     }
 
-    public void onAssignDeployments(ServerGroupRecord serverGroup, Set<DeploymentRecord> selectedSet) {
+    public void onAssignDeployments(ServerGroupRecord serverGroup, Set<DeploymentRecord> selectedSet)
+    {
         closeDialogue();
-
-        for(DeploymentRecord deployment : selectedSet)
+        for (DeploymentRecord deployment : selectedSet)
         {
             HashSet<ServerGroupSelection> groups = new HashSet<ServerGroupSelection>();
             ServerGroupSelection selection = new ServerGroupSelection(serverGroup);
             groups.add(selection);
             addToServerGroup(deployment, false, groups);
         }
-
     }
 
-    public void onCreateUnmanaged(final DeploymentRecord entity) {
+    public void onCreateUnmanaged(final DeploymentRecord entity)
+    {
         window.hide();
 
         ModelNode operation = new ModelNode();
@@ -401,27 +391,45 @@ public class DeploymentsPresenter extends Presenter<DeploymentsPresenter.MyView,
         ModelNode path = new ModelNode();
         path.get("path").set(entity.getPath());
         path.get("archive").set(entity.isArchive());
-        if(entity.getRelativeTo()!=null && !entity.getRelativeTo().equals(""))
-            path.get("relative-to").set(entity.getRelativeTo());
+        if (entity.getRelativeTo() != null && !entity.getRelativeTo().equals(""))
+        { path.get("relative-to").set(entity.getRelativeTo()); }
 
         content.add(path);
         operation.get("content").set(content);
 
-        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>()
+        {
             @Override
-            public void onSuccess(DMRResponse dmrResponse) {
+            public void onSuccess(DMRResponse dmrResponse)
+            {
                 ModelNode response = dmrResponse.get();
-                if(response.isFailure())
+                if (response.isFailure())
                 {
                     Console.error("Failed to create unmanaged content", response.getFailureDescription());
                 }
                 else
                 {
-                    Console.info(Console.MESSAGES.added("Deployment "+entity.getName()));
+                    Console.info(Console.MESSAGES.added("Deployment " + entity.getName()));
                 }
 
                 domainDeploymentInfo.refreshView();
             }
         });
+    }
+
+
+    @ProxyCodeSplit
+    @NameToken(NameTokens.DeploymentsPresenter)
+    @UseGatekeeper(DomainGateKeeper.class)
+    public interface MyProxy extends Proxy<DeploymentsPresenter>, Place
+    {
+    }
+
+
+    public interface MyView extends SuspendableView
+    {
+        void setPresenter(DeploymentsPresenter presenter);
+
+        void updateDeploymentInfo(DomainDeploymentInfo domainDeploymentInfo, DeploymentRecord... targets);
     }
 }
