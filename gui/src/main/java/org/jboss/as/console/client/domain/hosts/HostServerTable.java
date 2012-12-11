@@ -13,7 +13,6 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
@@ -29,7 +28,6 @@ import org.jboss.as.console.client.domain.model.ServerInstance;
 import org.jboss.as.console.client.shared.state.GlobalHostSelection;
 import org.jboss.as.console.client.shared.state.HostList;
 import org.jboss.as.console.client.shared.state.ServerInstanceList;
-import org.jboss.as.console.client.widgets.icons.ConsoleIcons;
 import org.jboss.as.console.client.widgets.lists.DefaultCellList;
 import org.jboss.as.console.client.widgets.popups.DefaultPopup;
 import org.jboss.ballroom.client.widgets.common.DefaultButton;
@@ -248,12 +246,13 @@ public class HostServerTable {
         header.setStyleName("table-picker");
         header.add(currentDisplayedValue);
 
-        Image img = new Image(ConsoleIcons.INSTANCE.tablePicker());
-        header.add(img);
+        //Image img = new Image(ConsoleIcons.INSTANCE.tablePicker());
+        HTML icon = new HTML("<span style='font-size:18px;cursor:pointer'><i class='icon-caret-down'></i></span>");
+        header.add(icon);
 
         currentDisplayedValue.getElement().getParentElement().setAttribute("width", "100%");
 
-        img.getParent().getElement().setAttribute("width", "18");
+        icon.getParent().getElement().setAttribute("width", "18");
 
         header.getElement().setAttribute("width", "100%");
         header.getElement().setAttribute("cellspacing", "0");
@@ -269,7 +268,7 @@ public class HostServerTable {
         };
 
         currentDisplayedValue.addClickHandler(clickHandler);
-        img.addClickHandler(clickHandler);
+        icon.addClickHandler(clickHandler);
 
         return header;
     }
@@ -311,7 +310,7 @@ public class HostServerTable {
         {
             int popupLeft = header.getAbsoluteLeft();
             popup.setPopupPosition(
-                    popupLeft,
+                    popupLeft-5,
                     header.getAbsoluteTop()+35
             );
         }

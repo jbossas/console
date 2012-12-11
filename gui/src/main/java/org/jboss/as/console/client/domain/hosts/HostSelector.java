@@ -10,7 +10,7 @@ import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.domain.model.Host;
 import org.jboss.as.console.client.shared.state.GlobalHostSelection;
 import org.jboss.as.console.client.shared.state.HostList;
-import org.jboss.ballroom.client.widgets.forms.ComboBox;
+import org.jboss.as.console.client.widgets.popups.ComboPicker;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +21,7 @@ import java.util.List;
  */
 public class HostSelector {
 
-    private ComboBox hosts;
+    private ComboPicker hosts;
 
     public Widget asWidget() {
 
@@ -30,7 +30,7 @@ public class HostSelector {
         layout.addStyleName("lhs-selector");
         layout.getElement().setAttribute("style","padding:4px;");
 
-        hosts = new ComboBox();
+        hosts = new ComboPicker();
         hosts.addValueChangeHandler(new ValueChangeHandler<String>() {
             @Override
             public void onValueChange(final ValueChangeEvent<String> event) {

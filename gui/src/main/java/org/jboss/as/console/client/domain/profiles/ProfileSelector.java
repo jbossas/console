@@ -8,6 +8,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.domain.events.ProfileSelectionEvent;
+import org.jboss.as.console.client.widgets.popups.ComboPicker;
 import org.jboss.ballroom.client.widgets.forms.ComboBox;
 
 import java.util.List;
@@ -18,17 +19,18 @@ import java.util.List;
  */
 public class ProfileSelector {
 
-    private ComboBox profiles;
+    private ComboPicker profiles;
     private String preselection;
 
     public Widget asWidget() {
+
 
         VerticalPanel layout = new VerticalPanel();
         layout.setStyleName("fill-layout-width");
         layout.addStyleName("lhs-selector");
         layout.getElement().setAttribute("style","padding:4px;");
 
-        profiles = new ComboBox();
+        profiles = new ComboPicker();
         profiles.addValueChangeHandler(new ValueChangeHandler<String>() {
             @Override
             public void onValueChange(final ValueChangeEvent<String> event) {

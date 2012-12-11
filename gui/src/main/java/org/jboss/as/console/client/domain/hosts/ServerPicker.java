@@ -46,13 +46,11 @@ public class ServerPicker implements HostServerManagement {
         Widget widget = hostServerTable.asWidget();
         widget.getElement().setAttribute("style", "width:100%;");
 
-        Label label = new Label(Console.CONSTANTS.common_label_server()+":");
+        Label label = new Label("Server:");
         label.setStyleName("header-label");
 
         layout.add(label);
-
-        ScrollPanel scroll = new ScrollPanel(widget);
-        layout.add(scroll);
+        layout.add(widget);
 
         return layout;
     }
