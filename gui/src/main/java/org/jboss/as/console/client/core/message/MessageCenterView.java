@@ -251,6 +251,7 @@ public class MessageCenterView implements MessageListener, ReloadEvent.ReloadLis
     {
 
         HorizontalPanel layout = new HorizontalPanel();
+        layout.getElement().setAttribute("title", "Notification Center");
         layout.getElement().setAttribute("style", "width:100%;padding-top:5px;");
 
         messageButton = new HTML("(" + messageCenter.getNewMessageCount() + ") " + MESSAGE_LABEL);
