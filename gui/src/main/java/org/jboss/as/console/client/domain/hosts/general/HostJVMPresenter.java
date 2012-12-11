@@ -53,6 +53,7 @@ import org.jboss.dmr.client.ModelNode;
 import org.jboss.dmr.client.Property;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -163,6 +164,8 @@ public class HostJVMPresenter extends Presenter<HostJVMPresenter.MyView, HostJVM
     }
 
     private void loadJVMConfig() {
+
+        getView().setJvms(Collections.EMPTY_LIST);
 
         ModelNode operation = new ModelNode();
         operation.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);

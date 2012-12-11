@@ -63,6 +63,7 @@ import org.jboss.as.console.client.shared.properties.PropertyManagement;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.shared.state.DomainEntityManager;
 import org.jboss.as.console.client.shared.state.HostList;
+import org.jboss.as.console.client.shared.state.HostSelectionChanged;
 import org.jboss.as.console.client.shared.state.ServerConfigList;
 import org.jboss.as.console.client.shared.util.DMRUtil;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
@@ -83,7 +84,7 @@ import static org.jboss.dmr.client.ModelDescriptionConstants.*;
  */
 public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyView, ServerConfigPresenter.MyProxy>
         implements  ServerWizardEvent.ServerWizardListener,
-        JvmManagement, PropertyManagement {
+        JvmManagement, PropertyManagement, HostSelectionChanged.ChangeListener {
 
     private HostInformationStore hostInfoStore;
     private ServerGroupStore serverGroupStore;
@@ -148,6 +149,7 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
         super.onBind();
         getView().setPresenter(this);
         getEventBus().addHandler(ServerWizardEvent.TYPE, this);
+        getEventBus().addHandler(HostSelectionChanged.TYPE, this);
     }
 
     @Override
@@ -170,6 +172,11 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
         // step1
         if(placeManager.getCurrentPlaceRequest().getNameToken().equals(getProxy().getNameToken()))
             loadSocketBindings();
+    }
+
+    @Override
+    public void onHostSelectionChanged() {
+        onReset();
     }
 
     private void loadSocketBindings() {
