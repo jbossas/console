@@ -30,16 +30,17 @@ import java.util.List;
  * @author Heiko Braun
  * @date 7/30/12
  */
+@Deprecated
 public class ServerGroupDeploymentView {
 
     private DefaultCellTable<DeploymentRecord> table;
     private ListDataProvider<DeploymentRecord> dataProvider;
-    private DeploymentsPresenter presenter;
+    private DomainDeploymentPresenter presenter;
     private ContentHeaderLabel header;
     private ServerGroupRecord currentSelection;
     private DeploymentFilter filter;
 
-    public ServerGroupDeploymentView(DeploymentsPresenter presenter) {
+    public ServerGroupDeploymentView(DomainDeploymentPresenter presenter) {
         this.presenter = presenter;
     }
 

@@ -28,6 +28,7 @@ import java.util.List;
  *
  * @author Stan Silvert <ssilvert@redhat.com> (C) 2011 Red Hat Inc.
  */
+@Deprecated
 public interface DeploymentViewRefresher {
     public List<String> getAllDeploymentNames();
     

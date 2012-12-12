@@ -41,23 +41,25 @@ import java.util.TreeSet;
  */
 public class ContentRepository
 {
-    private final SortedMap<DeploymentRecord, SortedSet<String>> deployments;
+    private final SortedMap<DeploymentRecord, SortedSet<String>> groupsOfDeployment;
     private final Map<String, DeploymentRecord> nameToDeployment;
     private final SortedSet<ServerGroupRecord> serverGroups;
     private final Map<String, ServerGroupRecord> nameToServerGroup;
+    private final Map<ServerGroupRecord, SortedSet<DeploymentRecord>> deploymentsOfGroup;
 
 
     public ContentRepository()
     {
-        this.deployments = new TreeMap<DeploymentRecord, SortedSet<String>>(new HasNameComparator<DeploymentRecord>());
+        this.groupsOfDeployment = new TreeMap<DeploymentRecord, SortedSet<String>>(new HasNameComparator<DeploymentRecord>());
         this.nameToDeployment = new HashMap<String, DeploymentRecord>();
         this.serverGroups = new TreeSet<ServerGroupRecord>(new HasNameComparator<ServerGroupRecord>());
         this.nameToServerGroup = new HashMap<String, ServerGroupRecord>();
+        this.deploymentsOfGroup = new HashMap<ServerGroupRecord, SortedSet<DeploymentRecord>>();
     }
 
     public void addDeployment(DeploymentRecord deployment)
     {
-        deployments.put(deployment, new TreeSet<String>());
+        groupsOfDeployment.put(deployment, new TreeSet<String>());
         nameToDeployment.put(deployment.getName(), deployment);
     }
 
@@ -65,6 +67,7 @@ public class ContentRepository
     {
         serverGroups.add(serverGroup);
         nameToServerGroup.put(serverGroup.getName(), serverGroup);
+        deploymentsOfGroup.put(serverGroup, new TreeSet<DeploymentRecord>(new HasNameComparator<DeploymentRecord>()));
     }
 
     public void assignDeploymentToServerGroup(String depoymentName, String serverGroupName)
@@ -73,9 +76,21 @@ public class ContentRepository
         ServerGroupRecord serverGroup = nameToServerGroup.get(serverGroupName);
         if (deployment != null && serverGroup != null)
         {
-            SortedSet<String> deploymentGroups = deployments.get(deployment);
-            deploymentGroups.add(serverGroup.getName());
+            SortedSet<String> groups = groupsOfDeployment.get(deployment);
+            groups.add(serverGroup.getName());
+            SortedSet<DeploymentRecord> deployments = deploymentsOfGroup.get(serverGroup);
+            deployments.add(deployment);
         }
+    }
+
+    public List<DeploymentRecord> getDeployments()
+    {
+        return new LinkedList<DeploymentRecord>(groupsOfDeployment.keySet());
+    }
+
+    public List<DeploymentRecord> getDeployments(ServerGroupRecord serverGroup)
+    {
+        return new LinkedList<DeploymentRecord>(deploymentsOfGroup.get(serverGroup));
     }
 
     public List<ServerGroupRecord> getServerGroups()
@@ -83,14 +98,9 @@ public class ContentRepository
         return new LinkedList<ServerGroupRecord>(serverGroups);
     }
 
-    public List<DeploymentRecord> getDeployments()
-    {
-        return new LinkedList<DeploymentRecord>(deployments.keySet());
-    }
-
     public List<String> getServerGroups(DeploymentRecord deployment)
     {
-        SortedSet<String> serverGroups = deployments.get(deployment);
+        SortedSet<String> serverGroups = groupsOfDeployment.get(deployment);
         if (serverGroups != null)
         {
             return new LinkedList<String>(serverGroups);
@@ -101,7 +111,7 @@ public class ContentRepository
     public int getAssignments(DeploymentRecord deployment)
     {
         int result = 0;
-        SortedSet<String> serverGroups = deployments.get(deployment);
+        SortedSet<String> serverGroups = groupsOfDeployment.get(deployment);
         if (serverGroups != null)
         {
             result = serverGroups.size();
@@ -113,7 +123,7 @@ public class ContentRepository
     public String toString()
     {
         StringBuilder builder = new StringBuilder("{");
-        for (Iterator<Map.Entry<DeploymentRecord, SortedSet<String>>> iterator = deployments.entrySet().iterator();
+        for (Iterator<Map.Entry<DeploymentRecord, SortedSet<String>>> iterator = groupsOfDeployment.entrySet().iterator();
                 iterator.hasNext(); )
         {
             Map.Entry<DeploymentRecord, SortedSet<String>> entry = iterator.next();

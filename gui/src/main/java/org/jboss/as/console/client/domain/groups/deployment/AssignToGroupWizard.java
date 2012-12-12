@@ -32,13 +32,13 @@ import java.util.Set;
  */
 public class AssignToGroupWizard {
 
-    private DeploymentsPresenter presenter;
+    private DomainDeploymentPresenter presenter;
     private ListDataProvider<DeploymentRecord> dataProvider;
     private List<DeploymentRecord> availableDeployments;
     private ServerGroupRecord serverGroup;
 
     public AssignToGroupWizard(
-            DeploymentsPresenter presenter,
+            DomainDeploymentPresenter presenter,
             List<DeploymentRecord> availableDeployments,
             ServerGroupRecord serverGroup) {
         this.presenter = presenter;

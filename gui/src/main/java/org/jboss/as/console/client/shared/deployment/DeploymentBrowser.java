@@ -52,8 +52,6 @@ import java.util.Map;
  */
 public class DeploymentBrowser
 {
-    private final DeploymentStore deploymentStore;
-    private final SingleSelectionModel<DeploymentRecord> selectionModel;
     private final DeploymentTreeModel deploymentTreeModel;
     private final DefaultCellBrowser cellBrowser;
     private final DeploymentBreadcrumb breadcrumb;
@@ -64,9 +62,6 @@ public class DeploymentBrowser
 
     public DeploymentBrowser(final DeploymentStore deploymentStore, final SingleSelectionModel<DeploymentRecord> selectionModel)
     {
-        this.deploymentStore = deploymentStore;
-        this.selectionModel = selectionModel;
-
         forms = new HashMap<String, Form<DeploymentData>>();
         indexes = new HashMap<String, Integer>();
 

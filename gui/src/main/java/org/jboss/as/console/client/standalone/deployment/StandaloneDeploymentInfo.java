@@ -32,13 +32,14 @@ import java.util.List;
  *
  * @author Stan Silvert <ssilvert@redhat.com> (C) 2011 Red Hat Inc.
  */
+@Deprecated
 public class StandaloneDeploymentInfo implements DeploymentViewRefresher {
 
-  private DeploymentBrowserPresenter presenter;
+  private StandaloneDeploymentPresenter presenter;
   private DeploymentStore deploymentStore;
   private List<DeploymentRecord> allDeployments = Collections.EMPTY_LIST;
 
-    public StandaloneDeploymentInfo(final DeploymentBrowserPresenter deploymentBrowserPresenter,
+    public StandaloneDeploymentInfo(final StandaloneDeploymentPresenter deploymentBrowserPresenter,
             final DeploymentStore deploymentStore)
     {
         this.presenter = deploymentBrowserPresenter;

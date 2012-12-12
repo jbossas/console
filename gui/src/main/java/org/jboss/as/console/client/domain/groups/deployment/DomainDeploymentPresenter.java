@@ -64,7 +64,7 @@ import static org.jboss.dmr.client.ModelDescriptionConstants.*;
  * @author Stan Silvert <ssilvert@redhat.com> (C) 2011 Red Hat Inc.
  * @date 3/1/11
  */
-public class DeploymentsPresenter extends Presenter<DeploymentsPresenter.MyView, DeploymentsPresenter.MyProxy>
+public class DomainDeploymentPresenter extends Presenter<DomainDeploymentPresenter.MyView, DomainDeploymentPresenter.MyProxy>
         implements DeployCommandExecutor
 {
     private List<ServerGroupRecord> serverGroups;
@@ -75,7 +75,7 @@ public class DeploymentsPresenter extends Presenter<DeploymentsPresenter.MyView,
 
 
     @Inject
-    public DeploymentsPresenter(EventBus eventBus, MyView view, MyProxy proxy, DeploymentStore deploymentStore,
+    public DomainDeploymentPresenter(EventBus eventBus, MyView view, MyProxy proxy, DeploymentStore deploymentStore,
             ServerGroupStore serverGroupStore, DispatchAsync dispatcher)
     {
         super(eventBus, view, proxy);
@@ -167,7 +167,7 @@ public class DeploymentsPresenter extends Presenter<DeploymentsPresenter.MyView,
             public void onSuccess(DMRResponse response)
             {
                 domainDeploymentInfo.refreshView(deployment);
-                DeploymentCommand.REMOVE_FROM_GROUP.displaySuccessMessage(DeploymentsPresenter.this, deployment);
+                DeploymentCommand.REMOVE_FROM_GROUP.displaySuccessMessage(DomainDeploymentPresenter.this, deployment);
             }
 
             @Override
@@ -175,7 +175,7 @@ public class DeploymentsPresenter extends Presenter<DeploymentsPresenter.MyView,
             {
                 super.onFailure(t);
                 domainDeploymentInfo.refreshView(deployment);
-                DeploymentCommand.REMOVE_FROM_GROUP.displayFailureMessage(DeploymentsPresenter.this, deployment, t);
+                DeploymentCommand.REMOVE_FROM_GROUP.displayFailureMessage(DomainDeploymentPresenter.this, deployment, t);
             }
         });
     }
@@ -430,14 +430,14 @@ public class DeploymentsPresenter extends Presenter<DeploymentsPresenter.MyView,
     @ProxyCodeSplit
     @NameToken(NameTokens.DeploymentsPresenter)
     @UseGatekeeper(DomainGateKeeper.class)
-    public interface MyProxy extends Proxy<DeploymentsPresenter>, Place
+    public interface MyProxy extends Proxy<DomainDeploymentPresenter>, Place
     {
     }
 
 
     public interface MyView extends SuspendableView
     {
-        void setPresenter(DeploymentsPresenter presenter);
+        void setPresenter(DomainDeploymentPresenter presenter);
         void updateContentRepository(ContentRepository contentRepository);
     }
 }

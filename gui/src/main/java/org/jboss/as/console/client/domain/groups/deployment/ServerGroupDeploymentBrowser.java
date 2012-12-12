@@ -41,14 +41,14 @@ import java.util.List;
  */
 public class ServerGroupDeploymentBrowser
 {
-    private final DeploymentsPresenter presenter;
+    private final DomainDeploymentPresenter presenter;
     private final DeploymentStore deploymentStore;
     private ContentHeaderLabel header;
     private ServerGroupRecord currentSelection;
     private DeploymentBrowser deploymentBrowser;
 
 
-    public ServerGroupDeploymentBrowser(final DeploymentsPresenter presenter, final DeploymentStore deploymentStore)
+    public ServerGroupDeploymentBrowser(final DomainDeploymentPresenter presenter, final DeploymentStore deploymentStore)
     {
         this.presenter = presenter;
         this.deploymentStore = deploymentStore;
@@ -67,7 +67,6 @@ public class ServerGroupDeploymentBrowser
                     @Override
                     public void onClick(ClickEvent clickEvent)
                     {
-
                         presenter.onAssignDeploymentToGroup(currentSelection);
                     }
                 }));
@@ -77,7 +76,6 @@ public class ServerGroupDeploymentBrowser
                     @Override
                     public void onClick(ClickEvent clickEvent)
                     {
-
                         DeploymentRecord selection = selectionModel.getSelectedObject();
                         if (selection != null)
                         {
@@ -94,9 +92,7 @@ public class ServerGroupDeploymentBrowser
                         DeploymentRecord selection = selectionModel.getSelectedObject();
                         if (selection != null)
                         {
-
                             presenter.onDisableDeploymentInGroup(selection);
-
                         }
                     }
                 }));
@@ -121,13 +117,8 @@ public class ServerGroupDeploymentBrowser
         header.setText("Deployments in group: " + selection.getName());
     }
 
-    public void updateDeployments(List<DeploymentRecord> deployments)
+    public void setDeployments(List<DeploymentRecord> deployments)
     {
         deploymentBrowser.updateDeployments(deployments);
-    }
-
-    public ServerGroupRecord getCurrentSelection()
-    {
-        return currentSelection;
     }
 }

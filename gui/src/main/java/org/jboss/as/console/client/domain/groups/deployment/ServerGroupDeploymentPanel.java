@@ -31,35 +31,31 @@ import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.shared.deployment.DeploymentStore;
 import org.jboss.as.console.client.shared.deployment.model.ContentRepository;
-import org.jboss.as.console.client.shared.deployment.model.DeploymentRecord;
 import org.jboss.as.console.client.shared.viewframework.builder.SimpleLayout;
 import org.jboss.as.console.client.widgets.pages.PagedView;
 import org.jboss.as.console.client.widgets.tables.ViewLinkCell;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
-
-import java.util.List;
-import java.util.Map;
 
 /**
  * Shows the server groups with a link to ServerGroupDeploymentView
  * @author Harald Pehl
  * @date 12/12/2012
  */
-public class ServerGroupDeploymentsView implements IsWidget
+public class ServerGroupDeploymentPanel implements IsWidget
 {
     private final Widget widget;
+    private final DomainDeploymentPresenter presenter;
+    private final DeploymentStore deploymentStore;
     private PagedView pagedView;
-    private DefaultCellTable<ServerGroupRecord> serverGroupDeployments;
     private ListDataProvider<ServerGroupRecord> serverGroupData;
+    private ServerGroupDeploymentBrowser groupDeploymentBrowser;
+    private ContentRepository contentRepository;
 
 
-    private ServerGroupDeploymentView groupDeployments;
-    private DeploymentsPresenter presenter;
-    private DeploymentStore deploymentStore;
-    private Map<String, List<DeploymentRecord>> deploymentPerGroup;
-
-    public ServerGroupDeploymentsView()
+    public ServerGroupDeploymentPanel(DomainDeploymentPresenter presenter, DeploymentStore deploymentStore)
     {
+        this.presenter = presenter;
+        this.deploymentStore = deploymentStore;
         this.widget = initUI();
     }
 
@@ -68,19 +64,21 @@ public class ServerGroupDeploymentsView implements IsWidget
     {
         pagedView = new PagedView();
 
-        serverGroupDeployments = new DefaultCellTable<ServerGroupRecord>(8, new ProvidesKey<ServerGroupRecord>()
+        ProvidesKey<ServerGroupRecord> keyProvider = new ProvidesKey<ServerGroupRecord>()
         {
             @Override
             public Object getKey(ServerGroupRecord serverGroupRecord)
             {
                 return serverGroupRecord.getName();
             }
-        });
+        };
+        DefaultCellTable<ServerGroupRecord> serverGroups = new DefaultCellTable<ServerGroupRecord>(8,
+                keyProvider);
         serverGroupData = new ListDataProvider<ServerGroupRecord>();
-        this.serverGroupData.addDataDisplay(serverGroupDeployments);
+        this.serverGroupData.addDataDisplay(serverGroups);
 
-        final SingleSelectionModel<ServerGroupRecord> selectionModel = new SingleSelectionModel<ServerGroupRecord>();
-        serverGroupDeployments.setSelectionModel(selectionModel);
+        final SingleSelectionModel<ServerGroupRecord> selectionModel = new SingleSelectionModel<ServerGroupRecord>(keyProvider);
+        serverGroups.setSelectionModel(selectionModel);
 
         Column nameColumn = new TextColumn<ServerGroupRecord>() {
             @Override
@@ -94,48 +92,44 @@ public class ServerGroupDeploymentsView implements IsWidget
                 return serverGroup.getProfileName();
             }
         };
-        serverGroupDeployments.addColumn(nameColumn, Console.CONSTANTS.common_label_serverGroup());
-        serverGroupDeployments.addColumn(profileColumn, Console.CONSTANTS.common_label_profile());
+        serverGroups.addColumn(nameColumn, Console.CONSTANTS.common_label_serverGroup());
+        serverGroups.addColumn(profileColumn, Console.CONSTANTS.common_label_profile());
 
-        Column<ServerGroupRecord, ServerGroupRecord> option = new Column<ServerGroupRecord, ServerGroupRecord>(
-                new ViewLinkCell<ServerGroupRecord>(Console.CONSTANTS.common_label_view(), new ActionCell.Delegate<ServerGroupRecord>() {
+        Column<ServerGroupRecord, ServerGroupRecord> option =
+                new Column<ServerGroupRecord, ServerGroupRecord>(
+                    new ViewLinkCell<ServerGroupRecord>(Console.CONSTANTS.common_label_view(),
+                    new ActionCell.Delegate<ServerGroupRecord>()
+                    {
+                        @Override
+                        public void execute(ServerGroupRecord selection)
+                        {
+                            groupDeploymentBrowser.setGroup(selection);
+                            groupDeploymentBrowser.setDeployments(contentRepository.getDeployments(selection));
+                            pagedView.showPage(1);
+                        }
+                    }))
+                {
                     @Override
-                    public void execute(ServerGroupRecord selection) {
-                        groupDeployments.setGroup(selection);
-                        groupDeployments.setDeploymentInfo(deploymentPerGroup.get(selection.getName()));
-                        //                        groupDeployments.updateDeployments(deploymentPerGroup.get(selection.getName()));
-                        pagedView.showPage(1);
+                    public ServerGroupRecord getValue(ServerGroupRecord manager)
+                    {
+                        return manager;
                     }
-                })
-        ) {
-            @Override
-            public ServerGroupRecord getValue(ServerGroupRecord manager) {
-                return manager;
-            }
-        };
-        serverGroupDeployments.addColumn(option, Console.CONSTANTS.common_label_option());
+                };
+        serverGroups.addColumn(option, Console.CONSTANTS.common_label_option());
 
         SimpleLayout overviewPanel = new SimpleLayout()
                 .setPlain(true)
                 .setHeadline("Server Groups")
                 .setDescription("Please chose a server group to assign deployment contents.")
-                .addContent("Available Groups", serverGroupDeployments.asWidget());
+                .addContent("Available Groups", serverGroups.asWidget());
 
-        // --
-
-        groupDeployments = new ServerGroupDeploymentView(presenter);
-        //        groupDeployments = new ServerGroupDeploymentBrowser(presenter, deploymentStore);
-
+        groupDeploymentBrowser = new ServerGroupDeploymentBrowser(presenter, deploymentStore);
         pagedView.addPage(Console.CONSTANTS.common_label_back(), overviewPanel.build());
-        pagedView.addPage("Group Deployments", groupDeployments.asWidget());
-
+        pagedView.addPage("Group Deployments", groupDeploymentBrowser.asWidget());
         pagedView.showPage(0);
 
         LayoutPanel layout = new LayoutPanel();
-        Widget panelWidget = pagedView.asWidget();
-
-        layout.add(panelWidget);
-
+        layout.add(pagedView.asWidget());
         return layout;
     }
 
@@ -147,6 +141,7 @@ public class ServerGroupDeploymentsView implements IsWidget
 
     void updateContentRepository(final ContentRepository contentRepository)
     {
+        this.contentRepository = contentRepository;
         serverGroupData.setList(contentRepository.getServerGroups());
     }
 }

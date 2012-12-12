@@ -53,18 +53,19 @@ import java.util.List;
  * @author Harald Pehl
  * @date 12/12/2012
  */
-public class ContentRepositoryView implements IsWidget
+public class ContentRepositoryPanel implements IsWidget
 {
     private final Widget widget;
-    private DeploymentsPresenter presenter;
+    private final DomainDeploymentPresenter presenter;
     private DeploymentFilter filter;
     private DefaultCellTable<DeploymentRecord> deploymentsTable;
     private ListDataProvider<DeploymentRecord> deploymentData;
     private SingleSelectionModel<DeploymentRecord> deploymentSelection;
     private ContentRepository contentRepository;
 
-    public ContentRepositoryView()
+    public ContentRepositoryPanel(DomainDeploymentPresenter presenter)
     {
+        this.presenter = presenter;
         this.widget = initUI();
     }
 
@@ -147,7 +148,7 @@ public class ContentRepositoryView implements IsWidget
                         final DeploymentRecord selection = deploymentSelection.getSelectedObject();
                         if (selection != null)
                         {
-                            new DeploymentCommandDelegate(ContentRepositoryView.this.presenter,
+                            new DeploymentCommandDelegate(ContentRepositoryPanel.this.presenter,
                                     DeploymentCommand.REMOVE_FROM_DOMAIN).execute(selection);
                         }
                     }
@@ -162,7 +163,7 @@ public class ContentRepositoryView implements IsWidget
                         final DeploymentRecord selection = deploymentSelection.getSelectedObject();
                         if (selection != null)
                         {
-                            new DeploymentCommandDelegate(ContentRepositoryView.this.presenter,
+                            new DeploymentCommandDelegate(ContentRepositoryPanel.this.presenter,
                                     DeploymentCommand.ADD_TO_GROUP).execute(selection);
                         }
                     }
@@ -178,7 +179,7 @@ public class ContentRepositoryView implements IsWidget
                         final DeploymentRecord selection = deploymentSelection.getSelectedObject();
                         if (selection != null)
                         {
-                            new DeploymentCommandDelegate(ContentRepositoryView.this.presenter,
+                            new DeploymentCommandDelegate(ContentRepositoryPanel.this.presenter,
                                     DeploymentCommand.UPDATE_CONTENT).execute(selection);
                         }
                     }
@@ -251,11 +252,6 @@ public class ContentRepositoryView implements IsWidget
     public Widget asWidget()
     {
         return widget;
-    }
-
-    void setPresenter(final DeploymentsPresenter presenter)
-    {
-        this.presenter = presenter;
     }
 
     void updateContentRepository(final ContentRepository contentRepository)

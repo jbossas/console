@@ -40,16 +40,17 @@ import java.util.Set;
  *
  * @author Stan Silvert <ssilvert@redhat.com> (C) 2011 Red Hat Inc.
  */
+@Deprecated
 public class DomainDeploymentInfo implements DeploymentViewRefresher {
 
-    private DeploymentsPresenter presenter;
+    private DomainDeploymentPresenter presenter;
     private ServerGroupStore serverGroupStore;
     private DeploymentStore deploymentStore;
     private List<String> serverGroupNames = Collections.EMPTY_LIST;
     private List<DeploymentRecord> domainDeployments = Collections.EMPTY_LIST;
     private Map<String, List<DeploymentRecord>> serverGroupDeployments = Collections.EMPTY_MAP;
 
-    DomainDeploymentInfo(DeploymentsPresenter presenter, ServerGroupStore serverGroupStore, DeploymentStore deploymentStore) {
+    DomainDeploymentInfo(DomainDeploymentPresenter presenter, ServerGroupStore serverGroupStore, DeploymentStore deploymentStore) {
         this.presenter = presenter;
         this.serverGroupStore = serverGroupStore;
         this.deploymentStore = deploymentStore;

@@ -62,21 +62,21 @@ import static org.jboss.dmr.client.ModelDescriptionConstants.*;
  * @author Harald Pehl
  * @date 3/14/11
  */
-public class DeploymentBrowserPresenter
-        extends Presenter<DeploymentBrowserPresenter.MyView, DeploymentBrowserPresenter.MyProxy>
+public class StandaloneDeploymentPresenter
+        extends Presenter<StandaloneDeploymentPresenter.MyView, StandaloneDeploymentPresenter.MyProxy>
         implements DeployCommandExecutor
 {
     @ProxyCodeSplit
     @NameToken(NameTokens.DeploymentBrowserPresenter)
     @UseGatekeeper(StandaloneGateKeeper.class)
-    public interface MyProxy extends Proxy<DeploymentBrowserPresenter>, Place
+    public interface MyProxy extends Proxy<StandaloneDeploymentPresenter>, Place
     {
     }
 
 
     public interface MyView extends View
     {
-        void setPresenter(DeploymentBrowserPresenter presenter);
+        void setPresenter(StandaloneDeploymentPresenter presenter);
         void updateDeployments(List<DeploymentRecord> deployments);
     }
 
@@ -89,7 +89,7 @@ public class DeploymentBrowserPresenter
 
 
     @Inject
-    public DeploymentBrowserPresenter(EventBus eventBus, MyView view, MyProxy proxy, DeploymentStore deploymentStore,
+    public StandaloneDeploymentPresenter(EventBus eventBus, MyView view, MyProxy proxy, DeploymentStore deploymentStore,
             PlaceManager placeManager, DispatchAsync dispatcher)
     {
         super(eventBus, view, proxy);
@@ -133,7 +133,7 @@ public class DeploymentBrowserPresenter
             public void onSuccess(DMRResponse response)
             {
                 deploymentInfo.refreshView();
-                DeploymentCommand.REMOVE_FROM_STANDALONE.displaySuccessMessage(DeploymentBrowserPresenter.this, record);
+                DeploymentCommand.REMOVE_FROM_STANDALONE.displaySuccessMessage(StandaloneDeploymentPresenter.this, record);
             }
 
             @Override
@@ -142,7 +142,7 @@ public class DeploymentBrowserPresenter
                 super.onFailure(t);
                 deploymentInfo.refreshView();
                 DeploymentCommand.REMOVE_FROM_STANDALONE
-                        .displayFailureMessage(DeploymentBrowserPresenter.this, record, t);
+                        .displayFailureMessage(StandaloneDeploymentPresenter.this, record, t);
             }
         });
     }

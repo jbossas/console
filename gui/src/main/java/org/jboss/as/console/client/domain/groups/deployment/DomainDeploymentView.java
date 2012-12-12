@@ -20,7 +20,9 @@ package org.jboss.as.console.client.domain.groups.deployment;
 
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.inject.Inject;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
+import org.jboss.as.console.client.shared.deployment.DeploymentStore;
 import org.jboss.as.console.client.shared.deployment.model.ContentRepository;
 import org.jboss.as.console.client.widgets.tabs.DefaultTabLayoutPanel;
 
@@ -28,15 +30,16 @@ import org.jboss.as.console.client.widgets.tabs.DefaultTabLayoutPanel;
  * @author Harald Pehl
  * @date 12/12/2012
  */
-public class DeploymentsView extends SuspendableViewImpl implements DeploymentsPresenter.MyView
+public class DomainDeploymentView extends SuspendableViewImpl implements DomainDeploymentPresenter.MyView
 {
-    private final ContentRepositoryView contentRepositoryView;
-    private final ServerGroupDeploymentsView serverGroupDeploymentsView;
+    private final DeploymentStore deploymentStore;
+    private ContentRepositoryPanel contentRepositoryPanel;
+    private ServerGroupDeploymentPanel serverGroupDeploymentPanel;
 
-    public DeploymentsView()
+    @Inject
+    public DomainDeploymentView(DeploymentStore deploymentStore)
     {
-        this.contentRepositoryView = new ContentRepositoryView();
-        this.serverGroupDeploymentsView = new ServerGroupDeploymentsView();
+        this.deploymentStore = deploymentStore;
     }
 
     @Override
@@ -44,21 +47,23 @@ public class DeploymentsView extends SuspendableViewImpl implements DeploymentsP
     {
         DefaultTabLayoutPanel tabLayoutPanel = new DefaultTabLayoutPanel(40, Style.Unit.PX);
         tabLayoutPanel.addStyleName("default-tabpanel");
-        tabLayoutPanel.add(contentRepositoryView, "Content Repository", true);
-        tabLayoutPanel.add(serverGroupDeploymentsView, "Server Groups", true);
+        tabLayoutPanel.add(contentRepositoryPanel, "Content Repository", true);
+        tabLayoutPanel.add(serverGroupDeploymentPanel, "Server Groups", true);
         return tabLayoutPanel;
     }
 
     @Override
-    public void setPresenter(final DeploymentsPresenter presenter)
+    public void setPresenter(final DomainDeploymentPresenter presenter)
     {
-        contentRepositoryView.setPresenter(presenter);
+        // As long as the presenter is application scoped, this should only be called once
+        this.contentRepositoryPanel = new ContentRepositoryPanel(presenter);
+        this.serverGroupDeploymentPanel = new ServerGroupDeploymentPanel(presenter, deploymentStore);
     }
 
     @Override
     public void updateContentRepository(final ContentRepository contentRepository)
     {
-        contentRepositoryView.updateContentRepository(contentRepository);
-        serverGroupDeploymentsView.updateContentRepository(contentRepository);
+        contentRepositoryPanel.updateContentRepository(contentRepository);
+        serverGroupDeploymentPanel.updateContentRepository(contentRepository);
     }
 }

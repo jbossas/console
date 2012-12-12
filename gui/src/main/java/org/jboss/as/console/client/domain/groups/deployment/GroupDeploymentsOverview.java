@@ -28,14 +28,14 @@ public class GroupDeploymentsOverview {
 
     private ServerGroupDeploymentView groupDeployments;
 //    private ServerGroupDeploymentBrowser groupDeployments;
-    private DeploymentsPresenter presenter;
+    private DomainDeploymentPresenter presenter;
     private DeploymentStore deploymentStore;
     private DefaultCellTable<ServerGroupRecord> serverGroupTable;
     private ListDataProvider<ServerGroupRecord> dataProvider;
     private PagedView panel;
     private Map<String, List<DeploymentRecord>> deploymentPerGroup;
 
-    public GroupDeploymentsOverview(DeploymentsPresenter presenter, DeploymentStore deploymentStore) {
+    public GroupDeploymentsOverview(DomainDeploymentPresenter presenter, DeploymentStore deploymentStore) {
         this.presenter = presenter;
         this.deploymentStore = deploymentStore;
     }

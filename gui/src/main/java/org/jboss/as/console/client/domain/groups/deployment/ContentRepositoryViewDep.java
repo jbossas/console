@@ -64,9 +64,9 @@ import java.util.Map;
  * @date 3/1/11
  */
 @Deprecated
-public class ContentRepositoryViewDep extends SuspendableViewImpl implements DeploymentsPresenter.MyView {
+public class ContentRepositoryViewDep extends SuspendableViewImpl implements DomainDeploymentPresenter.MyView {
 
-    private DeploymentsPresenter presenter;
+    private DomainDeploymentPresenter presenter;
     private DeploymentStore deploymentStore;
 
     private ListDataProvider<DeploymentRecord> domainDeploymentProvider = new ListDataProvider<DeploymentRecord>();
@@ -83,7 +83,7 @@ public class ContentRepositoryViewDep extends SuspendableViewImpl implements Dep
     }
 
     @Override
-    public void setPresenter(DeploymentsPresenter presenter) {
+    public void setPresenter(DomainDeploymentPresenter presenter) {
         this.presenter = presenter;
     }
 
