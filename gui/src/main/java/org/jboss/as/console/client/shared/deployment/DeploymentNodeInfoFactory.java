@@ -61,7 +61,7 @@ public class DeploymentNodeInfoFactory
             nodeInfo = createNodeInfo(node);
         }
 
-        // set the command which executes the relevant DeploymentStore methid for the selected node.
+        // set the command which executes the relevant DeploymentStore method for the selected node.
         // the command must not be cached!
         final DeploymentNodeInfo<T> finalNodeInfo = nodeInfo;
         if (node instanceof DeploymentRecord)
