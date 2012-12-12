@@ -20,4 +20,7 @@ public interface Extension {
 
     String getModule();
     void setModule(String module);
+
+    String getCompatibleVersion();
+    void setCompatibleVersion(String version);
 }

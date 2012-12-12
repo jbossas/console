@@ -1,6 +1,8 @@
 package org.jboss.as.console.client.shared.runtime.ext;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import org.jboss.as.console.client.Console;
+import org.jboss.as.console.client.core.settings.ModelVersions;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.AsyncCommand;
@@ -65,10 +67,16 @@ public class LoadExtensionCmd implements AsyncCommand<List<Extension>>{
 
                     String major = subsystem.getValue().get("management-major-version").asString();
                     String minor = subsystem.getValue().get("management-minor-version").asString();
-                    String micro = subsystem.getValue().get("management-micro-version").asString();
+                    String micro = subsystem.getValue().hasDefined("management-micro-version") ?
+                            subsystem.getValue().get("management-micro-version").asString() : "0";
 
                     extensionBean.setVersion(major+"."+minor+"."+micro);
 
+                    // compatibility checks
+                    ModelVersions modelVersions = Console.MODULES.modelVersions();
+                    String subsystemCompatVersion = modelVersions.get(subsystem.getName());
+                    String compatVersion = subsystemCompatVersion !=null ? subsystemCompatVersion : "no-set";
+                    extensionBean.setCompatibleVersion(compatVersion);
                     extensions.add(extensionBean);
                 }
 

@@ -1,10 +1,14 @@
 package org.jboss.as.console.client.shared.runtime.ext;
 
+import com.google.gwt.cell.client.SafeHtmlCell;
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.cellview.client.Column;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.ProvidesKey;
@@ -57,6 +61,20 @@ public class ExtensionView
             }
         },"Version");
 
+        extensionTable.addColumn(new Column<Extension, SafeHtml>(new SafeHtmlCell())
+        {
+            @Override
+            public SafeHtml getValue(Extension ext)
+            {
+                SafeHtmlBuilder html = new SafeHtmlBuilder();
+
+                if(!ext.getCompatibleVersion().equals(ext.getVersion()))
+                    html.appendHtmlConstant("<i class='icon-bolt'></i>");
+
+                return html.toSafeHtml();
+            }
+        },"");
+
         dataProvider = new ListDataProvider<Extension>();
         dataProvider.addDataDisplay(extensionTable);
 
@@ -74,8 +92,9 @@ public class ExtensionView
         TextItem version = new TextItem("version", "Version");
         TextItem module = new TextItem("module", "Module");
         TextItem subsystem = new TextItem("subsystem", "Subsystem");
+        TextItem compat = new TextItem("compatibleVersion", "Compatible Version");
 
-        form.setFields(name, version, module, subsystem);
+        form.setFields(name, version, module, subsystem, compat);
 
         form.bind(extensionTable);
 
