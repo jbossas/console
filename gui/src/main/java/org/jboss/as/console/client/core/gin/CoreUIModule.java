@@ -51,6 +51,7 @@ import org.jboss.as.console.client.core.message.MessageBar;
 import org.jboss.as.console.client.core.message.MessageCenter;
 import org.jboss.as.console.client.core.message.MessageCenterImpl;
 import org.jboss.as.console.client.core.message.MessageCenterView;
+import org.jboss.as.console.client.core.settings.ModelVersions;
 import org.jboss.as.console.client.core.settings.SettingsPresenter;
 import org.jboss.as.console.client.core.settings.SettingsPresenterViewImpl;
 import org.jboss.as.console.client.core.settings.SettingsPresenterWidget;
@@ -262,6 +263,8 @@ public class CoreUIModule extends AbstractPresenterModule {
 
         bind(GoogleAnalytics.class).toProvider(AnalyticsProvider.class).in(Singleton.class);
         bind(NavigationTracker.class).asEagerSingleton();
+
+        bind(ModelVersions.class).in(Singleton.class);
 
         // ----------------------------------------------------------------------
 
