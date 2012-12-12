@@ -33,6 +33,7 @@ import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.FormValidation;
 import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
 import org.jboss.ballroom.client.widgets.window.DialogueOptions;
+import org.jboss.ballroom.client.widgets.window.WindowContentBuilder;
 import org.jboss.dmr.client.ModelNode;
 
 /**
@@ -50,7 +51,6 @@ public class NewHostJvmWizard {
 
     Widget asWidget() {
 
-        DockLayoutPanel wrapper = new DockLayoutPanel(Style.Unit.PX);
 
         VerticalPanel layout = new VerticalPanel();
         layout.setStyleName("window-content");
@@ -109,9 +109,6 @@ public class NewHostJvmWizard {
         );
 
 
-        wrapper.addSouth(options, 35);
-        wrapper.add(layout);
-
-        return wrapper;
+        return new WindowContentBuilder(layout, options).build();
     }
 }
