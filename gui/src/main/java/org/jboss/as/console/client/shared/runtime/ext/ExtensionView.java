@@ -3,17 +3,16 @@ package org.jboss.as.console.client.shared.runtime.ext;
 import com.google.gwt.cell.client.SafeHtmlCell;
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.cellview.client.Column;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.ProvidesKey;
 import org.jboss.as.console.client.Console;
-import org.jboss.as.console.client.domain.topology.TopologyPresenter;
 import org.jboss.as.console.client.shared.viewframework.builder.MultipleToOneLayout;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.TextItem;
@@ -33,7 +32,7 @@ public class ExtensionView
     private DefaultCellTable<Extension> extensionTable;
     private ListDataProvider<Extension> dataProvider;
     private Form<Extension> form;
-    private TopologyPresenter presenter;
+    private ExtensionManager presenter;
 
     public Widget asWidget()
     {
@@ -43,23 +42,22 @@ public class ExtensionView
                 return extension.getName();
             }
         });
-        extensionTable.addColumn(new Column<Extension, String>(new TextCell())
-        {
+        Column<Extension, String> nameCol = new Column<Extension, String>(new TextCell()) {
             @Override
-            public String getValue(Extension ext)
-            {
-                return ext.getName();
+            public String getValue(Extension ext) {
+                return ext.getSubsystem();
             }
-        }, "Name");
+        };
 
-        extensionTable.addColumn(new Column<Extension, String>(new TextCell())
-        {
+        Column<Extension, String> versionCol = new Column<Extension, String>(new TextCell()) {
             @Override
-            public String getValue(Extension ext)
-            {
+            public String getValue(Extension ext) {
                 return ext.getVersion();
             }
-        },"Version");
+        };
+
+        extensionTable.addColumn(nameCol, "Name");
+        extensionTable.addColumn(versionCol,"Version");
 
         extensionTable.addColumn(new Column<Extension, SafeHtml>(new SafeHtmlCell())
         {
@@ -74,6 +72,9 @@ public class ExtensionView
                 return html.toSafeHtml();
             }
         },"");
+
+        extensionTable.setColumnWidth(nameCol, 50, Style.Unit.PCT);
+        extensionTable.setColumnWidth(versionCol, 40, Style.Unit.PCT);
 
         dataProvider = new ListDataProvider<Extension>();
         dataProvider.addDataDisplay(extensionTable);
@@ -129,11 +130,7 @@ public class ExtensionView
         extensionTable.selectDefaultEntity();
     }
 
-    public void setPresenter(TopologyPresenter presenter) {
+    public void setPresenter(ExtensionManager presenter) {
         this.presenter = presenter;
-    }
-
-    public TopologyPresenter getPresenter() {
-        return presenter;
     }
 }

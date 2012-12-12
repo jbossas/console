@@ -1,6 +1,10 @@
 package org.jboss.as.console.client.standalone;
 
+import com.google.gwt.event.logical.shared.CloseEvent;
+import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.PopupPanel;
+import com.google.gwt.user.client.ui.TextArea;
 import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.Presenter;
@@ -23,11 +27,13 @@ import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.as.console.client.shared.runtime.ext.Extension;
+import org.jboss.as.console.client.shared.runtime.ext.ExtensionManager;
 import org.jboss.as.console.client.shared.runtime.ext.LoadExtensionCmd;
 import org.jboss.as.console.client.shared.schedule.LongRunningTask;
 import org.jboss.as.console.client.shared.state.ReloadEvent;
 import org.jboss.as.console.client.shared.state.ReloadState;
 import org.jboss.as.console.client.standalone.runtime.StandaloneRuntimePresenter;
+import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 import org.jboss.dmr.client.ModelNode;
 
 import java.util.List;
@@ -38,7 +44,7 @@ import static org.jboss.dmr.client.ModelDescriptionConstants.*;
  * @author Heiko Braun
  * @date 6/7/11
  */
-public class StandaloneServerPresenter extends Presenter<StandaloneServerPresenter.MyView, StandaloneServerPresenter.MyProxy> {
+public class StandaloneServerPresenter extends Presenter<StandaloneServerPresenter.MyView, StandaloneServerPresenter.MyProxy> implements ExtensionManager {
 
     private final PlaceManager placeManager;
     private DispatchAsync dispatcher;
@@ -210,6 +216,7 @@ public class StandaloneServerPresenter extends Presenter<StandaloneServerPresent
         });
     }
 
+    @Override
     public void loadExtensions()
     {
         loadExtensionCmd.execute(new SimpleCallback<List<Extension>>() {
@@ -218,6 +225,39 @@ public class StandaloneServerPresenter extends Presenter<StandaloneServerPresent
                 getView().setExtensions(extensions);
             }
         });
+    }
+
+    public void onDumpVersions() {
+
+        loadExtensionCmd.dumpVersions(new SimpleCallback<String>() {
+            @Override
+            public void onSuccess(String s) {
+                showVersionInfo(s);
+            }
+        });
+
+    }
+
+    private void showVersionInfo(String json)
+    {
+        DefaultWindow window = new DefaultWindow(Console.MESSAGES.createTitle("Management Model Versions"));
+        window.setWidth(480);
+        window.setHeight(360);
+        window.addCloseHandler(new CloseHandler<PopupPanel>() {
+            @Override
+            public void onClose(CloseEvent<PopupPanel> event) {
+
+            }
+        });
+
+        TextArea textArea = new TextArea();
+        textArea.setStyleName("fill-layout");
+        textArea.setText(json);
+
+        window.setWidget(textArea);
+
+        window.setGlassEnabled(true);
+        window.center();
     }
 
 }

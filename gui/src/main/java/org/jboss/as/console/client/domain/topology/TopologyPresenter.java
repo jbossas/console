@@ -23,7 +23,6 @@ import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Random;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.inject.Inject;
@@ -41,7 +40,6 @@ import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.DomainGateKeeper;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.core.SuspendableView;
-import org.jboss.as.console.client.domain.hosts.general.NewHostJvmWizard;
 import org.jboss.as.console.client.domain.model.Host;
 import org.jboss.as.console.client.domain.model.HostInformationStore;
 import org.jboss.as.console.client.domain.model.Server;
@@ -57,6 +55,7 @@ import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.as.console.client.shared.runtime.ext.Extension;
+import org.jboss.as.console.client.shared.runtime.ext.ExtensionManager;
 import org.jboss.as.console.client.shared.runtime.ext.LoadExtensionCmd;
 import org.jboss.as.console.client.shared.state.StaleGlobalModel;
 import org.jboss.ballroom.client.widgets.window.DefaultWindow;
@@ -73,7 +72,6 @@ import java.util.TreeSet;
 
 import static org.jboss.as.console.client.domain.model.ServerFlag.RELOAD_REQUIRED;
 import static org.jboss.as.console.client.domain.model.ServerFlag.RESTART_REQUIRED;
-
 import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 
 /**
@@ -84,6 +82,7 @@ import static org.jboss.dmr.client.ModelDescriptionConstants.*;
  */
 public class TopologyPresenter extends
         Presenter<TopologyPresenter.MyView, TopologyPresenter.MyProxy>
+        implements ExtensionManager
 {
     private LoadExtensionCmd loadExtensionCmd;
     private final DispatchAsync dispatcher;
@@ -411,77 +410,10 @@ public class TopologyPresenter extends
 
     public void onDumpVersions() {
 
-
-        ModelNode operation = new ModelNode();
-        operation.get(ADDRESS).setEmptyList();
-
-        operation.get(OP).set(COMPOSITE);
-
-        List<ModelNode> steps = new ArrayList<ModelNode>();
-
-        ModelNode major = new ModelNode();
-        major.get(OP).set(READ_ATTRIBUTE_OPERATION);
-        major.get(ADDRESS).setEmptyList();
-        major.get(NAME).set("management-major-version");
-
-        ModelNode minor = new ModelNode();
-        minor.get(OP).set(READ_ATTRIBUTE_OPERATION);
-        minor.get(ADDRESS).setEmptyList();
-        minor.get(NAME).set("management-minor-version");
-
-        ModelNode micro = new ModelNode();
-        micro.get(OP).set(READ_ATTRIBUTE_OPERATION);
-        micro.get(ADDRESS).setEmptyList();
-        micro.get(NAME).set("management-micro-version");
-
-        steps.add(major);
-        steps.add(minor);
-        steps.add(micro);
-
-        operation.get(STEPS).set(steps);
-
-
-        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+        loadExtensionCmd.dumpVersions(new SimpleCallback<String>() {
             @Override
-            public void onSuccess(DMRResponse dmrResponse) {
-                ModelNode response = dmrResponse.get();
-
-                ModelNode wrapper = response.get(RESULT);
-
-                int majorVersion = wrapper.get("step-1").get(RESULT).asInt();
-                int minorVersion = wrapper.get("step-2").get(RESULT).asInt();
-                int microVersion = wrapper.get("step-3").get(RESULT).asInt();
-
-                final String coreVersion = majorVersion+"."+minorVersion+"."+microVersion;
-
-                System.out.println("Core Management version:"+coreVersion);
-
-                loadExtensionCmd.execute(new SimpleCallback<List<Extension>>() {
-                    @Override
-                    public void onSuccess(List<Extension> extensions) {
-
-                        StringBuilder sb = new StringBuilder();
-                        sb.append("{").append("\n");
-                        sb.append("\t\"created\":\"").append(new Date(System.currentTimeMillis())).append("\",").append("\n");
-                        sb.append("\t\"core-version\":\"").append(coreVersion).append("\",").append("\n");
-
-                        int i=0;
-                        for(Extension ext : extensions)
-                        {
-                            sb.append("\t\"").append(ext.getSubsystem()).append("\"").append(": ");
-                            sb.append("\"").append(ext.getVersion()).append("\"");
-                            if(i<extensions.size()-1)
-                                sb.append(",");
-                            sb.append("\n");
-                            i++;
-                        }
-
-                        sb.append("}").append("\n");
-
-                        //System.out.println(sb.toString());
-                        showVersionInfo(sb.toString());
-                    }
-                });
+            public void onSuccess(String s) {
+                showVersionInfo(s);
             }
         });
 

@@ -36,7 +36,7 @@ public class StandaloneServerView extends DisposableViewImpl implements Standalo
     private Label headline;
     private DeckPanel reloadPanel;
     private Form<StandaloneServer> form;
-    private ExtensionView extensions;
+    private ExtensionView extensions = new ExtensionView();
 
     @Override
     public Widget createWidget() {
@@ -129,11 +129,6 @@ public class StandaloneServerView extends DisposableViewImpl implements Standalo
                 .setMaster("Configuration", form.asWidget())
                 .addDetail("Status", reloadPanel);
 
-
-        // ---------------------
-
-        extensions = new ExtensionView();
-
         // ---------------------
         DefaultTabLayoutPanel tabLayoutpanel = new DefaultTabLayoutPanel(40, Style.Unit.PX);
         tabLayoutpanel.addStyleName("default-tabpanel");
@@ -151,6 +146,7 @@ public class StandaloneServerView extends DisposableViewImpl implements Standalo
     @Override
     public void setPresenter(StandaloneServerPresenter presenter) {
         this.presenter = presenter;
+        extensions.setPresenter(presenter);
     }
 
     @Override
