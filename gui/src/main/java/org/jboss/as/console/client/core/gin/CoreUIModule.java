@@ -60,8 +60,8 @@ import org.jboss.as.console.client.domain.DomainPresenter;
 import org.jboss.as.console.client.domain.DomainView;
 import org.jboss.as.console.client.domain.groups.ServerGroupPresenter;
 import org.jboss.as.console.client.domain.groups.ServerGroupView;
-import org.jboss.as.console.client.domain.groups.deployment.ContentRepositoryView;
 import org.jboss.as.console.client.domain.groups.deployment.DeploymentsPresenter;
+import org.jboss.as.console.client.domain.groups.deployment.DeploymentsView;
 import org.jboss.as.console.client.domain.hosts.HostMgmtPresenter;
 import org.jboss.as.console.client.domain.hosts.HostMgmtView;
 import org.jboss.as.console.client.domain.hosts.HostVMMetricPresenter;
@@ -411,7 +411,7 @@ public class CoreUIModule extends AbstractPresenterModule {
         // domain/domain-deployments
         bindPresenter(DeploymentsPresenter.class,
                 DeploymentsPresenter.MyView.class,
-                ContentRepositoryView.class,
+                DeploymentsView.class,
                 DeploymentsPresenter.MyProxy.class);
 
 

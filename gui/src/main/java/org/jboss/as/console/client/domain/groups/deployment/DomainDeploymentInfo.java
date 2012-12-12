@@ -110,7 +110,7 @@ public class DomainDeploymentInfo implements DeploymentViewRefresher {
 
                 List<String> groupNames = new ArrayList();
                 for (ServerGroupRecord record : serverGroups) {
-                    groupNames.add(record.getGroupName());
+                    groupNames.add(record.getName());
                 }
 
                 DomainDeploymentInfo.this.serverGroupNames = groupNames;
@@ -145,8 +145,8 @@ public class DomainDeploymentInfo implements DeploymentViewRefresher {
                             public void onSuccess(List<DeploymentRecord> result)
                             {
                                 DomainDeploymentInfo.this.domainDeployments = result;
-                                DomainDeploymentInfo.this.presenter.getView()
-                                        .updateDeploymentInfo(DomainDeploymentInfo.this, targets);
+//                                DomainDeploymentInfo.this.presenter.getView()
+//                                        .updateDeploymentInfo(DomainDeploymentInfo.this, targets);
                             }
                         });
                     }

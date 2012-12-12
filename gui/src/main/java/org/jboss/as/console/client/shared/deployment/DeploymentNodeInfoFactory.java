@@ -51,6 +51,7 @@ public class DeploymentNodeInfoFactory
         this.nodeInfos = new HashMap<String, DeploymentNodeInfo<? extends DeploymentData>>();
     }
 
+    @SuppressWarnings("unchecked")
     public <T extends DeploymentData> DeploymentNodeInfo<T> nodeInfoFor(T node)
     {
         DeploymentNodeInfo<T> nodeInfo = (DeploymentNodeInfo<T>) nodeInfos.get(node.getClass().getName());
@@ -143,6 +144,7 @@ public class DeploymentNodeInfoFactory
         return nodeInfo;
     }
 
+    @SuppressWarnings("unchecked")
     private <T extends DeploymentData> DeploymentNodeInfo<T> createNodeInfo(final T node)
     {
         DeploymentNodeInfo<T> nodeInfo = null;

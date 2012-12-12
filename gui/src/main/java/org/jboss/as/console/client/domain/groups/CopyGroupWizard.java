@@ -34,7 +34,7 @@ public class CopyGroupWizard {
         layout.setStyleName("window-content");
 
 
-        layout.add(new ContentDescription("<h3>Create copy</h3> You are about to create a copy of server-goup <b>'"+orig.getGroupName()+
+        layout.add(new ContentDescription("<h3>Create copy</h3> You are about to create a copy of server-goup <b>'"+orig.getName()+
                 "'</b>. The newly created group will inherit all properties of the original."));
 
         final Form<ServerGroupRecord> form = new Form<ServerGroupRecord>(ServerGroupRecord.class);
@@ -55,7 +55,7 @@ public class CopyGroupWizard {
             }
         };
 
-        nameItem.setValue(orig.getGroupName()+"_copy");
+        nameItem.setValue(orig.getName()+"_copy");
 
         form.setFields(nameItem);
 

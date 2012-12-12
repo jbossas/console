@@ -16,33 +16,39 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
+package org.jboss.as.console.client.domain.groups.deployment;
 
-package org.jboss.as.console.client.domain.model;
-
-import com.google.gwt.user.client.ui.HasName;
-import org.jboss.as.console.client.shared.jvm.Jvm;
-import org.jboss.as.console.client.shared.properties.PropertyRecord;
-import org.jboss.as.console.client.widgets.forms.Binding;
-
-import java.util.List;
+import com.google.gwt.user.client.ui.IsWidget;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.Widget;
+import org.jboss.as.console.client.shared.deployment.model.ContentRepository;
 
 /**
- * @author Heiko Braun
- * @date 2/11/11
+ * @author Harald Pehl
+ * @date 12/12/2012
  */
-public interface ServerGroupRecord  extends HasName
+public class ServerGroupDeploymentsView implements IsWidget
 {
-    @Binding(detypedName = "profile")
-    public String getProfileName();
-    public void setProfileName(String name);
+    private final Widget widget;
 
-    public void setProperties(List<PropertyRecord> props);
-    public List<PropertyRecord> getProperties();
+    public ServerGroupDeploymentsView()
+    {
+        this.widget = initUI();
+    }
 
-    public Jvm getJvm();
-    public void setJvm(Jvm jvm);
+    private Widget initUI()
+    {
+        return new Label("Not yet implemented");
+    }
 
-    @Binding(detypedName = "socket-binding-group")
-    public String getSocketBinding();
-    public void setSocketBinding(String socketBindingRef);
+    @Override
+    public Widget asWidget()
+    {
+        return widget;
+    }
+
+    void updateContentRepository(final ContentRepository contentRepository)
+    {
+
+    }
 }

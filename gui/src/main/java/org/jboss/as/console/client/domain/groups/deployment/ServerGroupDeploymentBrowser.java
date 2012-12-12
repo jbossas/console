@@ -118,7 +118,7 @@ public class ServerGroupDeploymentBrowser
     public void setGroup(ServerGroupRecord selection)
     {
         this.currentSelection = selection;
-        header.setText("Deployments in group: " + selection.getGroupName());
+        header.setText("Deployments in group: " + selection.getName());
     }
 
     public void updateDeployments(List<DeploymentRecord> deployments)

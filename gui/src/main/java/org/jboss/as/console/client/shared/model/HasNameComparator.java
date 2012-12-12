@@ -16,33 +16,36 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-
-package org.jboss.as.console.client.domain.model;
+package org.jboss.as.console.client.shared.model;
 
 import com.google.gwt.user.client.ui.HasName;
-import org.jboss.as.console.client.shared.jvm.Jvm;
-import org.jboss.as.console.client.shared.properties.PropertyRecord;
-import org.jboss.as.console.client.widgets.forms.Binding;
 
-import java.util.List;
+import java.util.Comparator;
 
 /**
- * @author Heiko Braun
- * @date 2/11/11
+ * @author Harald Pehl
+ * @date 12/12/2012
  */
-public interface ServerGroupRecord  extends HasName
+public class HasNameComparator<T extends HasName> implements Comparator<T>
 {
-    @Binding(detypedName = "profile")
-    public String getProfileName();
-    public void setProfileName(String name);
-
-    public void setProperties(List<PropertyRecord> props);
-    public List<PropertyRecord> getProperties();
-
-    public Jvm getJvm();
-    public void setJvm(Jvm jvm);
-
-    @Binding(detypedName = "socket-binding-group")
-    public String getSocketBinding();
-    public void setSocketBinding(String socketBindingRef);
+    @Override
+    public int compare(final T left, final T right)
+    {
+        if (left == null && right == null)
+        {
+            return 0;
+        }
+        else if (left == null)
+        {
+            return -1;
+        }
+        else if (right == null)
+        {
+            return 1;
+        }
+        else
+        {
+            return left.getName().compareTo(right.getName());
+        }
+    }
 }

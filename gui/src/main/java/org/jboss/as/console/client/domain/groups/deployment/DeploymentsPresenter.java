@@ -41,6 +41,7 @@ import org.jboss.as.console.client.shared.deployment.DeploymentCommand;
 import org.jboss.as.console.client.shared.deployment.DeploymentCommandDelegate;
 import org.jboss.as.console.client.shared.deployment.DeploymentStore;
 import org.jboss.as.console.client.shared.deployment.NewDeploymentWizard;
+import org.jboss.as.console.client.shared.deployment.model.ContentRepository;
 import org.jboss.as.console.client.shared.deployment.model.DeploymentRecord;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
@@ -53,7 +54,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import static org.jboss.dmr.client.ModelDescriptionConstants.*;
@@ -102,18 +102,19 @@ public class DeploymentsPresenter extends Presenter<DeploymentsPresenter.MyView,
     protected void onReset()
     {
         super.onReset();
-        loadDeployedContent();
-        domainDeploymentInfo.refreshView();
+        loadContentRepository();
+//        domainDeploymentInfo.refreshView();
     }
 
-    private void loadDeployedContent()
+    private void loadContentRepository()
     {
-        deploymentStore.loadServerGroupDeployments(new SimpleCallback<Map<String, List<DeploymentRecord>>>()
+        deploymentStore.loadContentRepository(new SimpleCallback<ContentRepository>()
         {
             @Override
-            public void onSuccess(final Map<String, List<DeploymentRecord>> result)
+            public void onSuccess(final ContentRepository result)
             {
-                System.out.println("Assigned deployments: " + result);
+                System.out.println("Content repository: " + result);
+                getView().updateContentRepository(result);
             }
         });
     }
@@ -290,7 +291,7 @@ public class DeploymentsPresenter extends Presenter<DeploymentsPresenter.MyView,
         List<ServerGroupRecord> possibleGroupAssignments = new ArrayList<ServerGroupRecord>();
         for (ServerGroupRecord group : getServerGroups())
         {
-            if (!domainDeploymentInfo.isAssignedToGroup(group.getGroupName(), record))
+            if (!domainDeploymentInfo.isAssignedToGroup(group.getName(), record))
             {
                 possibleGroupAssignments.add(group);
             }
@@ -350,13 +351,13 @@ public class DeploymentsPresenter extends Presenter<DeploymentsPresenter.MyView,
         List<DeploymentRecord> available = new ArrayList<DeploymentRecord>();
         for (DeploymentRecord deployment : domainDeploymentInfo.getDomainDeployments())
         {
-            if (!domainDeploymentInfo.isAssignedToGroup(serverGroup.getGroupName(), deployment))
+            if (!domainDeploymentInfo.isAssignedToGroup(serverGroup.getName(), deployment))
             { available.add(deployment); }
         }
 
         if (available.isEmpty())
         {
-            Console.warning("All contents assigned to group " + serverGroup.getGroupName());
+            Console.warning("All contents assigned to group " + serverGroup.getName());
             return;
         }
 
@@ -437,7 +438,6 @@ public class DeploymentsPresenter extends Presenter<DeploymentsPresenter.MyView,
     public interface MyView extends SuspendableView
     {
         void setPresenter(DeploymentsPresenter presenter);
-
-        void updateDeploymentInfo(DomainDeploymentInfo domainDeploymentInfo, DeploymentRecord... targets);
+        void updateContentRepository(ContentRepository contentRepository);
     }
 }

@@ -45,7 +45,7 @@ public class ServerGroupCell extends AbstractCell<ServerGroupRecord> {
 
         safeHtmlBuilder.append(
                     TEMPLATE.message("cross-reference",
-                        groupRecord.getGroupName(),
+                        groupRecord.getName(),
                         groupRecord.getProfileName()
                 )
         );

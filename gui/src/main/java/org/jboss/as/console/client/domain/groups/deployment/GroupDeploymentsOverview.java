@@ -47,7 +47,7 @@ public class GroupDeploymentsOverview {
         serverGroupTable = new DefaultCellTable<ServerGroupRecord>(8, new ProvidesKey<ServerGroupRecord>() {
             @Override
             public Object getKey(ServerGroupRecord serverGroupRecord) {
-                return serverGroupRecord.getGroupName();
+                return serverGroupRecord.getName();
             }
         });
         dataProvider = new ListDataProvider<ServerGroupRecord>();
@@ -59,7 +59,7 @@ public class GroupDeploymentsOverview {
         Column nameColumn = new TextColumn<ServerGroupRecord>() {
             @Override
             public String getValue(ServerGroupRecord serverGroup) {
-                return serverGroup.getGroupName();
+                return serverGroup.getName();
             }
         };
 
@@ -78,8 +78,8 @@ public class GroupDeploymentsOverview {
                     @Override
                     public void execute(ServerGroupRecord selection) {
                         groupDeployments.setGroup(selection);
-                        groupDeployments.setDeploymentInfo(deploymentPerGroup.get(selection.getGroupName()));
-//                        groupDeployments.updateDeployments(deploymentPerGroup.get(selection.getGroupName()));
+                        groupDeployments.setDeploymentInfo(deploymentPerGroup.get(selection.getName()));
+//                        groupDeployments.updateDeployments(deploymentPerGroup.get(selection.getName()));
                         panel.showPage(1);
                     }
                 })
@@ -129,8 +129,8 @@ public class GroupDeploymentsOverview {
             ServerGroupRecord currentSelection = groupDeployments.getCurrentSelection();
             if(currentSelection!=null)
             {
-                groupDeployments.setDeploymentInfo(deploymentPerGroup.get(currentSelection.getGroupName()));
-//                groupDeployments.updateDeployments(deploymentPerGroup.get(currentSelection.getGroupName()));
+                groupDeployments.setDeploymentInfo(deploymentPerGroup.get(currentSelection.getName()));
+//                groupDeployments.updateDeployments(deploymentPerGroup.get(currentSelection.getName()));
             }
 
         }

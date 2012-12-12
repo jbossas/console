@@ -15,7 +15,7 @@ public  class ServerGroupSelection implements CheckboxColumn.Selectable {
     }
 
     public String getName() {
-        return group.getGroupName();
+        return group.getName();
     }
 
     public String getProfileName() {

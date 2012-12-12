@@ -132,7 +132,7 @@ public class ServerConfigDetails {
 
         List<String> names = new ArrayList<String>(result.size());
         for(ServerGroupRecord rec : result)
-            names.add(rec.getGroupName());
+            names.add(rec.getName());
 
         groupItem.setValueMap(names);
     }

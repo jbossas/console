@@ -172,7 +172,7 @@ public class ServerGroupStoreImpl implements ServerGroupStore {
     private ServerGroupRecord model2ServerGroup(String groupName, ModelNode model) {
         ServerGroupRecord record = factory.serverGroup().as();
 
-        record.setGroupName(groupName);
+        record.setName(groupName);
         record.setProfileName(model.get("profile").asString());
         record.setSocketBinding(model.get("socket-binding-group").asString());
 
@@ -287,7 +287,7 @@ public class ServerGroupStoreImpl implements ServerGroupStore {
 
         final ModelNode group = new ModelNode();
         group.get(OP).set(ModelDescriptionConstants.ADD);
-        group.get(ADDRESS).add(ModelDescriptionConstants.SERVER_GROUP, record.getGroupName());
+        group.get(ADDRESS).add(ModelDescriptionConstants.SERVER_GROUP, record.getName());
 
         group.get("profile").set(record.getProfileName());
         group.get("socket-binding-group").set(record.getSocketBinding());
@@ -314,7 +314,7 @@ public class ServerGroupStoreImpl implements ServerGroupStore {
     public void delete(ServerGroupRecord record, final AsyncCallback<Boolean> callback) {
         final ModelNode group = new ModelNode();
         group.get(OP).set(ModelDescriptionConstants.REMOVE);
-        group.get(ADDRESS).add(ModelDescriptionConstants.SERVER_GROUP, record.getGroupName());
+        group.get(ADDRESS).add(ModelDescriptionConstants.SERVER_GROUP, record.getName());
 
         dispatcher.execute(new DMRAction(group), new AsyncCallback<DMRResponse>() {
             @Override
@@ -362,7 +362,7 @@ public class ServerGroupStoreImpl implements ServerGroupStore {
     public void loadJVMConfiguration(ServerGroupRecord group, final AsyncCallback<Jvm> callback) {
         final ModelNode operation = new ModelNode();
         operation.get(OP).set(ModelDescriptionConstants.READ_CHILDREN_RESOURCES_OPERATION);
-        operation.get(ADDRESS).add("server-group", group.getGroupName());
+        operation.get(ADDRESS).add("server-group", group.getName());
         operation.get(CHILD_TYPE).set("jvm");
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
@@ -393,7 +393,7 @@ public class ServerGroupStoreImpl implements ServerGroupStore {
     public void loadProperties(ServerGroupRecord group, final AsyncCallback<List<PropertyRecord>> callback) {
         final ModelNode operation = new ModelNode();
         operation.get(OP).set(ModelDescriptionConstants.READ_CHILDREN_RESOURCES_OPERATION);
-        operation.get(ADDRESS).add("server-group", group.getGroupName());
+        operation.get(ADDRESS).add("server-group", group.getName());
         operation.get(CHILD_TYPE).set("system-property");
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {

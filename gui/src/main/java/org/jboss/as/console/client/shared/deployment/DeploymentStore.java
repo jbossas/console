@@ -26,6 +26,7 @@ import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.domain.model.ServerGroupStore;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.shared.BeanFactory;
+import org.jboss.as.console.client.shared.deployment.model.ContentRepository;
 import org.jboss.as.console.client.shared.deployment.model.DeployedEjb;
 import org.jboss.as.console.client.shared.deployment.model.DeployedEndpoint;
 import org.jboss.as.console.client.shared.deployment.model.DeployedPersistenceUnit;
@@ -49,10 +50,8 @@ import org.jboss.dmr.client.Property;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import static org.jboss.as.console.client.shared.deployment.model.DeploymentDataType.*;
@@ -81,6 +80,7 @@ public class DeploymentStore
     private final EntityAdapter<DeployedPersistenceUnit> deployedPersistenceUnitEntityAdapter;
     private final EntityAdapter<DeployedEndpoint> deployedEndpointEntityAdapter;
     private final EntityAdapter<DeployedServlet> deployedServletEntityAdapter;
+    private final EntityAdapter<ServerGroupRecord> serverGroupRecordEntityAdapter;
 
 
     @Inject
@@ -107,6 +107,8 @@ public class DeploymentStore
         deploymentWebSubsystemnEntityAdapter = new EntityAdapter<DeploymentWebSubsystem>(DeploymentWebSubsystem.class,
                 applicationMetaData);
         deployedServletEntityAdapter = new EntityAdapter<DeployedServlet>(DeployedServlet.class, applicationMetaData);
+        serverGroupRecordEntityAdapter = new EntityAdapter<ServerGroupRecord>(ServerGroupRecord.class,
+                applicationMetaData);
     }
 
 
@@ -118,92 +120,78 @@ public class DeploymentStore
      *
      * @throws IllegalStateException if called in standalone mode
      */
-    public void loadServerGroupDeployments(final AsyncCallback<Map<String, List<DeploymentRecord>>> callback)
+    public void loadContentRepository(final AsyncCallback<ContentRepository> callback)
     {
         if (isStandalone)
         {
             throw new IllegalStateException(
-                    "DeploymentStore.loadServerGroupDeployments() must not be called in standalone mode!");
+                    "DeploymentStore.loadContentRepository() must not be called in standalone mode!");
         }
-        final Map<String, List<DeploymentRecord>> groupDeployments = new HashMap<String, List<DeploymentRecord>>();
+        final ContentRepository contentRepository = new ContentRepository();
 
-        // first load the server groups
-        serverGroupStore.loadServerGroups(new SimpleCallback<List<ServerGroupRecord>>()
+        // load deployments, server groups and assignments in one composite
+        ModelNode operation = new ModelNode();
+        operation.get(ADDRESS).setEmptyList();
+        operation.get(OP).set(COMPOSITE);
+        List<ModelNode> steps = new LinkedList<ModelNode>();
+
+        ModelNode deploymentsOp = new ModelNode();
+        deploymentsOp.get(ADDRESS).setEmptyList();
+        deploymentsOp.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
+        deploymentsOp.get(CHILD_TYPE).set("deployment");
+        steps.add(deploymentsOp);
+
+        ModelNode serverGroupsOp = new ModelNode();
+        serverGroupsOp.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
+        serverGroupsOp.get(CHILD_TYPE).set("server-group");
+        steps.add(serverGroupsOp);
+
+        ModelNode assignmentOp = new ModelNode();
+        assignmentOp.get(ADDRESS).add("server-group", "*");
+        assignmentOp.get(ADDRESS).add("deployment", "*");
+        assignmentOp.get(OP).set(READ_RESOURCE_OPERATION);
+        steps.add(assignmentOp);
+
+        operation.get(STEPS).set(steps);
+        dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>()
         {
             @Override
-            public void onSuccess(final List<ServerGroupRecord> groups)
+            public void onFailure(final Throwable caught)
             {
-                for (ServerGroupRecord group : groups)
-                {
-                    groupDeployments.put(group.getGroupName(), new ArrayList<DeploymentRecord>());
-                }
+                callback.onFailure(caught);
+            }
 
-                // read top level deployments /:read-children-resources(child-type=deployment)
-                // to get the deployments itself
-                ModelNode deploymentsOp = new ModelNode();
-                deploymentsOp.get(ADDRESS).setEmptyList();
-                deploymentsOp.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
-                deploymentsOp.get(CHILD_TYPE).set("deployment");
-                loadDeployments(deploymentsOp, null, new SimpleCallback<List<DeploymentRecord>>()
+            @Override
+            public void onSuccess(final DMRResponse result)
+            {
+                ModelNode response = result.get();
+                if (ModelAdapter.wasSuccess(response))
                 {
-                    @Override
-                    public void onSuccess(final List<DeploymentRecord> deployments)
+                    ModelNode stepsResult = response.get(RESULT);
+                    List<ModelNode> nodes = stepsResult.get("step-1").get(RESULT).asList();
+                    for (ModelNode node : nodes)
                     {
-                        // deployment name to DeploymentRecord is used below...
-                        final Map<String, DeploymentRecord> nameToDeployment = new HashMap<String, DeploymentRecord>();
-                        for (DeploymentRecord deployment : deployments)
-                        {
-                            nameToDeployment.put(deployment.getName(), deployment);
-                        }
-
-                        // check for assignements by calling as composite for each group
-                        // /server-group=<group>/deployment=*:read-resource
-                        ModelNode assignmentOp = new ModelNode();
-                        assignmentOp.get(OP).set(COMPOSITE);
-                        assignmentOp.get(ADDRESS).setEmptyList();
-                        final List<ModelNode> steps = new LinkedList<ModelNode>();
-                        for (String group : groupDeployments.keySet())
-                        {
-                            ModelNode stepOp = new ModelNode();
-                            stepOp.get(ADDRESS).add("server-group", group);
-                            stepOp.get(ADDRESS).add("deployment", "*");
-                            stepOp.get(OP).set(READ_RESOURCE_OPERATION);
-                            steps.add(stepOp);
-                        }
-                        assignmentOp.get(STEPS).set(steps);
-                        dispatcher.execute(new DMRAction(assignmentOp), new SimpleCallback<DMRResponse>()
-                        {
-                            @Override
-                            public void onSuccess(DMRResponse result)
-                            {
-                                ModelNode response = result.get();
-                                if (ModelAdapter.wasSuccess(response))
-                                {
-                                    // finally check for matches between the top level deployments
-                                    // and the deployments of the current server group.
-                                    ModelNode stepsNode = response.get(RESULT);
-                                    for (int i = 1; i <= steps.size(); i++)
-                                    {
-                                        List<ModelNode> nodes = stepsNode.get("step-" + i).get(RESULT).asList();
-                                        for (ModelNode node : nodes)
-                                        {
-                                            String groupName = node.get(ADDRESS).asList().get(0).get(
-                                                    "server-group").asString();
-                                            String deploymentName = node.get(RESULT).get("name").asString();
-                                            List<DeploymentRecord> currentDeployments = groupDeployments.get(groupName);
-                                            DeploymentRecord deployment = nameToDeployment.get(deploymentName);
-                                            if (currentDeployments != null && deployment != null)
-                                            {
-                                                currentDeployments.add(deployment);
-                                            }
-                                        }
-                                    }
-                                    callback.onSuccess(groupDeployments);
-                                }
-                            }
-                        });
+                        DeploymentRecord deployment = mapDeployment(null, node);
+                        contentRepository.addDeployment(deployment);
                     }
-                });
+                    nodes = stepsResult.get("step-2").get(RESULT).asList();
+                    for (ModelNode node : nodes)
+                    {
+                        Property property = node.asProperty();
+                        ModelNode serverGroupNode = property.getValue().asObject();
+                        ServerGroupRecord serverGroup = serverGroupRecordEntityAdapter.fromDMR(serverGroupNode);
+                        serverGroup.setName(property.getName());
+                        contentRepository.addServerGroup(serverGroup);
+                    }
+                    nodes = stepsResult.get("step-3").get(RESULT).asList();
+                    for (ModelNode node : nodes)
+                    {
+                        String group = node.get(ADDRESS).asList().get(0).get("server-group").asString();
+                        String deplyment = node.get(ADDRESS).asList().get(1).get("deployment").asString();
+                        contentRepository.assignDeploymentToServerGroup(deplyment, group);
+                    }
+                }
+                callback.onSuccess(contentRepository);
             }
         });
     }

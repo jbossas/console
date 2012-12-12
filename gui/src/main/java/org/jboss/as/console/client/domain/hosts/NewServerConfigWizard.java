@@ -89,7 +89,7 @@ public class NewServerConfigWizard {
 
         List<String> groups = new ArrayList<String>(serverGroups.size());
         for(ServerGroupRecord rec : serverGroups)
-            groups.add(rec.getGroupName());
+            groups.add(rec.getName());
 
         groupItem = new ComboBoxItem("group", Console.CONSTANTS.common_label_serverGroup());
         groupItem.setDefaultToFirstOption(true);
@@ -160,7 +160,7 @@ public class NewServerConfigWizard {
         ServerGroupRecord match = null;
         for(ServerGroupRecord rec : available)
         {
-            if(rec.getGroupName().equals(selectedName))
+            if(rec.getName().equals(selectedName))
             {
                 match = rec;
                 break;

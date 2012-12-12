@@ -104,7 +104,7 @@ public class AssignToGroupWizard {
         DeploymentFilter filter = new DeploymentFilter(dataProvider);
         toolStrip.addToolWidget(filter.asWidget());
 
-        layout.add(new ContentHeaderLabel("Server Group: "+serverGroup.getGroupName()));
+        layout.add(new ContentHeaderLabel("Server Group: "+serverGroup.getName()));
         layout.add(new ContentGroupLabel("Available Deployment Content"));
         layout.add(toolStrip.asWidget());
         layout.add(table.asWidget());
