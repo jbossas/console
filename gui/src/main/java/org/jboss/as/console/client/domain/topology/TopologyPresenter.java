@@ -19,8 +19,13 @@
 package org.jboss.as.console.client.domain.topology;
 
 import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.event.logical.shared.CloseEvent;
+import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Random;
+import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.PopupPanel;
+import com.google.gwt.user.client.ui.TextArea;
 import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.Presenter;
@@ -32,9 +37,11 @@ import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.DomainGateKeeper;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.core.SuspendableView;
+import org.jboss.as.console.client.domain.hosts.general.NewHostJvmWizard;
 import org.jboss.as.console.client.domain.model.Host;
 import org.jboss.as.console.client.domain.model.HostInformationStore;
 import org.jboss.as.console.client.domain.model.Server;
@@ -47,10 +54,15 @@ import org.jboss.as.console.client.domain.model.impl.ServerInstanceLifecycleCall
 import org.jboss.as.console.client.domain.runtime.DomainRuntimePresenter;
 import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
+import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
+import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.as.console.client.shared.runtime.ext.Extension;
 import org.jboss.as.console.client.shared.runtime.ext.LoadExtensionCmd;
 import org.jboss.as.console.client.shared.state.StaleGlobalModel;
+import org.jboss.ballroom.client.widgets.window.DefaultWindow;
+import org.jboss.dmr.client.ModelNode;
 
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -62,6 +74,8 @@ import java.util.TreeSet;
 import static org.jboss.as.console.client.domain.model.ServerFlag.RELOAD_REQUIRED;
 import static org.jboss.as.console.client.domain.model.ServerFlag.RESTART_REQUIRED;
 
+import static org.jboss.dmr.client.ModelDescriptionConstants.*;
+
 /**
  * TODO Remove fake code when in production
  *
@@ -72,6 +86,7 @@ public class TopologyPresenter extends
         Presenter<TopologyPresenter.MyView, TopologyPresenter.MyProxy>
 {
     private LoadExtensionCmd loadExtensionCmd;
+    private final DispatchAsync dispatcher;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.Topology)
@@ -103,9 +118,9 @@ public class TopologyPresenter extends
 
     @Inject
     public TopologyPresenter(final EventBus eventBus, final MyView view,
-            final MyProxy proxy, final PlaceManager placeManager,
-            final HostInformationStore hostInfoStore, final ServerGroupStore serverGroupStore,
-            final BeanFactory beanFactory, DispatchAsync dispatcher)
+                             final MyProxy proxy, final PlaceManager placeManager,
+                             final HostInformationStore hostInfoStore, final ServerGroupStore serverGroupStore,
+                             final BeanFactory beanFactory, DispatchAsync dispatcher)
     {
         super(eventBus, view, proxy);
         this.placeManager = placeManager;
@@ -118,6 +133,8 @@ public class TopologyPresenter extends
         this.serverGroups = new HashMap<String, ServerGroup>();
         this.fake = false;
         this.hostIndex = 0;
+
+        this.dispatcher = dispatcher;
     }
 
 
@@ -392,4 +409,103 @@ public class TopologyPresenter extends
         });
     }
 
+    public void onDumpVersions() {
+
+
+        ModelNode operation = new ModelNode();
+        operation.get(ADDRESS).setEmptyList();
+
+        operation.get(OP).set(COMPOSITE);
+
+        List<ModelNode> steps = new ArrayList<ModelNode>();
+
+        ModelNode major = new ModelNode();
+        major.get(OP).set(READ_ATTRIBUTE_OPERATION);
+        major.get(ADDRESS).setEmptyList();
+        major.get(NAME).set("management-major-version");
+
+        ModelNode minor = new ModelNode();
+        minor.get(OP).set(READ_ATTRIBUTE_OPERATION);
+        minor.get(ADDRESS).setEmptyList();
+        minor.get(NAME).set("management-minor-version");
+
+        ModelNode micro = new ModelNode();
+        micro.get(OP).set(READ_ATTRIBUTE_OPERATION);
+        micro.get(ADDRESS).setEmptyList();
+        micro.get(NAME).set("management-micro-version");
+
+        steps.add(major);
+        steps.add(minor);
+        steps.add(micro);
+
+        operation.get(STEPS).set(steps);
+
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+            @Override
+            public void onSuccess(DMRResponse dmrResponse) {
+                ModelNode response = dmrResponse.get();
+
+                ModelNode wrapper = response.get(RESULT);
+
+                int majorVersion = wrapper.get("step-1").get(RESULT).asInt();
+                int minorVersion = wrapper.get("step-2").get(RESULT).asInt();
+                int microVersion = wrapper.get("step-3").get(RESULT).asInt();
+
+                final String coreVersion = majorVersion+"."+minorVersion+"."+microVersion;
+
+                System.out.println("Core Management version:"+coreVersion);
+
+                loadExtensionCmd.execute(new SimpleCallback<List<Extension>>() {
+                    @Override
+                    public void onSuccess(List<Extension> extensions) {
+
+                        StringBuilder sb = new StringBuilder();
+                        sb.append("{").append("\n");
+                        sb.append("\t\"created\":\"").append(new Date(System.currentTimeMillis())).append("\",").append("\n");
+                        sb.append("\t\"core-version\":\"").append(coreVersion).append("\",").append("\n");
+
+                        int i=0;
+                        for(Extension ext : extensions)
+                        {
+                            sb.append("\t\"").append(ext.getSubsystem()).append("\"").append(": ");
+                            sb.append("\"").append(ext.getVersion()).append("\"");
+                            if(i<extensions.size()-1)
+                                sb.append(",");
+                            sb.append("\n");
+                            i++;
+                        }
+
+                        sb.append("}").append("\n");
+
+                        //System.out.println(sb.toString());
+                        showVersionInfo(sb.toString());
+                    }
+                });
+            }
+        });
+
+    }
+
+    private void showVersionInfo(String json)
+    {
+        DefaultWindow window = new DefaultWindow(Console.MESSAGES.createTitle("Management Model Versions"));
+        window.setWidth(480);
+        window.setHeight(360);
+        window.addCloseHandler(new CloseHandler<PopupPanel>() {
+            @Override
+            public void onClose(CloseEvent<PopupPanel> event) {
+
+            }
+        });
+
+        TextArea textArea = new TextArea();
+        textArea.setStyleName("fill-layout");
+        textArea.setText(json);
+
+        window.setWidget(textArea);
+
+        window.setGlassEnabled(true);
+        window.center();
+    }
 }

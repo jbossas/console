@@ -76,7 +76,7 @@ public class TopologyView extends SuspendableViewImpl implements TopologyPresent
     private HostsDisplay display;
     private LifecycleLinkListener lifecycleLinkListener;
     private FlowPanel container;
-    private ExtensionView extensions;
+    private ExtensionView extensions = new ExtensionView();
     private HostsPager pager;
 
     @Override
@@ -112,10 +112,6 @@ public class TopologyView extends SuspendableViewImpl implements TopologyPresent
 
         // ---------------------
 
-        extensions = new ExtensionView();
-
-        // ---------------------
-
         DefaultTabLayoutPanel tabLayoutpanel = new DefaultTabLayoutPanel(40, Style.Unit.PX);
         tabLayoutpanel.addStyleName("default-tabpanel");
 
@@ -131,6 +127,7 @@ public class TopologyView extends SuspendableViewImpl implements TopologyPresent
     public void setPresenter(final TopologyPresenter presenter)
     {
         this.presenter = presenter;
+        extensions.setPresenter(presenter);
     }
 
     @Override
