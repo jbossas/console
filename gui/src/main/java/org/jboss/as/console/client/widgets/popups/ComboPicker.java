@@ -209,8 +209,8 @@ public class ComboPicker implements HasValueChangeHandlers<String> {
             popup.setHeight((cellList.getRowCount()*36)+"px");
 
             popup.setPopupPosition(
-                    header.getAbsoluteLeft()-5,
-                    header.getAbsoluteTop()+35
+                    header.getAbsoluteLeft(),
+                    header.getAbsoluteTop()+39
             );
 
             popup.show();

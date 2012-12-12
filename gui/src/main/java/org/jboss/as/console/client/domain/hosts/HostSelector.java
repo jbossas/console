@@ -32,6 +32,7 @@ public class HostSelector {
         layout.getElement().setAttribute("style","padding:4px;");
 
         hosts = new ComboPicker();
+
         hosts.addValueChangeHandler(new ValueChangeHandler<String>() {
             @Override
             public void onValueChange(final ValueChangeEvent<String> event) {
@@ -54,6 +55,7 @@ public class HostSelector {
         hostLabel.setStyleName("header-label");
         layout.add(hostLabel);
         Widget hWidget = hosts.asWidget();
+        hWidget.getElement().addClassName("table-picker");
         layout.add(hWidget);
 
         // combo box use all available space

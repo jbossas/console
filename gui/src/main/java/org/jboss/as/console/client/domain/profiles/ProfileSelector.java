@@ -55,6 +55,7 @@ public class ProfileSelector {
         profileLabel.setStyleName("header-label");
         layout.add(profileLabel);
         Widget hWidget = profiles.asWidget();
+        hWidget.getElement().addClassName("table-picker");
         layout.add(hWidget);
 
         // the combox box use all available space

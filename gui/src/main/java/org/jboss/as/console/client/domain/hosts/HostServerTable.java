@@ -312,8 +312,8 @@ public class HostServerTable {
         {
             int popupLeft = header.getAbsoluteLeft();
             popup.setPopupPosition(
-                    popupLeft-5,
-                    header.getAbsoluteTop()+35
+                    popupLeft,
+                    header.getAbsoluteTop()+38
             );
         }
 
