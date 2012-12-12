@@ -30,7 +30,7 @@ import java.util.List;
  * @author Heiko Braun
  * @date 2/11/11
  */
-public interface ServerGroupRecord  extends HasName
+public interface ServerGroupRecord extends HasName
 {
     @Binding(detypedName = "profile")
     public String getProfileName();
