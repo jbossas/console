@@ -107,19 +107,18 @@ public class ExtensionView
                 .setMaster(Console.MESSAGES.available("Extensions"), extensionTable)
                 .addDetail(Console.CONSTANTS.common_label_attributes(), form.asWidget());
 
-        if(!GWT.isScript())
-        {
-            // debug util only available in hosted mode
-            ToolStrip tools = new ToolStrip();
-            tools.addToolButtonRight(new ToolButton("Versions", new ClickHandler() {
-                @Override
-                public void onClick(ClickEvent clickEvent) {
-                    presenter.onDumpVersions();
-                }
-            }));
 
-            layout.setMasterTools(tools);
-        }
+        // debug util only available in hosted mode
+        ToolStrip tools = new ToolStrip();
+        tools.addToolButtonRight(new ToolButton("Export", new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent clickEvent) {
+                presenter.onDumpVersions();
+            }
+        }));
+
+        layout.setMasterTools(tools);
+
 
         return layout.build();
     }
