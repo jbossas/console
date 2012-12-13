@@ -61,7 +61,8 @@ public @interface Binding {
      * Does support expressions?
      * @return
      */
-    boolean expr() default false;
+    @Deprecated
+    boolean expr() default true;
 
     /**
      * Should it be written as ModelType.UNDEFINED ?
