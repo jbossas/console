@@ -421,7 +421,7 @@ public class TopologyPresenter extends
 
     private void showVersionInfo(String json)
     {
-        DefaultWindow window = new DefaultWindow(Console.MESSAGES.createTitle("Management Model Versions"));
+        DefaultWindow window = new DefaultWindow("Management Model Versions");
         window.setWidth(480);
         window.setHeight(360);
         window.addCloseHandler(new CloseHandler<PopupPanel>() {
