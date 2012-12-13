@@ -5,6 +5,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
+import org.jboss.as.console.client.shared.expr.ExpressionAdapter;
 import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.jca.model.PoolConfig;
@@ -56,12 +57,17 @@ public class PoolConfigurationView {
             public FormValidation validate() {
                 FormValidation superValidation = super.validate();
                 PoolConfig updatedEntity = this.getUpdatedEntity();
-                int minPoolSize = updatedEntity.getMinPoolSize();
-                int maxPoolSize = updatedEntity.getMaxPoolSize();
-                if(minPoolSize > maxPoolSize){
-                    superValidation.addError("maxPoolSize");
-                    maxCon.setErroneous(true);
-                    maxCon.setErrMessage("Max Pool Size must be greater than Min Pool Size");
+
+                // only works on real values
+                if(ExpressionAdapter.getExpressions(updatedEntity).isEmpty())
+                {
+                    int minPoolSize = updatedEntity.getMinPoolSize();
+                    int maxPoolSize = updatedEntity.getMaxPoolSize();
+                    if(minPoolSize > maxPoolSize){
+                        superValidation.addError("maxPoolSize");
+                        maxCon.setErroneous(true);
+                        maxCon.setErrMessage("Max Pool Size must be greater than Min Pool Size");
+                    }
                 }
                 return superValidation;
             }
