@@ -260,10 +260,10 @@ public class ContentRepositoryView extends SuspendableViewImpl implements Deploy
         this.groupOverview.setGroups(serverGroups);
         this.groupOverview.setGroupDeployments(domainDeploymentInfo.getServerGroupDeployments());
 
+        currentAssignments = matchAssignments(domainDeploymentInfo);
+
         domainDeploymentProvider.setList(domainDeploymentInfo.getDomainDeployments());
         contentTable.selectDefaultEntity();
-
-        currentAssignments = matchAssignments(domainDeploymentInfo);
 
         filter.reset(true);
     }
