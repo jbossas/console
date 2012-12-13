@@ -176,7 +176,7 @@ public class ServerGroupDeploymentBrowser
                     }
                     else
                     {
-                        Console.warning("No server is running in this group. Cannot look into the deployments.");
+                        Console.warning("No server is running in this group. Cannot look into deployments.");
                     }
                 }
 
