@@ -19,9 +19,15 @@ public class LinkBar {
     private HorizontalPanel bar;
     private int numLinks = 0;
     private List<HTML> links = new LinkedList<HTML>();
+    private final boolean navOnFirstPage;
 
     public LinkBar() {
+        this(false);
+    }
+
+    public LinkBar(boolean navOnFirstPage) {
         this.bar = new HorizontalPanel();
+        this.navOnFirstPage = navOnFirstPage;
     }
 
     public Widget asWidget() {
@@ -42,16 +48,20 @@ public class LinkBar {
         html.addClickHandler(handler);
         html.addStyleName("link-bar");
 
+        SafeHtmlBuilder builder = new SafeHtmlBuilder();
+
         if(numLinks==0)
         {
-            html.addStyleName("link-bar-first");
-            SafeHtmlBuilder builder = new SafeHtmlBuilder();
-            builder.appendHtmlConstant("<i class='icon-chevron-left'></i>");
-            builder.appendHtmlConstant("&nbsp;");
-            builder.appendEscaped(text);
-            html.setHTML(builder.toSafeHtml());
+            if(!navOnFirstPage)
+            {
+                html.addStyleName("link-bar-first");
+                builder.appendHtmlConstant("<i class='icon-chevron-left'></i>");
+                builder.appendHtmlConstant("&nbsp;");
+            }
         }
 
+        builder.appendHtmlConstant("<a href='javascript:void(0)' tabindex='0'>"+text+"</a>");
+        html.setHTML(builder.toSafeHtml());
         links.add(html);
 
         bar.add(html);

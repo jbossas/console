@@ -30,7 +30,7 @@ public class PagedView {
 
         deck = new DeckPanel();
         deck.addStyleName("fill-layout");
-        bar = new LinkBar();
+        bar = new LinkBar(navOnFirstPage);
     }
 
     public PagedView() {
