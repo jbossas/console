@@ -185,9 +185,12 @@ public class DeploymentStore
                     nodes = stepsResult.get("step-3").get(RESULT).asList();
                     for (ModelNode node : nodes)
                     {
-                        String group = node.get(ADDRESS).asList().get(0).get("server-group").asString();
-                        String deplyment = node.get(ADDRESS).asList().get(1).get("deployment").asString();
-                        contentRepository.assignDeploymentToServerGroup(deplyment, group);
+                        String groupName = node.get(ADDRESS).asList().get(0).get("server-group").asString();
+                        String deploymentName = node.get(ADDRESS).asList().get(1).get("deployment").asString();
+                        // The state of the deployment (enabled/disabled) is taken from this step!
+                        DeploymentRecord dr = contentRepository.getDeployment(deploymentName);
+                        dr.setEnabled(node.get(RESULT).get("enabled").asBoolean());
+                        contentRepository.assignDeploymentToServerGroup(deploymentName, groupName);
                     }
                 }
                 callback.onSuccess(contentRepository);
@@ -207,7 +210,7 @@ public class DeploymentStore
     {
         // /<baseAddress>/:read-children-resources(child-type=deployment)
         ModelNode operation = new ModelNode();
-        operation.get(ADDRESS).add(baseAddress);
+        operation.get(ADDRESS).set(baseAddress);
         operation.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
         operation.get(CHILD_TYPE).set("deployment");
         loadDeployments(baseAddress, operation, null, callback);
@@ -218,7 +221,7 @@ public class DeploymentStore
     {
         // /<relativeTo>/deployment=<deployment.getName()>:read-children-resources(child-type=subdeployment)
         ModelNode operation = new ModelNode();
-        operation.get(ADDRESS).add(deployment.getBaseAddress());
+        operation.get(ADDRESS).set(deployment.getBaseAddress());
         operation.get(ADDRESS).add("deployment", deployment.getName());
         operation.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
         operation.get(CHILD_TYPE).set("subdeployment");
@@ -256,11 +259,6 @@ public class DeploymentStore
         deployment.setType(parent == null ? DeploymentDataType.deployment : subdeployment);
         try
         {
-            if (!isStandalone)
-            {
-                deployment.setEnabled(true);
-                deployment.setPersistent(true);
-            }
             ModelNode property = deploymentNode.get("content");
             if (property.isDefined())
             {
@@ -294,7 +292,7 @@ public class DeploymentStore
         final List<DeploymentSubsystem> subsystems = new ArrayList<DeploymentSubsystem>();
 
         ModelNode operation = new ModelNode();
-        operation.get(ADDRESS).add(deployment.getBaseAddress());
+        operation.get(ADDRESS).set(deployment.getBaseAddress());
         if (deployment.isSubdeployment())
         {
             // /<deployment.getBaseAddress()>/deployment=<deployment>/subdeployment=<subdeployment>:read-children-resources(child-type=subsystems)
@@ -426,7 +424,7 @@ public class DeploymentStore
     private ModelNode ejbOp(final DeploymentSubsystem subsystem, final String name)
     {
         ModelNode operation = new ModelNode();
-        operation.get(ADDRESS).add(subsystem.getDeployment().getBaseAddress());
+        operation.get(ADDRESS).set(subsystem.getDeployment().getBaseAddress());
         DeploymentRecord deployment = subsystem.getDeployment();
         if (deployment.isSubdeployment())
         {
@@ -451,7 +449,7 @@ public class DeploymentStore
         final List<DeployedPersistenceUnit> pus = new ArrayList<DeployedPersistenceUnit>();
 
         ModelNode operation = new ModelNode();
-        operation.get(ADDRESS).add(subsystem.getDeployment().getBaseAddress());
+        operation.get(ADDRESS).set(subsystem.getDeployment().getBaseAddress());
         DeploymentRecord deployment = subsystem.getDeployment();
         if (deployment.isSubdeployment())
         {
@@ -518,7 +516,7 @@ public class DeploymentStore
         final List<DeployedServlet> servlets = new ArrayList<DeployedServlet>();
 
         ModelNode operation = new ModelNode();
-        operation.get(ADDRESS).add(subsystem.getDeployment().getBaseAddress());
+        operation.get(ADDRESS).set(subsystem.getDeployment().getBaseAddress());
         DeploymentRecord deployment = subsystem.getDeployment();
         if (deployment.isSubdeployment())
         {
@@ -566,7 +564,7 @@ public class DeploymentStore
         final List<DeployedEndpoint> endpoints = new ArrayList<DeployedEndpoint>();
 
         ModelNode operation = new ModelNode();
-        operation.get(ADDRESS).add(subsystem.getDeployment().getBaseAddress());
+        operation.get(ADDRESS).set(subsystem.getDeployment().getBaseAddress());
         DeploymentRecord deployment = subsystem.getDeployment();
         if (deployment.isSubdeployment())
         {

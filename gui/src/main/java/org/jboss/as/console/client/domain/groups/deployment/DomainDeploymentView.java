@@ -64,9 +64,9 @@ public class DomainDeploymentView extends SuspendableViewImpl implements DomainD
     }
 
     @Override
-    public void updateContentRepository(final ContentRepository contentRepository)
+    public void reset(final ContentRepository contentRepository)
     {
-        contentRepositoryPanel.updateContentRepository(contentRepository);
-        serverGroupDeploymentPanel.updateContentRepository(contentRepository);
+        contentRepositoryPanel.reset(contentRepository);
+        serverGroupDeploymentPanel.reset(contentRepository);
     }
 }

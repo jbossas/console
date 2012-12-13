@@ -32,9 +32,11 @@ import org.jboss.as.console.client.shared.deployment.DeploymentDataKeyProvider;
 import org.jboss.as.console.client.shared.deployment.DeploymentStore;
 import org.jboss.as.console.client.shared.deployment.model.DeploymentRecord;
 import org.jboss.as.console.client.shared.viewframework.builder.SimpleLayout;
+import org.jboss.as.console.client.widgets.ContentDescription;
 import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
 import org.jboss.ballroom.client.widgets.tools.ToolStrip;
+import org.jboss.dmr.client.ModelNode;
 
 import java.util.Iterator;
 import java.util.List;
@@ -49,6 +51,7 @@ public class ServerGroupDeploymentBrowser
     private final DeploymentStore deploymentStore;
     private final HostInformationStore hostInfoStore;
     private ContentHeaderLabel header;
+    private ContentDescription description;
     private ServerGroupRecord currentServerGroup;
     private DeploymentBrowser deploymentBrowser;
 
@@ -78,6 +81,8 @@ public class ServerGroupDeploymentBrowser
                     }
                 }));
         tools.addToolButtonRight(new ToolButton(Console.CONSTANTS.common_label_remove(), new
+
+
                 ClickHandler()
                 {
                     @Override
@@ -91,6 +96,8 @@ public class ServerGroupDeploymentBrowser
                     }
                 }));
         tools.addToolButtonRight(new ToolButton(Console.CONSTANTS.common_label_enOrDisable(), new
+
+
                 ClickHandler()
                 {
                     @Override
@@ -107,10 +114,12 @@ public class ServerGroupDeploymentBrowser
         deploymentBrowser = new DeploymentBrowser(deploymentStore, selectionModel);
 
         header = new ContentHeaderLabel();
+        description = new ContentDescription("Deployments assigned to this server group.");
         SimpleLayout layout = new SimpleLayout()
                 .setPlain(true)
                 .setHeadlineWidget(header)
-                .setDescription("Deployments assigned to this server group.")
+                .setDescription("")
+                .addContent("description", description)
                 .addContent("tools", tools)
                 .addContent("browser", deploymentBrowser.getCellBrowser().asWidget())
                 .addContent("breadcrumb", deploymentBrowser.getBreadcrumb())
@@ -122,33 +131,65 @@ public class ServerGroupDeploymentBrowser
     {
         currentServerGroup = serverGroup;
         header.setText("Deployments in group: " + serverGroup.getName());
+        description.setText("Deployments assigned to this server group.");
         deploymentBrowser.updateDeployments(deployments);
-        hostInfoStore.loadServerInstances(currentServerGroup.getName(), new SimpleCallback<List<ServerInstance>>()
-        {
-            @Override
-            public void onSuccess(final List<ServerInstance> result)
-            {
-                ServerInstance hit = null;
-                for (Iterator<ServerInstance> iterator = result.iterator(); iterator.hasNext() && hit == null; )
-                {
-                    hit = matchingServer(iterator.next());
-                }
-                if (hit != null)
-                {
-                    // Try to get real deployment data from this server
-                    System.out.println("Loading real deployment data from " + hit.getName());
-                }
-            }
 
-            ServerInstance matchingServer(ServerInstance server)
+        boolean anyEnabled = false;
+        for (Iterator<DeploymentRecord> iterator = deployments.iterator(); iterator.hasNext() && !anyEnabled; )
+        {
+            anyEnabled = iterator.next().isEnabled();
+        }
+        if (anyEnabled)
+        {
+            hostInfoStore.loadServerInstances(currentServerGroup.getName(), new SimpleCallback<List<ServerInstance>>()
             {
-                if (server != null && server.isRunning() && server.getGroup()
-                        .equals(currentServerGroup.getName()))
+                @Override
+                public void onSuccess(final List<ServerInstance> result)
                 {
-                    return server;
+                    ServerInstance hit = null;
+                    for (Iterator<ServerInstance> iterator = result.iterator(); iterator.hasNext() && hit == null; )
+                    {
+                        hit = matchingServer(iterator.next());
+                    }
+                    if (hit != null)
+                    {
+                        // Try to get real deployment data from this server
+                        final ServerInstance finalHit = hit;
+                        final ModelNode baseAddress = new ModelNode();
+                        baseAddress.setEmptyList();
+                        baseAddress.add("host", hit.getHost());
+                        baseAddress.add("server", hit.getName());
+                        deploymentStore.loadDeployments(baseAddress, new SimpleCallback<List<DeploymentRecord>>()
+                        {
+                            @Override
+                            public void onSuccess(final List<DeploymentRecord> result)
+                            {
+                                deploymentBrowser.updateDeployments(result);
+                                if (!result.isEmpty())
+                                {
+                                    description.setText(
+                                            "Deployments assigned to this server group (taken from server " + finalHit
+                                                    .getName() + ").");
+                                }
+                            }
+                        });
+                    }
+                    else
+                    {
+                        Console.warning("No server is running in this group. Cannot look into the deployments.");
+                    }
                 }
-                return null;
-            }
-        });
+
+                ServerInstance matchingServer(ServerInstance server)
+                {
+                    if (server != null && server.isRunning() && server.getGroup()
+                            .equals(currentServerGroup.getName()))
+                    {
+                        return server;
+                    }
+                    return null;
+                }
+            });
+        }
     }
 }

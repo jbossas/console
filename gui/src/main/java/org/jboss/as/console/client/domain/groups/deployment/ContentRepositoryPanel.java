@@ -206,22 +206,6 @@ public class ContentRepositoryPanel implements IsWidget
         return layout.build();
     }
 
-    @Override
-    public void updateDeploymentInfo(DomainDeploymentInfo domainDeploymentInfo, DeploymentRecord... targets) {
-
-        List<ServerGroupRecord> serverGroups = this.presenter.getServerGroups();
-
-        this.groupOverview.setGroups(serverGroups);
-        this.groupOverview.setGroupDeployments(domainDeploymentInfo.getServerGroupDeployments());
-
-        currentAssignments = matchAssignments(domainDeploymentInfo);
-
-        domainDeploymentProvider.setList(domainDeploymentInfo.getDomainDeployments());
-        contentTable.selectDefaultEntity();
-
-        filter.reset(true);
-    }
-
     private List<Column> makeNameAndRuntimeColumns()
     {
         List<Column> columns = new ArrayList<Column>(2);
@@ -254,7 +238,7 @@ public class ContentRepositoryPanel implements IsWidget
         return widget;
     }
 
-    void updateContentRepository(final ContentRepository contentRepository)
+    void reset(final ContentRepository contentRepository)
     {
         this.contentRepository = contentRepository;
         this.deploymentData.setList(contentRepository.getDeployments());

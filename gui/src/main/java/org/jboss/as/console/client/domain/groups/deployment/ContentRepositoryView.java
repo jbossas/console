@@ -64,7 +64,7 @@ import java.util.Map;
  * @date 3/1/11
  */
 @Deprecated
-public class ContentRepositoryViewDep extends SuspendableViewImpl implements DomainDeploymentPresenter.MyView {
+public class ContentRepositoryView extends SuspendableViewImpl implements DomainDeploymentPresenter.MyView {
 
     private DomainDeploymentPresenter presenter;
     private DeploymentStore deploymentStore;
@@ -77,7 +77,7 @@ public class ContentRepositoryViewDep extends SuspendableViewImpl implements Dom
     private DeploymentFilter filter;
 
     @Inject
-    public ContentRepositoryViewDep(final DeploymentStore deploymentStore)
+    public ContentRepositoryView(final DeploymentStore deploymentStore)
     {
         this.deploymentStore = deploymentStore;
     }
@@ -183,7 +183,7 @@ public class ContentRepositoryViewDep extends SuspendableViewImpl implements Dom
                 final DeploymentRecord selection = selectionModel.getSelectedObject();
                 if(selection!=null) {
                     new DeploymentCommandDelegate(
-                            ContentRepositoryViewDep.this.presenter,
+                            ContentRepositoryView.this.presenter,
                             DeploymentCommand.REMOVE_FROM_DOMAIN).execute(
                             selection
                     );
@@ -201,7 +201,7 @@ public class ContentRepositoryViewDep extends SuspendableViewImpl implements Dom
                 if(selection!=null)
                 {
                     new DeploymentCommandDelegate(
-                            ContentRepositoryViewDep.this.presenter,
+                            ContentRepositoryView.this.presenter,
                             DeploymentCommand.ADD_TO_GROUP).execute(
                             selection
                     );
@@ -219,7 +219,7 @@ public class ContentRepositoryViewDep extends SuspendableViewImpl implements Dom
                 if(selection!=null)
                 {
                     new DeploymentCommandDelegate(
-                            ContentRepositoryViewDep.this.presenter,
+                            ContentRepositoryView.this.presenter,
                             DeploymentCommand.UPDATE_CONTENT).execute(
                             selection
                     );
@@ -255,7 +255,7 @@ public class ContentRepositoryViewDep extends SuspendableViewImpl implements Dom
     }
 
     @Override
-    public void updateContentRepository(final ContentRepository contentRepository)
+    public void reset(final ContentRepository contentRepository)
     {
         groupOverview.setGroups(contentRepository.getServerGroups());
 

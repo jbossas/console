@@ -39,6 +39,7 @@ import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 
 /**
  * Shows the server groups with a link to ServerGroupDeploymentView
+ *
  * @author Harald Pehl
  * @date 12/12/2012
  */
@@ -52,6 +53,7 @@ public class ServerGroupDeploymentPanel implements IsWidget
     private ListDataProvider<ServerGroupRecord> serverGroupData;
     private ServerGroupDeploymentBrowser groupDeploymentBrowser;
     private ContentRepository contentRepository;
+    private SingleSelectionModel<ServerGroupRecord> selectionModel;
 
 
     public ServerGroupDeploymentPanel(DomainDeploymentPresenter presenter, DeploymentStore deploymentStore,
@@ -81,36 +83,42 @@ public class ServerGroupDeploymentPanel implements IsWidget
         serverGroupData = new ListDataProvider<ServerGroupRecord>();
         this.serverGroupData.addDataDisplay(serverGroups);
 
-        final SingleSelectionModel<ServerGroupRecord> selectionModel = new SingleSelectionModel<ServerGroupRecord>(keyProvider);
+        selectionModel = new SingleSelectionModel<ServerGroupRecord>(keyProvider);
         serverGroups.setSelectionModel(selectionModel);
 
-        Column nameColumn = new TextColumn<ServerGroupRecord>() {
-            @Override
-            public String getValue(ServerGroupRecord serverGroup) {
-                return serverGroup.getName();
-            }
-        };
-        Column profileColumn = new TextColumn<ServerGroupRecord>() {
-            @Override
-            public String getValue(ServerGroupRecord serverGroup) {
-                return serverGroup.getProfileName();
-            }
-        };
+        Column nameColumn = new
+                TextColumn<ServerGroupRecord>()
+                {
+                    @Override
+                    public String getValue(ServerGroupRecord serverGroup)
+                    {
+                        return serverGroup.getName();
+                    }
+                };
+        Column profileColumn = new
+                TextColumn<ServerGroupRecord>()
+                {
+                    @Override
+                    public String getValue(ServerGroupRecord serverGroup)
+                    {
+                        return serverGroup.getProfileName();
+                    }
+                };
         serverGroups.addColumn(nameColumn, Console.CONSTANTS.common_label_serverGroup());
         serverGroups.addColumn(profileColumn, Console.CONSTANTS.common_label_profile());
 
-        Column<ServerGroupRecord, ServerGroupRecord> option =
-                new Column<ServerGroupRecord, ServerGroupRecord>(
-                    new ViewLinkCell<ServerGroupRecord>(Console.CONSTANTS.common_label_view(),
-                    new ActionCell.Delegate<ServerGroupRecord>()
+        ActionCell.Delegate<ServerGroupRecord> actionDelegate = new
+                ActionCell.Delegate<ServerGroupRecord>()
+                {
+                    @Override
+                    public void execute(ServerGroupRecord selection)
                     {
-                        @Override
-                        public void execute(ServerGroupRecord selection)
-                        {
-                            groupDeploymentBrowser.updateGroup(selection, contentRepository.getDeployments(selection));
-                            pagedView.showPage(1);
-                        }
-                    }))
+                        groupDeploymentBrowser.updateGroup(selection, contentRepository.getDeployments(selection));
+                        pagedView.showPage(1);
+                    }
+                };
+        Column<ServerGroupRecord, ServerGroupRecord> option = new Column<ServerGroupRecord, ServerGroupRecord>(
+                new ViewLinkCell<ServerGroupRecord>(Console.CONSTANTS.common_label_view(), actionDelegate))
                 {
                     @Override
                     public ServerGroupRecord getValue(ServerGroupRecord manager)
@@ -142,9 +150,15 @@ public class ServerGroupDeploymentPanel implements IsWidget
         return widget;
     }
 
-    void updateContentRepository(final ContentRepository contentRepository)
+    void reset(final ContentRepository contentRepository)
     {
         this.contentRepository = contentRepository;
         serverGroupData.setList(contentRepository.getServerGroups());
+        ServerGroupRecord selectedServerGroup = selectionModel.getSelectedObject();
+        if (pagedView.getPage() == 1 && selectedServerGroup != null)
+        {
+            groupDeploymentBrowser.updateGroup(selectedServerGroup,
+                    this.contentRepository.getDeployments(selectedServerGroup));
+        }
     }
 }

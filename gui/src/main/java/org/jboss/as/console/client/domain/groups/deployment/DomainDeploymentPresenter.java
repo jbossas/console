@@ -113,8 +113,7 @@ public class DomainDeploymentPresenter extends Presenter<DomainDeploymentPresent
             @Override
             public void onSuccess(final ContentRepository result)
             {
-                System.out.println("Content repository: " + result);
-                getView().updateContentRepository(result);
+                getView().reset(result);
             }
         });
     }
@@ -438,6 +437,6 @@ public class DomainDeploymentPresenter extends Presenter<DomainDeploymentPresent
     public interface MyView extends SuspendableView
     {
         void setPresenter(DomainDeploymentPresenter presenter);
-        void updateContentRepository(ContentRepository contentRepository);
+        void reset(ContentRepository contentRepository);
     }
 }

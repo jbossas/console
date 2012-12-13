@@ -53,6 +53,7 @@ import java.util.Map;
 public class DeploymentBrowser
 {
     private final DeploymentTreeModel deploymentTreeModel;
+    private final SingleSelectionModel<DeploymentRecord> selectionModel;
     private final DefaultCellBrowser cellBrowser;
     private final DeploymentBreadcrumb breadcrumb;
     private final DeckPanel contextPanel;
@@ -60,19 +61,29 @@ public class DeploymentBrowser
     private final Map<String, Integer> indexes;
 
 
-    public DeploymentBrowser(final DeploymentStore deploymentStore, final SingleSelectionModel<DeploymentRecord> selectionModel)
+    public DeploymentBrowser(final DeploymentStore deploymentStore,
+            final SingleSelectionModel<DeploymentRecord> selectionModel)
     {
         forms = new HashMap<String, Form<DeploymentData>>();
         indexes = new HashMap<String, Integer>();
 
-        deploymentTreeModel = new DeploymentTreeModel(this, deploymentStore, selectionModel);
+        this.selectionModel = selectionModel;
+        deploymentTreeModel = new DeploymentTreeModel(this, deploymentStore, this.selectionModel);
         cellBrowser = new DefaultCellBrowser.Builder(deploymentTreeModel, null).build();
 
         breadcrumb = new DeploymentBreadcrumb();
         breadcrumb.getElement().setAttribute("style", "margin-top:30px;");
 
+
         int index = 0;
         this.contextPanel = new DeckPanel();
+
+        Label noInfo = new Label("No information available.");
+        noInfo.getElement().addClassName("console-DeploymentBreadcrumb-noinfo");
+        noInfo.getElement().addClassName("console-DeploymentBreadcrumb-context");
+        this.contextPanel.add(noInfo);
+        index++;
+
         addContext(DeploymentRecord.class, index++,
                 new TextAreaItem("name", "Name"),
                 new TextAreaItem("path", "Path"),
@@ -118,6 +129,7 @@ public class DeploymentBrowser
                 new TextBoxItem("wsdl", "WSDL"));
     }
 
+    @SuppressWarnings("unchecked")
     private <T extends DeploymentData> void addContext(Class<T> clazz, int index, FormItem... formItems)
     {
         Widget widget;
@@ -141,9 +153,26 @@ public class DeploymentBrowser
         contextPanel.add(widget);
     }
 
+    /**
+     * Updates the list of deployments, selects the first deployment in the browser and shows the relevant context view.
+     * If the list is empty a special context view is displayed.
+     *
+     * @param deployments the deployments - can be empty, must not be null
+     */
     public void updateDeployments(List<DeploymentRecord> deployments)
     {
         deploymentTreeModel.updateDeployments(deployments);
+        if (deployments.isEmpty())
+        {
+            breadcrumb.empty();
+            contextPanel.showWidget(0);
+        }
+        else
+        {
+            DeploymentRecord firstDeployment = deployments.get(0);
+            selectionModel.setSelected(firstDeployment, true);
+            updateContext(firstDeployment);
+        }
     }
 
     public <T extends DeploymentData> void updateContext(final T selectedContext)
@@ -152,7 +181,7 @@ public class DeploymentBrowser
         AutoBean<T> autoBean = AutoBeanUtils.getAutoBean(selectedContext);
         String classname = autoBean.getType().getName();
         Integer index = indexes.get(classname);
-        if (index != null && index > -1 && index < contextPanel.getWidgetCount())
+        if (index != null && index > 0 && index < contextPanel.getWidgetCount())
         {
             Form<DeploymentData> form = forms.get(classname);
             if (form != null)
