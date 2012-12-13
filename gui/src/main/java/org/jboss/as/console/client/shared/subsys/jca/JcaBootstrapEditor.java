@@ -139,7 +139,7 @@ public class JcaBootstrapEditor {
                 .setHeadline("JCA Bootstrap Contexts")
                 .setDescription(description.toSafeHtml())
                 .setMaster(Console.MESSAGES.available("Bootstrap Context"), table)
-                .setTopLevelTools(topLevelTools.asWidget())
+                .setMasterTools(topLevelTools.asWidget())
                 .setDetail(Console.CONSTANTS.common_label_selection(), formPanel)
                 .build();
 
