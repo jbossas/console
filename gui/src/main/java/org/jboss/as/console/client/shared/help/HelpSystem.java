@@ -230,6 +230,7 @@ public class HelpSystem {
                         if(lookup.getDetypedName().equals(childName))
                         {
                             FieldDesc desc = new FieldDesc(lookup.getJavaName(), value.get("description").asString());
+                            desc.setSupportExpressions(value.get("expressions-allowed").asBoolean());
                             if(!fields.contains(desc))
                                 fields.add(desc);
                         }

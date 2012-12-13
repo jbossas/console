@@ -7,6 +7,7 @@ package org.jboss.as.console.client.shared.help;
 public class FieldDesc {
     String ref;
     String desc;
+    private boolean expressionSupport;
 
     public FieldDesc(String ref, String desc) {
         this.ref = ref;
@@ -27,6 +28,14 @@ public class FieldDesc {
 
     public void setDesc(String title) {
         this.desc = title;
+    }
+
+    public boolean doesSupportExpressions(){
+        return this.expressionSupport;
+    }
+
+    public void setSupportExpressions(boolean b) {
+        this.expressionSupport = b;
     }
 
     @Override
