@@ -20,6 +20,7 @@
 package org.jboss.as.console.client.shared.deployment.model;
 
 import org.jboss.as.console.client.widgets.forms.Binding;
+import org.jboss.dmr.client.ModelNode;
 
 /**
  * @author Heiko Braun
@@ -79,4 +80,8 @@ public interface DeploymentRecord extends DeploymentData
     @Binding(skip = true)
     boolean isHasSubdeployments();
     void setHasSubdeployments(boolean hasSubdeployments);
+
+    @Binding(skip = true)
+    ModelNode getBaseAddress();
+    void setBaseAddress(ModelNode baseAddress);
 }

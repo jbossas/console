@@ -23,7 +23,10 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.SingleSelectionModel;
 import org.jboss.as.console.client.Console;
+import org.jboss.as.console.client.domain.model.HostInformationStore;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
+import org.jboss.as.console.client.domain.model.ServerInstance;
+import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.shared.deployment.DeploymentBrowser;
 import org.jboss.as.console.client.shared.deployment.DeploymentDataKeyProvider;
 import org.jboss.as.console.client.shared.deployment.DeploymentStore;
@@ -33,6 +36,7 @@ import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
 import org.jboss.ballroom.client.widgets.tools.ToolStrip;
 
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -43,15 +47,18 @@ public class ServerGroupDeploymentBrowser
 {
     private final DomainDeploymentPresenter presenter;
     private final DeploymentStore deploymentStore;
+    private final HostInformationStore hostInfoStore;
     private ContentHeaderLabel header;
-    private ServerGroupRecord currentSelection;
+    private ServerGroupRecord currentServerGroup;
     private DeploymentBrowser deploymentBrowser;
 
 
-    public ServerGroupDeploymentBrowser(final DomainDeploymentPresenter presenter, final DeploymentStore deploymentStore)
+    public ServerGroupDeploymentBrowser(final DomainDeploymentPresenter presenter,
+            final DeploymentStore deploymentStore, final HostInformationStore hostInfoStore)
     {
         this.presenter = presenter;
         this.deploymentStore = deploymentStore;
+        this.hostInfoStore = hostInfoStore;
     }
 
     Widget asWidget()
@@ -67,7 +74,7 @@ public class ServerGroupDeploymentBrowser
                     @Override
                     public void onClick(ClickEvent clickEvent)
                     {
-                        presenter.onAssignDeploymentToGroup(currentSelection);
+                        presenter.onAssignDeploymentToGroup(currentServerGroup);
                     }
                 }));
         tools.addToolButtonRight(new ToolButton(Console.CONSTANTS.common_label_remove(), new
@@ -111,14 +118,37 @@ public class ServerGroupDeploymentBrowser
         return layout.build();
     }
 
-    public void setGroup(ServerGroupRecord selection)
+    public void updateGroup(final ServerGroupRecord serverGroup, final List<DeploymentRecord> deployments)
     {
-        this.currentSelection = selection;
-        header.setText("Deployments in group: " + selection.getName());
-    }
-
-    public void setDeployments(List<DeploymentRecord> deployments)
-    {
+        currentServerGroup = serverGroup;
+        header.setText("Deployments in group: " + serverGroup.getName());
         deploymentBrowser.updateDeployments(deployments);
+        hostInfoStore.loadServerInstances(currentServerGroup.getName(), new SimpleCallback<List<ServerInstance>>()
+        {
+            @Override
+            public void onSuccess(final List<ServerInstance> result)
+            {
+                ServerInstance hit = null;
+                for (Iterator<ServerInstance> iterator = result.iterator(); iterator.hasNext() && hit == null; )
+                {
+                    hit = matchingServer(iterator.next());
+                }
+                if (hit != null)
+                {
+                    // Try to get real deployment data from this server
+                    System.out.println("Loading real deployment data from " + hit.getName());
+                }
+            }
+
+            ServerInstance matchingServer(ServerInstance server)
+            {
+                if (server != null && server.isRunning() && server.getGroup()
+                        .equals(currentServerGroup.getName()))
+                {
+                    return server;
+                }
+                return null;
+            }
+        });
     }
 }

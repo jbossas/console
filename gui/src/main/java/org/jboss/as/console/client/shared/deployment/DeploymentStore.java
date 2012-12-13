@@ -42,7 +42,6 @@ import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.as.console.client.shared.model.ModelAdapter;
-import org.jboss.as.console.client.shared.runtime.RuntimeBaseAddress;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.as.console.client.widgets.forms.EntityAdapter;
 import org.jboss.dmr.client.ModelNode;
@@ -171,7 +170,7 @@ public class DeploymentStore
                     List<ModelNode> nodes = stepsResult.get("step-1").get(RESULT).asList();
                     for (ModelNode node : nodes)
                     {
-                        DeploymentRecord deployment = mapDeployment(null, node);
+                        DeploymentRecord deployment = mapDeployment(emptyAddress(), null, node);
                         contentRepository.addDeployment(deployment);
                     }
                     nodes = stepsResult.get("step-2").get(RESULT).asList();
@@ -201,27 +200,32 @@ public class DeploymentStore
 
     public void loadDeployments(final AsyncCallback<List<DeploymentRecord>> callback)
     {
-        // /:read-children-resources(child-type=deployment)
+        loadDeployments(emptyAddress(), callback);
+    }
+
+    public void loadDeployments(final ModelNode baseAddress, final AsyncCallback<List<DeploymentRecord>> callback)
+    {
+        // /<baseAddress>/:read-children-resources(child-type=deployment)
         ModelNode operation = new ModelNode();
-        operation.get(ADDRESS).add(RuntimeBaseAddress.get());
+        operation.get(ADDRESS).add(baseAddress);
         operation.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
         operation.get(CHILD_TYPE).set("deployment");
-        loadDeployments(operation, null, callback);
+        loadDeployments(baseAddress, operation, null, callback);
     }
 
     public void loadSubdeployments(final DeploymentRecord deployment,
             final AsyncCallback<List<DeploymentRecord>> callback)
     {
-        // /deployment=<deployment.getName()>:read-children-resources(child-type=subdeployment)
+        // /<relativeTo>/deployment=<deployment.getName()>:read-children-resources(child-type=subdeployment)
         ModelNode operation = new ModelNode();
-        operation.get(ADDRESS).add(RuntimeBaseAddress.get());
+        operation.get(ADDRESS).add(deployment.getBaseAddress());
         operation.get(ADDRESS).add("deployment", deployment.getName());
         operation.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
         operation.get(CHILD_TYPE).set("subdeployment");
-        loadDeployments(operation, deployment, callback);
+        loadDeployments(deployment.getBaseAddress(), operation, deployment, callback);
     }
 
-    private void loadDeployments(final ModelNode operation, final DeploymentRecord parent,
+    private void loadDeployments(final ModelNode baseAddress, final ModelNode operation, final DeploymentRecord parent,
             final AsyncCallback<List<DeploymentRecord>> callback)
     {
         final List<DeploymentRecord> deployments = new ArrayList<DeploymentRecord>();
@@ -236,7 +240,7 @@ public class DeploymentStore
                     List<ModelNode> nodes = response.get(RESULT).asList();
                     for (ModelNode node : nodes)
                     {
-                        deployments.add(mapDeployment(parent, node));
+                        deployments.add(mapDeployment(baseAddress, parent, node));
                     }
                 }
                 callback.onSuccess(deployments);
@@ -244,7 +248,7 @@ public class DeploymentStore
         });
     }
 
-    private DeploymentRecord mapDeployment(final DeploymentRecord parent, final ModelNode node)
+    private DeploymentRecord mapDeployment(final ModelNode baseAddress, final DeploymentRecord parent, final ModelNode node)
     {
         ModelNode deploymentNode = node.asProperty().getValue().asObject();
         DeploymentRecord deployment = deploymentEntityAdapter.fromDMR(deploymentNode);
@@ -275,6 +279,7 @@ public class DeploymentStore
             deployment.setSubdeployment(parent != null);
             deployment.setHasSubdeployments(deploymentNode.get("subdeployment").isDefined());
             deployment.setHasSubsystems(deploymentNode.get("subsystem").isDefined());
+            deployment.setBaseAddress(baseAddress);
         }
         catch (IllegalArgumentException e)
         {
@@ -289,16 +294,16 @@ public class DeploymentStore
         final List<DeploymentSubsystem> subsystems = new ArrayList<DeploymentSubsystem>();
 
         ModelNode operation = new ModelNode();
-        operation.get(ADDRESS).add(RuntimeBaseAddress.get());
+        operation.get(ADDRESS).add(deployment.getBaseAddress());
         if (deployment.isSubdeployment())
         {
-            // /deployment=<deployment>/subdeployment=<subdeployment>:read-children-resources(child-type=subsystems)
+            // /<deployment.getBaseAddress()>/deployment=<deployment>/subdeployment=<subdeployment>:read-children-resources(child-type=subsystems)
             operation.get(ADDRESS).add("deployment", deployment.getParent().getName())
                     .add("subdeployment", deployment.getName());
         }
         else
         {
-            // /deployment=<deployment>:read-children-resources(child-type=subsystems)
+            // /<deployment.getBaseAddress()>/deployment=<deployment>:read-children-resources(child-type=subsystems)
             operation.get(ADDRESS).add("deployment", deployment.getName());
         }
         operation.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
@@ -335,10 +340,13 @@ public class DeploymentStore
                                 subsystem = deploymentWebserviceSubsystemEntityAdapter.fromDMR(subsystemNode);
                                 break;
                         }
-                        subsystem.setName(name);
-                        subsystem.setType(type);
-                        subsystem.setDeployment(deployment);
-                        subsystems.add(subsystem);
+                        if (subsystem != null)
+                        {
+                            subsystem.setName(name);
+                            subsystem.setType(type);
+                            subsystem.setDeployment(deployment);
+                            subsystems.add(subsystem);
+                        }
                     }
                 }
                 callback.onSuccess(subsystems);
@@ -418,17 +426,17 @@ public class DeploymentStore
     private ModelNode ejbOp(final DeploymentSubsystem subsystem, final String name)
     {
         ModelNode operation = new ModelNode();
-        operation.get(ADDRESS).add(RuntimeBaseAddress.get());
+        operation.get(ADDRESS).add(subsystem.getDeployment().getBaseAddress());
         DeploymentRecord deployment = subsystem.getDeployment();
         if (deployment.isSubdeployment())
         {
-            // /deployment=<deployment>/subdeployment=<subdeployment>/subsystem=ejb3/<name>=*:read-resource
+            // /<deployment.getBaseAddress()>/deployment=<deployment>/subdeployment=<subdeployment>/subsystem=ejb3/<name>=*:read-resource
             operation.get(ADDRESS).add("deployment", deployment.getParent().getName())
                     .add("subdeployment", deployment.getName());
         }
         else
         {
-            // /deployment=<deployment>/subsystem=ejb3/<name>=*:read-resource
+            // /<deployment.getBaseAddress()>/deployment=<deployment>/subsystem=ejb3/<name>=*:read-resource
             operation.get(ADDRESS).add("deployment", deployment.getName());
         }
         operation.get(ADDRESS).add("subsystem", subsystem.getName()).add(name, "*");
@@ -443,17 +451,17 @@ public class DeploymentStore
         final List<DeployedPersistenceUnit> pus = new ArrayList<DeployedPersistenceUnit>();
 
         ModelNode operation = new ModelNode();
-        operation.get(ADDRESS).add(RuntimeBaseAddress.get());
+        operation.get(ADDRESS).add(subsystem.getDeployment().getBaseAddress());
         DeploymentRecord deployment = subsystem.getDeployment();
         if (deployment.isSubdeployment())
         {
-            // /deployment=<deployment>/subdeployment=<subdeployment>/subsystem=jpa/hibernate-persistence-unit=*:read-resource
+            // /<deployment.getBaseAddress()>/deployment=<deployment>/subdeployment=<subdeployment>/subsystem=jpa/hibernate-persistence-unit=*:read-resource
             operation.get(ADDRESS).add("deployment", deployment.getParent().getName())
                     .add("subdeployment", deployment.getName());
         }
         else
         {
-            // /deployment=<deployment>/subsystem=jpa/hibernate-persistence-unit=*:read-resource
+            // /<deployment.getBaseAddress()>/deployment=<deployment>/subsystem=jpa/hibernate-persistence-unit=*:read-resource
             operation.get(ADDRESS).add("deployment", deployment.getName());
         }
         operation.get(ADDRESS).add("subsystem", "jpa").add("hibernate-persistence-unit", "*");
@@ -505,23 +513,22 @@ public class DeploymentStore
         });
     }
 
-    public void loadServlets(final DeploymentSubsystem subsystem,
-            final AsyncCallback<List<DeployedServlet>> callback)
+    public void loadServlets(final DeploymentSubsystem subsystem, final AsyncCallback<List<DeployedServlet>> callback)
     {
         final List<DeployedServlet> servlets = new ArrayList<DeployedServlet>();
 
         ModelNode operation = new ModelNode();
-        operation.get(ADDRESS).add(RuntimeBaseAddress.get());
+        operation.get(ADDRESS).add(subsystem.getDeployment().getBaseAddress());
         DeploymentRecord deployment = subsystem.getDeployment();
         if (deployment.isSubdeployment())
         {
-            // /deployment=<deployment>/subdeployment=<subdeployment>/subsystem=web/servlet=*:read-resource
+            // /<deployment.getBaseAddress()>/deployment=<deployment>/subdeployment=<subdeployment>/subsystem=web/servlet=*:read-resource
             operation.get(ADDRESS).add("deployment", deployment.getParent().getName())
                     .add("subdeployment", deployment.getName());
         }
         else
         {
-            // /deployment=<deployment>/subsystem=web/servlet=*:read-resource
+            // /<deployment.getBaseAddress()>/deployment=<deployment>/subsystem=web/servlet=*:read-resource
             operation.get(ADDRESS).add("deployment", deployment.getName());
         }
         operation.get(ADDRESS).add("subsystem", "web").add("servlet", "*");
@@ -554,23 +561,22 @@ public class DeploymentStore
         });
     }
 
-    public void loadEndpoints(final DeploymentSubsystem subsystem,
-            final AsyncCallback<List<DeployedEndpoint>> callback)
+    public void loadEndpoints(final DeploymentSubsystem subsystem, final AsyncCallback<List<DeployedEndpoint>> callback)
     {
         final List<DeployedEndpoint> endpoints = new ArrayList<DeployedEndpoint>();
 
         ModelNode operation = new ModelNode();
-        operation.get(ADDRESS).add(RuntimeBaseAddress.get());
+        operation.get(ADDRESS).add(subsystem.getDeployment().getBaseAddress());
         DeploymentRecord deployment = subsystem.getDeployment();
         if (deployment.isSubdeployment())
         {
-            // /deployment=<deployment>/subdeployment=<subdeployment>/subsystem=webservices/servlet=*:read-resource
+            // /<deployment.getBaseAddress()>/deployment=<deployment>/subdeployment=<subdeployment>/subsystem=webservices/servlet=*:read-resource
             operation.get(ADDRESS).add("deployment", deployment.getParent().getName())
                     .add("subdeployment", deployment.getName());
         }
         else
         {
-            // /deployment=<deployment>/subsystem=web/servlet=*:read-resource
+            // /<deployment.getBaseAddress()>/deployment=<deployment>/subsystem=web/servlet=*:read-resource
             operation.get(ADDRESS).add("deployment", deployment.getName());
         }
         operation.get(ADDRESS).add("subsystem", "webservices").add("endpoint", "*");
@@ -604,6 +610,8 @@ public class DeploymentStore
 
 
     // ------------------------------------------------------ unrelated
+
+    private ModelNode emptyAddress() {return new ModelNode().get(ADDRESS).setEmptyList();}
 
     @Deprecated
     public void loadServerGroupDeploymentsAsList(final AsyncCallback<List<DeploymentRecord>> callback)

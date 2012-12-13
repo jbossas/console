@@ -31,6 +31,7 @@ import org.jboss.as.console.client.domain.model.Server;
 import org.jboss.as.console.client.domain.model.ServerFlag;
 import org.jboss.as.console.client.domain.model.ServerInstance;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
+import org.jboss.as.console.client.domain.topology.HostInfo;
 import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
@@ -112,6 +113,106 @@ public class HostInfoStoreImpl implements HostInformationStore {
                 callback.onSuccess(records);
             }
 
+        });
+    }
+
+    @Override
+    public void loadHostsAndServerInstances(final AsyncCallback<List<HostInfo>> callback)
+    {
+        getHosts(new SimpleCallback<List<Host>>()
+        {
+            @Override
+            public void onSuccess(final List<Host> hosts)
+            {
+                // The command is used to defer callback.onSuccess()
+                // until all server instances of all hosts are available
+                final Command cmd = new Command()
+                {
+                    int numRequests = 0;
+                    int numResponses = 0;
+                    final List<HostInfo> hostInfos = new ArrayList<HostInfo>();
+
+                    @Override
+                    public void execute()
+                    {
+                        for (final Host host : hosts)
+                        {
+                            numRequests++;
+                            getServerInstances(host.getName(), new SimpleCallback<List<ServerInstance>>()
+                            {
+                                @Override
+                                public void onFailure(final Throwable caught)
+                                {
+                                    // log error
+                                    super.onFailure(caught);
+
+                                    numResponses++;
+                                    HostInfo info = new HostInfo(host.getName(), host.isController());
+                                    info.setServerInstances(Collections.<ServerInstance>emptyList());
+                                    hostInfos.add(info);
+                                    checkComplete();
+                                }
+
+                                @Override
+                                public void onSuccess(List<ServerInstance> serverInstances)
+                                {
+                                    numResponses++;
+                                    HostInfo info = new HostInfo(host.getName(), host.isController());
+                                    info.setServerInstances(serverInstances);
+                                    hostInfos.add(info);
+                                    checkComplete();
+                                }
+                            });
+                        }
+                    }
+
+                    private void checkComplete()
+                    {
+                        if (numRequests == numResponses)
+                        {
+                            callback.onSuccess(hostInfos);
+                        }
+                    }
+                };
+
+                Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand()
+                {
+                    @Override
+                    public void execute()
+                    {
+                        cmd.execute();
+                    }
+                });
+            }
+        });
+    }
+
+    @Override
+    public void loadServerInstances(final String serverGroup, final AsyncCallback<List<ServerInstance>> callback)
+    {
+        final List<ServerInstance> instancesOfGroup = new LinkedList<ServerInstance>();
+        loadHostsAndServerInstances(new SimpleCallback<List<HostInfo>>()
+        {
+            @Override
+            public void onSuccess(final List<HostInfo> result)
+            {
+                for (HostInfo host : result)
+                {
+                    List<ServerInstance> instances = host.getServerInstances();
+                    for (ServerInstance instance : instances)
+                    {
+                        if (serverGroup == null)
+                        {
+                            instancesOfGroup.add(instance);
+                        }
+                        else if (instance.getGroup().equals(instance.getGroup()))
+                        {
+                            instancesOfGroup.add(instance);
+                        }
+                    }
+                }
+                callback.onSuccess(instancesOfGroup);
+            }
         });
     }
 

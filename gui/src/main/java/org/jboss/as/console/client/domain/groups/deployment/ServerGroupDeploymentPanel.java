@@ -28,6 +28,7 @@ import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.ProvidesKey;
 import com.google.gwt.view.client.SingleSelectionModel;
 import org.jboss.as.console.client.Console;
+import org.jboss.as.console.client.domain.model.HostInformationStore;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.shared.deployment.DeploymentStore;
 import org.jboss.as.console.client.shared.deployment.model.ContentRepository;
@@ -46,16 +47,19 @@ public class ServerGroupDeploymentPanel implements IsWidget
     private final Widget widget;
     private final DomainDeploymentPresenter presenter;
     private final DeploymentStore deploymentStore;
+    private final HostInformationStore hostInfoStore;
     private PagedView pagedView;
     private ListDataProvider<ServerGroupRecord> serverGroupData;
     private ServerGroupDeploymentBrowser groupDeploymentBrowser;
     private ContentRepository contentRepository;
 
 
-    public ServerGroupDeploymentPanel(DomainDeploymentPresenter presenter, DeploymentStore deploymentStore)
+    public ServerGroupDeploymentPanel(DomainDeploymentPresenter presenter, DeploymentStore deploymentStore,
+            HostInformationStore hostInfoStore)
     {
         this.presenter = presenter;
         this.deploymentStore = deploymentStore;
+        this.hostInfoStore = hostInfoStore;
         this.widget = initUI();
     }
 
@@ -103,8 +107,7 @@ public class ServerGroupDeploymentPanel implements IsWidget
                         @Override
                         public void execute(ServerGroupRecord selection)
                         {
-                            groupDeploymentBrowser.setGroup(selection);
-                            groupDeploymentBrowser.setDeployments(contentRepository.getDeployments(selection));
+                            groupDeploymentBrowser.updateGroup(selection, contentRepository.getDeployments(selection));
                             pagedView.showPage(1);
                         }
                     }))
@@ -123,7 +126,7 @@ public class ServerGroupDeploymentPanel implements IsWidget
                 .setDescription("Please chose a server group to assign deployment contents.")
                 .addContent("Available Groups", serverGroups.asWidget());
 
-        groupDeploymentBrowser = new ServerGroupDeploymentBrowser(presenter, deploymentStore);
+        groupDeploymentBrowser = new ServerGroupDeploymentBrowser(presenter, deploymentStore, hostInfoStore);
         pagedView.addPage(Console.CONSTANTS.common_label_back(), overviewPanel.build());
         pagedView.addPage("Group Deployments", groupDeploymentBrowser.asWidget());
         pagedView.showPage(0);

@@ -20,6 +20,7 @@
 package org.jboss.as.console.client.domain.model;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import org.jboss.as.console.client.domain.topology.HostInfo;
 import org.jboss.as.console.client.shared.jvm.Jvm;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
 
@@ -32,6 +33,8 @@ import java.util.Map;
  */
 public interface HostInformationStore {
     void getHosts(AsyncCallback<List<Host>> callback);
+    void loadHostsAndServerInstances(AsyncCallback<List<HostInfo>> callback);
+    void loadServerInstances(String serverGroup, AsyncCallback<List<ServerInstance>> callback);
     void getServerConfigurations(String name, AsyncCallback<List<Server>> callback);
     void getServerConfiguration(String host, String server, final AsyncCallback<Server> callback);
     void getServerInstances(String host, AsyncCallback<List<ServerInstance>> callback);
