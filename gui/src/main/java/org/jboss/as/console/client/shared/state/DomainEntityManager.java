@@ -186,17 +186,27 @@ public class DomainEntityManager implements
 
         ServerInstance matched = null;
 
+        ServerInstance active = null;
+
         // match by preselection
-        for(ServerInstance ServerInstance : serverInstances)
+        for(ServerInstance server : serverInstances)
         {
-            if(ServerInstance.getName().equals(selectedServer))
+            if(server.isRunning())
+                active = server;
+
+            if(server.getName().equals(selectedServer))
             {
-                matched = ServerInstance;
+                matched = server;
                 break;
             }
         }
 
-        // fallback match
+        // match first active server
+        if(active!=null && null==matched)  {
+            matched = active;
+        }
+
+        // fallback match: no preselection and no active server > pick any
         if(null==matched)
             matched = serverInstances.get(0);
 
