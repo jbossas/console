@@ -78,7 +78,7 @@ public class DeploymentBrowser
         int index = 0;
         this.contextPanel = new DeckPanel();
 
-        Label noInfo = new Label("No information available.");
+        Label noInfo = new Label("No deployments available.");
         noInfo.getElement().addClassName("console-DeploymentBreadcrumb-noinfo");
         noInfo.getElement().addClassName("console-DeploymentBreadcrumb-context");
         this.contextPanel.add(noInfo);

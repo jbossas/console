@@ -80,7 +80,7 @@ public class DeploymentBreadcrumb extends Composite
     public void empty()
     {
         panel.clear();
-        Label label = new InlineLabel("No deployments");
+        Label label = new InlineLabel("Deployment");
         label.setStyleName("console-DeploymentBreadcrumb-label");
         panel.add(label);
     }
