@@ -106,10 +106,15 @@ public class HelpSystem {
             }
         }
 
+        System.out.println(fieldNames);
+        System.out.println(operation);
+
         dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
             @Override
             public void onSuccess(DMRResponse result) {
                 ModelNode response = result.get();
+
+                System.out.println(response);
 
                 if(response.isFailure())
                 {
@@ -230,7 +235,10 @@ public class HelpSystem {
                         if(lookup.getDetypedName().equals(childName))
                         {
                             FieldDesc desc = new FieldDesc(lookup.getJavaName(), value.get("description").asString());
-                            desc.setSupportExpressions(value.get("expressions-allowed").asBoolean());
+                            if(value.hasDefined("expressions-allowed"))
+                            {
+                                desc.setSupportExpressions(value.get("expressions-allowed").asBoolean());
+                            }
                             if(!fields.contains(desc))
                                 fields.add(desc);
                         }
