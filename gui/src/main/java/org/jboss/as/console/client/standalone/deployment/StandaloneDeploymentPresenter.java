@@ -27,7 +27,6 @@ import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.annotations.UseGatekeeper;
 import com.gwtplatform.mvp.client.proxy.Place;
-import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import org.jboss.as.console.client.Console;
@@ -69,29 +68,23 @@ public class StandaloneDeploymentPresenter
     @UseGatekeeper(StandaloneGateKeeper.class)
     public interface MyProxy extends Proxy<StandaloneDeploymentPresenter>, Place
     {
-
     }
+
     public interface MyView extends View
     {
-
-
         void setPresenter(StandaloneDeploymentPresenter presenter);
         void updateDeployments(List<DeploymentRecord> deployments);
     }
-    private final PlaceManager placeManager;
 
-
-    private StandaloneDeploymentInfo deploymentInfo;
     private DeploymentStore deploymentStore;
     private DefaultWindow window;
     private DispatchAsync dispatcher;
+
     @Inject
     public StandaloneDeploymentPresenter(EventBus eventBus, MyView view, MyProxy proxy, DeploymentStore deploymentStore,
-            PlaceManager placeManager, DispatchAsync dispatcher)
+            DispatchAsync dispatcher)
     {
         super(eventBus, view, proxy);
-        this.placeManager = placeManager;
-        this.deploymentInfo = new StandaloneDeploymentInfo(this, deploymentStore);
         this.deploymentStore = deploymentStore;
         this.dispatcher = dispatcher;
     }
@@ -108,23 +101,31 @@ public class StandaloneDeploymentPresenter
     protected void onReset()
     {
         super.onReset();
-        deploymentInfo.refreshView();
+        loadDeployments();
     }
 
     @Override
     public void refreshDeployments()
     {
-        deploymentInfo.refreshView();
+        loadDeployments();
+    }
+
+    private void loadDeployments()
+    {
+        deploymentStore.loadDeployments(new SimpleCallback<List<DeploymentRecord>>()
+        {
+            @Override
+            public void onSuccess(List<DeploymentRecord> result)
+            {
+                getView().updateDeployments(result);
+            }
+        });
     }
 
     @Override
     protected void revealInParent()
     {
         RevealContentEvent.fire(this, StandaloneRuntimePresenter.TYPE_MainContent, this);
-    }
-
-    public void onFilterType(String value)
-    {
     }
 
     @Override
@@ -153,7 +154,6 @@ public class StandaloneDeploymentPresenter
     @Override
     public void enableDisableDeployment(final DeploymentRecord record)
     {
-
         final PopupPanel loading = Feedback.loading(
                 Console.CONSTANTS.common_label_plaseWait(),
                 Console.CONSTANTS.common_label_requestProcessed(),
@@ -168,14 +168,11 @@ public class StandaloneDeploymentPresenter
 
         deploymentStore.enableDisableDeployment(record, new SimpleCallback<DMRResponse>()
         {
-
             @Override
             public void onSuccess(DMRResponse response)
             {
                 loading.hide();
-
                 ModelNode result = response.get();
-
                 if (result.isFailure())
                 {
                     loading.hide();
@@ -186,11 +183,8 @@ public class StandaloneDeploymentPresenter
                 {
                     Console.info(Console.MESSAGES.modified("Deployment " + record.getRuntimeName()));
                 }
-
-                deploymentInfo.refreshView();
-
+                refreshDeployments();
             }
-
         });
     }
 
@@ -203,7 +197,7 @@ public class StandaloneDeploymentPresenter
     @Override
     public List<ServerGroupRecord> getPossibleGroupAssignments(DeploymentRecord record)
     {
-        return Collections.EMPTY_LIST;
+        return Collections.emptyList();
     }
 
     @Override
@@ -267,8 +261,7 @@ public class StandaloneDeploymentPresenter
                 {
                     Console.info(Console.MESSAGES.added("Deployment " + entity.getName()));
                 }
-
-                deploymentInfo.refreshView();
+                refreshDeployments();
             }
         });
     }

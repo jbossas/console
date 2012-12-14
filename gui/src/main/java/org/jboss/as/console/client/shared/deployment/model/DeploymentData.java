@@ -19,6 +19,7 @@
 package org.jboss.as.console.client.shared.deployment.model;
 
 import com.google.gwt.user.client.ui.HasName;
+import org.jboss.dmr.client.ModelNode;
 
 /**
  * @author Harald Pehl
@@ -28,4 +29,7 @@ public interface DeploymentData extends HasName
 {
     DeploymentDataType getType();
     void setType(DeploymentDataType type);
+
+    ModelNode getAddress();
+    void setAddress(ModelNode address);
 }

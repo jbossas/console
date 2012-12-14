@@ -23,7 +23,9 @@ import org.jboss.as.console.client.domain.model.ServerInstance;
 import org.jboss.as.console.client.widgets.forms.Binding;
 
 /**
- * TODO Refactor into different classes: DeploymentContent, GroupDeployment, ServerDeployment
+ * TODO Split up into different classes: DeploymentContent, GroupDeployment, ServerDeployment
+ * TODO Consolidate the different 'context' data like server, group and address
+ *
  * @author Heiko Braun
  * @date 1/31/11
  */

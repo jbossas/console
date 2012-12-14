@@ -103,6 +103,12 @@ public class DomainDeploymentPresenter extends Presenter<DomainDeploymentPresent
         loadContentRepository();
     }
 
+    @Override
+    public void refreshDeployments()
+    {
+        loadContentRepository();
+    }
+
     private void loadContentRepository()
     {
         deploymentStore.loadContentRepository(new SimpleCallback<ContentRepository>()
@@ -314,16 +320,6 @@ public class DomainDeploymentPresenter extends Presenter<DomainDeploymentPresent
         window.center();
     }
 
-    public List<ServerGroupRecord> getServerGroups()
-    {
-        return serverGroups;
-    }
-
-    void setServerGroups(List<ServerGroupRecord> serverGroups)
-    {
-        this.serverGroups = serverGroups;
-    }
-
     public void onDisableDeploymentInGroup(DeploymentRecord selection)
     {
         new DeploymentCommandDelegate(this, DeploymentCommand.ENABLE_DISABLE).execute(
@@ -405,12 +401,6 @@ public class DomainDeploymentPresenter extends Presenter<DomainDeploymentPresent
                 refreshDeployments();
             }
         });
-    }
-
-    @Override
-    public void refreshDeployments()
-    {
-        loadContentRepository();
     }
 
 

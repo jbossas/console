@@ -36,7 +36,6 @@ import org.jboss.as.console.client.shared.deployment.model.DeploymentRecord;
 import org.jboss.as.console.client.shared.deployment.model.DeploymentWebSubsystem;
 import org.jboss.as.console.client.shared.deployment.model.DeploymentWebserviceSubsystem;
 import org.jboss.as.console.client.shared.help.FormHelpPanel;
-import org.jboss.as.console.client.shared.runtime.RuntimeBaseAddress;
 import org.jboss.as.console.client.widgets.browser.DefaultCellBrowser;
 import org.jboss.ballroom.client.widgets.forms.CheckBoxItem;
 import org.jboss.ballroom.client.widgets.forms.Form;
@@ -63,6 +62,7 @@ public class DeploymentBrowser
     private final DeckPanel contextPanel;
     private final Map<String, Form<DeploymentData>> forms;
     private final Map<String, Integer> indexes;
+    private DeploymentBrowser.HelpCallback helpCallback;
 
 
     public DeploymentBrowser(final DeploymentStore deploymentStore,
@@ -78,9 +78,9 @@ public class DeploymentBrowser
         breadcrumb = new DeploymentBreadcrumb();
         breadcrumb.getElement().setAttribute("style", "margin-top:30px;");
 
-
         int index = 0;
         this.contextPanel = new DeckPanel();
+        this.helpCallback = new HelpCallback();
 
         Label noInfo = new Label("No deployments available.");
         noInfo.getElement().addClassName("console-DeploymentBreadcrumb-noinfo");
@@ -144,22 +144,8 @@ public class DeploymentBrowser
             form.setNumColumns(1);
             form.setEnabled(false);
             form.setFields(formItems);
-            // TODO Delay address callback
-            FormHelpPanel helpPanel = new FormHelpPanel(new FormHelpPanel.AddressCallback()
-            {
-                @Override
-                public ModelNode getAddress()
-                {
-                    ModelNode address = RuntimeBaseAddress.get();
-                    address.add("deployment", "*");
-                    address.add("subsystem", "jpa");
-                    address.add("hibernate-persistence-unit", "*");
-                    return address;
-                }
-            }, form);
-
+            FormHelpPanel helpPanel = new FormHelpPanel(helpCallback, form);
             forms.put(classname, (Form<DeploymentData>) form);
-
 
             VerticalPanel wrapper = new VerticalPanel();
             wrapper.setStyleName("fill-layout-width");
@@ -199,6 +185,7 @@ public class DeploymentBrowser
         }
     }
 
+    @SuppressWarnings("unchecked")
     public <T extends DeploymentData> void updateContext(final T selectedContext)
     {
         breadcrumb.setDeploymentData(selectedContext);
@@ -210,6 +197,7 @@ public class DeploymentBrowser
             Form<DeploymentData> form = forms.get(classname);
             if (form != null)
             {
+                helpCallback.setSelection(selectedContext);
                 form.edit(selectedContext);
             }
             contextPanel.showWidget(index);
@@ -229,5 +217,28 @@ public class DeploymentBrowser
     public DeckPanel getContextPanel()
     {
         return contextPanel;
+    }
+
+    class HelpCallback<T extends DeploymentData> implements FormHelpPanel.AddressCallback
+    {
+        private T selection;
+
+        @Override
+        public ModelNode getAddress()
+        {
+            ModelNode address = new ModelNode();
+            address.setEmptyList();
+            if (selection != null)
+            {
+                address = selection.getAddress();
+            }
+            return address;
+
+        }
+
+        public void setSelection(final T selection)
+        {
+            this.selection = selection;
+        }
     }
 }

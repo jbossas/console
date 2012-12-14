@@ -106,15 +106,10 @@ public class HelpSystem {
             }
         }
 
-        System.out.println(fieldNames);
-        System.out.println(operation);
-
         dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
             @Override
             public void onSuccess(DMRResponse result) {
                 ModelNode response = result.get();
-
-                System.out.println(response);
 
                 if(response.isFailure())
                 {
@@ -133,10 +128,7 @@ public class HelpSystem {
                         descriptionModel = payload;
 
                     matchSubElements(descriptionModel, fieldNames, fields);
-
-
                     callback.onSuccess(fields);
-
                 }
             }
 

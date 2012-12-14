@@ -23,10 +23,8 @@ import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import org.jboss.as.console.client.core.ApplicationProperties;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
-import org.jboss.as.console.client.domain.model.ServerGroupStore;
 import org.jboss.as.console.client.domain.model.ServerInstance;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
-import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.deployment.model.ContentRepository;
 import org.jboss.as.console.client.shared.deployment.model.DeployedEjb;
 import org.jboss.as.console.client.shared.deployment.model.DeployedEndpoint;
@@ -67,10 +65,8 @@ import static org.jboss.dmr.client.ModelDescriptionConstants.*;
  */
 public class DeploymentStore
 {
-    private final ServerGroupStore serverGroupStore;
-    private final DispatchAsync dispatcher;
-    private final BeanFactory factory;
     private final boolean isStandalone;
+    private final DispatchAsync dispatcher;
     private final EntityAdapter<DeploymentRecord> deploymentEntityAdapter;
     private final EntityAdapter<DeploymentEjbSubsystem> deploymentEjbSubsystemEntityAdapter;
     private final EntityAdapter<DeploymentJpaSubsystem> deploymentJpaSubsystemEntityAdapter;
@@ -84,12 +80,10 @@ public class DeploymentStore
 
 
     @Inject
-    public DeploymentStore(ServerGroupStore serverGroupStore, DispatchAsync dispatcher, BeanFactory factory,
-            ApplicationProperties bootstrap, ApplicationMetaData applicationMetaData)
+    public DeploymentStore(DispatchAsync dispatcher, ApplicationProperties bootstrap,
+            ApplicationMetaData applicationMetaData)
     {
-        this.serverGroupStore = serverGroupStore;
         this.dispatcher = dispatcher;
-        this.factory = factory;
         this.isStandalone = bootstrap.getProperty(ApplicationProperties.STANDALONE).equals("true");
 
         deploymentEntityAdapter = new EntityAdapter<DeploymentRecord>(DeploymentRecord.class, applicationMetaData);
@@ -188,10 +182,11 @@ public class DeploymentStore
                     {
                         String groupName = node.get(ADDRESS).asList().get(0).get("server-group").asString();
                         String deploymentName = node.get(ADDRESS).asList().get(1).get("deployment").asString();
-                        // The state of the deployment (enabled/disabled) is taken from this step!
                         DeploymentRecord dr = contentRepository.getDeployment(deploymentName);
                         dr.setServerGroup(groupName);
+                        // The state of the deployment (enabled/disabled) is taken from this step!
                         dr.setEnabled(node.get(RESULT).get("enabled").asBoolean());
+                        dr.setAddress(addressFor("server-group", groupName, "deployment", deploymentName));
                         contentRepository.assignDeploymentToServerGroup(deploymentName, groupName);
                     }
                 }
@@ -216,18 +211,6 @@ public class DeploymentStore
         operation.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
         operation.get(CHILD_TYPE).set("deployment");
         loadDeployments(server, operation, null, callback);
-    }
-
-    private ModelNode addressFor(final ServerInstance server)
-    {
-        final ModelNode address = new ModelNode();
-        address.setEmptyList();
-        if (server != null)
-        {
-            address.add("host", server.getHost());
-            address.add("server", server.getName());
-        }
-        return address;
     }
 
     public void loadSubdeployments(final DeploymentRecord deployment,
@@ -265,7 +248,8 @@ public class DeploymentStore
         });
     }
 
-    private DeploymentRecord mapDeployment(final ServerInstance server, final DeploymentRecord parent, final ModelNode node)
+    private DeploymentRecord mapDeployment(final ServerInstance server, final DeploymentRecord parent,
+            final ModelNode node)
     {
         ModelNode deploymentNode = node.asProperty().getValue().asObject();
         DeploymentRecord deployment = deploymentEntityAdapter.fromDMR(deploymentNode);
@@ -292,10 +276,22 @@ public class DeploymentStore
             deployment.setHasSubdeployments(deploymentNode.get("subdeployment").isDefined());
             deployment.setHasSubsystems(deploymentNode.get("subsystem").isDefined());
             deployment.setServer(server);
+            ModelNode address = addressFor();
             if (server != null)
             {
                 deployment.setServerGroup(server.getGroup());
+                if (parent == null)
+                {
+                    address = addressFor("host", server.getHost(), "server", server.getName(), "deployment",
+                            deployment.getName());
+                }
+                else
+                {
+                    address = addressFor("host", server.getHost(), "server", server.getName(), "deployment", parent.getName(),
+                            "subdeployment", deployment.getName());
+                }
             }
+            deployment.setAddress(address);
         }
         catch (IllegalArgumentException e)
         {
@@ -362,6 +358,7 @@ public class DeploymentStore
                             subsystem.setType(type);
                             subsystem.setDeployment(deployment);
                             subsystems.add(subsystem);
+                            subsystem.setAddress(addressFor(deployment.getAddress(), "subsystem", subsystem.getName()));
                         }
                     }
                 }
@@ -429,6 +426,7 @@ public class DeploymentStore
                                 {
                                     ejb.setType(statefulSessionBean);
                                 }
+                                ejb.setAddress(addressFor(subsystem.getAddress(), beanType, ejb.getName()));
                                 ejbs.add(ejb);
                             }
                         }
@@ -498,17 +496,19 @@ public class DeploymentStore
                         if (ModelAdapter.wasSuccess(node))
                         {
                             List<ModelNode> address = node.get(ADDRESS).asList();
-                            String name = address.get(address.size() - 1).asProperty().getValue().asString();
-                            int index = name.indexOf("#");
+                            String fullname = address.get(address.size() - 1).asProperty().getValue().asString();
+                            String name = fullname;
+                            int index = fullname.indexOf("#");
                             if (index != -1)
                             {
-                                name = name.substring(index + 1);
+                                name = fullname.substring(index + 1);
                             }
                             ModelNode puNode = node.get(RESULT);
                             DeployedPersistenceUnit pu = deployedPersistenceUnitEntityAdapter.fromDMR(puNode);
                             pu.setName(name);
                             pu.setType(persistenceUnit);
                             pu.setSubsystem(subsystem);
+                            pu.setAddress(addressFor(subsystem.getAddress(), "hibernate-persistence-unit", fullname));
                             if (puNode.get("entity").isDefined())
                             {
                                 List<ModelNode> entityNodes = puNode.get("entity").asList();
@@ -568,6 +568,7 @@ public class DeploymentStore
                             servlet.setName(servletNode.get("servlet-name").asString());
                             servlet.setType(DeploymentDataType.servlet);
                             servlet.setSubsystem(subsystem);
+                            servlet.setAddress(addressFor(subsystem.getAddress(), "servlet", servlet.getName()));
                             servlets.add(servlet);
                         }
                     }
@@ -615,6 +616,8 @@ public class DeploymentStore
                             DeployedEndpoint endpoint = deployedEndpointEntityAdapter.fromDMR(endpointNode);
                             endpoint.setType(webserviceEndpoint);
                             endpoint.setSubsystem(subsystem);
+                            // TODO Set the right address (different from endpoint name!)
+                            endpoint.setAddress(addressFor(subsystem.getAddress(), "endpoint", "*"));
                             endpoints.add(endpoint);
                         }
                     }
@@ -625,56 +628,46 @@ public class DeploymentStore
     }
 
 
-    // ------------------------------------------------------ unrelated
+    // ------------------------------------------------------ helper methods
 
-    private ModelNode emptyAddress() {return new ModelNode().get(ADDRESS).setEmptyList();}
-
-    @Deprecated
-    public void loadServerGroupDeploymentsAsList(final AsyncCallback<List<DeploymentRecord>> callback)
+    private ModelNode addressFor(ServerInstance server)
     {
-        // /server-group=*/deployment=*/:read-resource
-        final List<DeploymentRecord> deployments = new ArrayList<DeploymentRecord>();
-        ModelNode operation = new ModelNode();
-        operation.get(ADDRESS).add("server-group", "*");
-        operation.get(ADDRESS).add("deployment", "*");
-        operation.get(OP).set(READ_RESOURCE_OPERATION);
-
-        dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>()
+        if (server != null)
         {
-            @Override
-            public void onFailure(Throwable caught)
-            {
-                callback.onFailure(caught);
-            }
-
-            @Override
-            public void onSuccess(DMRResponse result)
-            {
-                ModelNode response = result.get();
-                if (!response.get(RESULT).isDefined())
-                {
-                    callback.onFailure(new Exception("Unexpected dmr result=" + response.toString()));
-                }
-
-                List<ModelNode> payload = response.get(RESULT).asList();
-                for (ModelNode deployment : payload)
-                {
-                    String serverGroup = deployment.get("address").asList().get(0).get("server-group").asString();
-                    ModelNode resultNode = deployment.get(RESULT);
-                    DeploymentRecord rec = factory.deployment().as();
-                    rec.setName(resultNode.get("name").asString());
-                    rec.setType(DeploymentDataType.deployment);
-                    rec.setSubdeployment(false);
-                    rec.setServerGroup(serverGroup);
-                    rec.setRuntimeName(resultNode.get("runtime-name").asString());
-                    rec.setEnabled(resultNode.get("enabled").asBoolean());
-                    rec.setPersistent(true);
-                    deployments.add(rec);
-                }
-                callback.onSuccess(deployments);
-            }
-        });
+            return addressFor("host", server.getHost(), "server", server.getName());
+        }
+        return addressFor();
     }
+
+    private ModelNode addressFor(String... path)
+    {
+        return addressFor(null, path);
+    }
+
+    private ModelNode addressFor(ModelNode base, String... path)
+    {
+        final ModelNode address = new ModelNode();
+        address.setEmptyList();
+        if (base != null)
+        {
+            List<Property> properties = base.asPropertyList();
+            for (Property property : properties)
+            {
+                address.add(property.getName(), property.getValue());
+            }
+        }
+        if (path != null && path.length > 0 && path.length % 2 == 0)
+        {
+            for (int i = 0; i < path.length; i += 2)
+            {
+                address.add(path[i], path[i + 1]);
+            }
+        }
+        return address;
+    }
+
+
+    // ------------------------------------------------------ cud methods
 
     public void removeContent(DeploymentRecord deploymentRecord, AsyncCallback<DMRResponse> callback)
     {
@@ -754,9 +747,5 @@ public class DeploymentStore
                 callback.onSuccess(result);
             }
         });
-    }
-
-    public void deleteDeployment(DeploymentRecord deploymentRecord, AsyncCallback<Boolean> callback)
-    {
     }
 }
