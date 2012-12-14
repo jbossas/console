@@ -33,7 +33,6 @@ import org.jboss.as.console.client.core.DomainGateKeeper;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.core.SuspendableView;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
-import org.jboss.as.console.client.domain.model.ServerGroupStore;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.domain.runtime.DomainRuntimePresenter;
 import org.jboss.as.console.client.shared.deployment.DeployCommandExecutor;
@@ -71,19 +70,17 @@ public class DomainDeploymentPresenter extends Presenter<DomainDeploymentPresent
     private DeploymentStore deploymentStore;
     private DefaultWindow window;
     private DispatchAsync dispatcher;
-    private DomainDeploymentInfo domainDeploymentInfo;
     private ContentRepository contentRepository;
 
 
     @Inject
     public DomainDeploymentPresenter(EventBus eventBus, MyView view, MyProxy proxy, DeploymentStore deploymentStore,
-            ServerGroupStore serverGroupStore, DispatchAsync dispatcher)
+            DispatchAsync dispatcher)
     {
         super(eventBus, view, proxy);
         this.deploymentStore = deploymentStore;
         this.dispatcher = dispatcher;
         this.serverGroups = new ArrayList<ServerGroupRecord>();
-        this.domainDeploymentInfo = new DomainDeploymentInfo(this, serverGroupStore, deploymentStore);
     }
 
     @Override
@@ -155,7 +152,7 @@ public class DomainDeploymentPresenter extends Presenter<DomainDeploymentPresent
                 {
                     Console.info(Console.MESSAGES.modified("Deployment " + record.getRuntimeName()));
                 }
-                domainDeploymentInfo.refreshView();
+                refreshDeployments();
             }
         });
 
@@ -169,7 +166,7 @@ public class DomainDeploymentPresenter extends Presenter<DomainDeploymentPresent
             @Override
             public void onSuccess(DMRResponse response)
             {
-                domainDeploymentInfo.refreshView(deployment);
+                refreshDeployments();
                 DeploymentCommand.REMOVE_FROM_GROUP.displaySuccessMessage(DomainDeploymentPresenter.this, deployment);
             }
 
@@ -177,7 +174,7 @@ public class DomainDeploymentPresenter extends Presenter<DomainDeploymentPresent
             public void onFailure(Throwable t)
             {
                 super.onFailure(t);
-                domainDeploymentInfo.refreshView(deployment);
+                refreshDeployments();
                 DeploymentCommand.REMOVE_FROM_GROUP.displayFailureMessage(DomainDeploymentPresenter.this, deployment, t);
             }
         });
@@ -343,18 +340,8 @@ public class DomainDeploymentPresenter extends Presenter<DomainDeploymentPresent
 
     public void launchAssignDeploymentToGroupWizard(ServerGroupRecord serverGroup)
     {
-        List<DeploymentRecord> available = new ArrayList<DeploymentRecord>();
-        for (DeploymentRecord deployment : domainDeploymentInfo.getDomainDeployments())
-        {
-            if (!domainDeploymentInfo.isAssignedToGroup(serverGroup.getName(), deployment))
-            { available.add(deployment); }
-        }
-
-        if (available.isEmpty())
-        {
-            Console.warning("All contents assigned to group " + serverGroup.getName());
-            return;
-        }
+        assert contentRepository != null;
+        List<DeploymentRecord> available = contentRepository.getPossibleServerGroupAssignments(serverGroup);
 
         window = new DefaultWindow("Assign Content");
         window.setWidth(480);
@@ -415,8 +402,7 @@ public class DomainDeploymentPresenter extends Presenter<DomainDeploymentPresent
                 {
                     Console.info(Console.MESSAGES.added("Deployment " + entity.getName()));
                 }
-
-                domainDeploymentInfo.refreshView();
+                refreshDeployments();
             }
         });
     }

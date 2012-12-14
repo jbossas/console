@@ -36,7 +36,6 @@ import org.jboss.as.console.client.widgets.ContentDescription;
 import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
 import org.jboss.ballroom.client.widgets.tools.ToolStrip;
-import org.jboss.dmr.client.ModelNode;
 
 import java.util.Iterator;
 import java.util.List;
@@ -155,11 +154,7 @@ public class ServerGroupDeploymentBrowser
                     {
                         // Try to get real deployment data from this server
                         final ServerInstance finalHit = hit;
-                        final ModelNode baseAddress = new ModelNode();
-                        baseAddress.setEmptyList();
-                        baseAddress.add("host", hit.getHost());
-                        baseAddress.add("server", hit.getName());
-                        deploymentStore.loadDeployments(baseAddress, new SimpleCallback<List<DeploymentRecord>>()
+                        deploymentStore.loadDeployments(finalHit, new SimpleCallback<List<DeploymentRecord>>()
                         {
                             @Override
                             public void onSuccess(final List<DeploymentRecord> result)

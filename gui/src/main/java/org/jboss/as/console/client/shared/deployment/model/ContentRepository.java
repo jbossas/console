@@ -141,16 +141,27 @@ public class ContentRepository
 
     public List<ServerGroupRecord> getPossibleServerGroupAssignments(DeploymentRecord deployment)
     {
-        SortedSet<ServerGroupRecord> possibleServerGroups = new TreeSet<ServerGroupRecord>(
+        SortedSet<ServerGroupRecord> allServerGroups = new TreeSet<ServerGroupRecord>(
                 new HasNameComparator<ServerGroupRecord>());
-        possibleServerGroups.addAll(serverGroups);
+        allServerGroups.addAll(serverGroups);
         List<String> currentServerGroupsNames = getServerGroups(deployment);
         for (String serverGroupsName : currentServerGroupsNames)
         {
             ServerGroupRecord serverGroup = nameToServerGroup.get(serverGroupsName);
-            possibleServerGroups.remove(serverGroup);
+            allServerGroups.remove(serverGroup);
         }
-        return new LinkedList<ServerGroupRecord>(possibleServerGroups);
+        return new LinkedList<ServerGroupRecord>(allServerGroups);
+    }
+
+    public List<DeploymentRecord> getPossibleServerGroupAssignments(ServerGroupRecord serverGroup)
+    {
+        SortedSet<DeploymentRecord> allDeployments = new TreeSet<DeploymentRecord>(
+                new HasNameComparator<DeploymentRecord>());
+        allDeployments.addAll(getDeployments());
+
+        List<DeploymentRecord> currentDeployments = getDeployments(serverGroup);
+        allDeployments.removeAll(currentDeployments);
+        return new LinkedList<DeploymentRecord>(allDeployments);
     }
 
     @Override

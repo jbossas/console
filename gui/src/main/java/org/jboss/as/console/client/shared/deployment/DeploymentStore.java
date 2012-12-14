@@ -24,6 +24,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import org.jboss.as.console.client.core.ApplicationProperties;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.domain.model.ServerGroupStore;
+import org.jboss.as.console.client.domain.model.ServerInstance;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.deployment.model.ContentRepository;
@@ -170,7 +171,7 @@ public class DeploymentStore
                     List<ModelNode> nodes = stepsResult.get("step-1").get(RESULT).asList();
                     for (ModelNode node : nodes)
                     {
-                        DeploymentRecord deployment = mapDeployment(emptyAddress(), null, node);
+                        DeploymentRecord deployment = mapDeployment(null, null, node);
                         contentRepository.addDeployment(deployment);
                     }
                     nodes = stepsResult.get("step-2").get(RESULT).asList();
@@ -189,6 +190,7 @@ public class DeploymentStore
                         String deploymentName = node.get(ADDRESS).asList().get(1).get("deployment").asString();
                         // The state of the deployment (enabled/disabled) is taken from this step!
                         DeploymentRecord dr = contentRepository.getDeployment(deploymentName);
+                        dr.setServerGroup(groupName);
                         dr.setEnabled(node.get(RESULT).get("enabled").asBoolean());
                         contentRepository.assignDeploymentToServerGroup(deploymentName, groupName);
                     }
@@ -203,17 +205,29 @@ public class DeploymentStore
 
     public void loadDeployments(final AsyncCallback<List<DeploymentRecord>> callback)
     {
-        loadDeployments(emptyAddress(), callback);
+        loadDeployments(null, callback);
     }
 
-    public void loadDeployments(final ModelNode baseAddress, final AsyncCallback<List<DeploymentRecord>> callback)
+    public void loadDeployments(final ServerInstance server, final AsyncCallback<List<DeploymentRecord>> callback)
     {
         // /<baseAddress>/:read-children-resources(child-type=deployment)
         ModelNode operation = new ModelNode();
-        operation.get(ADDRESS).set(baseAddress);
+        operation.get(ADDRESS).set(addressFor(server));
         operation.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
         operation.get(CHILD_TYPE).set("deployment");
-        loadDeployments(baseAddress, operation, null, callback);
+        loadDeployments(server, operation, null, callback);
+    }
+
+    private ModelNode addressFor(final ServerInstance server)
+    {
+        final ModelNode address = new ModelNode();
+        address.setEmptyList();
+        if (server != null)
+        {
+            address.add("host", server.getHost());
+            address.add("server", server.getName());
+        }
+        return address;
     }
 
     public void loadSubdeployments(final DeploymentRecord deployment,
@@ -221,14 +235,14 @@ public class DeploymentStore
     {
         // /<relativeTo>/deployment=<deployment.getName()>:read-children-resources(child-type=subdeployment)
         ModelNode operation = new ModelNode();
-        operation.get(ADDRESS).set(deployment.getBaseAddress());
+        operation.get(ADDRESS).set(addressFor(deployment.getServer()));
         operation.get(ADDRESS).add("deployment", deployment.getName());
         operation.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
         operation.get(CHILD_TYPE).set("subdeployment");
-        loadDeployments(deployment.getBaseAddress(), operation, deployment, callback);
+        loadDeployments(deployment.getServer(), operation, deployment, callback);
     }
 
-    private void loadDeployments(final ModelNode baseAddress, final ModelNode operation, final DeploymentRecord parent,
+    private void loadDeployments(final ServerInstance server, final ModelNode operation, final DeploymentRecord parent,
             final AsyncCallback<List<DeploymentRecord>> callback)
     {
         final List<DeploymentRecord> deployments = new ArrayList<DeploymentRecord>();
@@ -243,7 +257,7 @@ public class DeploymentStore
                     List<ModelNode> nodes = response.get(RESULT).asList();
                     for (ModelNode node : nodes)
                     {
-                        deployments.add(mapDeployment(baseAddress, parent, node));
+                        deployments.add(mapDeployment(server, parent, node));
                     }
                 }
                 callback.onSuccess(deployments);
@@ -251,7 +265,7 @@ public class DeploymentStore
         });
     }
 
-    private DeploymentRecord mapDeployment(final ModelNode baseAddress, final DeploymentRecord parent, final ModelNode node)
+    private DeploymentRecord mapDeployment(final ServerInstance server, final DeploymentRecord parent, final ModelNode node)
     {
         ModelNode deploymentNode = node.asProperty().getValue().asObject();
         DeploymentRecord deployment = deploymentEntityAdapter.fromDMR(deploymentNode);
@@ -277,7 +291,11 @@ public class DeploymentStore
             deployment.setSubdeployment(parent != null);
             deployment.setHasSubdeployments(deploymentNode.get("subdeployment").isDefined());
             deployment.setHasSubsystems(deploymentNode.get("subsystem").isDefined());
-            deployment.setBaseAddress(baseAddress);
+            deployment.setServer(server);
+            if (server != null)
+            {
+                deployment.setServerGroup(server.getGroup());
+            }
         }
         catch (IllegalArgumentException e)
         {
@@ -292,7 +310,7 @@ public class DeploymentStore
         final List<DeploymentSubsystem> subsystems = new ArrayList<DeploymentSubsystem>();
 
         ModelNode operation = new ModelNode();
-        operation.get(ADDRESS).set(deployment.getBaseAddress());
+        operation.get(ADDRESS).set(addressFor(deployment.getServer()));
         if (deployment.isSubdeployment())
         {
             // /<deployment.getBaseAddress()>/deployment=<deployment>/subdeployment=<subdeployment>:read-children-resources(child-type=subsystems)
@@ -424,7 +442,7 @@ public class DeploymentStore
     private ModelNode ejbOp(final DeploymentSubsystem subsystem, final String name)
     {
         ModelNode operation = new ModelNode();
-        operation.get(ADDRESS).set(subsystem.getDeployment().getBaseAddress());
+        operation.get(ADDRESS).set(addressFor(subsystem.getDeployment().getServer()));
         DeploymentRecord deployment = subsystem.getDeployment();
         if (deployment.isSubdeployment())
         {
@@ -449,7 +467,7 @@ public class DeploymentStore
         final List<DeployedPersistenceUnit> pus = new ArrayList<DeployedPersistenceUnit>();
 
         ModelNode operation = new ModelNode();
-        operation.get(ADDRESS).set(subsystem.getDeployment().getBaseAddress());
+        operation.get(ADDRESS).set(addressFor(subsystem.getDeployment().getServer()));
         DeploymentRecord deployment = subsystem.getDeployment();
         if (deployment.isSubdeployment())
         {
@@ -516,7 +534,7 @@ public class DeploymentStore
         final List<DeployedServlet> servlets = new ArrayList<DeployedServlet>();
 
         ModelNode operation = new ModelNode();
-        operation.get(ADDRESS).set(subsystem.getDeployment().getBaseAddress());
+        operation.get(ADDRESS).set(addressFor(subsystem.getDeployment().getServer()));
         DeploymentRecord deployment = subsystem.getDeployment();
         if (deployment.isSubdeployment())
         {
@@ -564,7 +582,7 @@ public class DeploymentStore
         final List<DeployedEndpoint> endpoints = new ArrayList<DeployedEndpoint>();
 
         ModelNode operation = new ModelNode();
-        operation.get(ADDRESS).set(subsystem.getDeployment().getBaseAddress());
+        operation.get(ADDRESS).set(addressFor(subsystem.getDeployment().getServer()));
         DeploymentRecord deployment = subsystem.getDeployment();
         if (deployment.isSubdeployment())
         {

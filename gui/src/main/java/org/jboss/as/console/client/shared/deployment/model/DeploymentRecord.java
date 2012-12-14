@@ -19,10 +19,11 @@
 
 package org.jboss.as.console.client.shared.deployment.model;
 
+import org.jboss.as.console.client.domain.model.ServerInstance;
 import org.jboss.as.console.client.widgets.forms.Binding;
-import org.jboss.dmr.client.ModelNode;
 
 /**
+ * TODO Refactor into different classes: DeploymentContent, GroupDeployment, ServerDeployment
  * @author Heiko Braun
  * @date 1/31/11
  */
@@ -82,6 +83,6 @@ public interface DeploymentRecord extends DeploymentData
     void setHasSubdeployments(boolean hasSubdeployments);
 
     @Binding(skip = true)
-    ModelNode getBaseAddress();
-    void setBaseAddress(ModelNode baseAddress);
+    ServerInstance getServer();
+    void setServer(ServerInstance server);
 }
