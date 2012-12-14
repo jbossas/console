@@ -69,7 +69,8 @@ public class ContentRepository
     {
         serverGroups.add(serverGroup);
         nameToServerGroup.put(serverGroup.getName(), serverGroup);
-        deploymentsOfGroup.put(serverGroup.getName(), new TreeSet<DeploymentRecord>(new HasNameComparator<DeploymentRecord>()));
+        deploymentsOfGroup
+                .put(serverGroup.getName(), new TreeSet<DeploymentRecord>(new HasNameComparator<DeploymentRecord>()));
     }
 
     public void assignDeploymentToServerGroup(String depoymentName, String serverGroupName)
@@ -127,7 +128,7 @@ public class ContentRepository
         return Collections.emptyList();
     }
 
-    public int getAssignments(DeploymentRecord deployment)
+    public int getNumberOfAssignments(DeploymentRecord deployment)
     {
         int result = 0;
         SortedSet<String> serverGroups = groupsOfDeployment.get(deployment.getName());
@@ -136,6 +137,20 @@ public class ContentRepository
             result = serverGroups.size();
         }
         return result;
+    }
+
+    public List<ServerGroupRecord> getPossibleServerGroupAssignments(DeploymentRecord deployment)
+    {
+        SortedSet<ServerGroupRecord> possibleServerGroups = new TreeSet<ServerGroupRecord>(
+                new HasNameComparator<ServerGroupRecord>());
+        possibleServerGroups.addAll(serverGroups);
+        List<String> currentServerGroupsNames = getServerGroups(deployment);
+        for (String serverGroupsName : currentServerGroupsNames)
+        {
+            ServerGroupRecord serverGroup = nameToServerGroup.get(serverGroupsName);
+            possibleServerGroups.remove(serverGroup);
+        }
+        return new LinkedList<ServerGroupRecord>(possibleServerGroups);
     }
 
     @Override

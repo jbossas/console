@@ -72,6 +72,7 @@ public class DomainDeploymentPresenter extends Presenter<DomainDeploymentPresent
     private DefaultWindow window;
     private DispatchAsync dispatcher;
     private DomainDeploymentInfo domainDeploymentInfo;
+    private ContentRepository contentRepository;
 
 
     @Inject
@@ -103,7 +104,6 @@ public class DomainDeploymentPresenter extends Presenter<DomainDeploymentPresent
     {
         super.onReset();
         loadContentRepository();
-//        domainDeploymentInfo.refreshView();
     }
 
     private void loadContentRepository()
@@ -113,10 +113,14 @@ public class DomainDeploymentPresenter extends Presenter<DomainDeploymentPresent
             @Override
             public void onSuccess(final ContentRepository result)
             {
+                DomainDeploymentPresenter.this.contentRepository = result;
                 getView().reset(result);
             }
         });
     }
+
+
+    // ------------------------------------------------------ TODO Refactor
 
     @Override
     public void enableDisableDeployment(final DeploymentRecord record)
@@ -180,7 +184,7 @@ public class DomainDeploymentPresenter extends Presenter<DomainDeploymentPresent
     }
 
     @Override
-    public void addToServerGroup(final DeploymentRecord deployment, final boolean enable,
+    public void onAssignToServerGroup(final DeploymentRecord deployment, final boolean enable,
             Set<ServerGroupSelection> selection)
     {
         final PopupPanel loading = Feedback.loading(
@@ -216,15 +220,16 @@ public class DomainDeploymentPresenter extends Presenter<DomainDeploymentPresent
                     Console.info(Console.MESSAGES
                             .added("Deployment " + deployment.getRuntimeName() + " to group " + serverGroups));
                 }
-                domainDeploymentInfo.refreshView();
+                DomainDeploymentPresenter.this.refreshDeployments();
             }
         });
     }
 
     @Override
-    public void removeContent(final DeploymentRecord deployment)
+    public void onRemoveContent(final DeploymentRecord deployment)
     {
-        Set<String> assignedGroups = domainDeploymentInfo.getAssignedGroups(deployment);
+        assert contentRepository != null : "Contentrepository must not be null!";
+        List<String> assignedGroups = contentRepository.getServerGroups(deployment);
 
         final PopupPanel loading = Feedback.loading(
                 Console.CONSTANTS.common_label_plaseWait(),
@@ -277,9 +282,7 @@ public class DomainDeploymentPresenter extends Presenter<DomainDeploymentPresent
                 {
                     Console.info(Console.MESSAGES.deleted("Deployment " + deployment.getRuntimeName()));
                 }
-
-
-                domainDeploymentInfo.refreshView();
+                refreshDeployments();
             }
         });
     }
@@ -287,19 +290,12 @@ public class DomainDeploymentPresenter extends Presenter<DomainDeploymentPresent
     @Override
     public List<ServerGroupRecord> getPossibleGroupAssignments(DeploymentRecord record)
     {
-        List<ServerGroupRecord> possibleGroupAssignments = new ArrayList<ServerGroupRecord>();
-        for (ServerGroupRecord group : getServerGroups())
-        {
-            if (!domainDeploymentInfo.isAssignedToGroup(group.getName(), record))
-            {
-                possibleGroupAssignments.add(group);
-            }
-        }
-        return possibleGroupAssignments;
+        assert contentRepository!=null;
+        return contentRepository.getPossibleServerGroupAssignments(record);
     }
 
     @Override
-    public void promptForGroupSelections(DeploymentRecord record)
+    public void launchGroupSelectionWizard(DeploymentRecord record)
     {
         new ServerGroupSelector(this, record);
     }
@@ -316,7 +312,7 @@ public class DomainDeploymentPresenter extends Presenter<DomainDeploymentPresent
         window.setWidth(480);
         window.setHeight(450);
         window.trapWidget(
-                new NewDeploymentWizard(this, window, domainDeploymentInfo, isUpdate, record).asWidget());
+                new NewDeploymentWizard(this, window, isUpdate, record).asWidget());
         window.setGlassEnabled(true);
         window.center();
     }
@@ -345,7 +341,7 @@ public class DomainDeploymentPresenter extends Presenter<DomainDeploymentPresent
         );
     }
 
-    public void onAssignDeploymentToGroup(ServerGroupRecord serverGroup)
+    public void launchAssignDeploymentToGroupWizard(ServerGroupRecord serverGroup)
     {
         List<DeploymentRecord> available = new ArrayList<DeploymentRecord>();
         for (DeploymentRecord deployment : domainDeploymentInfo.getDomainDeployments())
@@ -382,7 +378,7 @@ public class DomainDeploymentPresenter extends Presenter<DomainDeploymentPresent
             HashSet<ServerGroupSelection> groups = new HashSet<ServerGroupSelection>();
             ServerGroupSelection selection = new ServerGroupSelection(serverGroup);
             groups.add(selection);
-            addToServerGroup(deployment, false, groups);
+            onAssignToServerGroup(deployment, false, groups);
         }
     }
 
@@ -423,6 +419,12 @@ public class DomainDeploymentPresenter extends Presenter<DomainDeploymentPresent
                 domainDeploymentInfo.refreshView();
             }
         });
+    }
+
+    @Override
+    public void refreshDeployments()
+    {
+        loadContentRepository();
     }
 
 

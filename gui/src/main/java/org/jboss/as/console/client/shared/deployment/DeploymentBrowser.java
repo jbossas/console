@@ -20,6 +20,7 @@ package org.jboss.as.console.client.shared.deployment;
 
 import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.SingleSelectionModel;
 import com.google.web.bindery.autobean.shared.AutoBean;
@@ -34,6 +35,8 @@ import org.jboss.as.console.client.shared.deployment.model.DeploymentJpaSubsyste
 import org.jboss.as.console.client.shared.deployment.model.DeploymentRecord;
 import org.jboss.as.console.client.shared.deployment.model.DeploymentWebSubsystem;
 import org.jboss.as.console.client.shared.deployment.model.DeploymentWebserviceSubsystem;
+import org.jboss.as.console.client.shared.help.FormHelpPanel;
+import org.jboss.as.console.client.shared.runtime.RuntimeBaseAddress;
 import org.jboss.as.console.client.widgets.browser.DefaultCellBrowser;
 import org.jboss.ballroom.client.widgets.forms.CheckBoxItem;
 import org.jboss.ballroom.client.widgets.forms.Form;
@@ -41,6 +44,7 @@ import org.jboss.ballroom.client.widgets.forms.FormItem;
 import org.jboss.ballroom.client.widgets.forms.ListItem;
 import org.jboss.ballroom.client.widgets.forms.TextAreaItem;
 import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
+import org.jboss.dmr.client.ModelNode;
 
 import java.util.HashMap;
 import java.util.List;
@@ -86,8 +90,8 @@ public class DeploymentBrowser
 
         addContext(DeploymentRecord.class, index++,
                 new TextAreaItem("name", "Name"),
-                new TextAreaItem("path", "Path"),
                 new TextAreaItem("runtimeName", "Runtime Name"),
+                new TextAreaItem("path", "Path"),
                 new TextBoxItem("relativeTo", "Relative To"));
 
         addContext(DeploymentEjbSubsystem.class, index++);
@@ -95,8 +99,7 @@ public class DeploymentBrowser
         addContext(DeploymentJpaSubsystem.class, index++,
                 new TextAreaItem("name", "Name"),
                 new TextBoxItem("defaultDataSource", "Default Datasource"),
-                new TextBoxItem("defaultInheritance", "Default Inheritance"),
-                new CheckBoxItem("defaultVfs", "Default VFS"));
+                new TextBoxItem("defaultInheritance", "Default Inheritance"));
 
         addContext(DeploymentWebSubsystem.class, index++,
                 new TextAreaItem("name", "Name"),
@@ -114,7 +117,7 @@ public class DeploymentBrowser
 
         addContext(DeployedPersistenceUnit.class, index++,
                 new TextAreaItem("name", "Name"),
-                new CheckBoxItem("enabled", "Enabled"),
+                new CheckBoxItem("enabled", "Statistics Enabled"),
                 new ListItem("entities", "Entities"));
 
         addContext(DeployedServlet.class, index++,
@@ -133,15 +136,36 @@ public class DeploymentBrowser
     private <T extends DeploymentData> void addContext(Class<T> clazz, int index, FormItem... formItems)
     {
         Widget widget;
+
         String classname = clazz.getName();
-        if (formItems != null && formItems.length != 0)
+        if (formItems != null && formItems.length > 0)
         {
             Form<T> form = new Form<T>(clazz);
             form.setNumColumns(1);
             form.setEnabled(false);
             form.setFields(formItems);
+            // TODO Delay address callback
+            FormHelpPanel helpPanel = new FormHelpPanel(new FormHelpPanel.AddressCallback()
+            {
+                @Override
+                public ModelNode getAddress()
+                {
+                    ModelNode address = RuntimeBaseAddress.get();
+                    address.add("deployment", "*");
+                    address.add("subsystem", "jpa");
+                    address.add("hibernate-persistence-unit", "*");
+                    return address;
+                }
+            }, form);
+
             forms.put(classname, (Form<DeploymentData>) form);
-            widget = form.asWidget();
+
+
+            VerticalPanel wrapper = new VerticalPanel();
+            wrapper.setStyleName("fill-layout-width");
+            wrapper.add(helpPanel.asWidget());
+            wrapper.add(form.asWidget());
+            widget = wrapper;
         }
         else
         {

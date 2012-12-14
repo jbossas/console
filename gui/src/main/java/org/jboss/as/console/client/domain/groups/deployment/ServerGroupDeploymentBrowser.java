@@ -77,7 +77,7 @@ public class ServerGroupDeploymentBrowser
                     @Override
                     public void onClick(ClickEvent clickEvent)
                     {
-                        presenter.onAssignDeploymentToGroup(currentServerGroup);
+                        presenter.launchAssignDeploymentToGroupWizard(currentServerGroup);
                     }
                 }));
         tools.addToolButtonRight(new ToolButton(Console.CONSTANTS.common_label_remove(), new

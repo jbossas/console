@@ -18,8 +18,6 @@
  */
 package org.jboss.as.console.client.standalone.deployment;
 
-import com.google.gwt.event.logical.shared.CloseEvent;
-import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
@@ -71,23 +69,22 @@ public class StandaloneDeploymentPresenter
     @UseGatekeeper(StandaloneGateKeeper.class)
     public interface MyProxy extends Proxy<StandaloneDeploymentPresenter>, Place
     {
+
     }
-
-
     public interface MyView extends View
     {
+
+
         void setPresenter(StandaloneDeploymentPresenter presenter);
         void updateDeployments(List<DeploymentRecord> deployments);
     }
-
-
     private final PlaceManager placeManager;
+
+
     private StandaloneDeploymentInfo deploymentInfo;
     private DeploymentStore deploymentStore;
     private DefaultWindow window;
     private DispatchAsync dispatcher;
-
-
     @Inject
     public StandaloneDeploymentPresenter(EventBus eventBus, MyView view, MyProxy proxy, DeploymentStore deploymentStore,
             PlaceManager placeManager, DispatchAsync dispatcher)
@@ -98,6 +95,7 @@ public class StandaloneDeploymentPresenter
         this.deploymentStore = deploymentStore;
         this.dispatcher = dispatcher;
     }
+
 
     @Override
     protected void onBind()
@@ -114,6 +112,12 @@ public class StandaloneDeploymentPresenter
     }
 
     @Override
+    public void refreshDeployments()
+    {
+        deploymentInfo.refreshView();
+    }
+
+    @Override
     protected void revealInParent()
     {
         RevealContentEvent.fire(this, StandaloneRuntimePresenter.TYPE_MainContent, this);
@@ -124,15 +128,14 @@ public class StandaloneDeploymentPresenter
     }
 
     @Override
-    public void removeContent(final DeploymentRecord record)
+    public void onRemoveContent(final DeploymentRecord record)
     {
         deploymentStore.removeContent(record, new SimpleCallback<DMRResponse>()
         {
-
             @Override
             public void onSuccess(DMRResponse response)
             {
-                deploymentInfo.refreshView();
+                refreshDeployments();
                 DeploymentCommand.REMOVE_FROM_STANDALONE.displaySuccessMessage(StandaloneDeploymentPresenter.this, record);
             }
 
@@ -140,7 +143,7 @@ public class StandaloneDeploymentPresenter
             public void onFailure(Throwable t)
             {
                 super.onFailure(t);
-                deploymentInfo.refreshView();
+                refreshDeployments();
                 DeploymentCommand.REMOVE_FROM_STANDALONE
                         .displayFailureMessage(StandaloneDeploymentPresenter.this, record, t);
             }
@@ -192,7 +195,7 @@ public class StandaloneDeploymentPresenter
     }
 
     @Override
-    public void addToServerGroup(DeploymentRecord record, boolean enable, Set<ServerGroupSelection> selectedGroups)
+    public void onAssignToServerGroup(DeploymentRecord record, boolean enable, Set<ServerGroupSelection> selectedGroups)
     {
         throw new UnsupportedOperationException("Not supported in standalone mode.");
     }
@@ -204,7 +207,7 @@ public class StandaloneDeploymentPresenter
     }
 
     @Override
-    public void promptForGroupSelections(DeploymentRecord record)
+    public void launchGroupSelectionWizard(DeploymentRecord record)
     {
         throw new UnsupportedOperationException("Not supported in standalone mode.");
     }
@@ -226,19 +229,7 @@ public class StandaloneDeploymentPresenter
         window = new DefaultWindow(Console.MESSAGES.createTitle("Deployment"));
         window.setWidth(480);
         window.setHeight(450);
-        window.addCloseHandler(new CloseHandler<PopupPanel>()
-        {
-            @Override
-            public void onClose(CloseEvent<PopupPanel> event)
-            {
-
-            }
-        });
-
-        window.trapWidget(
-                new NewDeploymentWizard(this, window, deploymentInfo, isUpdate, record).asWidget()
-        );
-
+        window.trapWidget(new NewDeploymentWizard(this, window, isUpdate, record).asWidget());
         window.setGlassEnabled(true);
         window.center();
     }

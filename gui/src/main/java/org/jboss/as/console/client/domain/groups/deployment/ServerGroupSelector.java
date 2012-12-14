@@ -222,7 +222,7 @@ public class ServerGroupSelector {
                 return;
             }
 
-            ServerGroupSelector.this.presenter.addToServerGroup(deployment, enableBox.getValue(), groupsSelected);
+            ServerGroupSelector.this.presenter.onAssignToServerGroup(deployment, enableBox.getValue(), groupsSelected);
             window.hide();
         }
     }

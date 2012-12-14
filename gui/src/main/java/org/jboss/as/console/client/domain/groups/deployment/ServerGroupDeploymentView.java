@@ -115,7 +115,7 @@ public class ServerGroupDeploymentView {
             @Override
             public void onClick(ClickEvent clickEvent) {
 
-                presenter.onAssignDeploymentToGroup(currentSelection);
+                presenter.launchAssignDeploymentToGroupWizard(currentSelection);
             }
         }));
 

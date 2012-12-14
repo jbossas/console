@@ -87,7 +87,7 @@ public class ContentRepositoryPanel implements IsWidget
             @Override
             public String getValue(DeploymentRecord deployment)
             {
-                return String.valueOf(contentRepository.getAssignments(deployment));
+                return String.valueOf(contentRepository.getNumberOfAssignments(deployment));
             }
         }, "Assignments");
 
@@ -128,7 +128,7 @@ public class ContentRepositoryPanel implements IsWidget
         filter = new DeploymentFilter(deploymentData);
         toolStrip.addToolWidget(filter.asWidget());
 
-        ToolButton addContentBtn = new ToolButton("Add", new ClickHandler()
+        ToolButton addContentBtn = new ToolButton(Console.CONSTANTS.common_label_add(), new ClickHandler()
         {
             @Override
             public void onClick(ClickEvent event)

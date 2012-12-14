@@ -33,8 +33,6 @@ import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 import org.jboss.ballroom.client.widgets.window.DialogueOptions;
 import org.jboss.ballroom.client.widgets.window.WindowContentBuilder;
 
-import java.util.List;
-
 /**
  * @author Heiko Braun
  * @author Stan Silvert <ssilvert@redhat.com> (C) 2011 Red Hat Inc.
@@ -45,19 +43,15 @@ public class DeploymentStep2 {
     private NewDeploymentWizard wizard;
     private DefaultWindow window;
     private Form<DeploymentReference> form;
-    private DeploymentViewRefresher refresher;
-    private boolean isUpdate;
 
-    public DeploymentStep2(NewDeploymentWizard wizard, DefaultWindow window, DeploymentViewRefresher refresher, boolean isUpdate) {
+    public DeploymentStep2(NewDeploymentWizard wizard, DefaultWindow window) {
         this.wizard = wizard;
         this.window = window;
-        this.refresher = refresher;
-        this.isUpdate = isUpdate;
     }
 
     public Widget asWidget() {
         VerticalPanel layout = new VerticalPanel();
-        layout.getElement().setAttribute("style", "width:95%, margin:15px;");
+        layout.setStyleName("window-content");
 
         layout.add(new HTML("<h3>" + Console.CONSTANTS.common_label_step() + " 2/2: "
                 + Console.CONSTANTS.common_label_verifyDeploymentNames() + "</h3>"));
@@ -65,11 +59,8 @@ public class DeploymentStep2 {
         form = new Form<DeploymentReference>(DeploymentReference.class);
 
         TextItem hashField = new TextItem("hash", Console.CONSTANTS.common_label_key());
-        DeploymentNameTextBoxItem nameField = new DeploymentNameTextBoxItem("name",
-                Console.CONSTANTS.common_label_name(),
-                refresher.getAllDeploymentNames(),
-                isUpdate);
-        RuntimeNameTextBoxItem runtimeNameField = new RuntimeNameTextBoxItem("runtimeName", Console.CONSTANTS.common_label_runtimeName(), isUpdate);
+        TextBoxItem nameField = new TextBoxItem("name", Console.CONSTANTS.common_label_name());
+        TextBoxItem runtimeNameField = new TextBoxItem("runtimeName", Console.CONSTANTS.common_label_runtimeName());
 
         form.setFields(hashField, nameField, runtimeNameField);
 
@@ -111,75 +102,5 @@ public class DeploymentStep2 {
 
     void edit(DeploymentReference ref) {
         form.edit(ref);
-    }
-
-    private static class Step2TextBoxItem extends TextBoxItem {
-        protected String errorMessage = "";
-        protected boolean isUpdate;
-
-        public Step2TextBoxItem(String name, String title, boolean isUpdate) {
-            super(name, title);
-            this.isUpdate = isUpdate;
-            setEnabled(!isUpdate);
-        }
-
-        @Override
-        public boolean validate(String name) {
-            if (!super.validate(name)) {
-                errorMessage = Console.MESSAGES.common_validation_requiredField();
-                return false;
-            }
-            return true;
-        }
-
-        @Override
-        public String getErrMessage() {
-            return errorMessage;
-        }
-    }
-
-    public static class DeploymentNameTextBoxItem extends Step2TextBoxItem {
-        private List<String> currentDeploymentNames;
-
-        public DeploymentNameTextBoxItem(String name, String title, List<String> currentDeploymentNames, boolean isUpdate) {
-            super(name, title, isUpdate);
-            this.currentDeploymentNames = currentDeploymentNames;
-        }
-
-        @Override
-        public boolean validate(String name) {
-            if (isUpdate) return true;
-            if (!super.validate(name)) return false;
-
-            if (currentDeploymentNames.contains(name)) {
-                String nameField = Console.CONSTANTS.common_label_name();
-                errorMessage = Console.MESSAGES.alreadyExists(nameField);
-                return false;
-            }
-
-            return true;
-        }
-    }
-
-    private static class RuntimeNameTextBoxItem extends Step2TextBoxItem {
-        public RuntimeNameTextBoxItem(String name, String title, boolean isUpdate) {
-            super(name, title, isUpdate);
-        }
-
-        @Override
-        public boolean validate(String name) {
-            if (isUpdate) return true;
-            if (!super.validate(name)) return false;
-
-            // need actual list of acceptable extensions like *.war, *.ear, *.rar
-            // for now just make sure it is an archive name with 3 char extension
-            if (!name.matches(".+\\....")) {
-                String runtimeNameField = Console.CONSTANTS.common_label_runtimeName();
-                errorMessage = Console.MESSAGES.mustBeDeployableArchive(runtimeNameField);
-                return false;
-            }
-
-            return true;
-        }
     }
 }
