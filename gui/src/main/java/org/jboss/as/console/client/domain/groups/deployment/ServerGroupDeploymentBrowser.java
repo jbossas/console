@@ -163,7 +163,7 @@ public class ServerGroupDeploymentBrowser
                                 if (!result.isEmpty())
                                 {
                                     description.setText(
-                                            "Deployments assigned to this server group (taken from server " + finalHit
+                                            "Deployments assigned to this server group (Reference server: " + finalHit
                                                     .getName() + ").");
                                 }
                             }
@@ -171,7 +171,7 @@ public class ServerGroupDeploymentBrowser
                     }
                     else
                     {
-                        Console.warning("No server is running in this group. Cannot look into deployments.");
+                        Console.warning("No active server in this group.", "Unable to retrieve deployment subsystem information. ");
                     }
                 }
 
