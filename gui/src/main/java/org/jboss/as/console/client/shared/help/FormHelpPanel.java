@@ -99,24 +99,38 @@ public class FormHelpPanel {
 
                     final SafeHtmlBuilder html = new SafeHtmlBuilder();
                     html.appendHtmlConstant("<table class='help-attribute-descriptions'>");
-                    for(FieldDesc field : result)
-                    {
-                        html.appendHtmlConstant("<tr class='help-field-row'>");
-                        html.appendHtmlConstant("<td class='help-field-name'>");
 
-                        String ref = field.getRef();
-                        String title = form.getFormItemTitle(ref);
-                        html.appendEscaped(title).appendEscaped(": ");
-                        html.appendHtmlConstant("</td>");
-                        html.appendHtmlConstant("<td class='help-field-desc'>");
-                        try {
-                            html.appendHtmlConstant(field.getDesc());
-                        } catch (Throwable e) {
-                            // ignore parse errors
-                            html.appendHtmlConstant("<i>Failed to parse description</i>");
-                        }
+                    if(result.isEmpty())
+                    {
+                        Log.error("Failed to retrieve attribute descriptions: "+address.getAddress());
+
+                        html.appendHtmlConstant("<tr class='help-field-row'>");
+                        html.appendHtmlConstant("<td class='help-field-name' colspan=2>");
+                        html.appendEscaped("Attribute descriptions not available.");
                         html.appendHtmlConstant("</td>");
                         html.appendHtmlConstant("</tr>");
+                    }
+                    else
+                    {
+                        for(FieldDesc field : result)
+                        {
+                            html.appendHtmlConstant("<tr class='help-field-row'>");
+                            html.appendHtmlConstant("<td class='help-field-name'>");
+
+                            String ref = field.getRef();
+                            String title = form.getFormItemTitle(ref);
+                            html.appendEscaped(title).appendEscaped(": ");
+                            html.appendHtmlConstant("</td>");
+                            html.appendHtmlConstant("<td class='help-field-desc'>");
+                            try {
+                                html.appendHtmlConstant(field.getDesc());
+                            } catch (Throwable e) {
+                                // ignore parse errors
+                                html.appendHtmlConstant("<i>Failed to parse description</i>");
+                            }
+                            html.appendHtmlConstant("</td>");
+                            html.appendHtmlConstant("</tr>");
+                        }
                     }
                     html.appendHtmlConstant("</table>");
 
