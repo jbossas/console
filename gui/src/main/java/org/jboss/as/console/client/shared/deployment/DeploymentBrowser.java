@@ -90,9 +90,8 @@ public class DeploymentBrowser
 
         addContext(DeploymentRecord.class, index++,
                 new TextAreaItem("name", "Name"),
-                new TextAreaItem("runtimeName", "Runtime Name"),
-                new TextAreaItem("path", "Path"),
-                new TextBoxItem("relativeTo", "Relative To"));
+                new TextAreaItem("runtimeName", "Runtime Name")
+                );
 
         addContext(DeploymentEjbSubsystem.class, index++);
 
