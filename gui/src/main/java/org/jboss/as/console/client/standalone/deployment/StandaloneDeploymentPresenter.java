@@ -18,8 +18,6 @@
  */
 package org.jboss.as.console.client.standalone.deployment;
 
-import com.google.gwt.event.logical.shared.CloseEvent;
-import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
@@ -29,7 +27,6 @@ import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.annotations.UseGatekeeper;
 import com.gwtplatform.mvp.client.proxy.Place;
-import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import org.jboss.as.console.client.Console;
@@ -62,42 +59,36 @@ import static org.jboss.dmr.client.ModelDescriptionConstants.*;
  * @author Harald Pehl
  * @date 3/14/11
  */
-public class DeploymentBrowserPresenter
-        extends Presenter<DeploymentBrowserPresenter.MyView, DeploymentBrowserPresenter.MyProxy>
+public class StandaloneDeploymentPresenter
+        extends Presenter<StandaloneDeploymentPresenter.MyView, StandaloneDeploymentPresenter.MyProxy>
         implements DeployCommandExecutor
 {
     @ProxyCodeSplit
     @NameToken(NameTokens.DeploymentBrowserPresenter)
     @UseGatekeeper(StandaloneGateKeeper.class)
-    public interface MyProxy extends Proxy<DeploymentBrowserPresenter>, Place
+    public interface MyProxy extends Proxy<StandaloneDeploymentPresenter>, Place
     {
     }
-
 
     public interface MyView extends View
     {
-        void setPresenter(DeploymentBrowserPresenter presenter);
+        void setPresenter(StandaloneDeploymentPresenter presenter);
         void updateDeployments(List<DeploymentRecord> deployments);
     }
 
-
-    private final PlaceManager placeManager;
-    private StandaloneDeploymentInfo deploymentInfo;
     private DeploymentStore deploymentStore;
     private DefaultWindow window;
     private DispatchAsync dispatcher;
 
-
     @Inject
-    public DeploymentBrowserPresenter(EventBus eventBus, MyView view, MyProxy proxy, DeploymentStore deploymentStore,
-            PlaceManager placeManager, DispatchAsync dispatcher)
+    public StandaloneDeploymentPresenter(EventBus eventBus, MyView view, MyProxy proxy, DeploymentStore deploymentStore,
+            DispatchAsync dispatcher)
     {
         super(eventBus, view, proxy);
-        this.placeManager = placeManager;
-        this.deploymentInfo = new StandaloneDeploymentInfo(this, deploymentStore);
         this.deploymentStore = deploymentStore;
         this.dispatcher = dispatcher;
     }
+
 
     @Override
     protected void onBind()
@@ -110,7 +101,25 @@ public class DeploymentBrowserPresenter
     protected void onReset()
     {
         super.onReset();
-        deploymentInfo.refreshView();
+        loadDeployments();
+    }
+
+    @Override
+    public void refreshDeployments()
+    {
+        loadDeployments();
+    }
+
+    private void loadDeployments()
+    {
+        deploymentStore.loadDeployments(new SimpleCallback<List<DeploymentRecord>>()
+        {
+            @Override
+            public void onSuccess(List<DeploymentRecord> result)
+            {
+                getView().updateDeployments(result);
+            }
+        });
     }
 
     @Override
@@ -119,30 +128,25 @@ public class DeploymentBrowserPresenter
         RevealContentEvent.fire(this, StandaloneRuntimePresenter.TYPE_MainContent, this);
     }
 
-    public void onFilterType(String value)
-    {
-    }
-
     @Override
-    public void removeContent(final DeploymentRecord record)
+    public void onRemoveContent(final DeploymentRecord record)
     {
         deploymentStore.removeContent(record, new SimpleCallback<DMRResponse>()
         {
-
             @Override
             public void onSuccess(DMRResponse response)
             {
-                deploymentInfo.refreshView();
-                DeploymentCommand.REMOVE_FROM_STANDALONE.displaySuccessMessage(DeploymentBrowserPresenter.this, record);
+                refreshDeployments();
+                DeploymentCommand.REMOVE_FROM_STANDALONE.displaySuccessMessage(StandaloneDeploymentPresenter.this, record);
             }
 
             @Override
             public void onFailure(Throwable t)
             {
                 super.onFailure(t);
-                deploymentInfo.refreshView();
+                refreshDeployments();
                 DeploymentCommand.REMOVE_FROM_STANDALONE
-                        .displayFailureMessage(DeploymentBrowserPresenter.this, record, t);
+                        .displayFailureMessage(StandaloneDeploymentPresenter.this, record, t);
             }
         });
     }
@@ -150,7 +154,6 @@ public class DeploymentBrowserPresenter
     @Override
     public void enableDisableDeployment(final DeploymentRecord record)
     {
-
         final PopupPanel loading = Feedback.loading(
                 Console.CONSTANTS.common_label_plaseWait(),
                 Console.CONSTANTS.common_label_requestProcessed(),
@@ -165,14 +168,11 @@ public class DeploymentBrowserPresenter
 
         deploymentStore.enableDisableDeployment(record, new SimpleCallback<DMRResponse>()
         {
-
             @Override
             public void onSuccess(DMRResponse response)
             {
                 loading.hide();
-
                 ModelNode result = response.get();
-
                 if (result.isFailure())
                 {
                     loading.hide();
@@ -183,16 +183,13 @@ public class DeploymentBrowserPresenter
                 {
                     Console.info(Console.MESSAGES.modified("Deployment " + record.getRuntimeName()));
                 }
-
-                deploymentInfo.refreshView();
-
+                refreshDeployments();
             }
-
         });
     }
 
     @Override
-    public void addToServerGroup(DeploymentRecord record, boolean enable, Set<ServerGroupSelection> selectedGroups)
+    public void onAssignToServerGroup(DeploymentRecord record, boolean enable, Set<ServerGroupSelection> selectedGroups)
     {
         throw new UnsupportedOperationException("Not supported in standalone mode.");
     }
@@ -200,11 +197,11 @@ public class DeploymentBrowserPresenter
     @Override
     public List<ServerGroupRecord> getPossibleGroupAssignments(DeploymentRecord record)
     {
-        return Collections.EMPTY_LIST;
+        return Collections.emptyList();
     }
 
     @Override
-    public void promptForGroupSelections(DeploymentRecord record)
+    public void launchGroupSelectionWizard(DeploymentRecord record)
     {
         throw new UnsupportedOperationException("Not supported in standalone mode.");
     }
@@ -226,19 +223,7 @@ public class DeploymentBrowserPresenter
         window = new DefaultWindow(Console.MESSAGES.createTitle("Deployment"));
         window.setWidth(480);
         window.setHeight(450);
-        window.addCloseHandler(new CloseHandler<PopupPanel>()
-        {
-            @Override
-            public void onClose(CloseEvent<PopupPanel> event)
-            {
-
-            }
-        });
-
-        window.trapWidget(
-                new NewDeploymentWizard(this, window, deploymentInfo, isUpdate, record).asWidget()
-        );
-
+        window.trapWidget(new NewDeploymentWizard(this, window, isUpdate, record).asWidget());
         window.setGlassEnabled(true);
         window.center();
     }
@@ -276,8 +261,7 @@ public class DeploymentBrowserPresenter
                 {
                     Console.info(Console.MESSAGES.added("Deployment " + entity.getName()));
                 }
-
-                deploymentInfo.refreshView();
+                refreshDeployments();
             }
         });
     }

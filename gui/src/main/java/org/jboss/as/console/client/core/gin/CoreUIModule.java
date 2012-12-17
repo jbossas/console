@@ -60,8 +60,8 @@ import org.jboss.as.console.client.domain.DomainPresenter;
 import org.jboss.as.console.client.domain.DomainView;
 import org.jboss.as.console.client.domain.groups.ServerGroupPresenter;
 import org.jboss.as.console.client.domain.groups.ServerGroupView;
-import org.jboss.as.console.client.domain.groups.deployment.ContentRepositoryView;
-import org.jboss.as.console.client.domain.groups.deployment.DeploymentsPresenter;
+import org.jboss.as.console.client.domain.groups.deployment.DomainDeploymentPresenter;
+import org.jboss.as.console.client.domain.groups.deployment.DomainDeploymentView;
 import org.jboss.as.console.client.domain.hosts.HostMgmtPresenter;
 import org.jboss.as.console.client.domain.hosts.HostMgmtView;
 import org.jboss.as.console.client.domain.hosts.HostVMMetricPresenter;
@@ -92,7 +92,6 @@ import org.jboss.as.console.client.plugins.RuntimeLHSItemExtensionRegistryImpl;
 import org.jboss.as.console.client.plugins.SubsystemRegistry;
 import org.jboss.as.console.client.plugins.SubsystemRegistryImpl;
 import org.jboss.as.console.client.shared.deployment.DeploymentStore;
-import org.jboss.as.console.client.shared.deployment.DeploymentStoreImpl;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.HandlerMapping;
 import org.jboss.as.console.client.shared.dispatch.InvocationMetrics;
@@ -209,8 +208,8 @@ import org.jboss.as.console.client.standalone.ServerMgmtApplicationPresenter;
 import org.jboss.as.console.client.standalone.ServerMgmtApplicationView;
 import org.jboss.as.console.client.standalone.StandaloneServerPresenter;
 import org.jboss.as.console.client.standalone.StandaloneServerView;
-import org.jboss.as.console.client.standalone.deployment.DeploymentBrowserPresenter;
-import org.jboss.as.console.client.standalone.deployment.DeploymentBrowserView;
+import org.jboss.as.console.client.standalone.deployment.StandaloneDeploymentPresenter;
+import org.jboss.as.console.client.standalone.deployment.StandaloneDeploymentView;
 import org.jboss.as.console.client.standalone.runtime.StandaloneRuntimePresenter;
 import org.jboss.as.console.client.standalone.runtime.StandaloneRuntimeView;
 import org.jboss.as.console.client.tools.BrowserPresenter;
@@ -343,12 +342,12 @@ public class CoreUIModule extends AbstractPresenterModule {
                 ServerMgmtApplicationView.class,
                 ServerMgmtApplicationPresenter.ServerManagementProxy.class);
 
-        bindPresenter(DeploymentBrowserPresenter.class,
-                DeploymentBrowserPresenter.MyView.class,
-                DeploymentBrowserView.class,
-                DeploymentBrowserPresenter.MyProxy.class);
+        bindPresenter(StandaloneDeploymentPresenter.class,
+                StandaloneDeploymentPresenter.MyView.class,
+                StandaloneDeploymentView.class,
+                StandaloneDeploymentPresenter.MyProxy.class);
 
-        bind(DeploymentStore.class).to(DeploymentStoreImpl.class).in(Singleton.class);
+        bind(DeploymentStore.class).in(Singleton.class);
 
         // ------------------------------------------------
         // domain management application
@@ -410,10 +409,10 @@ public class CoreUIModule extends AbstractPresenterModule {
         bind(HostInformationStore.class).to(HostInfoStoreImpl.class).in(Singleton.class);
 
         // domain/domain-deployments
-        bindPresenter(DeploymentsPresenter.class,
-                DeploymentsPresenter.MyView.class,
-                ContentRepositoryView.class,
-                DeploymentsPresenter.MyProxy.class);
+        bindPresenter(DomainDeploymentPresenter.class,
+                DomainDeploymentPresenter.MyView.class,
+                DomainDeploymentView.class,
+                DomainDeploymentPresenter.MyProxy.class);
 
 
         bindPresenter(HostMgmtPresenter.class,

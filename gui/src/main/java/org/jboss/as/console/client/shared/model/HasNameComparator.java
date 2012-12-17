@@ -16,20 +16,36 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.as.console.client.shared.deployment.model;
+package org.jboss.as.console.client.shared.model;
 
 import com.google.gwt.user.client.ui.HasName;
-import org.jboss.dmr.client.ModelNode;
+
+import java.util.Comparator;
 
 /**
  * @author Harald Pehl
- * @date 11/28/2012
+ * @date 12/12/2012
  */
-public interface DeploymentData extends HasName
+public class HasNameComparator<T extends HasName> implements Comparator<T>
 {
-    DeploymentDataType getType();
-    void setType(DeploymentDataType type);
-
-    ModelNode getAddress();
-    void setAddress(ModelNode address);
+    @Override
+    public int compare(final T left, final T right)
+    {
+        if (left == null && right == null)
+        {
+            return 0;
+        }
+        else if (left == null)
+        {
+            return -1;
+        }
+        else if (right == null)
+        {
+            return 1;
+        }
+        else
+        {
+            return left.getName().compareTo(right.getName());
+        }
+    }
 }

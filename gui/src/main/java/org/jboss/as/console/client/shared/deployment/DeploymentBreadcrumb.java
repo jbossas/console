@@ -77,6 +77,14 @@ public class DeploymentBreadcrumb extends Composite
         }
     }
 
+    public void empty()
+    {
+        panel.clear();
+        Label label = new InlineLabel("Deployment");
+        label.setStyleName("console-DeploymentBreadcrumb-label");
+        panel.add(label);
+    }
+
     private void collectTypes(DeploymentRecord deployment, List<String> types)
     {
         if (deployment.isSubdeployment())

@@ -92,7 +92,7 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
                 final ServerGroupRecord serverGroup = getSelectionModel().getSelectedObject();
                 Feedback.confirm(
                         Console.MESSAGES.deleteServerGroup(),
-                        Console.MESSAGES.deleteServerGroupConfirm(serverGroup.getGroupName()),
+                        Console.MESSAGES.deleteServerGroupConfirm(serverGroup.getName()),
                         new Feedback.ConfirmationHandler() {
                             @Override
                             public void onConfirmation(boolean isConfirmed) {
@@ -123,7 +123,7 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
         serverGroupTable = new DefaultCellTable<ServerGroupRecord>(8, new ProvidesKey<ServerGroupRecord>() {
             @Override
             public Object getKey(ServerGroupRecord item) {
-                return item.getGroupName()+"_"+item.getProfileName();
+                return item.getName()+"_"+item.getProfileName();
             }
         });
         serverGroupProvider = new ListDataProvider<ServerGroupRecord>();
@@ -133,7 +133,7 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
         Column<ServerGroupRecord, String> nameColumn = new Column<ServerGroupRecord, String>(new TextCell()) {
             @Override
             public String getValue(ServerGroupRecord object) {
-                return object.getGroupName();
+                return object.getName();
             }
         };
 
@@ -215,7 +215,7 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
         /*boolean matchedPreselection = false;
         for(ServerGroupRecord group : groups)
         {
-            if(group.getGroupName().equals(preselection))
+            if(group.getName().equals(preselection))
             {
                 serverGroupTable.getSelectionModel().setSelected(group, true);
                 matchedPreselection = true;
@@ -240,12 +240,12 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
 
     @Override
     public void setJvm(ServerGroupRecord group, Jvm jvm) {
-        jvmEditor.setSelectedRecord(group.getGroupName(), jvm);
+        jvmEditor.setSelectedRecord(group.getName(), jvm);
     }
 
     @Override
     public void setProperties(ServerGroupRecord group, List<PropertyRecord> properties) {
-        propertyEditor.setProperties(group.getGroupName(), properties);
+        propertyEditor.setProperties(group.getName(), properties);
     }
 
     @Override

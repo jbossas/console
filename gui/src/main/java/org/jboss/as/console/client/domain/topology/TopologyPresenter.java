@@ -18,10 +18,8 @@
  */
 package org.jboss.as.console.client.domain.topology;
 
-import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
-import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Random;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.TextArea;
@@ -40,7 +38,6 @@ import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.DomainGateKeeper;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.core.SuspendableView;
-import org.jboss.as.console.client.domain.model.Host;
 import org.jboss.as.console.client.domain.model.HostInformationStore;
 import org.jboss.as.console.client.domain.model.Server;
 import org.jboss.as.console.client.domain.model.ServerGroupStore;
@@ -52,16 +49,12 @@ import org.jboss.as.console.client.domain.model.impl.ServerInstanceLifecycleCall
 import org.jboss.as.console.client.domain.runtime.DomainRuntimePresenter;
 import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
-import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
-import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.as.console.client.shared.runtime.ext.Extension;
 import org.jboss.as.console.client.shared.runtime.ext.ExtensionManager;
 import org.jboss.as.console.client.shared.runtime.ext.LoadExtensionCmd;
 import org.jboss.as.console.client.shared.state.StaleGlobalModel;
 import org.jboss.ballroom.client.widgets.window.DefaultWindow;
-import org.jboss.dmr.client.ModelNode;
 
-import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -72,7 +65,6 @@ import java.util.TreeSet;
 
 import static org.jboss.as.console.client.domain.model.ServerFlag.RELOAD_REQUIRED;
 import static org.jboss.as.console.client.domain.model.ServerFlag.RESTART_REQUIRED;
-import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 
 /**
  * TODO Remove fake code when in production
@@ -84,8 +76,6 @@ public class TopologyPresenter extends
         Presenter<TopologyPresenter.MyView, TopologyPresenter.MyProxy>
         implements ExtensionManager
 {
-    private LoadExtensionCmd loadExtensionCmd;
-    private final DispatchAsync dispatcher;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.Topology)
@@ -99,7 +89,6 @@ public class TopologyPresenter extends
     {
         void setPresenter(TopologyPresenter presenter);
         void updateHosts(final SortedSet<ServerGroup> groups, final int hostIndex);
-
         void setExtensions(List<Extension> extensions);
     }
 
@@ -111,6 +100,7 @@ public class TopologyPresenter extends
     private final HostInformationStore hostInfoStore;
     private final BeanFactory beanFactory;
     private final Map<String,ServerGroup> serverGroups;
+    private LoadExtensionCmd loadExtensionCmd;
     private boolean fake;
     private int hostIndex;
 
@@ -128,12 +118,9 @@ public class TopologyPresenter extends
         this.beanFactory = beanFactory;
 
         this.loadExtensionCmd = new LoadExtensionCmd(dispatcher, beanFactory);
-
         this.serverGroups = new HashMap<String, ServerGroup>();
         this.fake = false;
         this.hostIndex = 0;
-
-        this.dispatcher = dispatcher;
     }
 
 
@@ -181,6 +168,15 @@ public class TopologyPresenter extends
         }
         else
         {
+            hostInfoStore.loadHostsAndServerInstances(new SimpleCallback<List<HostInfo>>()
+            {
+                @Override
+                public void onSuccess(final List<HostInfo> result)
+                {
+                    getView().updateHosts(deriveGroups(result), hostIndex);
+                }
+            });
+/*
             hostInfoStore.getHosts(new SimpleCallback<List<Host>>()
             {
                 @Override
@@ -247,6 +243,7 @@ public class TopologyPresenter extends
                     });
                 }
             });
+*/
         }
     }
 

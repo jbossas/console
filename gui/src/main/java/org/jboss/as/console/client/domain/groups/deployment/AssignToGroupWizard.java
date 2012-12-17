@@ -32,13 +32,13 @@ import java.util.Set;
  */
 public class AssignToGroupWizard {
 
-    private DeploymentsPresenter presenter;
+    private DomainDeploymentPresenter presenter;
     private ListDataProvider<DeploymentRecord> dataProvider;
     private List<DeploymentRecord> availableDeployments;
     private ServerGroupRecord serverGroup;
 
     public AssignToGroupWizard(
-            DeploymentsPresenter presenter,
+            DomainDeploymentPresenter presenter,
             List<DeploymentRecord> availableDeployments,
             ServerGroupRecord serverGroup) {
         this.presenter = presenter;
@@ -104,7 +104,7 @@ public class AssignToGroupWizard {
         DeploymentFilter filter = new DeploymentFilter(dataProvider);
         toolStrip.addToolWidget(filter.asWidget());
 
-        layout.add(new ContentHeaderLabel("Server Group: "+serverGroup.getGroupName()));
+        layout.add(new ContentHeaderLabel("Server Group: "+serverGroup.getName()));
         layout.add(new ContentGroupLabel("Available Deployment Content"));
         layout.add(toolStrip.asWidget());
         layout.add(table.asWidget());

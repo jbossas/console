@@ -128,10 +128,7 @@ public class HelpSystem {
                         descriptionModel = payload;
 
                     matchSubElements(descriptionModel, fieldNames, fields);
-
-
                     callback.onSuccess(fields);
-
                 }
             }
 
@@ -230,7 +227,10 @@ public class HelpSystem {
                         if(lookup.getDetypedName().equals(childName))
                         {
                             FieldDesc desc = new FieldDesc(lookup.getJavaName(), value.get("description").asString());
-                            desc.setSupportExpressions(value.get("expressions-allowed").asBoolean());
+                            if(value.hasDefined("expressions-allowed"))
+                            {
+                                desc.setSupportExpressions(value.get("expressions-allowed").asBoolean());
+                            }
                             if(!fields.contains(desc))
                                 fields.add(desc);
                         }

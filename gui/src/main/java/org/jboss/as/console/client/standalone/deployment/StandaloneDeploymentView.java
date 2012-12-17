@@ -44,15 +44,15 @@ import java.util.List;
  * @author Harald Pehl
  * @date 3/14/11
  */
-public class DeploymentBrowserView extends SuspendableViewImpl implements DeploymentBrowserPresenter.MyView
+public class StandaloneDeploymentView extends SuspendableViewImpl implements StandaloneDeploymentPresenter.MyView
 {
     private DeploymentStore deploymentStore;
-    private DeploymentBrowserPresenter presenter;
+    private StandaloneDeploymentPresenter presenter;
     private DeploymentBrowser deploymentBrowser;
 
 
     @Inject
-    public DeploymentBrowserView(final DeploymentStore deploymentStore)
+    public StandaloneDeploymentView(final DeploymentStore deploymentStore)
     {
         this.deploymentStore = deploymentStore;
     }
@@ -85,7 +85,7 @@ public class DeploymentBrowserView extends SuspendableViewImpl implements Deploy
                         if (selection != null)
                         {
                             new DeploymentCommandDelegate(
-                                    DeploymentBrowserView.this.presenter,
+                                    StandaloneDeploymentView.this.presenter,
                                     DeploymentCommand.REMOVE_FROM_STANDALONE).execute(
                                     selection
                             );
@@ -102,14 +102,14 @@ public class DeploymentBrowserView extends SuspendableViewImpl implements Deploy
                         if (selection != null)
                         {
                             new DeploymentCommandDelegate(
-                                    DeploymentBrowserView.this.presenter,
+                                    StandaloneDeploymentView.this.presenter,
                                     DeploymentCommand.ENABLE_DISABLE).execute(
                                     selection
                             );
                         }
                     }
                 }));
-        toolStrip.addToolButtonRight(new ToolButton("Update", new
+        toolStrip.addToolButtonRight(new ToolButton("Replace", new
                 ClickHandler()
                 {
                     @Override
@@ -119,7 +119,7 @@ public class DeploymentBrowserView extends SuspendableViewImpl implements Deploy
                         if (selection != null)
                         {
                             new DeploymentCommandDelegate(
-                                    DeploymentBrowserView.this.presenter,
+                                    StandaloneDeploymentView.this.presenter,
                                     DeploymentCommand.UPDATE_CONTENT).execute(
                                     selection
                             );
@@ -142,7 +142,7 @@ public class DeploymentBrowserView extends SuspendableViewImpl implements Deploy
     }
 
     @Override
-    public void setPresenter(DeploymentBrowserPresenter presenter)
+    public void setPresenter(StandaloneDeploymentPresenter presenter)
     {
         this.presenter = presenter;
     }

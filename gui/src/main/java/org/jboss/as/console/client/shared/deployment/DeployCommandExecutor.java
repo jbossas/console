@@ -67,14 +67,14 @@ public interface DeployCommandExecutor
      *
      * @throws UnsupportedOperationException if in standalone mode.
      */
-    public void addToServerGroup(DeploymentRecord record, boolean enable, Set<ServerGroupSelection> selectedGroups);
+    public void onAssignToServerGroup(DeploymentRecord record, boolean enable, Set<ServerGroupSelection> selectedGroups);
 
     /**
      * Remove a deployment from the server.
      *
      * @param record The deployment.
      */
-    public void removeContent(DeploymentRecord record);
+    public void onRemoveContent(DeploymentRecord record);
 
     /**
      * Get the server groups that a deployment might be assigned to.  This returns all
@@ -92,7 +92,9 @@ public interface DeployCommandExecutor
      *
      * @param record The deployment record.
      */
-    public void promptForGroupSelections(DeploymentRecord record);
+    public void launchGroupSelectionWizard(DeploymentRecord record);
 
     public void onCreateUnmanaged(final DeploymentRecord entity);
+
+    public void refreshDeployments();
 }

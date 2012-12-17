@@ -30,10 +30,6 @@ public interface DeploymentWebSubsystem extends DeploymentSubsystem
     String getContextRoot();
     void setContextRoot(String contextRoot);
 
-    @Binding(detypedName = "max-active-sessions")
-    int getMaxActiveSessions();
-    void setMaxActiveSessions(int maxActiveSessions);
-
     @Binding(detypedName = "virtual-host")
     String getVirtualHost();
     void setVirtualHost(String virtualHost);

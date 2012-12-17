@@ -19,9 +19,13 @@
 
 package org.jboss.as.console.client.shared.deployment.model;
 
+import org.jboss.as.console.client.domain.model.ServerInstance;
 import org.jboss.as.console.client.widgets.forms.Binding;
 
 /**
+ * TODO Split up into different classes: DeploymentContent, GroupDeployment, ServerDeployment
+ * TODO Consolidate the different 'context' data like server, group and address
+ *
  * @author Heiko Braun
  * @date 1/31/11
  */
@@ -79,4 +83,8 @@ public interface DeploymentRecord extends DeploymentData
     @Binding(skip = true)
     boolean isHasSubdeployments();
     void setHasSubdeployments(boolean hasSubdeployments);
+
+    @Binding(skip = true)
+    ServerInstance getServer();
+    void setServer(ServerInstance server);
 }

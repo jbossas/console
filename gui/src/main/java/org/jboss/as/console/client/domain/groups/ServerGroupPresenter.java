@@ -210,9 +210,9 @@ public class ServerGroupPresenter
             @Override
             public void onSuccess(Boolean wasSuccessful) {
                 if (wasSuccessful) {
-                    Console.info(Console.MESSAGES.deleted(group.getGroupName()));
+                    Console.info(Console.MESSAGES.deleted(group.getName()));
                 } else {
-                    Console.error(Console.MESSAGES.deletionFailed(group.getGroupName()));
+                    Console.error(Console.MESSAGES.deletionFailed(group.getName()));
                 }
 
                 staleModel();
@@ -232,11 +232,11 @@ public class ServerGroupPresenter
 
                 if (success) {
 
-                    Console.info(Console.MESSAGES.added(newGroup.getGroupName()));
+                    Console.info(Console.MESSAGES.added(newGroup.getName()));
                     loadServerGroups();
 
                 } else {
-                    Console.error(Console.MESSAGES.addingFailed(newGroup.getGroupName()));
+                    Console.error(Console.MESSAGES.addingFailed(newGroup.getName()));
                 }
 
                 staleModel();
@@ -247,17 +247,17 @@ public class ServerGroupPresenter
 
     public void onSaveChanges(final ServerGroupRecord group, Map<String,Object> changeset) {
 
-        serverGroupStore.save(group.getGroupName(), changeset, new SimpleCallback<Boolean>() {
+        serverGroupStore.save(group.getName(), changeset, new SimpleCallback<Boolean>() {
 
             @Override
             public void onSuccess(Boolean wasSuccessful) {
                 if(wasSuccessful)
                 {
-                    Console.info(Console.MESSAGES.modified(group.getGroupName()));
+                    Console.info(Console.MESSAGES.modified(group.getName()));
                 }
                 else
                 {
-                    Console.info(Console.MESSAGES.modificationFailed(group.getGroupName()));
+                    Console.info(Console.MESSAGES.modificationFailed(group.getName()));
                 }
 
                 loadServerGroups();
@@ -432,13 +432,13 @@ public class ServerGroupPresenter
 
         final ModelNode operation = new ModelNode();
         operation.get(OP).set(READ_RESOURCE_OPERATION);
-        operation.get(ADDRESS).add("server-group", orig.getGroupName());
+        operation.get(ADDRESS).add("server-group", orig.getName());
         operation.get(RECURSIVE).set(true);
 
         dispatcher.execute(new DMRAction(operation, false), new AsyncCallback<DMRResponse>() {
             @Override
             public void onFailure(Throwable caught) {
-                Console.error("Failed to read server-group: "+orig.getGroupName(), caught.getMessage());
+                Console.error("Failed to read server-group: "+orig.getName(), caught.getMessage());
             }
 
             @Override
@@ -448,7 +448,7 @@ public class ServerGroupPresenter
 
                 if(response.isFailure())
                 {
-                    Console.error("Failed to read server-group: "+orig.getGroupName(), response.getFailureDescription());
+                    Console.error("Failed to read server-group: "+orig.getName(), response.getFailureDescription());
                 }
                 else
                 {
@@ -465,7 +465,7 @@ public class ServerGroupPresenter
 
                     final ModelNode rootResourceOp = new ModelNode();
                     rootResourceOp.get(OP).set(ADD);
-                    rootResourceOp.get(ADDRESS).add("server-group", newGroup.getGroupName());
+                    rootResourceOp.get(ADDRESS).add("server-group", newGroup.getName());
 
                     steps.add(rootResourceOp);
 
@@ -484,7 +484,7 @@ public class ServerGroupPresenter
                             }
                             else
                             {
-                                Console.info("Successfully copied server-group '"+newGroup.getGroupName()+"'");
+                                Console.info("Successfully copied server-group '"+newGroup.getName()+"'");
                             }
 
                             loadServerGroups();

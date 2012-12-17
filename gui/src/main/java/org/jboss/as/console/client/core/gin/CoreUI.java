@@ -43,7 +43,7 @@ import org.jboss.as.console.client.core.settings.SettingsPresenter;
 import org.jboss.as.console.client.core.settings.SettingsPresenterWidget;
 import org.jboss.as.console.client.domain.DomainPresenter;
 import org.jboss.as.console.client.domain.groups.ServerGroupPresenter;
-import org.jboss.as.console.client.domain.groups.deployment.DeploymentsPresenter;
+import org.jboss.as.console.client.domain.groups.deployment.DomainDeploymentPresenter;
 import org.jboss.as.console.client.domain.hosts.HostMgmtPresenter;
 import org.jboss.as.console.client.domain.hosts.HostVMMetricPresenter;
 import org.jboss.as.console.client.domain.hosts.ServerConfigPresenter;
@@ -124,7 +124,7 @@ import org.jboss.as.console.client.shared.subsys.ws.StandaloneEndpointStrategy;
 import org.jboss.as.console.client.shared.subsys.ws.WebServicePresenter;
 import org.jboss.as.console.client.standalone.ServerMgmtApplicationPresenter;
 import org.jboss.as.console.client.standalone.StandaloneServerPresenter;
-import org.jboss.as.console.client.standalone.deployment.DeploymentBrowserPresenter;
+import org.jboss.as.console.client.standalone.deployment.StandaloneDeploymentPresenter;
 import org.jboss.as.console.client.standalone.runtime.StandaloneRuntimePresenter;
 import org.jboss.as.console.client.standalone.runtime.VMMetricsPresenter;
 import org.jboss.as.console.client.tools.BrowserPresenter;
@@ -209,7 +209,7 @@ public interface CoreUI {
 
     // ----------------------------------------------------------------------
     AsyncProvider<ServerMgmtApplicationPresenter> getServerManagementAppPresenter();
-    AsyncProvider<DeploymentBrowserPresenter> getDeploymentBrowserPresenter();
+    AsyncProvider<StandaloneDeploymentPresenter> getDeploymentBrowserPresenter();
 
     DeploymentStore getDeploymentStore();
 
@@ -230,7 +230,7 @@ public interface CoreUI {
     HostInformationStore getHostInfoStore();
 
 
-    AsyncProvider<DeploymentsPresenter> getDeploymentsPresenter();
+    AsyncProvider<DomainDeploymentPresenter> getDeploymentsPresenter();
 
     AsyncProvider<HostMgmtPresenter> getHostMgmtPresenter();
     AsyncProvider<ServerConfigPresenter> getServerPresenter();

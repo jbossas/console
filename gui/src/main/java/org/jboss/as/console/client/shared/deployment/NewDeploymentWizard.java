@@ -52,7 +52,6 @@ public class NewDeploymentWizard  {
     private DeploymentStep2 step2;
 
     private DefaultWindow window;
-    private DeploymentViewRefresher refresher;
     private boolean isUpdate;
     private DeploymentRecord oldDeployment;
 
@@ -64,21 +63,19 @@ public class NewDeploymentWizard  {
      *
      * @param presenter
      * @param window
-     * @param refresher
      * @param isUpdate Are we updating content that is already in the repository?
      * @param oldDeployment The original deployment.  If isUpdate == false, this should be null.
      */
-    public NewDeploymentWizard(DeployCommandExecutor presenter, DefaultWindow window, DeploymentViewRefresher refresher, boolean isUpdate, DeploymentRecord oldDeployment) {
+    public NewDeploymentWizard(DeployCommandExecutor presenter, DefaultWindow window, boolean isUpdate, DeploymentRecord oldDeployment) {
         this.presenter = presenter;
         this.window = window;
-        this.refresher = refresher;
         this.isUpdate = isUpdate;
         this.oldDeployment = oldDeployment;
 
         deck = new DeckPanel();
 
         step1 = new DeploymentStep1(this, window);
-        step2 = new DeploymentStep2(this, window, refresher, isUpdate);
+        step2 = new DeploymentStep2(this, window);
 
         deck.add(step1.asWidget());
         deck.add(step2.asWidget());
@@ -188,7 +185,7 @@ public class NewDeploymentWizard  {
 
                     loading.hide();
                     window.hide();
-                    refresher.refreshView();
+                    presenter.refreshDeployments();
 
                     String operation = Console.CONSTANTS.common_label_addContent();
                     if (isUpdate) operation = Console.CONSTANTS.common_label_updateContent();

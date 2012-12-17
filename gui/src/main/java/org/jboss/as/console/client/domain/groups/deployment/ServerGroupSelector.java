@@ -58,7 +58,7 @@ import java.util.Set;
 public class ServerGroupSelector {
 
     private List<ServerGroupSelection> selections;
-    private DeploymentsPresenter presenter;
+    private DomainDeploymentPresenter presenter;
     private DeploymentRecord deployment;
     private MultiSelectionModel<ServerGroupSelection> selectionModel;
     private HTML errorMessages;
@@ -69,7 +69,7 @@ public class ServerGroupSelector {
      * @param presenter The presenter that will get the request for server group assignment.
      * @param deployment The deployment to be assigned to one or more server groups.
      */
-    public ServerGroupSelector(DeploymentsPresenter presenter, DeploymentRecord deployment) {
+    public ServerGroupSelector(DomainDeploymentPresenter presenter, DeploymentRecord deployment) {
         this.presenter = presenter;
         this.deployment = deployment;
 
@@ -222,7 +222,7 @@ public class ServerGroupSelector {
                 return;
             }
 
-            ServerGroupSelector.this.presenter.addToServerGroup(deployment, enableBox.getValue(), groupsSelected);
+            ServerGroupSelector.this.presenter.onAssignToServerGroup(deployment, enableBox.getValue(), groupsSelected);
             window.hide();
         }
     }

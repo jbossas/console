@@ -23,16 +23,21 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.SingleSelectionModel;
 import org.jboss.as.console.client.Console;
+import org.jboss.as.console.client.domain.model.HostInformationStore;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
+import org.jboss.as.console.client.domain.model.ServerInstance;
+import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.shared.deployment.DeploymentBrowser;
 import org.jboss.as.console.client.shared.deployment.DeploymentDataKeyProvider;
 import org.jboss.as.console.client.shared.deployment.DeploymentStore;
 import org.jboss.as.console.client.shared.deployment.model.DeploymentRecord;
 import org.jboss.as.console.client.shared.viewframework.builder.SimpleLayout;
+import org.jboss.as.console.client.widgets.ContentDescription;
 import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
 import org.jboss.ballroom.client.widgets.tools.ToolStrip;
 
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -41,17 +46,21 @@ import java.util.List;
  */
 public class ServerGroupDeploymentBrowser
 {
-    private final DeploymentsPresenter presenter;
+    private final DomainDeploymentPresenter presenter;
     private final DeploymentStore deploymentStore;
+    private final HostInformationStore hostInfoStore;
     private ContentHeaderLabel header;
-    private ServerGroupRecord currentSelection;
+    private ContentDescription description;
+    private ServerGroupRecord currentServerGroup;
     private DeploymentBrowser deploymentBrowser;
 
 
-    public ServerGroupDeploymentBrowser(final DeploymentsPresenter presenter, final DeploymentStore deploymentStore)
+    public ServerGroupDeploymentBrowser(final DomainDeploymentPresenter presenter,
+            final DeploymentStore deploymentStore, final HostInformationStore hostInfoStore)
     {
         this.presenter = presenter;
         this.deploymentStore = deploymentStore;
+        this.hostInfoStore = hostInfoStore;
     }
 
     Widget asWidget()
@@ -67,17 +76,17 @@ public class ServerGroupDeploymentBrowser
                     @Override
                     public void onClick(ClickEvent clickEvent)
                     {
-
-                        presenter.onAssignDeploymentToGroup(currentSelection);
+                        presenter.launchAssignDeploymentToGroupWizard(currentServerGroup);
                     }
                 }));
         tools.addToolButtonRight(new ToolButton(Console.CONSTANTS.common_label_remove(), new
+
+
                 ClickHandler()
                 {
                     @Override
                     public void onClick(ClickEvent clickEvent)
                     {
-
                         DeploymentRecord selection = selectionModel.getSelectedObject();
                         if (selection != null)
                         {
@@ -86,6 +95,8 @@ public class ServerGroupDeploymentBrowser
                     }
                 }));
         tools.addToolButtonRight(new ToolButton(Console.CONSTANTS.common_label_enOrDisable(), new
+
+
                 ClickHandler()
                 {
                     @Override
@@ -94,9 +105,7 @@ public class ServerGroupDeploymentBrowser
                         DeploymentRecord selection = selectionModel.getSelectedObject();
                         if (selection != null)
                         {
-
                             presenter.onDisableDeploymentInGroup(selection);
-
                         }
                     }
                 }));
@@ -104,10 +113,12 @@ public class ServerGroupDeploymentBrowser
         deploymentBrowser = new DeploymentBrowser(deploymentStore, selectionModel);
 
         header = new ContentHeaderLabel();
+        description = new ContentDescription("Deployments assigned to this server group.");
         SimpleLayout layout = new SimpleLayout()
                 .setPlain(true)
                 .setHeadlineWidget(header)
-                .setDescription("Deployments assigned to this server group.")
+                .setDescription("")
+                .addContent("description", description)
                 .addContent("tools", tools)
                 .addContent("browser", deploymentBrowser.getCellBrowser().asWidget())
                 .addContent("breadcrumb", deploymentBrowser.getBreadcrumb())
@@ -115,19 +126,65 @@ public class ServerGroupDeploymentBrowser
         return layout.build();
     }
 
-    public void setGroup(ServerGroupRecord selection)
+    public void updateGroup(final ServerGroupRecord serverGroup, final List<DeploymentRecord> deployments)
     {
-        this.currentSelection = selection;
-        header.setText("Deployments in group: " + selection.getGroupName());
-    }
-
-    public void updateDeployments(List<DeploymentRecord> deployments)
-    {
+        currentServerGroup = serverGroup;
+        header.setText("Deployments in group: " + serverGroup.getName());
+        description.setText("Deployments assigned to this server group.");
         deploymentBrowser.updateDeployments(deployments);
-    }
 
-    public ServerGroupRecord getCurrentSelection()
-    {
-        return currentSelection;
+        boolean anyEnabled = false;
+        for (Iterator<DeploymentRecord> iterator = deployments.iterator(); iterator.hasNext() && !anyEnabled; )
+        {
+            anyEnabled = iterator.next().isEnabled();
+        }
+        if (anyEnabled)
+        {
+            hostInfoStore.loadServerInstances(currentServerGroup.getName(), new SimpleCallback<List<ServerInstance>>()
+            {
+                @Override
+                public void onSuccess(final List<ServerInstance> result)
+                {
+                    ServerInstance hit = null;
+                    for (Iterator<ServerInstance> iterator = result.iterator(); iterator.hasNext() && hit == null; )
+                    {
+                        hit = matchingServer(iterator.next());
+                    }
+                    if (hit != null)
+                    {
+                        // Try to get real deployment data from this server
+                        final ServerInstance finalHit = hit;
+                        deploymentStore.loadDeployments(finalHit, new SimpleCallback<List<DeploymentRecord>>()
+                        {
+                            @Override
+                            public void onSuccess(final List<DeploymentRecord> result)
+                            {
+                                deploymentBrowser.updateDeployments(result);
+                                if (!result.isEmpty())
+                                {
+                                    description.setText(
+                                            "Deployments assigned to this server group (taken from server " + finalHit
+                                                    .getName() + ").");
+                                }
+                            }
+                        });
+                    }
+                    else
+                    {
+                        Console.warning("No server is running in this group. Cannot look into deployments.");
+                    }
+                }
+
+                ServerInstance matchingServer(ServerInstance server)
+                {
+                    if (server != null && server.isRunning() && server.getGroup()
+                            .equals(currentServerGroup.getName()))
+                    {
+                        return server;
+                    }
+                    return null;
+                }
+            });
+        }
     }
 }

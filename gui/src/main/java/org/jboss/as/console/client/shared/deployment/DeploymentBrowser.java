@@ -20,6 +20,7 @@ package org.jboss.as.console.client.shared.deployment;
 
 import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.SingleSelectionModel;
 import com.google.web.bindery.autobean.shared.AutoBean;
@@ -34,14 +35,15 @@ import org.jboss.as.console.client.shared.deployment.model.DeploymentJpaSubsyste
 import org.jboss.as.console.client.shared.deployment.model.DeploymentRecord;
 import org.jboss.as.console.client.shared.deployment.model.DeploymentWebSubsystem;
 import org.jboss.as.console.client.shared.deployment.model.DeploymentWebserviceSubsystem;
+import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.widgets.browser.DefaultCellBrowser;
 import org.jboss.ballroom.client.widgets.forms.CheckBoxItem;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.FormItem;
 import org.jboss.ballroom.client.widgets.forms.ListItem;
-import org.jboss.ballroom.client.widgets.forms.NumberBoxItem;
 import org.jboss.ballroom.client.widgets.forms.TextAreaItem;
 import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
+import org.jboss.dmr.client.ModelNode;
 
 import java.util.HashMap;
 import java.util.List;
@@ -53,25 +55,24 @@ import java.util.Map;
  */
 public class DeploymentBrowser
 {
-    private final DeploymentStore deploymentStore;
-    private final SingleSelectionModel<DeploymentRecord> selectionModel;
     private final DeploymentTreeModel deploymentTreeModel;
+    private final SingleSelectionModel<DeploymentRecord> selectionModel;
     private final DefaultCellBrowser cellBrowser;
     private final DeploymentBreadcrumb breadcrumb;
     private final DeckPanel contextPanel;
     private final Map<String, Form<DeploymentData>> forms;
     private final Map<String, Integer> indexes;
+    private DeploymentBrowser.HelpCallback helpCallback;
 
 
-    public DeploymentBrowser(final DeploymentStore deploymentStore, final SingleSelectionModel<DeploymentRecord> selectionModel)
+    public DeploymentBrowser(final DeploymentStore deploymentStore,
+            final SingleSelectionModel<DeploymentRecord> selectionModel)
     {
-        this.deploymentStore = deploymentStore;
-        this.selectionModel = selectionModel;
-
         forms = new HashMap<String, Form<DeploymentData>>();
         indexes = new HashMap<String, Integer>();
 
-        deploymentTreeModel = new DeploymentTreeModel(this, deploymentStore, selectionModel);
+        this.selectionModel = selectionModel;
+        deploymentTreeModel = new DeploymentTreeModel(this, deploymentStore, this.selectionModel);
         cellBrowser = new DefaultCellBrowser.Builder(deploymentTreeModel, null).build();
 
         breadcrumb = new DeploymentBreadcrumb();
@@ -79,10 +80,18 @@ public class DeploymentBrowser
 
         int index = 0;
         this.contextPanel = new DeckPanel();
+        this.helpCallback = new HelpCallback();
+
+        Label noInfo = new Label("No deployments available.");
+        noInfo.getElement().addClassName("console-DeploymentBreadcrumb-noinfo");
+        noInfo.getElement().addClassName("console-DeploymentBreadcrumb-context");
+        this.contextPanel.add(noInfo);
+        index++;
+
         addContext(DeploymentRecord.class, index++,
                 new TextAreaItem("name", "Name"),
-                new TextAreaItem("path", "Path"),
                 new TextAreaItem("runtimeName", "Runtime Name"),
+                new TextAreaItem("path", "Path"),
                 new TextBoxItem("relativeTo", "Relative To"));
 
         addContext(DeploymentEjbSubsystem.class, index++);
@@ -90,13 +99,11 @@ public class DeploymentBrowser
         addContext(DeploymentJpaSubsystem.class, index++,
                 new TextAreaItem("name", "Name"),
                 new TextBoxItem("defaultDataSource", "Default Datasource"),
-                new TextBoxItem("defaultInheritance", "Default Inheritance"),
-                new CheckBoxItem("defaultVfs", "Default VFS"));
+                new TextBoxItem("defaultInheritance", "Default Inheritance"));
 
         addContext(DeploymentWebSubsystem.class, index++,
                 new TextAreaItem("name", "Name"),
                 new TextBoxItem("contextRoot", "Context Root"),
-                new NumberBoxItem("maxActiveSessions", "Max Active Sessions"),
                 new TextBoxItem("virtualHost", "Virtual Host"));
 
         addContext(DeploymentWebserviceSubsystem.class, index++);
@@ -110,7 +117,7 @@ public class DeploymentBrowser
 
         addContext(DeployedPersistenceUnit.class, index++,
                 new TextAreaItem("name", "Name"),
-                new CheckBoxItem("enabled", "Enabled"),
+                new CheckBoxItem("enabled", "Statistics Enabled"),
                 new ListItem("entities", "Entities"));
 
         addContext(DeployedServlet.class, index++,
@@ -125,18 +132,26 @@ public class DeploymentBrowser
                 new TextBoxItem("wsdl", "WSDL"));
     }
 
+    @SuppressWarnings("unchecked")
     private <T extends DeploymentData> void addContext(Class<T> clazz, int index, FormItem... formItems)
     {
         Widget widget;
+
         String classname = clazz.getName();
-        if (formItems != null && formItems.length != 0)
+        if (formItems != null && formItems.length > 0)
         {
             Form<T> form = new Form<T>(clazz);
             form.setNumColumns(1);
             form.setEnabled(false);
             form.setFields(formItems);
+            FormHelpPanel helpPanel = new FormHelpPanel(helpCallback, form);
             forms.put(classname, (Form<DeploymentData>) form);
-            widget = form.asWidget();
+
+            VerticalPanel wrapper = new VerticalPanel();
+            wrapper.setStyleName("fill-layout-width");
+            wrapper.add(helpPanel.asWidget());
+            wrapper.add(form.asWidget());
+            widget = wrapper;
         }
         else
         {
@@ -148,22 +163,41 @@ public class DeploymentBrowser
         contextPanel.add(widget);
     }
 
+    /**
+     * Updates the list of deployments, selects the first deployment in the browser and shows the relevant context view.
+     * If the list is empty a special context view is displayed.
+     *
+     * @param deployments the deployments - can be empty, must not be null
+     */
     public void updateDeployments(List<DeploymentRecord> deployments)
     {
         deploymentTreeModel.updateDeployments(deployments);
+        if (deployments.isEmpty())
+        {
+            breadcrumb.empty();
+            contextPanel.showWidget(0);
+        }
+        else
+        {
+            DeploymentRecord firstDeployment = deployments.get(0);
+            selectionModel.setSelected(firstDeployment, true);
+            updateContext(firstDeployment);
+        }
     }
 
+    @SuppressWarnings("unchecked")
     public <T extends DeploymentData> void updateContext(final T selectedContext)
     {
         breadcrumb.setDeploymentData(selectedContext);
         AutoBean<T> autoBean = AutoBeanUtils.getAutoBean(selectedContext);
         String classname = autoBean.getType().getName();
         Integer index = indexes.get(classname);
-        if (index != null && index > -1 && index < contextPanel.getWidgetCount())
+        if (index != null && index > 0 && index < contextPanel.getWidgetCount())
         {
             Form<DeploymentData> form = forms.get(classname);
             if (form != null)
             {
+                helpCallback.setSelection(selectedContext);
                 form.edit(selectedContext);
             }
             contextPanel.showWidget(index);
@@ -183,5 +217,28 @@ public class DeploymentBrowser
     public DeckPanel getContextPanel()
     {
         return contextPanel;
+    }
+
+    class HelpCallback<T extends DeploymentData> implements FormHelpPanel.AddressCallback
+    {
+        private T selection;
+
+        @Override
+        public ModelNode getAddress()
+        {
+            ModelNode address = new ModelNode();
+            address.setEmptyList();
+            if (selection != null)
+            {
+                address = selection.getAddress();
+            }
+            return address;
+
+        }
+
+        public void setSelection(final T selection)
+        {
+            this.selection = selection;
+        }
     }
 }

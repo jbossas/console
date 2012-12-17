@@ -19,6 +19,7 @@
 
 package org.jboss.as.console.client.domain.model;
 
+import com.google.gwt.user.client.ui.HasName;
 import org.jboss.as.console.client.shared.jvm.Jvm;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.widgets.forms.Binding;
@@ -29,11 +30,8 @@ import java.util.List;
  * @author Heiko Braun
  * @date 2/11/11
  */
-public interface ServerGroupRecord {
-
-    public String getGroupName();
-    public void setGroupName(String name);
-
+public interface ServerGroupRecord extends HasName
+{
     @Binding(detypedName = "profile")
     public String getProfileName();
     public void setProfileName(String name);

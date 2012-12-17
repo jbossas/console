@@ -6,9 +6,9 @@ import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.cellview.client.Column;
 import org.jboss.as.console.client.shared.deployment.model.DeploymentRecord;
 
-public class TitleColumn extends Column<DeploymentRecord, SafeHtml> {
+public class DeploymentNameColumn extends Column<DeploymentRecord, SafeHtml> {
 
-    public TitleColumn() {
+    public DeploymentNameColumn() {
         super(new SafeHtmlCell());
     }
 

@@ -161,18 +161,19 @@ final class HtmlGenerator
         }
 
         startLinks();
+        String uniqueServerName = host + "_" + server.getName();
         if (server.isRunning())
         {
-            appendLifecycleLink(STOP_SERVER_ID + server.getName(), null, host, server.getName(), "Stop Server");
+            appendLifecycleLink(STOP_SERVER_ID + uniqueServerName, null, host, server.getName(), "Stop Server");
             if (server.getFlag() == RELOAD_REQUIRED)
             {
                 appendHtmlConstant("<br/>");
-                appendLifecycleLink(RELOAD_SERVER_ID + server.getName(), null, host, server.getName(), "Reload Server");
+                appendLifecycleLink(RELOAD_SERVER_ID + uniqueServerName, null, host, server.getName(), "Reload Server");
             }
         }
         else
         {
-            appendLifecycleLink(START_SERVER_ID + server.getName(), null, host, server.getName(), "Start Server");
+            appendLifecycleLink(START_SERVER_ID + uniqueServerName, null, host, server.getName(), "Start Server");
         }
         appendHtmlConstant("</td>");
         return this;

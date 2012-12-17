@@ -55,7 +55,7 @@ public enum DeploymentCommand {
      */
     public void execute(final DeployCommandExecutor executor, final DeploymentRecord record) {
         if  ((this == DeploymentCommand.ADD_TO_GROUP)) {
-            executor.promptForGroupSelections(record);
+            executor.launchGroupSelectionWizard(record);
             return;
         }
 
@@ -86,10 +86,10 @@ public enum DeploymentCommand {
                 executor.removeDeploymentFromGroup(record);
                 break;
             case REMOVE_FROM_DOMAIN:
-                executor.removeContent(record);
+                executor.onRemoveContent(record);
                 break;
             case REMOVE_FROM_STANDALONE:
-                executor.removeContent(record);
+                executor.onRemoveContent(record);
                 break;
         }
     }
