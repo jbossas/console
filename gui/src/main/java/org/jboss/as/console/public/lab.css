@@ -499,3 +499,17 @@ input[type="checkbox"] {
     display: inline-block;
     background-color: #FFFD99;
 }
+
+.chextbox {
+    border:none!important;
+}
+
+.chextbox-active {
+    border: 1px solid #CCCCCC!important;
+    border-radius: 3px 3px 3px 3px;
+}
+
+.chextbox:hover {
+    border: 1px solid #CCCCCC!important;
+    border-radius: 3px 3px 3px 3px;
+}

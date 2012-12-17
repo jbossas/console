@@ -10,6 +10,7 @@ import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.shared.subsys.tx.model.TransactionManager;
 import org.jboss.as.console.client.widgets.ContentDescription;
+import org.jboss.as.console.client.widgets.forms.ChextBoxItem;
 import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
 import org.jboss.ballroom.client.widgets.forms.CheckBoxItem;
 import org.jboss.ballroom.client.widgets.forms.NumberBoxItem;
@@ -56,24 +57,24 @@ public class TransactionView extends SuspendableViewImpl implements TransactionP
         // -----
 
         NumberBoxItem defaultTimeout = new NumberBoxItem("defaultTimeout", "Default Timeout");
-        CheckBoxItem enableStatistics = new CheckBoxItem("enableStatistics", "Enable Statistics");
-        CheckBoxItem enableTsm = new CheckBoxItem("enableTsmStatus", "Enable TSM Status");
+        ChextBoxItem enableStatistics = new ChextBoxItem("enableStatistics", "Enable Statistics");
+        ChextBoxItem enableTsm = new ChextBoxItem("enableTsmStatus", "Enable TSM Status");
 
-        CheckBoxItem jts = new CheckBoxItem("jts", "Enable JTS");
+        ChextBoxItem jts = new ChextBoxItem("jts", "Enable JTS");
         TextBoxItem nodeId = new TextBoxItem("nodeIdentifier", "Node Identifier");
 
         TextBoxItem processIdSocket = new TextBoxItem("processIdSocketBinding", "Process ID Socket");
         NumberBoxItem processIdPortMax = new NumberBoxItem("processIdMaxPorts", "Max Ports");
-        CheckBoxItem processIdUUID = new CheckBoxItem("processIdUUID", "Process ID UUID?");
+        ChextBoxItem processIdUUID = new ChextBoxItem("processIdUUID", "Process ID UUID?");
 
-        CheckBoxItem useHornetq = new CheckBoxItem("hornetqStore", "Use HornetQ Store?");
+        ChextBoxItem useHornetq = new ChextBoxItem("hornetqStore", "Use HornetQ Store?");
 
         TextBoxItem path = new TextBoxItem("path", "Path");
         TextBoxItem relativeTo = new TextBoxItem("relativeTo", "Relative To");
         TextBoxItem objectStorePath = new TextBoxItem("objectStorePath", "Object Store Path");
         TextBoxItem objectStorePathRelativeTo = new TextBoxItem("objectStoreRelativeTo", "Object Store Relative To");
 
-        CheckBoxItem recoveryListener = new CheckBoxItem("recoveryListener", "Recovery Listener");
+        ChextBoxItem recoveryListener = new ChextBoxItem("recoveryListener", "Recovery Listener");
         TextBoxItem socketBinding = new TextBoxItem("socketBinding", "Socket Binding");
         TextBoxItem statusSocketBinding = new TextBoxItem("statusSocketBinding", "Status Socket Binding");
 
