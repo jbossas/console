@@ -77,7 +77,9 @@ public class DeploymentTreeModel implements TreeViewModel
 
     public void updateDeployments(List<DeploymentRecord> deployments)
     {
-        deploymentDataProvider.setList(deployments);
+        deploymentDataProvider.getList().clear();
+        deploymentDataProvider.getList().addAll(deployments);
+        deploymentDataProvider.refresh();
     }
 
 
