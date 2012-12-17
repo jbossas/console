@@ -276,8 +276,20 @@ public class DeploymentStore
             deployment.setHasSubdeployments(deploymentNode.get("subdeployment").isDefined());
             deployment.setHasSubsystems(deploymentNode.get("subsystem").isDefined());
             deployment.setServer(server);
-            ModelNode address = addressFor();
-            if (server != null)
+            ModelNode address;
+            // TODO Optimize address setup
+            if (server == null)
+            {
+                if (parent == null)
+                {
+                    address = addressFor("deployment", deployment.getName());
+                }
+                else
+                {
+                    address = addressFor("deployment", parent.getName(), "subdeployment", deployment.getName());
+                }
+            }
+            else
             {
                 deployment.setServerGroup(server.getGroup());
                 if (parent == null)
@@ -616,8 +628,8 @@ public class DeploymentStore
                             DeployedEndpoint endpoint = deployedEndpointEntityAdapter.fromDMR(endpointNode);
                             endpoint.setType(webserviceEndpoint);
                             endpoint.setSubsystem(subsystem);
-                            // TODO Set the right address (different from endpoint name!)
-                            endpoint.setAddress(addressFor(subsystem.getAddress(), "endpoint", "*"));
+                            endpoint.setAddress(addressFor(subsystem.getAddress(), "endpoint",
+                                    node.get(ADDRESS).asList().get(2).get("endpoint").asString()));
                             endpoints.add(endpoint);
                         }
                     }
