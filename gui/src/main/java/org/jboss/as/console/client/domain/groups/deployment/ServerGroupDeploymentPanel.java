@@ -23,6 +23,7 @@ import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.LayoutPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.ProvidesKey;
@@ -36,6 +37,7 @@ import org.jboss.as.console.client.shared.viewframework.builder.SimpleLayout;
 import org.jboss.as.console.client.widgets.pages.PagedView;
 import org.jboss.as.console.client.widgets.tables.ViewLinkCell;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
+import org.jboss.ballroom.client.widgets.tables.DefaultPager;
 
 /**
  * Shows the server groups with a link to ServerGroupDeploymentView
@@ -75,13 +77,15 @@ public class ServerGroupDeploymentPanel implements IsWidget
             @Override
             public Object getKey(ServerGroupRecord serverGroupRecord)
             {
-                return serverGroupRecord.getName();
+                return serverGroupRecord.getName() + "_" + serverGroupRecord.getProfileName();
             }
         };
         DefaultCellTable<ServerGroupRecord> serverGroups = new DefaultCellTable<ServerGroupRecord>(8,
                 keyProvider);
         serverGroupData = new ListDataProvider<ServerGroupRecord>();
         this.serverGroupData.addDataDisplay(serverGroups);
+        DefaultPager pager = new DefaultPager();
+        pager.setDisplay(serverGroups);
 
         selectionModel = new SingleSelectionModel<ServerGroupRecord>(keyProvider);
         serverGroups.setSelectionModel(selectionModel);
@@ -128,11 +132,14 @@ public class ServerGroupDeploymentPanel implements IsWidget
                 };
         serverGroups.addColumn(option, Console.CONSTANTS.common_label_option());
 
+        VerticalPanel wrapper = new VerticalPanel();
+        wrapper.add(serverGroups.asWidget());
+        wrapper.add(pager);
         SimpleLayout overviewPanel = new SimpleLayout()
                 .setPlain(true)
                 .setHeadline("Server Groups")
                 .setDescription("Please chose a server group to assign deployment contents.")
-                .addContent("Available Groups", serverGroups.asWidget());
+                .addContent("Available Groups", wrapper);
 
         groupDeploymentBrowser = new ServerGroupDeploymentBrowser(presenter, deploymentStore, hostInfoStore);
         pagedView.addPage(Console.CONSTANTS.common_label_back(), overviewPanel.build());
