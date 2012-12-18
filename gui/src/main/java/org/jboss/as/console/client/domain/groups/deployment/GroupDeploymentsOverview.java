@@ -4,6 +4,7 @@ import com.google.gwt.cell.client.ActionCell;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.LayoutPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.ProvidesKey;
@@ -15,6 +16,7 @@ import org.jboss.as.console.client.shared.viewframework.builder.SimpleLayout;
 import org.jboss.as.console.client.widgets.pages.PagedView;
 import org.jboss.as.console.client.widgets.tables.TextLinkCell;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
+import org.jboss.ballroom.client.widgets.tables.DefaultPager;
 
 import java.util.List;
 import java.util.Map;
@@ -48,6 +50,8 @@ public class GroupDeploymentsOverview {
         });
         dataProvider = new ListDataProvider<ServerGroupRecord>();
         this.dataProvider.addDataDisplay(serverGroupTable);
+        DefaultPager pager = new DefaultPager();
+        pager.setDisplay(serverGroupTable);
 
         final SingleSelectionModel<ServerGroupRecord> selectionModel = new SingleSelectionModel<ServerGroupRecord>();
         serverGroupTable.setSelectionModel(selectionModel);
@@ -86,11 +90,14 @@ public class GroupDeploymentsOverview {
         };
         serverGroupTable.addColumn(option, Console.CONSTANTS.common_label_option());
 
+        VerticalPanel wrapper = new VerticalPanel();
+        wrapper.add(serverGroupTable.asWidget());
+        wrapper.add(pager);
         SimpleLayout overviewPanel = new SimpleLayout()
                 .setPlain(true)
                 .setHeadline("Server Groups")
                 .setDescription("Please chose a server group to assign deployment contents.")
-                .addContent("Available Groups", serverGroupTable.asWidget());
+                .addContent("Available Groups", wrapper);
 
         // --
 
