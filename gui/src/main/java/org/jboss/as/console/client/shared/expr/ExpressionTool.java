@@ -101,11 +101,15 @@ public class ExpressionTool implements Tool {
 
         output.setErroneous(false);
         output.clearValue();
-        input.setValue(expr);
 
-        resolver.resolveValue(Expression.fromString(expr), new SimpleCallback<Map<String,String>>() {
+
+        final Expression exprModel = Expression.fromString(expr);
+        resolver.resolveValue(exprModel, new SimpleCallback<Map<String,String>>() {
             @Override
             public void onSuccess(Map<String,String> serverValues) {
+
+                input.setValue(exprModel.toString());
+
                 output.setErroneous(serverValues.isEmpty());
 
                 StringBuilder sb = new StringBuilder();

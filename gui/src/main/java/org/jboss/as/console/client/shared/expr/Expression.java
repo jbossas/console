@@ -28,18 +28,22 @@ public class Expression {
 
     public static Expression fromString(String s) {
 
-        Expression expr = null;
-        String token = s.substring(2, s.length()-1);
-        int idx = token.indexOf(":");
-        if(idx!=-1)
-        {
-            expr = new Expression(token.substring(0, idx), token.substring(idx+1, token.length()));
-        }
-        else
-        {
-            expr = new Expression(token);
-        }
 
+        Expression expr = new Expression("foo-bar", "default-value");
+
+        if(s!=null && s.startsWith("${") && s.endsWith("}"))
+        {
+            String token = s.substring(2, s.length()-1);
+            int idx = token.indexOf(":");
+            if(idx!=-1)
+            {
+                expr = new Expression(token.substring(0, idx), token.substring(idx+1, token.length()));
+            }
+            else
+            {
+                expr = new Expression(token);
+            }
+        }
         return expr;
     }
 
