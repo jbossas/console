@@ -65,7 +65,7 @@ class NewServerGroupWizard {
 
         final Form<ServerGroupRecord> form = new Form(ServerGroupRecord.class);
 
-        TextBoxItem nameField = new TextBoxItem("groupName", Console.CONSTANTS.common_label_name())
+        TextBoxItem nameField = new TextBoxItem("name", Console.CONSTANTS.common_label_name())
         {
             @Override
             public boolean validate(String value) {

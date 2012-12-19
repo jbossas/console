@@ -226,7 +226,8 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
 
     @Override
     public void updateSocketBindings(List<String> result) {
-        details.setAvailableSockets(result);
+        if(details!=null)
+            details.setAvailableSockets(result);
     }
 
     @Override
