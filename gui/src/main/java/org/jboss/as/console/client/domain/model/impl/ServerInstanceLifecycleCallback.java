@@ -19,6 +19,8 @@
 package org.jboss.as.console.client.domain.model.impl;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import org.jboss.as.console.client.Console;
+import org.jboss.as.console.client.domain.events.StaleModelEvent;
 import org.jboss.as.console.client.domain.model.HostInformationStore;
 import org.jboss.as.console.client.domain.model.Server;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
@@ -77,6 +79,9 @@ public class ServerInstanceLifecycleCallback extends SimpleCallback<Boolean>
                             if (!keepPolling)
                             {
                                 ServerInstanceLifecycleCallback.this.callback.onSuccess(server);
+                                Console.MODULES.getEventBus().fireEvent(
+                                        new StaleModelEvent(StaleModelEvent.SERVER_INSTANCES)
+                                );
                             }
                             callback.onSuccess(keepPolling);
                         }

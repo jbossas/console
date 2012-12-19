@@ -34,10 +34,10 @@ import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
-import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.DomainGateKeeper;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.core.SuspendableView;
+import org.jboss.as.console.client.domain.events.StaleModelEvent;
 import org.jboss.as.console.client.domain.model.HostInformationStore;
 import org.jboss.as.console.client.domain.model.Server;
 import org.jboss.as.console.client.domain.model.ServerGroupStore;
@@ -52,7 +52,6 @@ import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.runtime.ext.Extension;
 import org.jboss.as.console.client.shared.runtime.ext.ExtensionManager;
 import org.jboss.as.console.client.shared.runtime.ext.LoadExtensionCmd;
-import org.jboss.as.console.client.shared.state.StaleGlobalModel;
 import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 
 import java.util.ArrayList;
@@ -282,8 +281,6 @@ public class TopologyPresenter extends
             case RESTART:
                 break;
         }
-
-        getEventBus().fireEvent(new StaleGlobalModel(StaleGlobalModel.SERVER_INSTANCES));
     }
 
     public void onGroupLifecycle(final String group, final LifecycleOperation op)
@@ -315,8 +312,6 @@ public class TopologyPresenter extends
                     break;
             }
         }
-
-        getEventBus().fireEvent(new StaleGlobalModel(StaleGlobalModel.SERVER_GROUPS));
     }
 
 

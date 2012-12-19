@@ -19,6 +19,8 @@
 package org.jboss.as.console.client.domain.model.impl;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import org.jboss.as.console.client.Console;
+import org.jboss.as.console.client.domain.events.StaleModelEvent;
 import org.jboss.as.console.client.domain.model.HostInformationStore;
 import org.jboss.as.console.client.domain.model.Server;
 import org.jboss.as.console.client.domain.model.ServerInstance;
@@ -47,8 +49,8 @@ public class ServerGroupLifecycleCallback extends SimpleCallback<Boolean>
     private final SimpleCallback<List<Server>> callback;
 
     public ServerGroupLifecycleCallback(final HostInformationStore hostInfoStore,
-            final Map<HostInfo, List<ServerInstance>> serversPerHost,
-            final LifecycleOperation lifecycleOp, final SimpleCallback<List<Server>> callback)
+                                        final Map<HostInfo, List<ServerInstance>> serversPerHost,
+                                        final LifecycleOperation lifecycleOp, final SimpleCallback<List<Server>> callback)
     {
         this.hostInfoStore = hostInfoStore;
         this.serversPerHost = serversPerHost;
@@ -94,6 +96,9 @@ public class ServerGroupLifecycleCallback extends SimpleCallback<Boolean>
                                             if (!keepPolling && finishedServers.size() == servers)
                                             {
                                                 ServerGroupLifecycleCallback.this.callback.onSuccess(finishedServers);
+                                                Console.MODULES.getEventBus().fireEvent(
+                                                        new StaleModelEvent(StaleModelEvent.SERVER_GROUPS)
+                                                );
                                             }
                                             callback.onSuccess(keepPolling);
                                         }

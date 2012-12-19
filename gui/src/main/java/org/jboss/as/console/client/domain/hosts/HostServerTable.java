@@ -23,6 +23,7 @@ import com.google.gwt.view.client.ProvidesKey;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 import org.jboss.as.console.client.Console;
+import org.jboss.as.console.client.domain.events.StaleModelEvent;
 import org.jboss.as.console.client.domain.model.Host;
 import org.jboss.as.console.client.domain.model.ServerInstance;
 import org.jboss.as.console.client.shared.state.GlobalHostSelection;
@@ -30,6 +31,7 @@ import org.jboss.as.console.client.shared.state.HostList;
 import org.jboss.as.console.client.shared.state.ServerInstanceList;
 import org.jboss.as.console.client.widgets.lists.DefaultCellList;
 import org.jboss.as.console.client.widgets.popups.DefaultPopup;
+import org.jboss.ballroom.client.widgets.InlineLink;
 import org.jboss.ballroom.client.widgets.common.DefaultButton;
 import org.jboss.ballroom.client.widgets.tables.DefaultPager;
 
@@ -108,8 +110,20 @@ public class HostServerTable {
         layout.getElement().setAttribute("style", "padding:5px;");
         //layout.addStyleName("tablepicker-popup");
 
+        HorizontalPanel tools = new HorizontalPanel();
+        tools.setStyleName("fill-layout-width");
         if(description!=null)
-            layout.add(new HTML(description));
+            tools.add(new HTML(description));
+        InlineLink refresh = new InlineLink("Refresh");
+        refresh.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent clickEvent) {
+                Console.MODULES.getEventBus().fireEvent(new StaleModelEvent(StaleModelEvent.SERVER_INSTANCES));
+            }
+        });
+        tools.add(refresh);
+        refresh.getElement().getParentElement().setAttribute("style", "vertical-align:right");
+        layout.add(tools);
 
         ratio = new HTML("RATIO HERE");
         layout.add(ratio);
