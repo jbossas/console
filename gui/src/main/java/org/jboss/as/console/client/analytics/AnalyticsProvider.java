@@ -3,6 +3,7 @@ package org.jboss.as.console.client.analytics;
 import com.google.gwt.core.client.GWT;
 import com.google.inject.Provider;
 import com.gwtplatform.mvp.client.googleanalytics.GoogleAnalytics;
+import org.jboss.as.console.client.Build;
 import org.jboss.as.console.client.shared.Preferences;
 
 /**
@@ -19,9 +20,17 @@ public class AnalyticsProvider implements Provider<GoogleAnalytics> {
 
         GoogleAnalytics analytics = null;
 
-        if(!Preferences.has(Preferences.Key.ANALYTICS) // not set at all
-            || Preferences.get(Preferences.Key.ANALYTICS).equals("true")
-                && GWT.isScript() ) // web mode only
+        // no preferences == enabled
+        boolean prefEnabled = !Preferences.has(Preferences.Key.ANALYTICS)
+                || Preferences.get(Preferences.Key.ANALYTICS).equals("true");
+
+        // disabled for EAP by default
+        boolean isEAP = Build.PROFILE.equalsIgnoreCase("eap");
+
+        // web mode only
+        boolean isWebMode = GWT.isScript();
+
+        if(!isEAP && prefEnabled && isWebMode)
         {
             analytics = new CustomAnalyticsImpl();
             System.out.println("Google analytics is setup");
