@@ -229,6 +229,8 @@ input[type="checkbox"] {
     /* fallback */
     background-color: #F3F3F3;
 
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#F3F3F3'); /* for IE */
+
     /* Safari 4-5, Chrome 1-9 */
     background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#ffffff), to(#F3F3F3));
 
