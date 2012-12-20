@@ -36,8 +36,12 @@ public class DomainRuntimeView extends ViewImpl implements DomainRuntimePresente
         contentCanvas = new LayoutPanel();
         lhsNavigation = new DomainRuntimeNavigation();
 
-        layout.addWest(lhsNavigation.asWidget(), 197);
+        Widget nav = lhsNavigation.asWidget();
+        nav.getElement().setAttribute("role", "navigation");
 
+        contentCanvas.getElement().setAttribute("role", "main");
+
+        layout.addWest(nav, 197);
         layout.add(contentCanvas);
 
     }
