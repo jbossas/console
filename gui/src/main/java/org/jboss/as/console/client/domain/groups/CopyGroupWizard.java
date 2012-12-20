@@ -40,7 +40,7 @@ public class CopyGroupWizard {
         final Form<ServerGroupRecord> form = new Form<ServerGroupRecord>(ServerGroupRecord.class);
         form.setNumColumns(1);
 
-        TextBoxItem nameItem = new TextBoxItem("groupName", Console.CONSTANTS.common_label_name())
+        TextBoxItem nameItem = new TextBoxItem("name", Console.CONSTANTS.common_label_name())
         {
             @Override
             public boolean validate(String value) {
