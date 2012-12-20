@@ -87,13 +87,14 @@ class DomainRuntimeNavigation {
         LHSNavTreeItem jmsQueues = new LHSNavTreeItem("JMS Destinations", NameTokens.JmsMetricPresenter);
         LHSNavTreeItem web = new LHSNavTreeItem("Web", NameTokens.WebMetricPresenter);
         LHSNavTreeItem jpa = new LHSNavTreeItem("JPA", NameTokens.JPAMetricPresenter);
+        LHSNavTreeItem ws = new LHSNavTreeItem("Webservices", NameTokens.WebServiceRuntimePresenter);
         LHSNavTreeItem naming = new LHSNavTreeItem("JNDI View", NameTokens.JndiPresenter);
-
 
         metricPredicates.add(new Predicate("datasources", datasources));
         metricPredicates.add(new Predicate("messaging", jmsQueues));
         metricPredicates.add(new Predicate("web", web));
         metricPredicates.add(new Predicate("jpa", jpa));
+        metricPredicates.add(new Predicate("webservices", ws));
         metricPredicates.add(new Predicate("naming", naming));
 
 
@@ -183,9 +184,6 @@ class DomainRuntimeNavigation {
                     runtimeLeaf.addItem(predicate.getNavItem());
             }
         }
-
-        final LHSNavTreeItem webservices = new LHSNavTreeItem("Webservices", NameTokens.WebServiceRuntimePresenter);
-        subsystemGroup.addItem(webservices);
 
         metricLeaf.addItem(subsystemGroup);
         subsystemGroup.setState(true);

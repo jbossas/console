@@ -35,8 +35,8 @@ public class StandaloneRuntimeNavigation {
     private List<Predicate> runtimePredicates = new ArrayList<Predicate>();
 
     private ScrollPanel scroll;
-    private TreeItem metricLeaf;
-    private TreeItem runtimeLeaf;
+    private LHSTreeSection metricLeaf;
+    private LHSTreeSection runtimeLeaf;
     private LHSNavTree navigation;
 
     public Widget asWidget()
@@ -67,6 +67,7 @@ public class StandaloneRuntimeNavigation {
         // -------------
 
         metricLeaf = new LHSTreeSection("Status");
+        navigation.addItem(metricLeaf);
 
         LHSNavTreeItem datasources = new LHSNavTreeItem("Datasources", NameTokens.DataSourceMetricPresenter);
         LHSNavTreeItem jmsQueues = new LHSNavTreeItem("JMS Destinations", NameTokens.JmsMetricPresenter);
@@ -78,12 +79,11 @@ public class StandaloneRuntimeNavigation {
         metricPredicates.add(new Predicate("datasources", datasources));
         metricPredicates.add(new Predicate("messaging", jmsQueues));
         metricPredicates.add(new Predicate("web", web));
-
         metricPredicates.add(new Predicate("jpa", jpa));
         metricPredicates.add(new Predicate("webservices", ws));
         metricPredicates.add(new Predicate("naming", naming));
 
-        navigation.addItem(metricLeaf);
+
 
 
         // Extension based additions
@@ -116,23 +116,19 @@ public class StandaloneRuntimeNavigation {
         // ---
 
         runtimeLeaf = new LHSTreeSection("Runtime Operations");
-
+        navigation.addItem(runtimeLeaf);
 
         LHSNavTreeItem osgi = new LHSNavTreeItem("OSGi", NameTokens.OSGiRuntimePresenter);
-
         runtimePredicates.add(new Predicate("osgi", osgi));
-
-        navigation.addItem(runtimeLeaf);
 
         // ----------------------------------------------------
 
-        // ---
+        navigation.expandTopLevel();
+
         stack.add(navigation);
         layout.add(stack);
 
         scroll = new ScrollPanel(layout);
-
-        navigation.expandTopLevel();
 
         return scroll;
     }
@@ -144,6 +140,8 @@ public class StandaloneRuntimeNavigation {
 
         metricLeaf.removeItems();
         runtimeLeaf.removeItems();
+
+        if(subsystems.isEmpty()) return;
 
         final GroupItem platformGroup = new GroupItem("Platform");
 
