@@ -116,8 +116,7 @@ public class DeploymentBrowser
 
         addContext(DeployedPersistenceUnit.class, index++,
                 new TextAreaItem("name", "Name"),
-                new CheckBoxItem("enabled", "Statistics Enabled"),
-                new ListItem("entities", "Entities"));
+                new CheckBoxItem("enabled", "Statistics Enabled"));
 
         addContext(DeployedServlet.class, index++,
                 new TextAreaItem("name", "Name"),
