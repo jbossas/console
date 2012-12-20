@@ -5,12 +5,10 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
-import com.gwtplatform.mvp.client.annotations.UseGatekeeper;
 import com.gwtplatform.mvp.client.proxy.Place;
 import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import org.jboss.as.console.client.core.NameTokens;
-import org.jboss.as.console.client.core.StandaloneGateKeeper;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
@@ -36,7 +34,6 @@ public class VMMetricsPresenter
 
     @ProxyCodeSplit
     @NameToken(NameTokens.VirtualMachine)
-    @UseGatekeeper( StandaloneGateKeeper.class )
     public interface MyProxy extends Proxy<VMMetricsPresenter>, Place {
     }
 
