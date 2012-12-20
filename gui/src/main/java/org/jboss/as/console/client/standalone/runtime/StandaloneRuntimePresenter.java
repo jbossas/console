@@ -1,8 +1,6 @@
 package org.jboss.as.console.client.standalone.runtime;
 
-import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.shared.GwtEvent;
-import com.google.gwt.user.client.Timer;
 import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.Presenter;
@@ -16,7 +14,6 @@ import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
-import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.BootstrapContext;
 import org.jboss.as.console.client.core.Header;
 import org.jboss.as.console.client.core.MainLayoutPresenter;
@@ -24,7 +21,6 @@ import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.shared.model.SubsystemRecord;
 import org.jboss.as.console.client.shared.model.SubsystemStore;
-import org.jboss.ballroom.client.layout.LHSHighlightEvent;
 
 import java.util.List;
 
@@ -43,7 +39,7 @@ public class StandaloneRuntimePresenter extends Presenter<StandaloneRuntimePrese
     private SubsystemStore subsysStore;
     private BootstrapContext bootstrap;
 
-    private String lastSubPlace;
+    private PlaceRequest lastSubPlace;
     private Header header;
 
     @ProxyCodeSplit
@@ -87,15 +83,29 @@ public class StandaloneRuntimePresenter extends Presenter<StandaloneRuntimePrese
         String currentToken = placeManager.getCurrentPlaceRequest().getNameToken();
         if(!currentToken.equals(getProxy().getNameToken()))
         {
-            lastSubPlace = currentToken;
+            lastSubPlace = placeManager.getCurrentPlaceRequest();
         }
         else if(lastSubPlace!=null)
         {
-            placeManager.revealPlace(new PlaceRequest(lastSubPlace));
+            placeManager.revealPlace(lastSubPlace);
         }
 
         // first request, select default contents
-        if(!hasBeenRevealed )
+        if(!hasBeenRevealed && NameTokens.StandaloneRuntimePresenter.equals(currentToken))
+        {
+
+            if (lastSubPlace != null)
+            {
+                placeManager.revealPlace(lastSubPlace);
+            }
+            else
+            {
+                placeManager.revealPlace(new PlaceRequest(NameTokens.StandaloneServerPresenter));
+            }
+
+            hasBeenRevealed = true;
+        }
+        else if (!NameTokens.StandaloneRuntimePresenter.equals(currentToken))
         {
             subsysStore.loadSubsystems("default", new SimpleCallback<List<SubsystemRecord>>() {
                 @Override
@@ -104,38 +114,6 @@ public class StandaloneRuntimePresenter extends Presenter<StandaloneRuntimePrese
                 }
             });
 
-
-            if(placeManager.getCurrentPlaceRequest().getNameToken().equals(NameTokens.StandaloneRuntimePresenter))
-            {
-                placeManager.revealPlace(new PlaceRequest(NameTokens.StandaloneServerPresenter));
-            }
-
-            Timer t = new Timer() {
-                @Override
-                public void run() {
-                    highlightLHSNav();
-                }
-            };
-
-            t.schedule(150);
-
-            hasBeenRevealed = true;
-
-        }
-    }
-
-    private void highlightLHSNav() {
-        if(bootstrap.getInitialPlace()!=null)
-        {
-            Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
-                @Override
-                public void execute() {
-                    Console.getEventBus().fireEvent(
-                            new LHSHighlightEvent(bootstrap.getInitialPlace())
-                    );
-                    bootstrap.setInitialPlace(null);
-                }
-            });
         }
     }
 

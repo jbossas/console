@@ -147,11 +147,6 @@ public class NameTokens {
         return ProfileMgmtPresenter;
     }
 
-    public static final String DomainPresenter = "domain";
-    public static String getDomainPresenter() {
-        return DomainPresenter;
-    }
-
     public static final String Topology = "topology";
     public static String getTopology() {
         return Topology;

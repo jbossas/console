@@ -56,8 +56,6 @@ import org.jboss.as.console.client.core.settings.SettingsPresenter;
 import org.jboss.as.console.client.core.settings.SettingsPresenterViewImpl;
 import org.jboss.as.console.client.core.settings.SettingsPresenterWidget;
 import org.jboss.as.console.client.core.settings.SettingsView;
-import org.jboss.as.console.client.domain.DomainPresenter;
-import org.jboss.as.console.client.domain.DomainView;
 import org.jboss.as.console.client.domain.groups.ServerGroupPresenter;
 import org.jboss.as.console.client.domain.groups.ServerGroupView;
 import org.jboss.as.console.client.domain.groups.deployment.DomainDeploymentPresenter;
@@ -383,11 +381,6 @@ public class CoreUIModule extends AbstractPresenterModule {
                 ProfileMgmtView.class,
                 ProfileMgmtPresenter.MyProxy.class);
 
-        // domain/profiles
-        bindPresenter(DomainPresenter.class,
-                DomainPresenter.MyView.class,
-                DomainView.class,
-                DomainPresenter.MyProxy.class);
 
         bindPresenter(TopologyPresenter.class,
                 TopologyPresenter.MyView.class,
