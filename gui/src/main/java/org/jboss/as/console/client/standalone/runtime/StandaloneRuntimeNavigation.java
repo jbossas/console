@@ -29,15 +29,13 @@ public class StandaloneRuntimeNavigation {
     private VerticalPanel stack;
     private VerticalPanel layout;
 
-    private List<SubsystemRecord> subsystems;
-
     private List<Predicate> metricPredicates = new ArrayList<Predicate>();
     private List<Predicate> runtimePredicates = new ArrayList<Predicate>();
 
     private ScrollPanel scroll;
+    private LHSNavTree navigation;
     private LHSTreeSection metricLeaf;
     private LHSTreeSection runtimeLeaf;
-    private LHSNavTree navigation;
 
     public Widget asWidget()
     {
@@ -82,8 +80,6 @@ public class StandaloneRuntimeNavigation {
         metricPredicates.add(new Predicate("jpa", jpa));
         metricPredicates.add(new Predicate("webservices", ws));
         metricPredicates.add(new Predicate("naming", naming));
-
-
 
 
         // Extension based additions

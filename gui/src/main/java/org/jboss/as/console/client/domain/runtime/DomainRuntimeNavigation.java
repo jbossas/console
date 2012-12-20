@@ -40,10 +40,6 @@ class DomainRuntimeNavigation {
     private LHSTreeSection metricLeaf;
     private LHSTreeSection runtimeLeaf;
 
-    public DomainRuntimeNavigation() {
-
-    }
-
     public Widget asWidget()
     {
         layout = new VerticalPanel();
