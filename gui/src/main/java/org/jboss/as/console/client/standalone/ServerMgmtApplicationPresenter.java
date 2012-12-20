@@ -19,7 +19,9 @@
 
 package org.jboss.as.console.client.standalone;
 
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.shared.GwtEvent;
+import com.google.gwt.user.client.Timer;
 import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.Presenter;
@@ -32,6 +34,7 @@ import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.BootstrapContext;
 import org.jboss.as.console.client.core.Header;
 import org.jboss.as.console.client.core.MainLayoutPresenter;
@@ -40,6 +43,7 @@ import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.shared.SubsystemMetaData;
 import org.jboss.as.console.client.shared.model.SubsystemRecord;
 import org.jboss.as.console.client.shared.model.SubsystemStore;
+import org.jboss.ballroom.client.layout.LHSHighlightEvent;
 
 import java.util.List;
 
@@ -90,7 +94,7 @@ public class ServerMgmtApplicationPresenter extends Presenter<ServerMgmtApplicat
 
         header.highlight(NameTokens.serverConfig);
 
-        String currentToken = placeManager.getCurrentPlaceRequest().getNameToken();
+        final String currentToken = placeManager.getCurrentPlaceRequest().getNameToken();
         if(!currentToken.equals(getProxy().getNameToken()))
         {
             lastSubPlace = currentToken;
@@ -111,17 +115,18 @@ public class ServerMgmtApplicationPresenter extends Presenter<ServerMgmtApplicat
 
                     getView().updateFrom(existingSubsystems);
 
+
                     // chose default view if necessary
 
-                    if(placeManager.getCurrentPlaceRequest().getNameToken().equals(NameTokens.serverConfig))
-                    {
-                        final String[] defaultSubsystem = SubsystemMetaData.getDefaultSubsystem(
-                                NameTokens.DataSourcePresenter, existingSubsystems
-                        );
+                    String preference = NameTokens.serverConfig.equals(currentToken) ? NameTokens.DataSourcePresenter : currentToken;
 
-                        placeManager.revealPlace(new PlaceRequest(defaultSubsystem[1]));
+                    final String[] defaultSubsystem = SubsystemMetaData.getDefaultSubsystem(
+                            preference, existingSubsystems
+                    );
 
-                    }
+                    placeManager.revealPlace(new PlaceRequest(defaultSubsystem[1]));
+
+
 
                 }
             });
