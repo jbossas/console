@@ -154,6 +154,18 @@ public class StandaloneDeploymentPresenter
     @Override
     public void enableDisableDeployment(final DeploymentRecord record)
     {
+        final String success;
+        final String failed;
+        if (record.isEnabled())
+        {
+            success = Console.MESSAGES.successDisabled(record.getRuntimeName());
+            failed = Console.MESSAGES.failedToDisable(record.getRuntimeName());
+        }
+        else
+        {
+            success = Console.MESSAGES.successEnabled(record.getRuntimeName());
+            failed = Console.MESSAGES.failedToEnable(record.getRuntimeName());
+        }
         final PopupPanel loading = Feedback.loading(
                 Console.CONSTANTS.common_label_plaseWait(),
                 Console.CONSTANTS.common_label_requestProcessed(),
@@ -169,19 +181,24 @@ public class StandaloneDeploymentPresenter
         deploymentStore.enableDisableDeployment(record, new SimpleCallback<DMRResponse>()
         {
             @Override
+            public void onFailure(final Throwable caught)
+            {
+                loading.hide();
+                Console.error(failed, caught.getMessage());
+            }
+
+            @Override
             public void onSuccess(DMRResponse response)
             {
                 loading.hide();
                 ModelNode result = response.get();
                 if (result.isFailure())
                 {
-                    loading.hide();
-                    Console.error(Console.MESSAGES.modificationFailed("Deployment " + record.getRuntimeName()),
-                            result.getFailureDescription());
+                    Console.error(failed, result.getFailureDescription());
                 }
                 else
                 {
-                    Console.info(Console.MESSAGES.modified("Deployment " + record.getRuntimeName()));
+                    Console.info(success);
                 }
                 refreshDeployments();
             }

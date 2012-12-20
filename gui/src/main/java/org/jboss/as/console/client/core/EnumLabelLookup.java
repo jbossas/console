@@ -20,6 +20,8 @@ package org.jboss.as.console.client.core;
 
 import com.google.gwt.core.client.GWT;
 
+import java.util.MissingResourceException;
+
 /**
  * @author Harald Pehl
  * @date 11/29/2012
@@ -30,37 +32,24 @@ public class EnumLabelLookup
 
     /**
      * Returns a label for the specified enum constant. Assumes that there is matching constant defined. Does not work
-     * with nested enums!
-     *
-     * <p>For the enum</p>
-     * <pre>
-     *     package org.jboss.as.console.client;
-     *
-     *     enum Color {
-     *         green, red, blue
-     *     }
-     * </pre>
-     *
-     * <p>You have to specify the following constants</p>
-     * <ul>
-     *     <li>org_jboss_as_console_client_Color_green</li>
-     *     <li>org_jboss_as_console_client_Color_red</li>
-     *     <li>org_jboss_as_console_client_Color_blue</li>
-     * </ul>
-     *
-     * @param enm
-     * @param <E>
-     *
-     * @return
+     * with nested enums! The prefix is added to the enum name together with '_' and must be specified to prevent
+     * ambiguities.
      */
-    public static <E extends Enum<E>> String labelFor(Enum<E> enm)
+    public static <E extends Enum<E>> String labelFor(String prefix, Enum<E> enm)
     {
         String label = "n/a";
         if (enm != null)
         {
-            String key = enm.getClass().getName() + "." + enm.name();
-            label = ENUM_LABELS.getString(key.replace('.', '_'));
-            if (label == null || label.length() == 0)
+            String key = prefix + "_" + enm.name();
+            try
+            {
+                label = ENUM_LABELS.getString(key);
+                if (label == null || label.length() == 0)
+                {
+                    label = "Empty label for '" + key + "'";
+                }
+            }
+            catch (MissingResourceException e)
             {
                 label = "Missing label for '" + key + "'";
             }

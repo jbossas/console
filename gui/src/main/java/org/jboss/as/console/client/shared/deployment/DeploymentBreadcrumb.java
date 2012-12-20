@@ -58,14 +58,14 @@ public class DeploymentBreadcrumb extends Composite
         {
             DeploymentSubsystem subsystem = (DeploymentSubsystem) deploymentData;
             collectTypes(subsystem.getDeployment(), types);
-            types.add(EnumLabelLookup.labelFor(subsystem.getType()));
+            types.add(EnumLabelLookup.labelFor("DeploymentData", subsystem.getType()));
         }
         else if (deploymentData instanceof DeploymentSubsystemElement)
         {
             DeploymentSubsystemElement element = (DeploymentSubsystemElement) deploymentData;
             collectTypes(element.getSubsystem().getDeployment(), types);
-            types.add(EnumLabelLookup.labelFor(element.getSubsystem().getType()));
-            types.add(EnumLabelLookup.labelFor(element.getType()));
+            types.add(EnumLabelLookup.labelFor("DeploymentData", element.getSubsystem().getType()));
+            types.add(EnumLabelLookup.labelFor("DeploymentData", element.getType()));
         }
 
         panel.clear();
@@ -89,8 +89,8 @@ public class DeploymentBreadcrumb extends Composite
     {
         if (deployment.isSubdeployment())
         {
-            types.add(EnumLabelLookup.labelFor(deployment.getParent().getType()));
+            types.add(EnumLabelLookup.labelFor("DeploymentData", deployment.getParent().getType()));
         }
-        types.add(EnumLabelLookup.labelFor(deployment.getType()));
+        types.add(EnumLabelLookup.labelFor("DeploymentData", deployment.getType()));
     }
 }

@@ -134,9 +134,12 @@ public class ServerGroupDeploymentBrowser
         deploymentBrowser.updateDeployments(deployments);
 
         boolean anyEnabled = false;
-        for (Iterator<DeploymentRecord> iterator = deployments.iterator(); iterator.hasNext() && !anyEnabled; )
+        if (!deployments.isEmpty())
         {
-            anyEnabled = iterator.next().isEnabled();
+            for (Iterator<DeploymentRecord> iterator = deployments.iterator(); iterator.hasNext() && !anyEnabled; )
+            {
+                anyEnabled = iterator.next().isEnabled();
+            }
         }
         if (anyEnabled)
         {
