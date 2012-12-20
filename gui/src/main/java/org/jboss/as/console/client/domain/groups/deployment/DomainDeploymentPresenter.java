@@ -128,7 +128,18 @@ public class DomainDeploymentPresenter extends Presenter<DomainDeploymentPresent
     @Override
     public void enableDisableDeployment(final DeploymentRecord record)
     {
-        // TODO Distinguish between enable and disable and user proper messages
+        final String success;
+        final String failed;
+        if (record.isEnabled())
+        {
+            success = Console.MESSAGES.successDisabled(record.getRuntimeName());
+            failed = Console.MESSAGES.failedToDisable(record.getRuntimeName());
+        }
+        else
+        {
+            success = Console.MESSAGES.successEnabled(record.getRuntimeName());
+            failed = Console.MESSAGES.failedToEnable(record.getRuntimeName());
+        }
         final PopupPanel loading = Feedback.loading(
                 Console.CONSTANTS.common_label_plaseWait(),
                 Console.CONSTANTS.common_label_requestProcessed(),
@@ -147,7 +158,7 @@ public class DomainDeploymentPresenter extends Presenter<DomainDeploymentPresent
             public void onFailure(final Throwable caught)
             {
                 loading.hide();
-                Console.error(Console.MESSAGES.modificationFailed("Deployment " + record.getRuntimeName()), caught.getMessage());
+                Console.error(failed, caught.getMessage());
             }
 
             @Override
@@ -157,12 +168,11 @@ public class DomainDeploymentPresenter extends Presenter<DomainDeploymentPresent
                 ModelNode result = response.get();
                 if (result.isFailure())
                 {
-                    Console.error(Console.MESSAGES.modificationFailed("Deployment " + record.getRuntimeName()),
-                            result.getFailureDescription());
+                    Console.error(failed, result.getFailureDescription());
                 }
                 else
                 {
-                    Console.info(Console.MESSAGES.modified("Deployment " + record.getRuntimeName()));
+                    Console.info(success);
                 }
                 refreshDeployments();
             }
@@ -213,6 +223,14 @@ public class DomainDeploymentPresenter extends Presenter<DomainDeploymentPresent
 
         deploymentStore.addToServerGroups(names, enable, deployment, new SimpleCallback<DMRResponse>()
         {
+            @Override
+            public void onFailure(final Throwable caught)
+            {
+                loading.hide();
+                Console.error(Console.MESSAGES.addingFailed("Deployment " + deployment.getRuntimeName()),
+                        caught.getMessage());
+            }
+
             @Override
             public void onSuccess(DMRResponse response)
             {
