@@ -91,30 +91,29 @@ public class StandaloneRuntimePresenter extends Presenter<StandaloneRuntimePrese
         }
 
         // first request, select default contents
-        if(!hasBeenRevealed && NameTokens.StandaloneRuntimePresenter.equals(currentToken))
+        if(!hasBeenRevealed)
         {
 
-            if (lastSubPlace != null)
-            {
-                placeManager.revealPlace(lastSubPlace);
-            }
-            else
-            {
-                placeManager.revealPlace(new PlaceRequest(NameTokens.StandaloneServerPresenter));
-            }
-
-            hasBeenRevealed = true;
-        }
-        else if (!NameTokens.StandaloneRuntimePresenter.equals(currentToken))
-        {
             subsysStore.loadSubsystems("default", new SimpleCallback<List<SubsystemRecord>>() {
                 @Override
                 public void onSuccess(List<SubsystemRecord> result) {
                     getView().setSubsystems(result);
+
+                    if (lastSubPlace != null)
+                    {
+                        placeManager.revealPlace(lastSubPlace);
+                    }
+                    else
+                    {
+                        placeManager.revealPlace(new PlaceRequest(NameTokens.StandaloneServerPresenter));
+                    }
                 }
             });
 
+
+            hasBeenRevealed = true;
         }
+
     }
 
     @Override
