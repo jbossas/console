@@ -26,17 +26,18 @@ import com.google.gwt.i18n.client.ConstantsWithLookup;
  */
 public interface EnumLabels extends ConstantsWithLookup
 {
-    String org_jboss_as_console_client_shared_deployment_model_DeploymentDataType_deployment();
-    String org_jboss_as_console_client_shared_deployment_model_DeploymentDataType_subdeployment();
-    String org_jboss_as_console_client_shared_deployment_model_DeploymentDataType_ejb3();
-    String org_jboss_as_console_client_shared_deployment_model_DeploymentDataType_jpa();
-    String org_jboss_as_console_client_shared_deployment_model_DeploymentDataType_web();
-    String org_jboss_as_console_client_shared_deployment_model_DeploymentDataType_webservices();
-    String org_jboss_as_console_client_shared_deployment_model_DeploymentDataType_entityBean();
-    String org_jboss_as_console_client_shared_deployment_model_DeploymentDataType_messageDrivenBean();
-    String org_jboss_as_console_client_shared_deployment_model_DeploymentDataType_statefulSessionBean();
-    String org_jboss_as_console_client_shared_deployment_model_DeploymentDataType_statelessSessionBean();
-    String org_jboss_as_console_client_shared_deployment_model_DeploymentDataType_persistenceUnit();
-    String org_jboss_as_console_client_shared_deployment_model_DeploymentDataType_servlet();
-    String org_jboss_as_console_client_shared_deployment_model_DeploymentDataType_webserviceEndpoint();
+    String DeploymentData_deployment();
+    String DeploymentData_subdeployment();
+    String DeploymentData_ejb3();
+    String DeploymentData_jpa();
+    String DeploymentData_web();
+    String DeploymentData_webservices();
+    String DeploymentData_entityBean();
+    String DeploymentData_messageDrivenBean();
+    String DeploymentData_singletonBean();
+    String DeploymentData_statefulSessionBean();
+    String DeploymentData_statelessSessionBean();
+    String DeploymentData_persistenceUnit();
+    String DeploymentData_servlet();
+    String DeploymentData_webserviceEndpoint();
 }
