@@ -19,9 +19,7 @@
 
 package org.jboss.as.console.client.standalone;
 
-import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.shared.GwtEvent;
-import com.google.gwt.user.client.Timer;
 import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.Presenter;
@@ -34,7 +32,6 @@ import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
-import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.BootstrapContext;
 import org.jboss.as.console.client.core.Header;
 import org.jboss.as.console.client.core.MainLayoutPresenter;
@@ -43,7 +40,6 @@ import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.shared.SubsystemMetaData;
 import org.jboss.as.console.client.shared.model.SubsystemRecord;
 import org.jboss.as.console.client.shared.model.SubsystemStore;
-import org.jboss.ballroom.client.layout.LHSHighlightEvent;
 
 import java.util.List;
 
@@ -59,7 +55,7 @@ public class ServerMgmtApplicationPresenter extends Presenter<ServerMgmtApplicat
     private PlaceManager placeManager;
     private SubsystemStore subsysStore;
     private boolean hasBeenRevealed;
-    private boolean matchCurrent;
+
     private BootstrapContext bootstrap;
     private String lastSubPlace;
     private Header header;
@@ -86,40 +82,6 @@ public class ServerMgmtApplicationPresenter extends Presenter<ServerMgmtApplicat
         this.subsysStore = subsysStore;
         this.bootstrap = bootstrap;
         this.header = header;
-    }
-
-
-    /**
-     * Load a default sub page upon first reveal
-     * and highlight navigation sections in subsequent requests.
-     *
-     * @param request
-     */
-    @Override
-    public void prepareFromRequest(PlaceRequest request) {
-        super.prepareFromRequest(request);
-
-        // is the presenter itself requested, or nested children?
-        matchCurrent = NameTokens.serverConfig.equals(request.getNameToken());
-    }
-
-
-    private void highlightLHSNav()
-    {
-        if(bootstrap.getInitialPlace()!=null)
-        {
-            Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
-                @Override
-                public void execute() {
-                    Console.getEventBus().fireEvent(
-                            new LHSHighlightEvent(bootstrap.getInitialPlace())
-                    );
-
-                    bootstrap.setInitialPlace(null);
-                }
-            });
-        }
-
     }
 
     @Override
@@ -161,14 +123,6 @@ public class ServerMgmtApplicationPresenter extends Presenter<ServerMgmtApplicat
 
                     }
 
-                    Timer t = new Timer() {
-                        @Override
-                        public void run() {
-                            highlightLHSNav();
-                        }
-                    };
-
-                    t.schedule(150);
                 }
             });
 
