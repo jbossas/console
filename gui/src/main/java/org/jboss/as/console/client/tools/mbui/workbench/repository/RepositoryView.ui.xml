@@ -1,0 +1,32 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+             xmlns:g="urn:import:com.google.gwt.user.client.ui"
+             xmlns:c="urn:import:com.google.gwt.user.cellview.client">
+
+    <ui:style>
+        .repository {
+            background-color: white;
+        }
+        .list {
+            margin: 10px;
+        }
+        .button {
+            margin: 0 10px 10px 10px;
+        }
+    </ui:style>
+
+    <g:DockLayoutPanel unit="PX" addStyleNames="{style.repository}">
+        <g:south size="100">
+            <g:VerticalPanel addStyleNames="{style.list}">
+                <g:Button ui:field="reify" addStyleNames="{style.button}">onBind</g:Button>
+                <g:Button ui:field="reset" addStyleNames="{style.button}">onReset</g:Button>
+            </g:VerticalPanel>
+        </g:south>
+        <g:center>
+            <g:ScrollPanel addStyleNames="{style.list}">
+                <c:CellList ui:field="list" />
+            </g:ScrollPanel>
+        </g:center>
+    </g:DockLayoutPanel>
+
+</ui:UiBinder>

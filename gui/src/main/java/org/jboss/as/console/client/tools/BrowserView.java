@@ -25,7 +25,6 @@ import javax.inject.Inject;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
 /**
  * @author Heiko Braun
@@ -42,7 +41,6 @@ public class BrowserView extends PopupViewImpl implements BrowserPresenter.MyVie
     private DescriptionView descView;
     private DefaultWindow window;
 
-    private FXTemplatesView storageView;
     private NodeHeader nodeHeader;
 
 
@@ -105,7 +103,6 @@ public class BrowserView extends PopupViewImpl implements BrowserPresenter.MyVie
         rawView = new RawView();
         descView = new DescriptionView();
         nodeHeader = new NodeHeader();
-        storageView = new FXTemplatesView();
 
         TabPanel tabs = new TabPanel();
         tabs.setStyleName("default-tabpanel");
@@ -333,10 +330,5 @@ public class BrowserView extends PopupViewImpl implements BrowserPresenter.MyVie
         PlaceholderItem() {
             super("*");
         }
-    }
-
-    @Override
-    public void setTemplates(Set<FXTemplate> fxTemplates) {
-        //TODO storageView.setTemplates(fxTemplates);
     }
 }

@@ -7,7 +7,6 @@ import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.ballroom.client.widgets.InlineLink;
-import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.FormAdapter;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
 import org.jboss.ballroom.client.widgets.tools.ToolStrip;
@@ -55,7 +54,7 @@ public class FormToolStrip<T> {
         this.callback = callback;
     }
 
-    public FormToolStrip(Form<T> form, FormCallback<T> callback, String deleteOpName) {
+    public FormToolStrip(FormAdapter<T> form, FormCallback<T> callback, String deleteOpName) {
         this.form = form;
         this.callback = callback;
         this.deleteOpName = deleteOpName;

@@ -115,7 +115,7 @@ public class TabbedFormLayoutPanel<T> implements FormAdapter<T>, SingleEntityVie
 
             layout.add(toolStrip.asWidget());
 
-            // help widget
+            // help widgets
             if (address != null) {
                 layout.add(HelpWidgetFactory.makeHelpWidget(address, form));
             }
