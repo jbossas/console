@@ -187,11 +187,34 @@ public class SubsystemMetaData {
         }
 
         if(null==chosen)
-            chosen = existing.get(0);
-
+            chosen = firstAvailable(existing);
 
         return resolveTokens(chosen.getKey());
     }
+
+    private static SubsystemRecord firstAvailable(List<SubsystemRecord> existing) {
+
+        SubsystemRecord match =  null;
+
+        for(SubsystemRecord candidate : existing)
+        {
+            final SubsystemRegistry subsystemRegistry = Console.MODULES.getSubsystemRegistry();
+            for(SubsystemExtensionMetaData ext : subsystemRegistry.getExtensions())
+            {
+                if(candidate.getKey().equals(ext.getKey()))
+                {
+                    match = candidate;
+                    break;
+                }
+            }
+        }
+
+        if(null==match)
+            throw new RuntimeException("Failed to resolve default subsystem selection");
+
+        return match;
+    }
+
 
     public static String[] resolveTokens(String key) {
         String[] token = new String[2];
@@ -206,21 +229,6 @@ public class SubsystemMetaData {
                 break;
             }
         }
-
-        /*for(String groupName : groups.keySet())
-        {
-            SubsystemGroup group = groups.get(groupName);
-            for(SubsystemGroupItem item : group.getItems())
-            {
-                if(item.getKey().equals(key)
-                        && item.isDisabled() == false)
-                {
-                    token[0] = item.getName();
-                    token[1] = item.getPresenter();
-                    break;
-                }
-            }
-        } */
 
         return token;
     }
