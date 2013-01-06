@@ -41,6 +41,7 @@ import org.jboss.as.console.client.shared.viewframework.EntityToDmrBridgeImpl;
 import org.jboss.as.console.client.shared.viewframework.FrameworkButton;
 import org.jboss.as.console.client.shared.viewframework.FrameworkView;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
+import org.jboss.as.console.client.widgets.tables.ColumnSortHandler;
 import org.jboss.as.console.client.widgets.tables.TextLinkCell;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.FormAdapter;
@@ -68,7 +69,7 @@ public class BundleRuntimeView extends AbstractEntityView<OSGiBundle> implements
     private final EntityToDmrBridgeImpl<OSGiBundle> bridge;
     private DefaultCellTable<OSGiBundle> bundleTable;
     private OSGiRuntimePresenter presenter;
-    private MyListHandler<OSGiBundle> sortHandler;
+    private ColumnSortHandler<OSGiBundle> sortHandler;
 
     public BundleRuntimeView(ApplicationMetaData propertyMetaData, DispatchAsync dispatcher) {
         super(OSGiBundle.class, propertyMetaData, EnumSet.allOf(FrameworkButton.class));
@@ -113,7 +114,7 @@ public class BundleRuntimeView extends AbstractEntityView<OSGiBundle> implements
     @Override
     protected DefaultCellTable<OSGiBundle> makeEntityTable() {
         bundleTable = new DefaultCellTable<OSGiBundle>(8);
-        sortHandler = new MyListHandler<OSGiBundle>();
+        sortHandler = new ColumnSortHandler<OSGiBundle>();
 
         TextColumn<OSGiBundle> idColumn = new TextColumn<OSGiBundle>() {
             @Override
@@ -244,49 +245,5 @@ public class BundleRuntimeView extends AbstractEntityView<OSGiBundle> implements
 
     public void setPresenter(OSGiRuntimePresenter presenter) {
         this.presenter = presenter;
-    }
-
-    // This handler is similar to ColumnSortEvent.ListHandler except that it allows the list to be set after construction
-    // This class is generic and could move to a more common place if useful.
-    public static class MyListHandler<T> implements Handler {
-        private final Map<Column<?, ?>, Comparator<T>> comparators = new HashMap<Column<?, ?>, Comparator<T>>();
-        private List<T> list;
-
-        public List<T> getList() {
-            return list;
-        }
-
-        public void setList(List<T> list) {
-            this.list = list;
-        }
-
-        public void onColumnSort(ColumnSortEvent event) {
-            // Get the sorted column.
-            Column<?, ?> column = event.getColumn();
-            if (column == null) {
-                return;
-            }
-
-            // Get the comparator.
-            final Comparator<T> comparator = comparators.get(column);
-            if (comparator == null) {
-                return;
-            }
-
-            // Sort using the comparator.
-            if (event.isSortAscending()) {
-                Collections.sort(list, comparator);
-            } else {
-                Collections.sort(list, new Comparator<T>() {
-                    public int compare(T o1, T o2) {
-                        return -comparator.compare(o1, o2);
-                    }
-                });
-            }
-        }
-
-        public void setComparator(Column<T, ?> column, Comparator<T> comparator) {
-            comparators.put(column, comparator);
-        }
     }
 }
