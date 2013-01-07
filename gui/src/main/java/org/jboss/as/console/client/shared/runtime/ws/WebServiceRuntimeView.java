@@ -1,15 +1,19 @@
 package org.jboss.as.console.client.shared.runtime.ws;
 
+import com.google.gwt.user.cellview.client.ColumnSortEvent;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.view.client.ListDataProvider;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.shared.subsys.ws.model.WebServiceEndpoint;
 import org.jboss.as.console.client.shared.viewframework.builder.MultipleToOneLayout;
+import org.jboss.as.console.client.widgets.tables.ColumnSortHandler;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.TextItem;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -19,6 +23,8 @@ import java.util.List;
 public class WebServiceRuntimeView extends SuspendableViewImpl implements WebServiceRuntimePresenter.MyView {
 
     private WebServiceRuntimePresenter presenter;
+    private ListDataProvider<WebServiceEndpoint> dataProvider;
+    private ColumnSortHandler<WebServiceEndpoint> sortHandler;
 
     @Override
     public void setPresenter(WebServiceRuntimePresenter presenter) {
@@ -30,7 +36,11 @@ public class WebServiceRuntimeView extends SuspendableViewImpl implements WebSer
 
     public Widget createWidget() {
 
-        table = new DefaultCellTable<WebServiceEndpoint>(6);
+        table = new DefaultCellTable<WebServiceEndpoint>(10);
+        sortHandler = new ColumnSortHandler<WebServiceEndpoint>();
+
+        dataProvider = new ListDataProvider<WebServiceEndpoint>();
+        dataProvider.addDataDisplay(table);
 
         TextColumn<WebServiceEndpoint> nameCol = new TextColumn<WebServiceEndpoint>() {
             @Override
@@ -38,25 +48,46 @@ public class WebServiceRuntimeView extends SuspendableViewImpl implements WebSer
                 return object.getName();
             }
         };
-
+        nameCol.setSortable(true);
+        sortHandler.setComparator(nameCol, new Comparator<WebServiceEndpoint>() {
+            @Override
+            public int compare(WebServiceEndpoint o1, WebServiceEndpoint o2) {
+                return o1.getName().compareTo(o2.getName());
+            }
+        });
         TextColumn<WebServiceEndpoint> contextCol = new TextColumn<WebServiceEndpoint>() {
             @Override
             public String getValue(WebServiceEndpoint object) {
                 return object.getContext();
             }
         };
-
-         TextColumn<WebServiceEndpoint> deploymentCol = new TextColumn<WebServiceEndpoint>() {
+        contextCol.setSortable(true);
+        sortHandler.setComparator(contextCol, new Comparator<WebServiceEndpoint>() {
+            @Override
+            public int compare(WebServiceEndpoint o1, WebServiceEndpoint o2) {
+                return o1.getContext().compareTo(o2.getContext());
+            }
+        });
+        TextColumn<WebServiceEndpoint> deploymentCol = new TextColumn<WebServiceEndpoint>() {
             @Override
             public String getValue(WebServiceEndpoint object) {
                 return object.getDeployment();
             }
         };
+        deploymentCol.setSortable(true);
+        sortHandler.setComparator(deploymentCol, new Comparator<WebServiceEndpoint>() {
+            @Override
+            public int compare(WebServiceEndpoint o1, WebServiceEndpoint o2) {
+                return o1.getDeployment().compareTo(o2.getDeployment());
+            }
+        });
 
         table.addColumn(nameCol, "Name");
         table.addColumn(contextCol, "Context");
         table.addColumn(deploymentCol, "Deployment");
 
+        table.addColumnSortHandler(sortHandler);
+        table.getColumnSortList().push(nameCol); // initial sort is on name
 
         // -----
 
@@ -89,10 +120,13 @@ public class WebServiceRuntimeView extends SuspendableViewImpl implements WebSer
     }
 
     public void updateEndpoints(List<WebServiceEndpoint> endpoints) {
-        table.setRowCount(endpoints.size(), true);
-        table.setRowData(endpoints);
+        dataProvider.setList(endpoints);
+        sortHandler.setList(dataProvider.getList());
 
-        if(endpoints.size()>0)
+        // Make sure the new values are properly sorted
+        ColumnSortEvent.fire(table, table.getColumnSortList());
+
+        if (endpoints.size() > 0)
             table.getSelectionModel().setSelected(endpoints.get(0), true);
     }
 }
