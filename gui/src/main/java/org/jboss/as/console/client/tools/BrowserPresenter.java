@@ -19,7 +19,6 @@ import org.jboss.dmr.client.Property;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 
@@ -27,13 +26,11 @@ import static org.jboss.dmr.client.ModelDescriptionConstants.*;
  * @author Heiko Braun
  * @date 6/15/12
  */
-public class BrowserPresenter extends PresenterWidget<BrowserPresenter.MyView>
-        implements FXTemplatesPresenter, FXFormManager {
+public class BrowserPresenter extends PresenterWidget<BrowserPresenter.MyView>{
 
     private final PlaceManager placeManager;
     private DispatchAsync dispatcher;
     private boolean hasBeenRevealed;
-    private FXStorage storage = new LocalFXStorage();
     private DefaultWindow window;
 
     public interface MyView extends PopupView {
@@ -42,8 +39,6 @@ public class BrowserPresenter extends PresenterWidget<BrowserPresenter.MyView>
         void updateChildrenNames(ModelNode address, List<ModelNode> modelNodes);
         void updateResource(ModelNode address, ModelNode resource);
         void updateDescription(ModelNode address, ModelNode description);
-
-        void setTemplates(Set<FXTemplate> fxTemplates);
     }
 
     @Inject
@@ -192,77 +187,10 @@ public class BrowserPresenter extends PresenterWidget<BrowserPresenter.MyView>
 
     public void onRefresh() {
         readChildrenTypes(new ModelNode().setEmptyList());
-        getView().setTemplates(storage.loadTemplates());
+
     }
 
     // ---------- Storage Presenter  ----
-
-    @Override
-    public void launchNewTemplateWizard() {
-        window = new DefaultWindow("Create Template");
-        window.setWidth(480);
-        window.setHeight(420);
-
-        window.trapWidget(
-                new NewFXTemplateWizard(BrowserPresenter.this).asWidget()
-        );
-
-        window.setGlassEnabled(true);
-        window.center();
-    }
-
-    @Override
-    public void onRemoveTemplate(String id) {
-        storage.removeTemplate(id);
-        getView().setTemplates(storage.loadTemplates());
-    }
-
-    @Override
-    public void closeDialogue() {
-        window.hide();
-    }
-
-    @Override
-    public void onCreateTemplate(FXTemplate template) {
-
-        closeDialogue();
-        //System.out.println("Create: "+template.asModelNode());
-        storage.storeTemplate(template);
-        getView().setTemplates(storage.loadTemplates());
-    }
-
-    @Override
-    public void onUpdateTemplate(FXTemplate template) {
-
-        //System.out.println("Update: "+template.asModelNode());
-        storage.storeTemplate(template);
-        getView().setTemplates(storage.loadTemplates());
-    }
-
-    @Override
-    public void launchNewModelStepWizard(FXTemplate template) {
-
-    }
-
-    @Override
-    public void onRemoveModelStep(FXTemplate currentTemplate, String stepId) {
-
-    }
-
-    @Override
-    public void createFormProxy(String templateId, String modelId, final AsyncCallback<FormProxy> callback) {
-
-        final FXTemplate fxTemplate = storage.loadTemplate(templateId);
-        final FXModel fxModel = fxTemplate.getModel(modelId);
-
-        loadDmrDescription(fxModel.getAddress(), new SimpleCallback<ModelNode>() {
-
-            @Override
-            public void onSuccess(ModelNode modelNode) {
-                callback.onSuccess(new FormProxy(fxModel, modelNode, BrowserPresenter.this));
-            }
-        });
-    }
 
     public void loadDmrDescription(ModelNode address, final AsyncCallback<ModelNode> callback) {
         ModelNode descriptionOp  = new ModelNode();
@@ -298,14 +226,6 @@ public class BrowserPresenter extends PresenterWidget<BrowserPresenter.MyView>
                 }
             }}
         );
-    }
-
-    @Override
-    public void getProxyData(String templateId, String modelId, final AsyncCallback<ModelNode> callback) {
-
-        final FXTemplate fxTemplate = storage.loadTemplate(templateId);
-        final FXModel fxModel = fxTemplate.getModel(modelId);
-        loadResourceData(fxModel.getAddress(), callback);
     }
 
     public void loadResourceData(ModelNode address, final AsyncCallback<ModelNode> callback)

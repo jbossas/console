@@ -154,6 +154,12 @@
             </dependency>
 
             <dependency>
+                <groupId>com.gwtplatform</groupId>
+                <artifactId>gwtp-processors</artifactId>
+                <version>${gwtp.version}</version>
+            </dependency>
+
+            <dependency>
                 <groupId>com.google.inject</groupId>
                 <artifactId>guice</artifactId>
                 <version>${guice.version}</version>

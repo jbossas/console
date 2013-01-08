@@ -98,7 +98,10 @@ public class ToolsPresenter extends Presenter<ToolsPresenter.MyView, ToolsPresen
             }
             //RevealRootPopupContentEvent.fire(this, debug);
         }
-
+        else if("mbui-workbench".equals(requestedTool))
+        {
+            placeManager.revealPlace(new PlaceRequest("mbui-workbench"));
+        }
 
 
     }

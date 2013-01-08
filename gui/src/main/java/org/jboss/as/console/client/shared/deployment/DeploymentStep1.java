@@ -85,7 +85,7 @@ public class DeploymentStep1 {
         panel.getElement().setAttribute("style", "width:100%");
         form.setWidget(panel);
 
-        // Create a FileUpload widget.
+        // Create a FileUpload widgets.
         final FileUpload upload = new FileUpload();
         upload.setName("uploadFormElement");
         panel.add(upload);

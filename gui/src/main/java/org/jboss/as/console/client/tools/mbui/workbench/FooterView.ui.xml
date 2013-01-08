@@ -1,0 +1,24 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+             xmlns:g="urn:import:com.google.gwt.user.client.ui">
+
+    <ui:style>
+        .footer {
+            background-color: rgb(190, 190, 190);
+        }
+
+        .footer p {
+            color: #fff;
+            margin: 0 10px;
+            padding: 0;
+            line-height: 25px; /* height of g:south in ApplicationView.ui.xml  */
+        }
+    </ui:style>
+
+    <g:HTMLPanel addStyleNames="{style.footer}">
+        <footer>
+            <p>Version x.y</p>
+        </footer>
+    </g:HTMLPanel>
+
+</ui:UiBinder>
