@@ -22,9 +22,9 @@ package org.jboss.as.console.client.shared.viewframework;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
-import org.jboss.ballroom.client.widgets.forms.ListEditor;
-import org.jboss.ballroom.client.widgets.forms.ListManagement;
-import org.jboss.ballroom.client.widgets.forms.NewListItemWizard;
+import org.jboss.as.console.client.widgets.deprecated.ListEditor;
+import org.jboss.as.console.client.widgets.deprecated.ListManagement;
+import org.jboss.as.console.client.widgets.deprecated.NewListItemWizard;
 import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 
 import java.util.ArrayList;

@@ -24,7 +24,7 @@ import org.jboss.as.console.client.shared.subsys.infinispan.model.CacheContainer
 import org.jboss.as.console.client.shared.viewframework.EmbeddedListView;
 import org.jboss.as.console.client.shared.viewframework.FrameworkPresenter;
 import org.jboss.as.console.client.shared.viewframework.SingleEntityView;
-import org.jboss.ballroom.client.widgets.forms.ListManagement;
+import org.jboss.as.console.client.widgets.deprecated.ListManagement;
 
 import java.util.HashMap;
 import java.util.List;

@@ -16,12 +16,13 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.jboss.ballroom.client.widgets.forms;
+package org.jboss.as.console.client.widgets.deprecated;
 
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.shared.viewframework.FormItemObserver;
 import org.jboss.as.console.client.shared.viewframework.FormItemObserver.Action;
 import org.jboss.as.console.client.widgets.forms.PropertyBinding;
+import org.jboss.ballroom.client.widgets.forms.FormItem;
 
 /**
  *

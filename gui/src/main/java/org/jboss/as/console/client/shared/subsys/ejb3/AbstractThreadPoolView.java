@@ -25,7 +25,7 @@ import org.jboss.as.console.client.shared.viewframework.AbstractSingleEntityView
 import org.jboss.as.console.client.shared.viewframework.FrameworkButton;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.ballroom.client.widgets.forms.ComboBoxItem;
-import org.jboss.ballroom.client.widgets.forms.ObservableFormItem;
+import org.jboss.as.console.client.widgets.deprecated.ObservableFormItem;
 
 import java.util.EnumSet;
 import java.util.List;

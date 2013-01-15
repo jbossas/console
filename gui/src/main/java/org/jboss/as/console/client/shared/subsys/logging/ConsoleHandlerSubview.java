@@ -25,7 +25,7 @@ import org.jboss.as.console.client.shared.subsys.logging.model.ConsoleHandler;
 import org.jboss.as.console.client.shared.viewframework.FrameworkView;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.ballroom.client.widgets.forms.ComboBoxItem;
-import org.jboss.ballroom.client.widgets.forms.ObservableFormItem;
+import org.jboss.as.console.client.widgets.deprecated.ObservableFormItem;
 
 /**
  * Subview for Console Handlers.

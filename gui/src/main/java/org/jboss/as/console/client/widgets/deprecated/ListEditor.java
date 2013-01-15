@@ -17,7 +17,7 @@
  * MA  02110-1301, USA.
  */
 
-package org.jboss.ballroom.client.widgets.forms;
+package org.jboss.as.console.client.widgets.deprecated;
 
 import com.google.gwt.cell.client.ActionCell;
 import com.google.gwt.cell.client.TextCell;

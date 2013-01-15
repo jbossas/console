@@ -18,7 +18,7 @@
  */
 package org.jboss.as.console.client.shared.viewframework;
 
-import org.jboss.ballroom.client.widgets.forms.ObservableFormItem;
+import org.jboss.as.console.client.widgets.deprecated.ObservableFormItem;
 
 /**
  *
