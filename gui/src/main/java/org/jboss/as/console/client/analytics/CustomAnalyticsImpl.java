@@ -36,7 +36,7 @@ public class CustomAnalyticsImpl implements GoogleAnalytics {
 
     ScriptElement config = Document.get().createScriptElement(
         "var _gaq = _gaq || [];_gaq.push(['_setAccount', '" + userAccount
-            + "']);_gaq.push(['_trackPageview']);");
+            + "']);_gaq.push (['_gat._anonymizeIp']);_gaq.push(['_trackPageview']);");
 
     firstScript.getParentNode().insertBefore(config, firstScript);
 
