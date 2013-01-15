@@ -39,7 +39,7 @@ import org.jboss.as.console.client.shared.jvm.JvmEditor;
 import org.jboss.as.console.client.shared.properties.PropertyEditor;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.shared.state.ServerConfigList;
-import org.jboss.as.console.client.shared.viewframework.builder.MultipleToOneLayout;
+import org.jboss.as.console.client.layout.MultipleToOneLayout;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
 import org.jboss.ballroom.client.widgets.tools.ToolStrip;

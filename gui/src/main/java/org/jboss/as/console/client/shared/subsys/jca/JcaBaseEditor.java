@@ -8,7 +8,7 @@ import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.jca.model.JcaArchiveValidation;
 import org.jboss.as.console.client.shared.subsys.jca.model.JcaConnectionManager;
-import org.jboss.as.console.client.shared.viewframework.builder.OneToOneLayout;
+import org.jboss.as.console.client.layout.OneToOneLayout;
 import org.jboss.as.console.client.widgets.forms.FormToolStrip;
 import org.jboss.ballroom.client.widgets.forms.CheckBoxItem;
 import org.jboss.ballroom.client.widgets.forms.Form;

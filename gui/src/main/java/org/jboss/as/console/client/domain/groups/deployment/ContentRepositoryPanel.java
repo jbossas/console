@@ -37,7 +37,7 @@ import org.jboss.as.console.client.shared.deployment.DeploymentFilter;
 import org.jboss.as.console.client.shared.deployment.DeploymentNameColumn;
 import org.jboss.as.console.client.shared.deployment.model.ContentRepository;
 import org.jboss.as.console.client.shared.deployment.model.DeploymentRecord;
-import org.jboss.as.console.client.shared.viewframework.builder.MultipleToOneLayout;
+import org.jboss.as.console.client.layout.MultipleToOneLayout;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.ListItem;
 import org.jboss.ballroom.client.widgets.forms.TextAreaItem;

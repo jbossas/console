@@ -24,7 +24,7 @@ import org.jboss.mbui.model.structure.Container;
 import org.jboss.mbui.model.structure.InteractionUnit;
 import org.jboss.mbui.gui.Context;
 import org.jboss.mbui.gui.ReificationStrategy;
-import org.jboss.as.console.client.shared.viewframework.builder.SimpleLayout;
+import org.jboss.as.console.client.layout.SimpleLayout;
 
 import static org.jboss.mbui.model.structure.TemporalOperator.OrderIndependance;
 

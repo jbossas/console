@@ -12,7 +12,7 @@ import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.subsys.messaging.forms.CFConnectionsForm;
 import org.jboss.as.console.client.shared.subsys.messaging.forms.DefaultCFForm;
 import org.jboss.as.console.client.shared.subsys.messaging.model.ConnectionFactory;
-import org.jboss.as.console.client.shared.viewframework.builder.MultipleToOneLayout;
+import org.jboss.as.console.client.layout.MultipleToOneLayout;
 import org.jboss.as.console.client.widgets.forms.FormToolStrip;
 import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;

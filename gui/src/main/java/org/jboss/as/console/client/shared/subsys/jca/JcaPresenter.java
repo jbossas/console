@@ -29,7 +29,7 @@ import org.jboss.as.console.client.shared.subsys.jca.model.JcaBootstrapContext;
 import org.jboss.as.console.client.shared.subsys.jca.model.JcaConnectionManager;
 import org.jboss.as.console.client.shared.subsys.jca.model.JcaWorkmanager;
 import org.jboss.as.console.client.shared.subsys.jca.model.WorkmanagerPool;
-import org.jboss.as.console.client.shared.viewframework.builder.ModalWindowLayout;
+import org.jboss.as.console.client.layout.ModalWindowLayout;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.as.console.client.widgets.forms.BeanMetaData;
 import org.jboss.as.console.client.widgets.forms.EntityAdapter;

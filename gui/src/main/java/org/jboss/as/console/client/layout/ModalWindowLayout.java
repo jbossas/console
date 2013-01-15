@@ -1,4 +1,4 @@
-package org.jboss.as.console.client.shared.viewframework.builder;
+package org.jboss.as.console.client.layout;
 
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.ballroom.client.widgets.window.DefaultWindow;

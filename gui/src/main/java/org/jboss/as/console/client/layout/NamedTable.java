@@ -1,4 +1,4 @@
-package org.jboss.as.console.client.shared.viewframework.builder;
+package org.jboss.as.console.client.layout;
 
 import com.google.gwt.user.cellview.client.CellTable;
 
