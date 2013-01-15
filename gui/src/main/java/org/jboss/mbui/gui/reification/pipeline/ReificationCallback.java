@@ -16,17 +16,20 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.as.console.client.tools.mbui.workbench.repository;
+package org.jboss.mbui.gui.reification.pipeline;
 
-import org.jboss.mbui.model.structure.InteractionUnit;
+import com.allen_sauer.gwt.log.client.Log;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 
 /**
- * @author Harald Pehl
- * @date 10/25/2012
- */
-public interface Sample
+* @author Harald Pehl
+* @date 11/12/2012
+*/
+public abstract class ReificationCallback implements AsyncCallback<Boolean>
 {
-    String getName();
-
-    InteractionUnit build();
+    @Override
+    public void onFailure(final Throwable caught)
+    {
+        Log.error("Reification failed: " + caught.getMessage(), caught);
+    }
 }

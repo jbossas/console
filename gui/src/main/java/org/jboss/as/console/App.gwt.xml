@@ -27,6 +27,7 @@
 
     <inherits name="org.jboss.ballroom.Framework"/>
     <inherits name="org.jboss.dmr.DMR"/>
+    <inherits name="org.jboss.mbui.MBUI"/>
 
     <inherits name="com.allen_sauer.gwt.log.gwt-log-ERROR" />
 

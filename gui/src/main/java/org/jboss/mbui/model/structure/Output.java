@@ -16,17 +16,27 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.as.console.client.tools.mbui.workbench.repository;
-
-import org.jboss.mbui.model.structure.InteractionUnit;
+package org.jboss.mbui.model.structure;
 
 /**
  * @author Harald Pehl
  * @date 10/25/2012
  */
-public interface Sample
+public class Output extends InteractionUnit
 {
-    String getName();
+    public Output(String ns, String id)
+    {
+        super(ns, id);
+    }
 
-    InteractionUnit build();
+    public Output(String ns, final String id, final String name)
+    {
+        super(ns, id, name);
+    }
+
+    @Override
+    public String toString()
+    {
+        return "Output{" + getId() + '}';
+    }
 }

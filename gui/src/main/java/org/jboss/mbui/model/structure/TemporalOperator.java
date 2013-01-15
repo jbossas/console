@@ -16,17 +16,13 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.as.console.client.tools.mbui.workbench.repository;
-
-import org.jboss.mbui.model.structure.InteractionUnit;
+package org.jboss.mbui.model.structure;
 
 /**
  * @author Harald Pehl
- * @date 10/25/2012
+ * @date 10/31/2012
  */
-public interface Sample
+public enum TemporalOperator
 {
-    String getName();
-
-    InteractionUnit build();
+    Choice, Sequence, OrderIndependance, Concurrency, Deactivation
 }

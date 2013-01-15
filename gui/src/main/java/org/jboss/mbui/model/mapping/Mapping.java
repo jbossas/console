@@ -16,17 +16,49 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.as.console.client.tools.mbui.workbench.repository;
-
-import org.jboss.mbui.model.structure.InteractionUnit;
+package org.jboss.mbui.model.mapping;
 
 /**
  * @author Harald Pehl
  * @date 10/25/2012
  */
-public interface Sample
+public abstract class Mapping
 {
-    String getName();
+    protected MappingType type;
+    protected String namespace;
 
-    InteractionUnit build();
+
+    protected Mapping(MappingType type, String namespace)
+    {
+        this.type = type;
+        this.namespace = namespace;
+    }
+
+    @Override
+    public boolean equals(final Object o)
+    {
+        if (this == o) { return true; }
+        if (!(o instanceof Mapping)) { return false; }
+
+        Mapping mapping = (Mapping) o;
+        if (!type.equals(mapping.type)) { return false; }
+
+        return true;
+    }
+
+    @Override
+    public String toString()
+    {
+        return "Mapping{type=" + type + '}';
+    }
+
+    public String getNamespace()
+    {
+        return namespace;
+    }
+
+    public MappingType getType()
+    {
+        return type;
+    }
 }

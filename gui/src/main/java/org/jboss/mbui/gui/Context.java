@@ -16,17 +16,51 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.as.console.client.tools.mbui.workbench.repository;
+package org.jboss.mbui.gui;
 
-import org.jboss.mbui.model.structure.InteractionUnit;
+import org.jboss.mbui.gui.reification.ContextKey;
+
+import java.util.EnumMap;
+import java.util.Map;
 
 /**
  * @author Harald Pehl
  * @date 10/25/2012
  */
-public interface Sample
+public class Context
 {
-    String getName();
+    private final Map<ContextKey, Object> data;
 
-    InteractionUnit build();
+    public Context()
+    {
+        this.data = new EnumMap<ContextKey, Object>(ContextKey.class);
+    }
+
+    public <T> Context set(final ContextKey key, final T value)
+    {
+        data.put(key, value);
+        return this;
+    }
+
+    public <T> T get(final ContextKey name)
+    {
+        Object value = data.get(name);
+        if (value != null)
+        {
+            return (T) value;
+        }
+        return null;
+    }
+
+    public boolean has(final ContextKey name)
+    {
+        Object value = data.get(name);
+        return value != null;
+    }
+
+    @Override
+    public String toString()
+    {
+        return "Context " + data;
+    }
 }

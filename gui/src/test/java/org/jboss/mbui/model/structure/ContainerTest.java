@@ -16,17 +16,45 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.as.console.client.tools.mbui.workbench.repository;
+package org.jboss.mbui.model.structure;
 
-import org.jboss.mbui.model.structure.InteractionUnit;
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.jboss.mbui.TestNamespace.NAMESPACE;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 /**
  * @author Harald Pehl
- * @date 10/25/2012
+ * @date 10/26/2012
  */
-public interface Sample
+public class ContainerTest
 {
-    String getName();
+    Container cut;
 
-    InteractionUnit build();
+    @Before
+    public void setUp()
+    {
+        this.cut = new Container(NAMESPACE, "test", "Test", TemporalOperator.Choice);
+    }
+
+    @Test
+    public void parentChild()
+    {
+        InteractionUnit foo = new TestableInteractionUnit(NAMESPACE, "foo", "Foo");
+        InteractionUnit bar = new TestableInteractionUnit(NAMESPACE, "bar", "Bar");
+
+        cut.add(foo);
+        assertEquals(foo, cut.getChildren().get(0));
+
+        cut.add(bar);
+        assertEquals(bar, cut.getChildren().get(1));
+
+        cut.remove(bar);
+        assertFalse(cut.getChildren().contains(bar));
+
+        cut.remove(foo);
+        assertFalse(cut.getChildren().contains(foo));
+    }
 }

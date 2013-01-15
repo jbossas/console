@@ -16,44 +16,55 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.as.console.client.tools.mbui.workbench.editor;
+package org.jboss.mbui.model.mapping;
 
-import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.SimplePanel;
-import com.google.gwt.user.client.ui.Widget;
-import com.google.inject.Inject;
-import com.gwtplatform.mvp.client.ViewImpl;
-import org.jboss.mbui.gui.reification.ReificationWidget;
+import org.jboss.mbui.model.mapping.as7.ResourceMapping;
+import org.junit.Before;
+import org.junit.Test;
+
+import static junit.framework.Assert.assertEquals;
+import static org.jboss.mbui.TestNamespace.NAMESPACE;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author Harald Pehl
- * @date 10/30/2012
+ * @date 10/25/2012
  */
-public class PreviewView extends ViewImpl implements PreviewPresenter.MyView
+public class ResourceMappingTest
 {
-    public interface Binder extends UiBinder<Widget, PreviewView>
+    ResourceMapping cut;
+
+    @Before
+    public void setUp()
     {
+        cut = new ResourceMapping(NAMESPACE);
     }
 
-    private final Widget widget;
-    @UiField SimplePanel container;
-
-    @Inject
-    public PreviewView(final Binder binder)
+    @Test
+    public void addNullAttribute()
     {
-        this.widget = binder.createAndBindUi(this);
+        cut.addAttributes((String)null);
+        assertTrue(cut.getAttributes().isEmpty());
     }
 
-    @Override
-    public Widget asWidget()
+    @Test
+    public void addEmptyAttribute()
     {
-        return widget;
+        cut.addAttributes("");
+        assertTrue(cut.getAttributes().isEmpty());
     }
 
-    @Override
-    public void show(final ReificationWidget interactionUnit)
+    @Test
+    public void addNullAndEmptyAttributes()
     {
-        container.setWidget(interactionUnit);
+        cut.addAttributes("", null, "", "", null, "");
+        assertTrue(cut.getAttributes().isEmpty());
+    }
+
+    @Test
+    public void addDefaultAttribtes()
+    {
+        cut.addAttributes("foo", "bar");
+        assertEquals(2, cut.getAttributes().size());
     }
 }

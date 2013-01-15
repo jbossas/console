@@ -16,17 +16,26 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.as.console.client.tools.mbui.workbench.repository;
+package org.jboss.mbui.model.structure.as7;
 
-import org.jboss.mbui.model.structure.InteractionUnit;
+import org.jboss.mbui.model.structure.Container;
+
+import static org.jboss.mbui.model.structure.TemporalOperator.OrderIndependance;
 
 /**
  * @author Harald Pehl
- * @date 10/25/2012
+ * @date 11/12/2012
  */
-public interface Sample
+public class Form extends Container
 {
-    String getName();
+    public Form(final String namespace, final String id, final String name)
+    {
+        super(namespace, id, name, OrderIndependance);
+    }
 
-    InteractionUnit build();
+    @Override
+    public String toString()
+    {
+        return "Form{" + getId() + '}';
+    }
 }

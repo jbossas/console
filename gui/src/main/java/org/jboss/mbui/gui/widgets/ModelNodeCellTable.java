@@ -16,17 +16,26 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.as.console.client.tools.mbui.workbench.repository;
+package org.jboss.mbui.gui.widgets;
 
-import org.jboss.mbui.model.structure.InteractionUnit;
+import com.google.gwt.view.client.ProvidesKey;
+import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
+import org.jboss.dmr.client.ModelNode;
 
 /**
  * @author Harald Pehl
- * @date 10/25/2012
+ * @date 11/12/2012
  */
-public interface Sample
+public class ModelNodeCellTable extends DefaultCellTable<ModelNode>
 {
-    String getName();
+    public ModelNodeCellTable(final int pageSize)
+    {
+        super(pageSize);
+    }
 
-    InteractionUnit build();
+    public ModelNodeCellTable(final int pageSize,
+            final ProvidesKey<ModelNode> keyProvider)
+    {
+        super(pageSize, keyProvider);
+    }
 }

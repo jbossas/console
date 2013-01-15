@@ -16,17 +16,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.as.console.client.tools.mbui.workbench.repository;
+package org.jboss.mbui.gui.reification;
 
-import org.jboss.mbui.model.structure.InteractionUnit;
+import com.google.gwt.user.client.ui.IsWidget;
 
 /**
  * @author Harald Pehl
- * @date 10/25/2012
+ * @date 10/26/2012
  */
-public interface Sample
+public interface ReificationWidget extends IsWidget
 {
-    String getName();
-
-    InteractionUnit build();
+    public void add(ReificationWidget widget);
 }

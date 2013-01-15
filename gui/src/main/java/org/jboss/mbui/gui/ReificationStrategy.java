@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.as.console.client.tools.mbui.workbench.repository;
+package org.jboss.mbui.gui;
 
 import org.jboss.mbui.model.structure.InteractionUnit;
 
@@ -24,9 +24,9 @@ import org.jboss.mbui.model.structure.InteractionUnit;
  * @author Harald Pehl
  * @date 10/25/2012
  */
-public interface Sample
+public interface ReificationStrategy<T>
 {
-    String getName();
+    T reify(InteractionUnit interactionUnit, Context context);
 
-    InteractionUnit build();
+    boolean appliesTo(InteractionUnit interactionUnit);
 }

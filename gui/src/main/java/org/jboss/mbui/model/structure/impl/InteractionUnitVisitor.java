@@ -16,17 +16,20 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.as.console.client.tools.mbui.workbench.repository;
+package org.jboss.mbui.model.structure.impl;
 
+import org.jboss.mbui.model.structure.Container;
 import org.jboss.mbui.model.structure.InteractionUnit;
 
 /**
  * @author Harald Pehl
- * @date 10/25/2012
+ * @date 11/14/2012
  */
-public interface Sample
+public interface InteractionUnitVisitor
 {
-    String getName();
+    void startVisit(Container container);
 
-    InteractionUnit build();
+    void visit(InteractionUnit interactionUnit);
+
+    void endVisit(Container container);
 }

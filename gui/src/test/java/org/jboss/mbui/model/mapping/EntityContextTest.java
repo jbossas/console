@@ -16,17 +16,43 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.as.console.client.tools.mbui.workbench.repository;
+package org.jboss.mbui.model.mapping;
 
-import org.jboss.mbui.model.structure.InteractionUnit;
+import org.jboss.mbui.model.mapping.as7.ResourceMapping;
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.jboss.mbui.TestNamespace.NAMESPACE;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author Harald Pehl
  * @date 10/25/2012
  */
-public interface Sample
+public class EntityContextTest
 {
-    String getName();
+    EntityContext cut;
 
-    InteractionUnit build();
+    @Before
+    public void setUp()
+    {
+        cut = new EntityContext("test");
+    }
+
+    @Test
+    public void addNullMapping()
+    {
+        cut.addMapping(null);
+        assertTrue(cut.getMappings().isEmpty());
+    }
+
+    @Test
+    public void addMapping()
+    {
+        ResourceMapping mapping = new ResourceMapping(NAMESPACE).setAddress("/foo=bar");
+        cut.addMapping(mapping);
+        assertEquals(1, cut.getMappings().size());
+        assertEquals(mapping, cut.getMappings().iterator().next());
+    }
 }

@@ -18,21 +18,16 @@
  */
 package org.jboss.as.console.client.tools.mbui.workbench.repository;
 
-import org.jboss.as.console.client.mbui.aui.aim.Behaviour;
-import org.jboss.as.console.client.mbui.aui.aim.Builder;
-import org.jboss.as.console.client.mbui.aui.aim.Container;
-import org.jboss.as.console.client.mbui.aui.aim.InteractionUnit;
-import org.jboss.as.console.client.mbui.aui.aim.Trigger;
-import org.jboss.as.console.client.mbui.aui.aim.TriggerType;
-import org.jboss.as.console.client.mbui.aui.aim.as7.Form;
-import org.jboss.as.console.client.mbui.aui.aim.as7.ImplicitBehaviour;
-import org.jboss.as.console.client.mbui.aui.mapping.Mapping;
-import org.jboss.as.console.client.mbui.aui.mapping.as7.ResourceMapping;
+import org.jboss.mbui.model.structure.impl.Builder;
+import org.jboss.mbui.model.structure.Container;
+import org.jboss.mbui.model.structure.InteractionUnit;
+import org.jboss.mbui.model.structure.as7.Form;
+import org.jboss.mbui.model.structure.as7.ImplicitBehaviour;
+import org.jboss.mbui.model.mapping.Mapping;
+import org.jboss.mbui.model.mapping.as7.ResourceMapping;
 
-import static org.jboss.as.console.client.mbui.aui.aim.TemporalOperator.Choice;
-import static org.jboss.as.console.client.mbui.aui.aim.TemporalOperator.OrderIndependance;
-import static org.jboss.as.console.client.mbui.aui.aim.TriggerType.*;
-import static org.jboss.as.console.client.mbui.aui.aim.TriggerType.System;
+import static org.jboss.mbui.model.structure.TemporalOperator.Choice;
+import static org.jboss.mbui.model.structure.TemporalOperator.OrderIndependance;
 
 /**
  * @author Harald Pehl
