@@ -165,6 +165,7 @@ public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, Preview
                         // load tx resource
                         System.out.println("load basic attributes");
 
+                        // TODO: retrieve address from mapping
                         ModelNode operation = metaData.getBeanMetaData(TransactionManager.class)
                                 .getAddress().asResource(Baseadress.get());
 
