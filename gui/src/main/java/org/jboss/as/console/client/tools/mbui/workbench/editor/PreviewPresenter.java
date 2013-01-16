@@ -64,6 +64,8 @@ import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 /**
  *
  * @author Harald Pehl
+ * @author Heiko Braun
+ *
  * @date 10/30/2012
  */
 public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, PreviewPresenter.MyProxy>
@@ -178,14 +180,14 @@ public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, Preview
                             public void onSuccess(DMRResponse dmrResponse) {
                                 ModelNode response = dmrResponse.get();
 
-                                PresentationEvent statement = new PresentationEvent(
+                                PresentationEvent presentation = new PresentationEvent(
                                         QName.valueOf("org.jboss.as:form-update")
                                 );
 
-                                statement.setTarget(transactionManagerResource);
-                                statement.setPayload(response.get(RESULT));
+                                presentation.setTarget(transactionManagerResource);
+                                presentation.setPayload(response.get(RESULT));
 
-                                txCoordinator.fireEvent(statement);
+                                txCoordinator.fireEvent(presentation);
                             }
                         });
                     }
