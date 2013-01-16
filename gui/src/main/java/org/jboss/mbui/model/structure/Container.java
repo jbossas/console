@@ -24,6 +24,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
+ * A container is used to hierarchically structure the abstract interaction objects.
+ *
  * @author Harald Pehl
  * @date 10/31/2012
  */

@@ -3,6 +3,9 @@ package org.jboss.mbui.model.behaviour;
 import org.jboss.mbui.model.structure.QName;
 
 /**
+ *
+ * Absolute/relative navigation
+ *
  * @author Heiko Braun
  * @date 11/1/12
  */

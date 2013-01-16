@@ -19,6 +19,8 @@
 package org.jboss.mbui.model.structure;
 
 /**
+ * The select element is used to specify the inclusive/exclusive selection of a value from a set of values.
+ *
  * @author Harald Pehl
  * @date 10/25/2012
  */

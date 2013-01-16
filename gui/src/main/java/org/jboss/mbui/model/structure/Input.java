@@ -19,6 +19,8 @@
 package org.jboss.mbui.model.structure;
 
 /**
+ * The input element is used to specify the data input from the user perspective.
+ *
  * @author Harald Pehl
  * @author Heiko Braun
  * @date 10/25/2012

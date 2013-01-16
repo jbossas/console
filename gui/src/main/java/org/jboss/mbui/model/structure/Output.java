@@ -19,6 +19,8 @@
 package org.jboss.mbui.model.structure;
 
 /**
+ * The output element is used to specify the data output from the user perspective.
+ *
  * @author Harald Pehl
  * @date 10/25/2012
  */
