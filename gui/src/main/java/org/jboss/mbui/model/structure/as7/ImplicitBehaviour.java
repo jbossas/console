@@ -1,8 +1,8 @@
 package org.jboss.mbui.model.structure.as7;
 
+import org.jboss.mbui.model.behaviour.ResourceType;
 import org.jboss.mbui.model.structure.InteractionUnit;
-import org.jboss.mbui.model.behaviour.Trigger;
-import org.jboss.mbui.model.behaviour.TriggerType;
+import org.jboss.mbui.model.behaviour.Resource;
 
 /**
  * @author Heiko Braun
@@ -22,8 +22,8 @@ public class ImplicitBehaviour {
 
     private static void attachFormBehaviour(InteractionUnit unit) {
 
-        Trigger<TriggerType> reset = new Trigger<TriggerType>(PROJECT_NAMESPACE, "reset", TriggerType.System);
-        Trigger<TriggerType> save = new Trigger<TriggerType>(PROJECT_NAMESPACE, "save", TriggerType.Interaction);
+        Resource<ResourceType> reset = new Resource<ResourceType>(PROJECT_NAMESPACE, "reset", ResourceType.System);
+        Resource<ResourceType> save = new Resource<ResourceType>(PROJECT_NAMESPACE, "save", ResourceType.Interaction);
 
         unit.setInputs(reset);
         unit.setOutputs(save);

@@ -3,21 +3,24 @@ package org.jboss.mbui.model.behaviour;
 import org.jboss.mbui.model.structure.QName;
 
 /**
+ * A resource is an entity that produced and consumed. Typically these are events,
+ * domain model entities or generally speaking: data that drives an interaction.
+ *
  * @author Heiko Braun
  * @date 10/31/12
  */
-public class Trigger<T extends Enum<T>> {
+public class Resource<T extends Enum<T>> {
 
     private QName id;
     private QName source;
     private T type;
 
-    public Trigger(String namespace, String id, T type) {
+    public Resource(String namespace, String id, T type) {
         this.id = new QName(namespace, id);
         this.type = type;
     }
 
-    public Trigger(QName id, T type) {
+    public Resource(QName id, T type) {
         this.id = id;
         this.type = type;
     }
@@ -50,9 +53,9 @@ public class Trigger<T extends Enum<T>> {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Trigger)) return false;
+        if (!(o instanceof Resource)) return false;
 
-        Trigger event = (Trigger) o;
+        Resource event = (Resource) o;
 
         if (!id.equals(event.id)) return false;
         if (!type.equals(event.type)) return false;

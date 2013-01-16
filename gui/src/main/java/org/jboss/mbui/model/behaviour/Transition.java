@@ -1,15 +1,17 @@
 package org.jboss.mbui.model.behaviour;
 
 import org.jboss.mbui.model.structure.QName;
-import org.jboss.mbui.model.structure.impl.EventProduction;
+import org.jboss.mbui.model.structure.impl.ResourceProduction;
 
 import java.util.Set;
 
 /**
+ * The execution of an behaviour.
+ *
  * @author Heiko Braun
  * @date 10/31/12
  */
-public abstract class Transition implements TriggerSource {
+public abstract class Transition implements Producer {
 
     private QName id;
 
@@ -21,21 +23,21 @@ public abstract class Transition implements TriggerSource {
         return id;
     }
 
-    private EventProduction eventProduction =
-            new EventProduction(TriggerType.Transition);
+    private ResourceProduction resourceProduction =
+            new ResourceProduction(ResourceType.Transition);
 
     @Override
-    public boolean doesTrigger() {
-        return eventProduction.doesTrigger();
+    public boolean doesProduce() {
+        return resourceProduction.doesProduce();
     }
 
     @Override
-    public void setOutputs(Trigger<TriggerType>... events) {
-        this.eventProduction.setOutputs(events);
+    public void setOutputs(Resource<ResourceType>... events) {
+        this.resourceProduction.setOutputs(events);
     }
 
-    public Set<Trigger<TriggerType>> getOutputs()
+    public Set<Resource<ResourceType>> getOutputs()
     {
-        return eventProduction.getOutputs();
+        return resourceProduction.getOutputs();
     }
 }

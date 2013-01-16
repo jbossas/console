@@ -1,20 +1,22 @@
 package org.jboss.mbui.model.behaviour;
 
 import org.jboss.mbui.model.structure.QName;
-import org.jboss.mbui.model.structure.impl.EventConsumption;
+import org.jboss.mbui.model.structure.impl.ResourceConsumption;
 
 import java.util.LinkedList;
 import java.util.Set;
 
 /**
+ * A represenation of an ECA rule (event, condition & action)
+ *
  * @author Heiko Braun
  * @date 10/31/12
  */
-public class Behaviour implements TriggerTarget {
+public class Behaviour implements Consumer {
 
     private QName id;
     private Condition condition;
-    private Trigger trigger;
+    private Resource resource;
     private LinkedList<Transition> transitions = new LinkedList<Transition>();
 
     private static final Condition CONDITION_ALWAYS= new Condition() {
@@ -24,17 +26,17 @@ public class Behaviour implements TriggerTarget {
         }
     };
 
-    private EventConsumption eventConsumption = new EventConsumption();
+    private ResourceConsumption resourceConsumption = new ResourceConsumption();
 
-    public Behaviour(String namespace, String id, Trigger trigger) {
-        this.trigger = trigger;
+    public Behaviour(String namespace, String id, Resource resource) {
+        this.resource = resource;
         this.id = new QName(namespace, id);
         this.condition = CONDITION_ALWAYS;
-        this.eventConsumption.setInputs(trigger);
+        this.resourceConsumption.setInputs(resource);
     }
 
-    public Behaviour(String namespace, String id, Trigger trigger, Condition condition) {
-        this(namespace, id, trigger);
+    public Behaviour(String namespace, String id, Resource resource, Condition condition) {
+        this(namespace, id, resource);
         this.condition = condition;
     }
 
@@ -42,8 +44,8 @@ public class Behaviour implements TriggerTarget {
         return id;
     }
 
-    public Trigger getTrigger() {
-        return trigger;
+    public Resource getResource() {
+        return resource;
     }
 
     public void setCondition(Condition condition) {
@@ -55,18 +57,18 @@ public class Behaviour implements TriggerTarget {
     }
 
     @Override
-    public Set<Trigger<TriggerType>> getInputs() {
-        return eventConsumption.getInputs();
+    public Set<Resource<ResourceType>> getInputs() {
+        return resourceConsumption.getInputs();
     }
 
     @Override
-    public void setInputs(Trigger<TriggerType>... trigger) {
-        eventConsumption.setInputs(trigger);
+    public void setInputs(Resource<ResourceType>... resource) {
+        resourceConsumption.setInputs(resource);
     }
 
     @Override
-    public boolean isTriggeredBy(Trigger<TriggerType> type) {
-        return eventConsumption.isTriggeredBy(type);
+    public boolean doesConsume(Resource<ResourceType> type) {
+        return resourceConsumption.doesConsume(type);
     }
 
 }

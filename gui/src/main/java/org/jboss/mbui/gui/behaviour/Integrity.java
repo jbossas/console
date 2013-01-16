@@ -1,11 +1,11 @@
 package org.jboss.mbui.gui.behaviour;
 
 import org.jboss.mbui.model.behaviour.Behaviour;
+import org.jboss.mbui.model.behaviour.ResourceType;
 import org.jboss.mbui.model.structure.Container;
 import org.jboss.mbui.model.structure.InteractionUnit;
 import org.jboss.mbui.model.structure.impl.InteractionUnitVisitor;
-import org.jboss.mbui.model.behaviour.Trigger;
-import org.jboss.mbui.model.behaviour.TriggerType;
+import org.jboss.mbui.model.behaviour.Resource;
 
 import java.util.Set;
 
@@ -23,14 +23,14 @@ public class Integrity {
         container.accept(new InteractionUnitVisitor() {
             @Override
             public void startVisit(Container container) {
-                if(container.doesTrigger())
+                if(container.doesProduce())
                     checkDeclared(container, err);
 
             }
 
             @Override
             public void visit(InteractionUnit interactionUnit) {
-                if(interactionUnit.doesTrigger())
+                if(interactionUnit.doesProduce())
                     checkDeclared(interactionUnit, err);
 
             }
@@ -43,14 +43,14 @@ public class Integrity {
             void checkDeclared(InteractionUnit unit, IntegrityException exception)
             {
                 // check each declared trigger against existing behaviours
-                Set<Trigger<TriggerType>> producedTypes = unit.getOutputs();
+                Set<Resource<ResourceType>> producedTypes = unit.getOutputs();
 
-                for(Trigger<TriggerType> event : producedTypes)
+                for(Resource<ResourceType> event : producedTypes)
                 {
                     boolean match = false;
                     for(Behaviour candidate : behaviours)
                     {
-                        if(candidate.isTriggeredBy(event))
+                        if(candidate.doesConsume(event))
                         {
                             match = true;
                             break;

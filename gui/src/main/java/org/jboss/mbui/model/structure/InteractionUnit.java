@@ -18,12 +18,12 @@
  */
 package org.jboss.mbui.model.structure;
 
-import org.jboss.mbui.model.behaviour.Trigger;
-import org.jboss.mbui.model.behaviour.TriggerSource;
-import org.jboss.mbui.model.behaviour.TriggerTarget;
-import org.jboss.mbui.model.behaviour.TriggerType;
-import org.jboss.mbui.model.structure.impl.EventConsumption;
-import org.jboss.mbui.model.structure.impl.EventProduction;
+import org.jboss.mbui.model.behaviour.Consumer;
+import org.jboss.mbui.model.behaviour.Producer;
+import org.jboss.mbui.model.behaviour.Resource;
+import org.jboss.mbui.model.behaviour.ResourceType;
+import org.jboss.mbui.model.structure.impl.ResourceConsumption;
+import org.jboss.mbui.model.structure.impl.ResourceProduction;
 import org.jboss.mbui.model.mapping.Mapping;
 import org.jboss.mbui.model.mapping.MappingType;
 import org.jboss.mbui.model.mapping.Predicate;
@@ -38,7 +38,7 @@ import java.util.Set;
  * @author Harald Pehl
  * @date 10/24/2012
  */
-public abstract class InteractionUnit implements TriggerTarget, TriggerSource
+public abstract class InteractionUnit implements Consumer, Producer
 {
     private final QName id;
     private InteractionUnit parent;
@@ -46,8 +46,8 @@ public abstract class InteractionUnit implements TriggerTarget, TriggerSource
 
     private final Map<MappingType, Mapping> mappings;
 
-    private EventConsumption eventConsumption;
-    private EventProduction eventProduction;
+    private ResourceConsumption resourceConsumption;
+    private ResourceProduction resourceProduction;
 
     protected InteractionUnit(String namespace, final String id)
     {
@@ -68,8 +68,8 @@ public abstract class InteractionUnit implements TriggerTarget, TriggerSource
         this.id = id;
         this.name = name;
         this.mappings = new EnumMap<MappingType, Mapping>(MappingType.class);
-        this.eventConsumption = new EventConsumption();
-        this.eventProduction = new EventProduction(TriggerType.Interaction);
+        this.resourceConsumption = new ResourceConsumption();
+        this.resourceProduction = new ResourceProduction(ResourceType.Interaction);
     }
 
     @Override
@@ -168,15 +168,15 @@ public abstract class InteractionUnit implements TriggerTarget, TriggerSource
     // ------------------------------------------------------ event handling
 
     @Override
-    public Set<Trigger<TriggerType>> getInputs()
+    public Set<Resource<ResourceType>> getInputs()
     {
-        return eventConsumption.getInputs();
+        return resourceConsumption.getInputs();
     }
 
     @Override
-    public boolean isTriggeredBy(Trigger<TriggerType> event)
+    public boolean doesConsume(Resource<ResourceType> event)
     {
-        return eventConsumption.isTriggeredBy(event);
+        return resourceConsumption.doesConsume(event);
     }
 
 
@@ -220,32 +220,32 @@ public abstract class InteractionUnit implements TriggerTarget, TriggerSource
         this.name = name;
     }
 
-    public boolean doesTrigger()
+    public boolean doesProduce()
     {
-        return eventProduction.doesTrigger();
+        return resourceProduction.doesProduce();
     }
 
     @Override
-    public void setOutputs(Trigger<TriggerType>... trigger)
+    public void setOutputs(Resource<ResourceType>... resource)
     {
-        for(Trigger<TriggerType> event : trigger)
+        for(Resource<ResourceType> event : resource)
             event.setSource(getId());
 
-        eventProduction.setOutputs(trigger);
+        resourceProduction.setOutputs(resource);
     }
 
     @Override
-    public void setInputs(Trigger<TriggerType>... trigger) {
+    public void setInputs(Resource<ResourceType>... resource) {
 
-        for(Trigger<TriggerType> event : trigger)
+        for(Resource<ResourceType> event : resource)
             event.setSource(getId());
 
-        for(Trigger<TriggerType> e : trigger)
-            eventConsumption.setInputs(e);
+        for(Resource<ResourceType> e : resource)
+            resourceConsumption.setInputs(e);
 
     }
 
-    public Set<Trigger<TriggerType>> getOutputs() {
-        return eventProduction.getOutputs();
+    public Set<Resource<ResourceType>> getOutputs() {
+        return resourceProduction.getOutputs();
     }
 }

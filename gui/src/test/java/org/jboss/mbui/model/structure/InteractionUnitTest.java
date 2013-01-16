@@ -19,8 +19,8 @@
 package org.jboss.mbui.model.structure;
 
 import org.jboss.mbui.model.behaviour.Behaviour;
-import org.jboss.mbui.model.behaviour.Trigger;
-import org.jboss.mbui.model.behaviour.TriggerType;
+import org.jboss.mbui.model.behaviour.Resource;
+import org.jboss.mbui.model.behaviour.ResourceType;
 import org.jboss.mbui.model.structure.as7.Form;
 import org.jboss.mbui.model.mapping.Predicate;
 import org.jboss.mbui.model.mapping.as7.ResourceMapping;
@@ -36,9 +36,9 @@ import java.util.Set;
 import static org.jboss.mbui.TestNamespace.NAMESPACE;
 import static org.jboss.mbui.model.structure.TemporalOperator.Choice;
 import static org.jboss.mbui.model.structure.TemporalOperator.OrderIndependance;
-import static org.jboss.mbui.model.behaviour.TriggerType.*;
-import static org.jboss.mbui.model.behaviour.TriggerType.System;
-import static org.jboss.mbui.model.behaviour.TriggerType.Transition;
+import static org.jboss.mbui.model.behaviour.ResourceType.*;
+import static org.jboss.mbui.model.behaviour.ResourceType.System;
+import static org.jboss.mbui.model.behaviour.ResourceType.Transition;
 import static org.jboss.mbui.model.mapping.MappingType.RESOURCE;
 import static org.junit.Assert.*;
 
@@ -73,19 +73,19 @@ public class InteractionUnitTest
                 .end()
                 .build();
 
-        assertFalse("Should not produce events by default", submit.doesTrigger());
+        assertFalse("Should not produce events by default", submit.doesProduce());
 
-        Trigger<TriggerType> submitEvent = new Trigger<TriggerType>(NAMESPACE, "submit", Interaction);
+        Resource<ResourceType> submitEvent = new Resource<ResourceType>(NAMESPACE, "submit", Interaction);
         submit.setOutputs(submitEvent);
 
-        assertTrue("submit should produce events", submit.doesTrigger());
+        assertTrue("submit should produce events", submit.doesProduce());
         assertFalse("submit should not consume interaction events",
-                container.isTriggeredBy(new Trigger<TriggerType>(NAMESPACE, "pressCancel", Interaction))
+                container.doesConsume(new Resource<ResourceType>(NAMESPACE, "pressCancel", Interaction))
         );
 
 
         Behaviour handleSubmit = new Behaviour(NAMESPACE, "handleSubmit", submitEvent);
-        assertTrue("Behaviour should be triggered by submitEvent", handleSubmit.isTriggeredBy(submitEvent));
+        assertTrue("Behaviour should be triggered by submitEvent", handleSubmit.doesConsume(submitEvent));
 
         // integrity checks
         final Set<Behaviour> behaviours = new HashSet<Behaviour>();
@@ -99,7 +99,7 @@ public class InteractionUnitTest
         }
 
         // create a derivation that causes the integrity check to fail
-        Trigger<TriggerType> closeEvent = new Trigger<TriggerType>(NAMESPACE, "dialog-close", Interaction);
+        Resource<ResourceType> closeEvent = new Resource<ResourceType>(NAMESPACE, "dialog-close", Interaction);
         close.setOutputs(closeEvent);
 
         try {
@@ -119,16 +119,16 @@ public class InteractionUnitTest
     @Test
     public void behaviourResolution()
     {
-        Trigger<TriggerType> submitEvent = new Trigger<TriggerType>(NAMESPACE, "submitName", Interaction);
-        Trigger<TriggerType> deviceRotation = new Trigger<TriggerType>(NAMESPACE, "deviceRotation", System);
-        Trigger<TriggerType> loadData = new Trigger<TriggerType>(NAMESPACE, "loadData", Transition);
+        Resource<ResourceType> submitEvent = new Resource<ResourceType>(NAMESPACE, "submitName", Interaction);
+        Resource<ResourceType> deviceRotation = new Resource<ResourceType>(NAMESPACE, "deviceRotation", System);
+        Resource<ResourceType> loadData = new Resource<ResourceType>(NAMESPACE, "loadData", Transition);
 
         Behaviour behaviour = new Behaviour(NAMESPACE, "onSubmitName", submitEvent);
 
-        assertTrue("Behaviour can be triggered by submitEvent", behaviour.isTriggeredBy(submitEvent));
+        assertTrue("Behaviour can be triggered by submitEvent", behaviour.doesConsume(submitEvent));
 
-        assertFalse("Behaviour should not be triggered by deviceRotation", behaviour.isTriggeredBy(deviceRotation));
-        assertFalse("Behaviour should not be triggered by loadData", behaviour.isTriggeredBy(loadData));
+        assertFalse("Behaviour should not be triggered by deviceRotation", behaviour.doesConsume(deviceRotation));
+        assertFalse("Behaviour should not be triggered by loadData", behaviour.doesConsume(loadData));
 
     }
 
