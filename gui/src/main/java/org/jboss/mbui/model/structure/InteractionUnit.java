@@ -123,7 +123,7 @@ public abstract class InteractionUnit implements Consumer, Producer
     }
 
     /**
-     * Finds a specific mapping over a hirarchy of interaction units following a bottom up approach.
+     * Finds a specific mapping over a hierarchy of interaction units following a bottom up approach.
      *
      * @param type
      * @param <T>
@@ -136,7 +136,7 @@ public abstract class InteractionUnit implements Consumer, Producer
     }
 
     /**
-     * Finds a specific mapping over a hirarchy of interaction units following a bottom up approach.
+     * Finds a specific mapping over a hierarchy of interaction units following a bottom up approach.
      * <p/>
      * The mapping is only returned if the predicate matches.
      *

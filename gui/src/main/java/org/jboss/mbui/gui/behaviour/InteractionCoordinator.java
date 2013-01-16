@@ -14,26 +14,27 @@ import java.util.Map;
  * A coordinator acts as the middleman between a framework (i.e. GWTP), the structure (interface model)
  * and the behaviour (interaction model). <p/>
  *
- * It translates framework events (presenter lifecyle) into {@link SystemEvent}'s
- * and realizes the actual business logic as a {@link TransitionEvent.Handler}.
+ * It wires the {@link org.jboss.mbui.model.behaviour.Resource} input/output of interaction units to certain behaviour and vice versa.
+ * It's available at reification time to interaction units and provides an API to register {@link Procedure}'s.
+ *
  *
  * @author Heiko Braun
  * @date 11/15/12
  */
-public class InteractionCoordinator implements FrameworkContract, TransitionEvent.Handler {
+public class InteractionCoordinator implements FrameworkContract, InteractionEvent.Handler {
 
     private static final String PROJECT_NAMESPACE = "org.jboss.as";
 
     // a bus scoped to this coordinator and the associated models
     private EventBus bus;
-    private Map<QName, BehaviourExecution> behaviours = new HashMap<QName, BehaviourExecution>();
+    private Map<QName, Procedure> behaviours = new HashMap<QName, Procedure>();
 
     @Inject
     public InteractionCoordinator() {
         this.bus = new SimpleEventBus();
 
         // transitions (initiated by the behaviour model)
-        bus.addHandler(TransitionEvent.TYPE, this);
+        bus.addHandler(InteractionEvent.TYPE, this);
     }
 
     public EventBus getLocalBus()
@@ -57,41 +58,41 @@ public class InteractionCoordinator implements FrameworkContract, TransitionEven
 
     }
 
-    public void perform(BehaviourExecution execution)
+    public void perform(Procedure procedure)
     {
-        behaviours.put(execution.getTriggerId(), execution);
+        behaviours.put(procedure.getId(), procedure);
     }
 
     //  ----- System events ------
     @Override
     public void onBind() {
-        bus.fireEvent(new SystemEvent(new QName(PROJECT_NAMESPACE, "bind"), SystemEvent.Kind.FRAMEWORK));
+        bus.fireEvent(new SystemEvent(new QName(PROJECT_NAMESPACE, "bind")));
     }
 
     @Override
     public void onReveal() {
-        bus.fireEvent(new SystemEvent(new QName(PROJECT_NAMESPACE, "reveal"), SystemEvent.Kind.FRAMEWORK));
+        bus.fireEvent(new SystemEvent(new QName(PROJECT_NAMESPACE, "reveal")));
 
     }
 
     @Override
     public void onReset() {
-        bus.fireEvent(new SystemEvent(new QName(PROJECT_NAMESPACE, "reset"), SystemEvent.Kind.FRAMEWORK));
+        bus.fireEvent(new SystemEvent(new QName(PROJECT_NAMESPACE, "reset")));
     }
 
     //  ----- Transitions ------
 
     @Override
-    public boolean accepts(TransitionEvent.Kind kind) {
-        return (kind==TransitionEvent.Kind.FUNCTION_CALL);
+    public boolean accepts(InteractionEvent event) {
+        return true; // TODO guard clause?
     }
 
     @Override
-    public void onTransitionEvent(final TransitionEvent event) {
+    public void onTransitionEvent(final InteractionEvent event) {
         QName trigger = event.getId();
         Object source = event.getSource();
 
-        final BehaviourExecution execution = behaviours.get(trigger);
+        final Procedure execution = behaviours.get(trigger);
 
         if(execution!=null && execution.doesMatch(trigger, source))
         {

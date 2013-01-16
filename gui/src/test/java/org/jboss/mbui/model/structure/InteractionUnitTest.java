@@ -137,15 +137,21 @@ public class InteractionUnitTest
         InteractionUnit root = new Builder()
                 .start(new Container(NAMESPACE, "root", "Root", OrderIndependance))
                 .addMapping(new ResourceMapping(NAMESPACE).setAddress("root"))
-                .add(new Select(NAMESPACE, "table", "Table"))
-                .start(new Container(NAMESPACE, "forms", "Forms", Choice))
-                .add(basicAttributes)
-                .addMapping(new ResourceMapping(NAMESPACE).setAddress("basicAttributes"))
-                .add(new Form(NAMESPACE, "extendedAttributes", "Basic Attributes"))
-                .end()
+                    .add(new Select(NAMESPACE, "table", "Table"))
+                        .start(new Container(NAMESPACE, "forms", "Forms", Choice))
+                            .add(basicAttributes)
+                            .addMapping(new ResourceMapping(NAMESPACE).setAddress("basicAttributes"))
+                            .add(new Form(NAMESPACE, "extendedAttributes", "Basic Attributes"))
+                        .end()
                 .end().build();
 
-        ResourceMapping mapping = basicAttributes.findMapping(RESOURCE);
+        // TODO: find resource mapping type & namespace is what we actual needs I think.
+        ResourceMapping mapping = basicAttributes.findMapping(RESOURCE, new Predicate<ResourceMapping>() {
+            @Override
+            public boolean appliesTo(ResourceMapping candidate) {
+                return candidate.getNamespace().equals(NAMESPACE);
+            }
+        });
         assertNotNull(mapping);
         assertEquals("basicAttributes", mapping.getAddress());
 

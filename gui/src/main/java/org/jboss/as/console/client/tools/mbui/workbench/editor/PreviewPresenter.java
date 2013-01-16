@@ -30,13 +30,13 @@ import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
+import org.jboss.mbui.gui.behaviour.DataDrivenCommand;
+import org.jboss.mbui.gui.behaviour.PresentationEvent;
+import org.jboss.mbui.gui.behaviour.Procedure;
 import org.jboss.mbui.model.structure.InteractionUnit;
 import org.jboss.mbui.model.structure.QName;
 import org.jboss.mbui.gui.Context;
-import org.jboss.mbui.gui.behaviour.BehaviourExecution;
-import org.jboss.mbui.gui.behaviour.DataDrivenCommand;
 import org.jboss.mbui.gui.behaviour.InteractionCoordinator;
-import org.jboss.mbui.gui.behaviour.StatementEvent;
 import org.jboss.mbui.gui.reification.ContextKey;
 import org.jboss.mbui.gui.reification.ReificationWidget;
 import org.jboss.mbui.gui.reification.pipeline.ReificationPipeline;
@@ -113,7 +113,7 @@ public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, Preview
 
         final QName transactionManagerResource = new QName("org.jboss.transactions", "root");
 
-        BehaviourExecution saveBasicAttributes = new BehaviourExecution(
+        Procedure saveBasicAttributes = new Procedure(
                 new QName("org.jboss.as", "save"),
                 transactionManagerResource,
                 new DataDrivenCommand<HashMap>() {
@@ -155,7 +155,7 @@ public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, Preview
                 }
         );
 
-        BehaviourExecution loadBasicAttributes = new BehaviourExecution(
+        Procedure loadBasicAttributes = new Procedure(
                 new QName("org.jboss.as", "load"),
                 transactionManagerResource,
                 new DataDrivenCommand() {
@@ -178,9 +178,8 @@ public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, Preview
                             public void onSuccess(DMRResponse dmrResponse) {
                                 ModelNode response = dmrResponse.get();
 
-                                StatementEvent statement = new StatementEvent(
-                                        QName.valueOf("org.jboss.as:form-update"),
-                                        StatementEvent.Kind.UPDATE
+                                PresentationEvent statement = new PresentationEvent(
+                                        QName.valueOf("org.jboss.as:form-update")
                                 );
 
                                 statement.setTarget(transactionManagerResource);

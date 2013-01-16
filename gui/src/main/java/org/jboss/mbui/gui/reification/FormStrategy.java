@@ -22,6 +22,8 @@ import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.web.bindery.event.shared.EventBus;
+import org.jboss.mbui.gui.behaviour.InteractionEvent;
+import org.jboss.mbui.gui.behaviour.PresentationEvent;
 import org.jboss.mbui.model.structure.InteractionUnit;
 import org.jboss.mbui.model.structure.QName;
 import org.jboss.mbui.model.mapping.MappingType;
@@ -29,9 +31,7 @@ import org.jboss.mbui.model.mapping.as7.ResourceAttribute;
 import org.jboss.mbui.model.mapping.as7.ResourceMapping;
 import org.jboss.mbui.gui.Context;
 import org.jboss.mbui.gui.ReificationStrategy;
-import org.jboss.mbui.gui.behaviour.StatementEvent;
 import org.jboss.mbui.gui.behaviour.SystemEvent;
-import org.jboss.mbui.gui.behaviour.TransitionEvent;
 import org.jboss.mbui.gui.widgets.ModelNodeForm;
 import org.jboss.as.console.client.shared.help.StaticHelpPanel;
 import org.jboss.as.console.client.widgets.forms.FormToolStrip;
@@ -192,9 +192,8 @@ public class FormStrategy implements ReificationStrategy<ReificationWidget>
                         @Override
                         public void onSave(Map<String, Object> changeset) {
 
-                            TransitionEvent transitionEvent = new TransitionEvent(
-                                    QName.valueOf("org.jboss.as:save"),
-                                    TransitionEvent.Kind.FUNCTION_CALL);
+                            InteractionEvent transitionEvent = new InteractionEvent(
+                                    QName.valueOf("org.jboss.as:save"));
 
                             transitionEvent.setPayload(form.getChangedValues());
 
@@ -219,8 +218,9 @@ public class FormStrategy implements ReificationStrategy<ReificationWidget>
             // handle resets within this scope
             coordinator.addHandler(SystemEvent.TYPE, new SystemEvent.Handler() {
                 @Override
-                public boolean accepts(SystemEvent.Kind kind) {
-                    return (SystemEvent.Kind.FRAMEWORK == kind);
+                public boolean accepts(SystemEvent event) {
+                    QName reset = new QName("org.jboss.as", "reset");
+                    return event.getId().equals(reset);
                 }
 
                 @Override
@@ -228,9 +228,8 @@ public class FormStrategy implements ReificationStrategy<ReificationWidget>
                     form.cancel();
 
                     // request loading of data
-                    TransitionEvent transitionEvent = new TransitionEvent(
-                            QName.valueOf("org.jboss.as:load"),
-                            TransitionEvent.Kind.FUNCTION_CALL);
+                    InteractionEvent transitionEvent =
+                            new InteractionEvent(QName.valueOf("org.jboss.as:load"));
 
                     // update interaction units
                     coordinator.fireEventFromSource(
@@ -242,17 +241,15 @@ public class FormStrategy implements ReificationStrategy<ReificationWidget>
 
 
             // handle the results of function calls (statements)
-            coordinator.addHandler(StatementEvent.TYPE, new StatementEvent.Handler()
+            coordinator.addHandler(PresentationEvent.TYPE, new PresentationEvent.Handler()
             {
                 @Override
-                public boolean accepts(StatementEvent event) {
-                    return (StatementEvent.Kind.UPDATE == event.getKind() &&
-                            event.getTarget().equalsIgnoreSuffix(interactionUnit.getId())
-                    );
+                public boolean accepts(PresentationEvent event) {
+                    return true; // TODO: guard clause?
                 }
 
                 @Override
-                public void onStatementEvent(StatementEvent event) {
+                public void onStatementEvent(PresentationEvent event) {
 
                     assert (event.getPayload() instanceof ModelNode) : "Unexpected type "+event.getPayload().getClass();
 

@@ -7,7 +7,7 @@ import java.util.LinkedList;
 import java.util.Set;
 
 /**
- * A represenation of an ECA rule (event, condition & action)
+ * A representation of an ECA rule (event, condition & action)
  *
  * @author Heiko Braun
  * @date 10/31/12

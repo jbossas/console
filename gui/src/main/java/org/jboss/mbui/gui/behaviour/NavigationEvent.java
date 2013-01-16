@@ -6,37 +6,25 @@ import com.google.gwt.event.shared.HasHandlers;
 import org.jboss.mbui.model.structure.QName;
 
 /**
+ * A navigation event is the created by a {@link DataDrivenCommand}.
+ * It's typically the result of a an instruction to navigate to a different interaction unit.
+ *
  * @author Heiko Braun
  * @date 11/15/12
  */
-public class StatementEvent extends GwtEvent<StatementEvent.Handler> {
+public class NavigationEvent extends GwtEvent<NavigationEvent.Handler> {
 
     public static final Type TYPE = new Type<Handler>();
 
-    public enum Kind {UPDATE}
-
     private QName id;
-    private Kind kind;
+
     private Object payload;
 
     private QName target;
 
-    public StatementEvent(QName id, Kind kind) {
+    public NavigationEvent(QName id) {
         super();
         this.id = id;
-        this.kind = kind;
-    }
-
-    public Kind getKind() {
-        return kind;
-    }
-
-    public Object getPayload() {
-        return payload;
-    }
-
-    public void setPayload(Object payload) {
-        this.payload = payload;
     }
 
     public QName getId() {
@@ -59,15 +47,15 @@ public class StatementEvent extends GwtEvent<StatementEvent.Handler> {
     @Override
     protected void dispatch(Handler listener) {
         if(listener.accepts(this))
-            listener.onStatementEvent(this);
+            listener.onNavigationEvent(this);
     }
 
     public interface Handler extends EventHandler {
-        boolean accepts(StatementEvent event);
-        void onStatementEvent(StatementEvent event);
+        boolean accepts(NavigationEvent event);
+        void onNavigationEvent(NavigationEvent event);
     }
 
-    public static void fire(HasHandlers source, StatementEvent eventInstance) {
+    public static void fire(HasHandlers source, NavigationEvent eventInstance) {
         source.fireEvent(eventInstance);
     }
 }
