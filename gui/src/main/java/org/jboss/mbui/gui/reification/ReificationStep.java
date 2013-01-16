@@ -20,7 +20,6 @@ package org.jboss.mbui.gui.reification;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import org.jboss.mbui.model.structure.InteractionUnit;
-import org.jboss.mbui.gui.Context;
 
 import java.util.Iterator;
 

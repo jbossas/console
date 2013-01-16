@@ -16,26 +16,51 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.mbui.gui.widgets;
+package org.jboss.mbui.gui.reification;
 
-import com.google.gwt.view.client.ProvidesKey;
-import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
-import org.jboss.dmr.client.ModelNode;
+import org.jboss.mbui.gui.reification.strategy.ContextKey;
+
+import java.util.EnumMap;
+import java.util.Map;
 
 /**
  * @author Harald Pehl
- * @date 11/12/2012
+ * @date 10/25/2012
  */
-public class ModelNodeCellTable extends DefaultCellTable<ModelNode>
+public class Context
 {
-    public ModelNodeCellTable(final int pageSize)
+    private final Map<ContextKey, Object> data;
+
+    public Context()
     {
-        super(pageSize);
+        this.data = new EnumMap<ContextKey, Object>(ContextKey.class);
     }
 
-    public ModelNodeCellTable(final int pageSize,
-            final ProvidesKey<ModelNode> keyProvider)
+    public <T> Context set(final ContextKey key, final T value)
     {
-        super(pageSize, keyProvider);
+        data.put(key, value);
+        return this;
+    }
+
+    public <T> T get(final ContextKey name)
+    {
+        Object value = data.get(name);
+        if (value != null)
+        {
+            return (T) value;
+        }
+        return null;
+    }
+
+    public boolean has(final ContextKey name)
+    {
+        Object value = data.get(name);
+        return value != null;
+    }
+
+    @Override
+    public String toString()
+    {
+        return "Context " + data;
     }
 }

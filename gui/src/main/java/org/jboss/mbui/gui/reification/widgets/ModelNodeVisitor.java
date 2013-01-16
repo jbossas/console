@@ -1,4 +1,4 @@
-package org.jboss.mbui.gui.widgets;
+package org.jboss.mbui.gui.reification.widgets;
 
 import org.jboss.dmr.client.ModelNode;
 

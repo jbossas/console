@@ -35,7 +35,7 @@ import org.jboss.mbui.gui.behaviour.PresentationEvent;
 import org.jboss.mbui.gui.behaviour.Procedure;
 import org.jboss.mbui.model.structure.InteractionUnit;
 import org.jboss.mbui.model.structure.QName;
-import org.jboss.mbui.gui.Context;
+import org.jboss.mbui.gui.reification.Context;
 import org.jboss.mbui.gui.behaviour.InteractionCoordinator;
 import org.jboss.mbui.gui.reification.strategy.ContextKey;
 import org.jboss.mbui.gui.reification.strategy.ReificationWidget;

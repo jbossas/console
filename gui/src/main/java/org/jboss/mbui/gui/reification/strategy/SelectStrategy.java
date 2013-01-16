@@ -28,9 +28,9 @@ import org.jboss.mbui.model.structure.Select;
 import org.jboss.mbui.model.mapping.MappingType;
 import org.jboss.mbui.model.mapping.as7.ResourceAttribute;
 import org.jboss.mbui.model.mapping.as7.ResourceMapping;
-import org.jboss.mbui.gui.Context;
-import org.jboss.mbui.gui.ReificationStrategy;
-import org.jboss.mbui.gui.widgets.ModelNodeCellTable;
+import org.jboss.mbui.gui.reification.Context;
+import org.jboss.mbui.gui.reification.ReificationStrategy;
+import org.jboss.mbui.gui.reification.widgets.ModelNodeCellTable;
 import org.jboss.ballroom.client.widgets.tables.DefaultPager;
 
 import java.util.List;

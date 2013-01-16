@@ -22,7 +22,6 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import org.jboss.mbui.model.structure.Container;
 import org.jboss.mbui.model.structure.InteractionUnit;
 import org.jboss.mbui.model.structure.impl.InteractionUnitVisitor;
-import org.jboss.mbui.gui.ReificationStrategy;
 import org.jboss.mbui.gui.reification.strategy.ChoiceStrategy;
 import org.jboss.mbui.gui.reification.strategy.FormStrategy;
 import org.jboss.mbui.gui.reification.strategy.OrderIndependanceStrategy;

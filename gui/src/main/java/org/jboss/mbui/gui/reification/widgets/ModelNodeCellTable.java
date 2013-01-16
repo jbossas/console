@@ -16,17 +16,26 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.mbui.gui;
+package org.jboss.mbui.gui.reification.widgets;
 
-import org.jboss.mbui.model.structure.InteractionUnit;
+import com.google.gwt.view.client.ProvidesKey;
+import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
+import org.jboss.dmr.client.ModelNode;
 
 /**
  * @author Harald Pehl
- * @date 10/25/2012
+ * @date 11/12/2012
  */
-public interface ReificationStrategy<T>
+public class ModelNodeCellTable extends DefaultCellTable<ModelNode>
 {
-    T reify(InteractionUnit interactionUnit, Context context);
+    public ModelNodeCellTable(final int pageSize)
+    {
+        super(pageSize);
+    }
 
-    boolean appliesTo(InteractionUnit interactionUnit);
+    public ModelNodeCellTable(final int pageSize,
+            final ProvidesKey<ModelNode> keyProvider)
+    {
+        super(pageSize, keyProvider);
+    }
 }
