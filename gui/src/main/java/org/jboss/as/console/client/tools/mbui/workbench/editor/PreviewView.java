@@ -24,7 +24,7 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.ViewImpl;
-import org.jboss.mbui.gui.reification.ReificationWidget;
+import org.jboss.mbui.gui.reification.strategy.ReificationWidget;
 
 /**
  * @author Harald Pehl

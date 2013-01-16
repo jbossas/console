@@ -16,13 +16,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.mbui.gui.reification;
+package org.jboss.mbui.gui.reification.strategy;
+
+import com.google.gwt.user.client.ui.IsWidget;
 
 /**
  * @author Harald Pehl
- * @date 11/14/2012
+ * @date 10/26/2012
  */
-public enum ContextKey
+public interface ReificationWidget extends IsWidget
 {
-    WIDGET, MODEL_DESCRIPTIONS, PROPERTIES, COORDINATOR
+    public void add(ReificationWidget widget);
 }

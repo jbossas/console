@@ -16,25 +16,25 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.mbui.gui.reification.pipeline;
+package org.jboss.mbui.gui.reification;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import org.jboss.mbui.model.structure.Container;
 import org.jboss.mbui.model.structure.InteractionUnit;
 import org.jboss.mbui.model.structure.impl.InteractionUnitVisitor;
 import org.jboss.mbui.gui.ReificationStrategy;
-import org.jboss.mbui.gui.reification.ChoiceStrategy;
-import org.jboss.mbui.gui.reification.FormStrategy;
-import org.jboss.mbui.gui.reification.OrderIndependanceStrategy;
-import org.jboss.mbui.gui.reification.ReificationWidget;
-import org.jboss.mbui.gui.reification.SelectStrategy;
+import org.jboss.mbui.gui.reification.strategy.ChoiceStrategy;
+import org.jboss.mbui.gui.reification.strategy.FormStrategy;
+import org.jboss.mbui.gui.reification.strategy.OrderIndependanceStrategy;
+import org.jboss.mbui.gui.reification.strategy.ReificationWidget;
+import org.jboss.mbui.gui.reification.strategy.SelectStrategy;
 
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Stack;
 
-import static org.jboss.mbui.gui.reification.ContextKey.WIDGET;
+import static org.jboss.mbui.gui.reification.strategy.ContextKey.WIDGET;
 
 /**
  * @author Harald Pehl

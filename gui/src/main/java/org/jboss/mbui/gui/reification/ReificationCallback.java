@@ -18,13 +18,18 @@
  */
 package org.jboss.mbui.gui.reification;
 
-import com.google.gwt.user.client.ui.IsWidget;
+import com.allen_sauer.gwt.log.client.Log;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 
 /**
- * @author Harald Pehl
- * @date 10/26/2012
- */
-public interface ReificationWidget extends IsWidget
+* @author Harald Pehl
+* @date 11/12/2012
+*/
+public abstract class ReificationCallback implements AsyncCallback<Boolean>
 {
-    public void add(ReificationWidget widget);
+    @Override
+    public void onFailure(final Throwable caught)
+    {
+        Log.error("Reification failed: " + caught.getMessage(), caught);
+    }
 }

@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.mbui.gui.reification.pipeline;
+package org.jboss.mbui.gui.reification;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
@@ -41,7 +41,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static org.jboss.mbui.model.mapping.MappingType.RESOURCE;
-import static org.jboss.mbui.gui.reification.ContextKey.MODEL_DESCRIPTIONS;
+import static org.jboss.mbui.gui.reification.strategy.ContextKey.MODEL_DESCRIPTIONS;
 import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 
 /**

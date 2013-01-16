@@ -16,20 +16,13 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.mbui.gui.reification.pipeline;
-
-import com.allen_sauer.gwt.log.client.Log;
-import com.google.gwt.user.client.rpc.AsyncCallback;
+package org.jboss.mbui.gui.reification.strategy;
 
 /**
-* @author Harald Pehl
-* @date 11/12/2012
-*/
-public abstract class ReificationCallback implements AsyncCallback<Boolean>
+ * @author Harald Pehl
+ * @date 11/14/2012
+ */
+public enum ContextKey
 {
-    @Override
-    public void onFailure(final Throwable caught)
-    {
-        Log.error("Reification failed: " + caught.getMessage(), caught);
-    }
+    WIDGET, MODEL_DESCRIPTIONS, PROPERTIES, COORDINATOR
 }

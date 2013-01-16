@@ -1,4 +1,4 @@
-package org.jboss.mbui.gui.reification;
+package org.jboss.mbui.gui.reification.strategy;
 
 import com.google.gwt.user.client.ui.Widget;
 

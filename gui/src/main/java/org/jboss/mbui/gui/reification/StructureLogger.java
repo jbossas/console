@@ -1,4 +1,4 @@
-package org.jboss.mbui.gui.reification.pipeline;
+package org.jboss.mbui.gui.reification;
 
 import org.jboss.mbui.model.structure.InteractionUnit;
 

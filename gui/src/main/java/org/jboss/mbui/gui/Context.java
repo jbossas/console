@@ -18,7 +18,7 @@
  */
 package org.jboss.mbui.gui;
 
-import org.jboss.mbui.gui.reification.ContextKey;
+import org.jboss.mbui.gui.reification.strategy.ContextKey;
 
 import java.util.EnumMap;
 import java.util.Map;

@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.mbui.gui.reification.pipeline;
+package org.jboss.mbui.gui.reification;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
@@ -28,6 +28,10 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
+ * Entry point for reification of an abstract model to a concrete interface.
+ * It does rely on different {@link org.jboss.mbui.gui.reification.strategy.WidgetStrategy}'s
+ * for each {@link InteractionUnit} type.
+ *
  * @author Harald Pehl
  * @date 11/12/2012
  */
