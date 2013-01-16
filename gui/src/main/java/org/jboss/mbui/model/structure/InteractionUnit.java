@@ -69,7 +69,7 @@ public abstract class InteractionUnit implements Consumer, Producer
         this.name = name;
         this.mappings = new EnumMap<MappingType, Mapping>(MappingType.class);
         this.resourceConsumption = new ResourceConsumption();
-        this.resourceProduction = new ResourceProduction(ResourceType.Interaction);
+        this.resourceProduction = new ResourceProduction();
     }
 
     @Override

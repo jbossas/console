@@ -14,10 +14,10 @@ import java.util.Set;
 public class ResourceProduction implements Producer {
 
     private Set<Resource<ResourceType>> producedTypes;
-    private ResourceType type;
 
-    public ResourceProduction(ResourceType type) {
-        this.type = type;
+
+    public ResourceProduction() {
+
     }
 
     @Override

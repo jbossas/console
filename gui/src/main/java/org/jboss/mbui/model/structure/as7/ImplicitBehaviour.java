@@ -22,8 +22,8 @@ public class ImplicitBehaviour {
 
     private static void attachFormBehaviour(InteractionUnit unit) {
 
-        Resource<ResourceType> reset = new Resource<ResourceType>(PROJECT_NAMESPACE, "reset", ResourceType.System);
-        Resource<ResourceType> save = new Resource<ResourceType>(PROJECT_NAMESPACE, "save", ResourceType.Interaction);
+        Resource<ResourceType> reset = new Resource<ResourceType>(PROJECT_NAMESPACE, "reset", ResourceType.Event);
+        Resource<ResourceType> save = new Resource<ResourceType>(PROJECT_NAMESPACE, "save", ResourceType.Event);
 
         unit.setInputs(reset);
         unit.setOutputs(save);

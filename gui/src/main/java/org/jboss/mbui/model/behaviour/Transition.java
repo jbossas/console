@@ -24,7 +24,7 @@ public abstract class Transition implements Producer {
     }
 
     private ResourceProduction resourceProduction =
-            new ResourceProduction(ResourceType.Transition);
+            new ResourceProduction();
 
     @Override
     public boolean doesProduce() {

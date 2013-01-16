@@ -6,5 +6,5 @@ package org.jboss.mbui.model.behaviour;
  */
 public enum ResourceType {
 
-    Interaction, Transition, System, Statement
+    Event, Presentation
 }

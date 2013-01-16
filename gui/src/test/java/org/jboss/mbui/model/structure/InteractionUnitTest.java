@@ -37,8 +37,6 @@ import static org.jboss.mbui.TestNamespace.NAMESPACE;
 import static org.jboss.mbui.model.structure.TemporalOperator.Choice;
 import static org.jboss.mbui.model.structure.TemporalOperator.OrderIndependance;
 import static org.jboss.mbui.model.behaviour.ResourceType.*;
-import static org.jboss.mbui.model.behaviour.ResourceType.System;
-import static org.jboss.mbui.model.behaviour.ResourceType.Transition;
 import static org.jboss.mbui.model.mapping.MappingType.RESOURCE;
 import static org.junit.Assert.*;
 
@@ -75,12 +73,12 @@ public class InteractionUnitTest
 
         assertFalse("Should not produce events by default", submit.doesProduce());
 
-        Resource<ResourceType> submitEvent = new Resource<ResourceType>(NAMESPACE, "submit", Interaction);
+        Resource<ResourceType> submitEvent = new Resource<ResourceType>(NAMESPACE, "submit", Event);
         submit.setOutputs(submitEvent);
 
         assertTrue("submit should produce events", submit.doesProduce());
         assertFalse("submit should not consume interaction events",
-                container.doesConsume(new Resource<ResourceType>(NAMESPACE, "pressCancel", Interaction))
+                container.doesConsume(new Resource<ResourceType>(NAMESPACE, "pressCancel", Event))
         );
 
 
@@ -99,7 +97,7 @@ public class InteractionUnitTest
         }
 
         // create a derivation that causes the integrity check to fail
-        Resource<ResourceType> closeEvent = new Resource<ResourceType>(NAMESPACE, "dialog-close", Interaction);
+        Resource<ResourceType> closeEvent = new Resource<ResourceType>(NAMESPACE, "dialog-close", Event);
         close.setOutputs(closeEvent);
 
         try {
@@ -119,9 +117,9 @@ public class InteractionUnitTest
     @Test
     public void behaviourResolution()
     {
-        Resource<ResourceType> submitEvent = new Resource<ResourceType>(NAMESPACE, "submitName", Interaction);
-        Resource<ResourceType> deviceRotation = new Resource<ResourceType>(NAMESPACE, "deviceRotation", System);
-        Resource<ResourceType> loadData = new Resource<ResourceType>(NAMESPACE, "loadData", Transition);
+        Resource<ResourceType> submitEvent = new Resource<ResourceType>(NAMESPACE, "submitName", Event);
+        Resource<ResourceType> deviceRotation = new Resource<ResourceType>(NAMESPACE, "deviceRotation", Event);
+        Resource<ResourceType> loadData = new Resource<ResourceType>(NAMESPACE, "loadData", Event   );
 
         Behaviour behaviour = new Behaviour(NAMESPACE, "onSubmitName", submitEvent);
 
