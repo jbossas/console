@@ -28,7 +28,7 @@ import org.jboss.as.console.spi.GinExtension;
  * @author Harald Pehl
  * @date 10/25/2012
  */
-@GinExtension("org.jboss.as.console.MBUI")
+@GinExtension("org.jboss.mbui.MBUI")
 public interface WorkbenchGinjector extends Ginjector
 {
 
