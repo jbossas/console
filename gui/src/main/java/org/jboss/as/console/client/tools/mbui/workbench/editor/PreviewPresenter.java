@@ -194,8 +194,8 @@ public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, Preview
                 }
         );
 
-        txCoordinator.perform(saveBasicAttributes);
-        txCoordinator.perform(loadBasicAttributes);
+        txCoordinator.registerProcedure(saveBasicAttributes);
+        txCoordinator.registerProcedure(loadBasicAttributes);
 
     }
 

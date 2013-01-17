@@ -249,7 +249,7 @@ public class FormStrategy implements ReificationStrategy<ReificationWidget>
                 }
 
                 @Override
-                public void onStatementEvent(PresentationEvent event) {
+                public void onPresentationEvent(PresentationEvent event) {
 
                     assert (event.getPayload() instanceof ModelNode) : "Unexpected type "+event.getPayload().getClass();
 
@@ -259,6 +259,8 @@ public class FormStrategy implements ReificationStrategy<ReificationWidget>
                     form.edit((ModelNode)event.getPayload());
                 }
             });
+
+            // TODO: register implicit behaviour with model
 
             return layout;
         }

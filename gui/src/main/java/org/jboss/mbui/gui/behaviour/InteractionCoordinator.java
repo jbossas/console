@@ -58,7 +58,7 @@ public class InteractionCoordinator implements FrameworkContract, InteractionEve
 
     }
 
-    public void perform(Procedure procedure)
+    public void registerProcedure(Procedure procedure)
     {
         behaviours.put(procedure.getId(), procedure);
     }

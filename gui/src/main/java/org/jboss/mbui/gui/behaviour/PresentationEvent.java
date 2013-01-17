@@ -55,12 +55,12 @@ public class PresentationEvent extends GwtEvent<PresentationEvent.Handler> {
     @Override
     protected void dispatch(Handler listener) {
         if(listener.accepts(this))
-            listener.onStatementEvent(this);
+            listener.onPresentationEvent(this);
     }
 
     public interface Handler extends EventHandler {
         boolean accepts(PresentationEvent event);
-        void onStatementEvent(PresentationEvent event);
+        void onPresentationEvent(PresentationEvent event);
     }
 
     public static void fire(HasHandlers source, PresentationEvent eventInstance) {
