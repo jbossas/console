@@ -75,10 +75,10 @@ public class TransactionSample implements Sample
                 .addAttributes("recovery-listener", "socket-binding");
 
         Container overview = new Container(ns, "transactionManager", "TransactionManager", OrderIndependance);
-        Form basicAttributes = new Form(ns, "root#basicAttributes", "Attributes");
+        Form basicAttributes = new Form(ns, "transactionManager#basicAttributes", "Attributes");
         Container details = new Container(ns, "configGroups", "Details", Choice);
-        Form processAttributes = new Form(ns, "root#processAttributes", "Process ID");
-        Form recoveryAttributes = new Form(ns, "root#recoveryAttributes", "Recovery");
+        Form processAttributes = new Form(ns, "transactionManager#processAttributes", "Process ID");
+        Form recoveryAttributes = new Form(ns, "transactionManager#recoveryAttributes", "Recovery");
 
         // structure & mapping
         InteractionUnit root = new Builder()

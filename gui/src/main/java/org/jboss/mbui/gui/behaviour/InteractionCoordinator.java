@@ -117,7 +117,7 @@ public class InteractionCoordinator implements FrameworkContract,
         }
         else
         {
-            System.out.println("No procedures for " +event);
+            System.out.println("No procedure for " +event);
         }
 
     }

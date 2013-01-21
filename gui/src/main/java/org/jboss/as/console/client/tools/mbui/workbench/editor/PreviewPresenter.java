@@ -118,7 +118,7 @@ public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, Preview
 
         // setup behaviour hooks
 
-        final QName transactionManagerResource = new QName("org.jboss.transactions", "root");
+        final QName transactionManagerResource = new QName("org.jboss.transactions", "transactionManager");
 
         Procedure saveBasicAttributes = new Procedure(
                 new QName("org.jboss.as", "save"),
@@ -127,6 +127,10 @@ public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, Preview
                     @Override
                     public void execute(Dialog dialog, HashMap changeset) {
                         // todo: parametrized resource mapping
+
+                        InteractionUnit source = dialog.findUnit(transactionManagerResource);
+                        System.out.println("source is " + source.getId());
+
                         ModelNode operation =
                                 txAdapter.fromDmrChangeset(
                                         changeset,
@@ -141,7 +145,7 @@ public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, Preview
                             public void onSuccess(DMRResponse dmrResponse) {
                                 ModelNode response = dmrResponse.get();
 
-                                if(response.isFailure())
+                                if (response.isFailure())
                                     Console.error(Console.MESSAGES.modificationFailed("Transaction Manager"), response.getFailureDescription());
                                 else
                                     Console.info(Console.MESSAGES.modified("Transaction Manager"));

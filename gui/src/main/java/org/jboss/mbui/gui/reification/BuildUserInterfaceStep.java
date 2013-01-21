@@ -47,7 +47,7 @@ public class BuildUserInterfaceStep extends ReificationStep
 
     public BuildUserInterfaceStep()
     {
-        super("getDialog ui");
+        super("build ui");
         this.strategies = new LinkedList<ReificationStrategy<ReificationWidget>>();
         // order is important! add specific strategies first!
         this.strategies.add(new FormStrategy());
