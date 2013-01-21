@@ -228,12 +228,12 @@ public class FormStrategy implements ReificationStrategy<ReificationWidget>
                     form.cancel();
 
                     // request loading of data
-                    InteractionEvent transitionEvent =
+                    InteractionEvent reset =
                             new InteractionEvent(QName.valueOf("org.jboss.as:load"));
 
                     // update interaction units
                     coordinator.fireEventFromSource(
-                            transitionEvent,
+                            reset,
                             interactionUnit.getId()
                     );
                 }
@@ -245,7 +245,7 @@ public class FormStrategy implements ReificationStrategy<ReificationWidget>
             {
                 @Override
                 public boolean accepts(PresentationEvent event) {
-                    return true; // TODO: guard clause?
+                    return (event.getPayload() instanceof ModelNode);
                 }
 
                 @Override
