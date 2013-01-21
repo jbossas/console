@@ -66,4 +66,12 @@ public class PresentationEvent extends GwtEvent<PresentationEvent.Handler> {
     public static void fire(HasHandlers source, PresentationEvent eventInstance) {
         source.fireEvent(eventInstance);
     }
+
+    @Override
+    public String toString() {
+        return "PresentationEvent{" +
+                "id=" + id +
+                ", target=" + target +
+                '}';
+    }
 }

@@ -7,7 +7,7 @@ import org.jboss.mbui.model.structure.QName;
 
 /**
  * A navigation event is the created by a {@link DataDrivenCommand}.
- * It's typically the result of a an instruction to navigate to a different interaction unit.
+ * It's an instruction to navigate to a different interaction unit.
  *
  * @author Heiko Braun
  * @date 11/15/12
@@ -18,13 +18,12 @@ public class NavigationEvent extends GwtEvent<NavigationEvent.Handler> {
 
     private QName id;
 
-    private Object payload;
-
     private QName target;
 
-    public NavigationEvent(QName id) {
+    public NavigationEvent(QName id, QName target) {
         super();
         this.id = id;
+        this.target = target;
     }
 
     public QName getId() {
@@ -33,10 +32,6 @@ public class NavigationEvent extends GwtEvent<NavigationEvent.Handler> {
 
     public QName getTarget() {
         return target;
-    }
-
-    public void setTarget(QName target) {
-        this.target = target;
     }
 
     @Override
@@ -57,5 +52,13 @@ public class NavigationEvent extends GwtEvent<NavigationEvent.Handler> {
 
     public static void fire(HasHandlers source, NavigationEvent eventInstance) {
         source.fireEvent(eventInstance);
+    }
+
+    @Override
+    public String toString() {
+        return "NavigationEvent{" +
+                "id=" + id +
+                ", target=" + target +
+                '}';
     }
 }

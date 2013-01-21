@@ -49,12 +49,12 @@ public class InteractionEvent extends GwtEvent<InteractionEvent.Handler> {
     @Override
     protected void dispatch(Handler listener) {
         if(listener.accepts(this))
-            listener.onTransitionEvent(this);
+            listener.onInteractionEvent(this);
     }
 
     public interface Handler extends EventHandler {
         boolean accepts(InteractionEvent kind);
-        void onTransitionEvent(InteractionEvent event);
+        void onInteractionEvent(InteractionEvent event);
     }
 
     public static void fire(HasHandlers source, InteractionEvent eventInstance) {
@@ -63,7 +63,7 @@ public class InteractionEvent extends GwtEvent<InteractionEvent.Handler> {
 
     @Override
     public String toString() {
-        return "BehaviourEvent{" +
+        return "InteractionEvent{" +
                 "id=" +getId()+
                 ", source=" + getSource() +
                 '}';
