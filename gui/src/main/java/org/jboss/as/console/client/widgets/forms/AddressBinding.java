@@ -193,6 +193,10 @@ public class AddressBinding {
         return address;
     }
 
+    public static AddressBinding fromString(String address) {
+        return new AddressBinding(AddressBinding.parseAddressString(address));
+    }
+
     public static class StringTokenizer {
         private final String deli;
         private final String s;

@@ -20,6 +20,19 @@ public class Procedure {
         this.id = resource;
     }
 
+    public Procedure(QName id, QName source) {
+        this.id = id;
+        this.requiredSource = source;
+    }
+
+    public void setCommand(ModelDrivenCommand command) {
+        this.command = command;
+    }
+
+    public QName getRequiredSource() {
+        return requiredSource;
+    }
+
     public ModelDrivenCommand getCommand() {
         return command;
     }

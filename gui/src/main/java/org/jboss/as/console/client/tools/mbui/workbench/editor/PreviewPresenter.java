@@ -30,9 +30,16 @@ import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
+import org.jboss.as.console.client.widgets.forms.AddressBinding;
 import org.jboss.mbui.gui.behaviour.ModelDrivenCommand;
 import org.jboss.mbui.gui.behaviour.PresentationEvent;
 import org.jboss.mbui.gui.behaviour.Procedure;
+import org.jboss.mbui.gui.behaviour.as7.AddressContext;
+import org.jboss.mbui.gui.behaviour.as7.LoadResourceProcedure;
+import org.jboss.mbui.gui.behaviour.as7.SaveChangesetProcedure;
+import org.jboss.mbui.model.mapping.Mapping;
+import org.jboss.mbui.model.mapping.MappingType;
+import org.jboss.mbui.model.mapping.as7.ResourceMapping;
 import org.jboss.mbui.model.structure.Dialog;
 import org.jboss.mbui.model.structure.InteractionUnit;
 import org.jboss.mbui.model.structure.QName;
@@ -57,6 +64,7 @@ import org.jboss.as.console.client.widgets.forms.EntityAdapter;
 import org.jboss.dmr.client.ModelNode;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.jboss.as.console.client.tools.mbui.workbench.NameTokens.preview;
@@ -119,90 +127,26 @@ public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, Preview
         // setup behaviour hooks
 
         final QName transactionManagerResource = new QName("org.jboss.transactions", "transactionManager");
+        AddressContext addressContext = new AddressContext() {
+            @Override
+            public String[] resolve() {
+                return new String[] {Console.MODULES.getCurrentSelectedProfile().getName()};
+            }
+        };
 
-        Procedure saveBasicAttributes = new Procedure(
-                new QName("org.jboss.as", "save"),
+        Procedure saveAttributes = new SaveChangesetProcedure(
                 transactionManagerResource,
-                new ModelDrivenCommand<HashMap>() {
-                    @Override
-                    public void execute(Dialog dialog, HashMap changeset) {
-                        // todo: parametrized resource mapping
+                txCoordinator,
+                dispatcher,
+                addressContext);
 
-                        InteractionUnit source = dialog.findUnit(transactionManagerResource);
-                        System.out.println("source is " + source.getId());
-
-                        ModelNode operation =
-                                txAdapter.fromDmrChangeset(
-                                        changeset,
-                                        metaData.getBeanMetaData(TransactionManager.class)
-                                                .getAddress().asResource(Baseadress.get())
-                                );
-
-                        System.out.println(operation);
-
-                        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
-                            @Override
-                            public void onSuccess(DMRResponse dmrResponse) {
-                                ModelNode response = dmrResponse.get();
-
-                                if (response.isFailure())
-                                    Console.error(Console.MESSAGES.modificationFailed("Transaction Manager"), response.getFailureDescription());
-                                else
-                                    Console.info(Console.MESSAGES.modified("Transaction Manager"));
-
-                                Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
-                                    @Override
-                                    public void execute() {
-                                        txCoordinator.onReset();
-                                    }
-                                });
-
-                            }
-                        });
-                    }
-                }
-        );
-
-        Procedure loadBasicAttributes = new Procedure(
-                new QName("org.jboss.as", "load"),
+        Procedure loadBasicAttributes = new LoadResourceProcedure(
                 transactionManagerResource,
-                new ModelDrivenCommand() {
-                    @Override
-                    public void execute(Dialog dialog, Object payload) {
-                        // load tx resource
-                        System.out.println("load basic attributes");
+                txCoordinator,
+                dispatcher,
+                addressContext);
 
-                        // TODO: parametrized resource mapping
-                        ModelNode operation = metaData.getBeanMetaData(TransactionManager.class)
-                                .getAddress().asResource(Baseadress.get());
-
-                        operation.get(OP).set(READ_RESOURCE_OPERATION);
-                        operation.get(INCLUDE_RUNTIME).set(true);
-
-                        System.out.println(operation);
-
-                        getDispatcher().execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
-
-                            // when load is finished update view
-                            @Override
-                            public void onSuccess(DMRResponse dmrResponse) {
-                                ModelNode response = dmrResponse.get();
-
-                                PresentationEvent presentation = new PresentationEvent(
-                                        QName.valueOf("org.jboss.as:form-update")
-                                );
-
-                                presentation.setTarget(transactionManagerResource);
-                                presentation.setPayload(response.get(RESULT));
-
-                                txCoordinator.fireEvent(presentation);
-                            }
-                        });
-                    }
-                }
-        );
-
-        txCoordinator.registerProcedure(saveBasicAttributes);
+        txCoordinator.registerProcedure(saveAttributes);
         txCoordinator.registerProcedure(loadBasicAttributes);
 
     }
