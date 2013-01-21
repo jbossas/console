@@ -6,7 +6,7 @@ import com.google.gwt.event.shared.HasHandlers;
 import org.jboss.mbui.model.structure.QName;
 
 /**
- * A presentation event is the created by a {@link DataDrivenCommand}.
+ * A presentation event is the created by a {@link ModelDrivenCommand}.
  * It's typically the result of a function call in preparation to present some data.
  *
  * @author Heiko Braun

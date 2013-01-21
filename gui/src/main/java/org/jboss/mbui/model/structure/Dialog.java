@@ -17,11 +17,20 @@ public class Dialog {
     private InteractionUnit root;
     private Set<Behaviour> behaviours = new HashSet<Behaviour>();
 
-    public Dialog(InteractionUnit root) {
+    public Dialog(QName id, InteractionUnit root) {
+        this.id = id;
         this.root = root;
     }
 
-    public Set<Behaviour> getBehaviours() {
+    public QName getId() {
+        return id;
+    }
+
+    public InteractionUnit getInterfaceModel() {
+        return root;
+    }
+
+    public Set<Behaviour> getBehaviourModel() {
         return behaviours;
     }
 }

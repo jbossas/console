@@ -30,9 +30,10 @@ import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
-import org.jboss.mbui.gui.behaviour.DataDrivenCommand;
+import org.jboss.mbui.gui.behaviour.ModelDrivenCommand;
 import org.jboss.mbui.gui.behaviour.PresentationEvent;
 import org.jboss.mbui.gui.behaviour.Procedure;
+import org.jboss.mbui.model.structure.Dialog;
 import org.jboss.mbui.model.structure.InteractionUnit;
 import org.jboss.mbui.model.structure.QName;
 import org.jboss.mbui.gui.reification.Context;
@@ -105,11 +106,15 @@ public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, Preview
 
         this.txAdapter = new EntityAdapter<TransactionManager>(TransactionManager.class, metaData);
 
-        final InteractionCoordinator txCoordinator = new InteractionCoordinator();
-        final InteractionCoordinator dsCoordinator = new InteractionCoordinator();
+        // these would be created/stored differently. This is just an example
+        final TransactionSample transactionSample = new TransactionSample();
+        final DataSourceSample dataSourceSample = new DataSourceSample();
 
-        coordinators.put(new TransactionSample().getName(), txCoordinator);
-        coordinators.put(new DataSourceSample().getName(), dsCoordinator);
+        final InteractionCoordinator txCoordinator = new InteractionCoordinator(transactionSample.getDialog());
+        final InteractionCoordinator dsCoordinator = new InteractionCoordinator(dataSourceSample.getDialog());
+
+        coordinators.put(transactionSample.getName(), txCoordinator);
+        coordinators.put(dataSourceSample.getName(), dsCoordinator);
 
         // setup behaviour hooks
 
@@ -118,13 +123,10 @@ public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, Preview
         Procedure saveBasicAttributes = new Procedure(
                 new QName("org.jboss.as", "save"),
                 transactionManagerResource,
-                new DataDrivenCommand<HashMap>() {
+                new ModelDrivenCommand<HashMap>() {
                     @Override
-                    public void execute(HashMap changeset) {
-                        onSaveConfig(changeset);
-                    }
-
-                    public void onSaveConfig(Map<String, Object> changeset) {
+                    public void execute(Dialog dialog, HashMap changeset) {
+                        // todo: parametrized resource mapping
                         ModelNode operation =
                                 txAdapter.fromDmrChangeset(
                                         changeset,
@@ -160,18 +162,20 @@ public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, Preview
         Procedure loadBasicAttributes = new Procedure(
                 new QName("org.jboss.as", "load"),
                 transactionManagerResource,
-                new DataDrivenCommand() {
+                new ModelDrivenCommand() {
                     @Override
-                    public void execute(Object payload) {
+                    public void execute(Dialog dialog, Object payload) {
                         // load tx resource
                         System.out.println("load basic attributes");
 
-                        // TODO: retrieve address from mapping
+                        // TODO: parametrized resource mapping
                         ModelNode operation = metaData.getBeanMetaData(TransactionManager.class)
                                 .getAddress().asResource(Baseadress.get());
 
                         operation.get(OP).set(READ_RESOURCE_OPERATION);
                         operation.get(INCLUDE_RUNTIME).set(true);
+
+                        System.out.println(operation);
 
                         getDispatcher().execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
 
@@ -228,12 +232,13 @@ public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, Preview
     @Override
     public void onReify(final ReifyEvent event)
     {
+        // TODO: dialog models would ned to be stored for later retrieval in a real world app
         Sample sample = event.getSample();
         selectedSample = sample.getName();
 
         if(cachedWidgets.get(selectedSample)==null)
         {
-            InteractionUnit interactionUnit = sample.build();
+            InteractionUnit interactionUnit = sample.getDialog().getInterfaceModel();
             final Context context = new Context();
 
             // make the coordinator bus available to the model components

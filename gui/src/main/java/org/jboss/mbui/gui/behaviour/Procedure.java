@@ -10,17 +10,17 @@ import org.jboss.mbui.model.structure.QName;
  */
 public class Procedure {
 
-    private DataDrivenCommand command;
+    private ModelDrivenCommand command;
     private QName requiredSource;
     private QName id;
 
-    public Procedure(QName resource, QName source, DataDrivenCommand command) {
+    public Procedure(QName resource, QName source, ModelDrivenCommand command) {
         this.command = command;
         this.requiredSource = source;
         this.id = resource;
     }
 
-    public DataDrivenCommand getCommand() {
+    public ModelDrivenCommand getCommand() {
         return command;
     }
 

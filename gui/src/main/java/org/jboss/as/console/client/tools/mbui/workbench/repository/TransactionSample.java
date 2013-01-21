@@ -18,6 +18,8 @@
  */
 package org.jboss.as.console.client.tools.mbui.workbench.repository;
 
+import org.jboss.mbui.model.structure.Dialog;
+import org.jboss.mbui.model.structure.QName;
 import org.jboss.mbui.model.structure.impl.Builder;
 import org.jboss.mbui.model.structure.Container;
 import org.jboss.mbui.model.structure.InteractionUnit;
@@ -35,6 +37,13 @@ import static org.jboss.mbui.model.structure.TemporalOperator.OrderIndependance;
  */
 public class TransactionSample implements Sample
 {
+
+    private Dialog dialog;
+
+    public TransactionSample() {
+        this.dialog = build();
+    }
+
     @Override
     public String getName()
     {
@@ -42,7 +51,11 @@ public class TransactionSample implements Sample
     }
 
     @Override
-    public InteractionUnit build()
+    public Dialog getDialog() {
+        return dialog;
+    }
+
+    public Dialog build()
     {
         String ns = "org.jboss.transactions";
 
@@ -82,7 +95,8 @@ public class TransactionSample implements Sample
         // attach the implicit behaviour
         ImplicitBehaviour.attach(basicAttributes);
 
-        return root;
+        Dialog dialog = new Dialog(QName.valueOf("org.jboss.as7:transaction-subsystem"), root);
+        return dialog;
     }
 }
 

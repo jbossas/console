@@ -18,6 +18,8 @@
  */
 package org.jboss.as.console.client.tools.mbui.workbench.repository;
 
+import org.jboss.mbui.model.structure.Dialog;
+import org.jboss.mbui.model.structure.QName;
 import org.jboss.mbui.model.structure.impl.Builder;
 import org.jboss.mbui.model.structure.Container;
 import org.jboss.mbui.model.structure.InteractionUnit;
@@ -36,6 +38,12 @@ import static org.jboss.mbui.model.structure.TemporalOperator.OrderIndependance;
  */
 public class DataSourceSample implements Sample
 {
+    private Dialog dialog;
+
+    public DataSourceSample() {
+        this.dialog = build();
+    }
+
     @Override
     public String getName()
     {
@@ -43,7 +51,11 @@ public class DataSourceSample implements Sample
     }
 
     @Override
-    public InteractionUnit build()
+    public Dialog getDialog() {
+        return this.dialog;
+    }
+
+    public Dialog build()
     {
         String namespace = "org.jboss.ds";
 
@@ -81,6 +93,7 @@ public class DataSourceSample implements Sample
                 .end()
             .end().build();
 
-        return root;
+        Dialog dialog = new Dialog(QName.valueOf("org.jboss.as7:datasource-subsystem"), root);
+        return dialog;
     }
 }

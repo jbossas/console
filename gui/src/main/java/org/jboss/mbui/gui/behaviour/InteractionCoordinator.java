@@ -5,6 +5,7 @@ import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.Event;
 import com.google.web.bindery.event.shared.EventBus;
 import com.google.web.bindery.event.shared.SimpleEventBus;
+import org.jboss.mbui.model.structure.Dialog;
 import org.jboss.mbui.model.structure.QName;
 
 import java.util.HashMap;
@@ -28,10 +29,12 @@ public class InteractionCoordinator implements FrameworkContract,
 
     // a bus scoped to this coordinator and the associated models
     private EventBus bus;
-    private Map<QName, Procedure> procedure = new HashMap<QName, Procedure>();
+    private Map<QName, Procedure> procedures = new HashMap<QName, Procedure>();
+    private Dialog dialog;
 
     @Inject
-    public InteractionCoordinator() {
+    public InteractionCoordinator(Dialog dialog) {
+        this.dialog = dialog;
         this.bus = new SimpleEventBus();
 
         bus.addHandler(InteractionEvent.TYPE, this);
@@ -42,6 +45,12 @@ public class InteractionCoordinator implements FrameworkContract,
     public EventBus getLocalBus()
     {
         return this.bus;
+    }
+
+    public void registerProcedure(Procedure procedure)
+    {
+        assert !procedures.containsKey(procedure.getId()) : "procedure already registered "+ procedure.getId();
+        this.procedures.put(procedure.getId(), procedure);
     }
 
     /**
@@ -58,11 +67,6 @@ public class InteractionCoordinator implements FrameworkContract,
             }
         });
 
-    }
-
-    public void registerProcedure(Procedure procedure)
-    {
-        this.procedure.put(procedure.getId(), procedure);
     }
 
     //  ----- System events ------
@@ -90,7 +94,7 @@ public class InteractionCoordinator implements FrameworkContract,
     }
 
     /**
-     * Find the corresponding procedure and execute it.
+     * Find the corresponding procedures and execute it.
      *
      * @param event
      */
@@ -99,7 +103,7 @@ public class InteractionCoordinator implements FrameworkContract,
         QName id = event.getId();
         Object source = event.getSource();
 
-        final Procedure execution = procedure.get(id);
+        final Procedure execution = procedures.get(id);
 
         if(execution!=null && execution.doesMatch(id, source))
         {
@@ -107,13 +111,13 @@ public class InteractionCoordinator implements FrameworkContract,
             Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
                 @Override
                 public void execute() {
-                    execution.getCommand().execute(event.getPayload());
+                    execution.getCommand().execute(InteractionCoordinator.this.dialog, event.getPayload());
                 }
             });
         }
         else
         {
-            System.out.println("No procedure for " +event);
+            System.out.println("No procedures for " +event);
         }
 
     }
@@ -148,4 +152,5 @@ public class InteractionCoordinator implements FrameworkContract,
     @Override
     public void onNavigationEvent(NavigationEvent event) {
     }
+
 }

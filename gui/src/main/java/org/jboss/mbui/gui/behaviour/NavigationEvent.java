@@ -6,7 +6,7 @@ import com.google.gwt.event.shared.HasHandlers;
 import org.jboss.mbui.model.structure.QName;
 
 /**
- * A navigation event is the created by a {@link DataDrivenCommand}.
+ * A navigation event is the created by a {@link ModelDrivenCommand}.
  * It's an instruction to navigate to a different interaction unit.
  *
  * @author Heiko Braun
