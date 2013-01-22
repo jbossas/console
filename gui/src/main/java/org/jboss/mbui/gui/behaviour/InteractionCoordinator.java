@@ -1,5 +1,6 @@
 package org.jboss.mbui.gui.behaviour;
 
+import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.core.client.Scheduler;
 import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.Event;
@@ -23,7 +24,7 @@ import java.util.Map;
  * @date 11/15/12
  */
 public class InteractionCoordinator implements FrameworkContract,
-        InteractionEvent.Handler, PresentationEvent.Handler, NavigationEvent.Handler {
+        InteractionEvent.Handler, PresentationEvent.Handler, NavigationEvent.Handler, StatementEvent.Handler {
 
     private static final String PROJECT_NAMESPACE = "org.jboss.as";
 
@@ -42,6 +43,7 @@ public class InteractionCoordinator implements FrameworkContract,
         bus.addHandler(InteractionEvent.TYPE, this);
         bus.addHandler(PresentationEvent.TYPE, this);
         bus.addHandler(NavigationEvent.TYPE, this);
+        bus.addHandler(StatementEvent.TYPE, this);
 
         this.parentContext = parentContext;
     }
@@ -179,4 +181,23 @@ public class InteractionCoordinator implements FrameworkContract,
     public void onNavigationEvent(NavigationEvent event) {
     }
 
+
+    @Override
+    public boolean accepts(StatementEvent event) {
+        return true; // all statement are processed by the coordinator
+    }
+
+    @Override
+    public void onStatementEvent(StatementEvent event) {
+
+        Log.debug("StatementEvent " + event.getKey() + "=" + event.getValue());
+
+        if(event.getValue()!=null)
+            statements.put(event.getKey(), event.getValue());
+        else
+            statements.remove(event.getKey());
+
+        // diagnose
+        statements.dump();
+    }
 }

@@ -245,6 +245,7 @@ public class FormStrategy implements ReificationStrategy<ReificationWidget>
             {
                 @Override
                 public boolean accepts(PresentationEvent event) {
+                    // only single resources accepted (might be collection, see LoadResourceProcedure)
                     return (event.getPayload() instanceof ModelNode);
                 }
 
@@ -252,10 +253,6 @@ public class FormStrategy implements ReificationStrategy<ReificationWidget>
                 public void onPresentationEvent(PresentationEvent event) {
 
                     assert (event.getPayload() instanceof ModelNode) : "Unexpected type "+event.getPayload().getClass();
-
-                    //System.out.println(event.getKind()+"=>"+event.getId()+", target="+interactionUnit.getId());
-                    //System.out.println(event.getPayload());
-
                     form.edit((ModelNode)event.getPayload());
                 }
             });

@@ -10,5 +10,16 @@ import java.util.HashMap;
  */
 public class StatementRegistry extends HashMap<String,String> {
 
+    public void dump() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Statement Registry\n");
+        sb.append("------------------\n");
+        for(String key : keySet())
+        {
+            sb.append(key).append(":").append("\t\t\t").append(get(key)).append("\n");
+        }
+        sb.append("------------------\n");
 
+        System.out.println(sb.toString());
+    }
 }

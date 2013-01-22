@@ -59,17 +59,19 @@ public class DataSourceSample implements Sample
     {
         String namespace = "org.jboss.datasource";
 
-        // mappings
-        ResourceMapping global = new ResourceMapping(namespace)
-                .setAddress("/profile={selected.profile}/subsystem=datasources/data-source={selected.entity}");
+        // maps to a collection of datasources
+        ResourceMapping datasourceCollection = new ResourceMapping(namespace)
+                .setAddress("/profile={selected.profile}/subsystem=datasources/data-source=*");
+
+        // maps to a specific datasource
+        ResourceMapping singleDataSource = new ResourceMapping(namespace)
+                        .setAddress("/profile={selected.profile}/subsystem=datasources/data-source={selected.entity}");
 
         Mapping tableMapping = new ResourceMapping(namespace)
-                .addAttribute(new ResourceAttribute("${selected.entity}", "Name"))
-                .addAttributes("jndi-name", "enabled");
+                .addAttributes("entity.key","jndi-name", "enabled");
 
         Mapping basicAttributesMapping = new ResourceMapping(namespace)
-                .addAttribute(new ResourceAttribute("${selected.entity}", "Name"))
-                .addAttributes("jndi-name", "enabled", "driver-name", "share-prepared-statements",
+                .addAttributes("entity.key", "jndi-name", "enabled", "driver-name", "share-prepared-statements",
                         "prepared-statements-cache-size");
 
         Mapping connectionAttributesMapping = new ResourceMapping(namespace)
@@ -78,15 +80,16 @@ public class DataSourceSample implements Sample
         // UI
         InteractionUnit root = new Builder()
             .start(new Container(namespace, "datasources", "Datasources", Choice))
-            .addMapping(global)
+            .addMapping(datasourceCollection)
                 .start(new Container(namespace, "regularDS", "Regular", OrderIndependance))
                     .add(new Select(namespace, "datasourceTable", "DatasourceList"))
                     .addMapping(tableMapping)
                     .start(new Container(namespace, "datasourceAttributes", "Datasource", Choice))
-                        .add(new Form(namespace, "datasources#basicAttributes", "Attributes"))
-                        .addMapping(basicAttributesMapping)
-                        .add(new Form(namespace, "datasources#connectionAttributes", "Connection"))
-                        .addMapping(connectionAttributesMapping)
+                        .addMapping(singleDataSource)
+                            .add(new Form(namespace, "datasources#basicAttributes", "Attributes"))
+                            .addMapping(basicAttributesMapping)
+                            .add(new Form(namespace, "datasources#connectionAttributes", "Connection"))
+                            .addMapping(connectionAttributesMapping)
                     .end()
                 .end()
                 .start(new Container(namespace, "xsDS", "XA", OrderIndependance))

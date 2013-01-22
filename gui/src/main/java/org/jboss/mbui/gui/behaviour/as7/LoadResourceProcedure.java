@@ -8,6 +8,8 @@ import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.as.console.client.widgets.forms.AddressBinding;
 import org.jboss.dmr.client.ModelNode;
+import org.jboss.dmr.client.ModelType;
+import org.jboss.dmr.client.Property;
 import org.jboss.mbui.gui.behaviour.ModelDrivenCommand;
 import org.jboss.mbui.gui.behaviour.PresentationEvent;
 import org.jboss.mbui.gui.behaviour.Procedure;
@@ -16,6 +18,9 @@ import org.jboss.mbui.model.mapping.as7.ResourceMapping;
 import org.jboss.mbui.model.structure.Dialog;
 import org.jboss.mbui.model.structure.InteractionUnit;
 import org.jboss.mbui.model.structure.QName;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 
@@ -53,7 +58,7 @@ public class LoadResourceProcedure extends Procedure {
     private void loadResource(final String name, AddressBinding address) {
 
 
-        ModelNode operation = address.asResource(statementContext);
+        final ModelNode operation = address.asResource(statementContext);
         operation.get(OP).set(READ_RESOURCE_OPERATION);
         operation.get(INCLUDE_RUNTIME).set(true);
 
@@ -64,15 +69,34 @@ public class LoadResourceProcedure extends Procedure {
 
                 if (response.isFailure())
                     Console.error(Console.MESSAGES.modificationFailed(name), response.getFailureDescription());
-                else
-                    Console.info(Console.MESSAGES.modified(name));
 
                 Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
                     @Override
                     public void execute() {
 
                         PresentationEvent presentation = new PresentationEvent(RESULT_ID);
-                        presentation.setPayload(response.get(RESULT));
+
+                        // the result is either a single resource or a collection
+                        ModelNode result = response.get(RESULT);
+                        if(ModelType.LIST==result.getType())
+                        {
+                            List<ModelNode> collection = result.asList();
+                            List normalized = new ArrayList<ModelNode>(collection.size());
+                            for(ModelNode model : collection)
+                            {
+                                ModelNode payload = model.get(RESULT).asObject();
+                                assignKeyFromAddressNode(payload, model.get(ADDRESS));
+                                normalized.add(payload);
+                            }
+                            presentation.setPayload(normalized);
+                        }
+                        else
+                        {
+                            ModelNode payload = result.asObject();
+                            assignKeyFromAddressNode(payload, operation.get(ADDRESS));
+                            presentation.setPayload(payload);
+                        }
+
                         // source and target are the same
                         presentation.setTarget(getRequiredSource());
 
@@ -83,5 +107,18 @@ public class LoadResourceProcedure extends Procedure {
             }
         });
 
+    }
+
+    /**
+     * the model representations we use internally carry along the entity keys.
+     * these are derived from the resource address, but will be available as synthetic resource attributes.
+     *
+     * @param payload
+     * @param address
+     */
+    private static void assignKeyFromAddressNode(ModelNode payload, ModelNode address) {
+        List<Property> props = address.asPropertyList();
+        Property lastToken = props.get(props.size()-1);
+        payload.get("entity.key").set(lastToken.getValue().asString());
     }
 }
