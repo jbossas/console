@@ -142,12 +142,17 @@ public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, Preview
                 datasourcesResource,
                 dispatcher);
 
-        Procedure loadDsAttributes = new LoadResourceProcedure(
+        Procedure loadDatasources = new LoadResourceProcedure(
                 datasourcesResource,
                 dispatcher);
 
+        Procedure loadDatasource = new LoadResourceProcedure(
+                       QName.valueOf("org.jboss.datasource:datasource"),
+                       dispatcher);
+
         dsCoordinator.registerProcedure(saveDsAttributes);
-        dsCoordinator.registerProcedure(loadDsAttributes);
+        dsCoordinator.registerProcedure(loadDatasources);
+        dsCoordinator.registerProcedure(loadDatasource);
 
     }
 

@@ -84,7 +84,7 @@ public class DataSourceSample implements Sample
                 .start(new Container(namespace, "regularDS", "Regular", OrderIndependance))
                     .add(new Select(namespace, "datasources", "DatasourceList"))
                     .addMapping(tableMapping)
-                    .start(new Container(namespace, "datasourceAttributes", "Datasource", Choice))
+                    .start(new Container(namespace, "datasource", "Datasource", Choice))
                         .addMapping(singleDataSource)
                             .add(new Form(namespace, "datasource#basicAttributes", "Attributes"))
                             .addMapping(basicAttributesMapping)

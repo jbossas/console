@@ -10,7 +10,9 @@ import com.google.web.bindery.event.shared.SimpleEventBus;
 import org.jboss.mbui.model.structure.Dialog;
 import org.jboss.mbui.model.structure.QName;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -31,7 +33,7 @@ public class InteractionCoordinator implements FrameworkContract,
 
     // a bus scoped to this coordinator and the associated models
     private EventBus bus;
-    private Map<QName, Procedure> procedures = new HashMap<QName, Procedure>();
+    private Map<QName, List<Procedure>> procedures = new HashMap<QName, List<Procedure>>();
     private Dialog dialog;
     private StatementRegistry statements = new StatementRegistry();
     private StatementContext parentContext;
@@ -56,7 +58,12 @@ public class InteractionCoordinator implements FrameworkContract,
 
     public void registerProcedure(Procedure procedure)
     {
-        assert !procedures.containsKey(procedure.getId()) : "procedure already registered "+ procedure.getId();
+        List<Procedure> collection = procedures.get(procedure.getId());
+        if(null==collection)
+        {
+            collection = new ArrayList<Procedure>();
+            procedures.put(procedure.getId(), collection);
+        }
 
         procedure.setCoordinator(this);
 
@@ -77,7 +84,7 @@ public class InteractionCoordinator implements FrameworkContract,
             }
         });
 
-        this.procedures.put(procedure.getId(), procedure);
+        collection.add(procedure);
     }
 
 
@@ -131,23 +138,35 @@ public class InteractionCoordinator implements FrameworkContract,
         QName id = event.getId();
         Object source = event.getSource();
 
-        final Procedure execution = procedures.get(id);
+        final List<Procedure> collection = procedures.get(id);
+        Procedure execution = null;
 
-        if(execution!=null && execution.doesMatch(id, source))
+        if(collection!=null)
         {
+            for(Procedure candidate : collection)
 
-            Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
-                @Override
-                public void execute() {
-                    execution.getCommand().execute(InteractionCoordinator.this.dialog, event.getPayload());
+                if(candidate.getId().equals(id)
+                        && candidate.doesMatch(id, source))
+                {
+                    execution = candidate;
+                    break;
                 }
-            });
         }
-        else
+
+        if(null==execution)
         {
             Window.alert("No procedure for " + event);
             System.out.println("No procedure for " + event);
         }
+        else
+        {
+            try {
+                execution.getCommand().execute(InteractionCoordinator.this.dialog, event.getPayload());
+            } catch (Throwable e) {
+                Log.error("Failed to execute procedure "+execution, e);
+            }
+        }
+
     }
 
     @Override

@@ -121,4 +121,9 @@ public class LoadResourceProcedure extends Procedure {
         Property lastToken = props.get(props.size()-1);
         payload.get("entity.key").set(lastToken.getValue().asString());
     }
+
+    @Override
+    public String toString() {
+        return "LoadResource "+getRequiredSource();
+    }
 }
