@@ -31,15 +31,19 @@ public class InteractionCoordinator implements FrameworkContract,
     private EventBus bus;
     private Map<QName, Procedure> procedures = new HashMap<QName, Procedure>();
     private Dialog dialog;
+    private StatementRegistry statements = new StatementRegistry();
+    private StatementContext parentContext;
 
     @Inject
-    public InteractionCoordinator(Dialog dialog) {
+    public InteractionCoordinator(Dialog dialog, StatementContext parentContext) {
         this.dialog = dialog;
         this.bus = new SimpleEventBus();
 
         bus.addHandler(InteractionEvent.TYPE, this);
         bus.addHandler(PresentationEvent.TYPE, this);
         bus.addHandler(NavigationEvent.TYPE, this);
+
+        this.parentContext = parentContext;
     }
 
     public EventBus getLocalBus()
@@ -50,8 +54,29 @@ public class InteractionCoordinator implements FrameworkContract,
     public void registerProcedure(Procedure procedure)
     {
         assert !procedures.containsKey(procedure.getId()) : "procedure already registered "+ procedure.getId();
+
+        procedure.setCoordinator(this);
+
+        // simple parent delegation mechanism to resolve statement values
+        procedure.setStatementContext(new StatementContext() {
+            @Override
+            public String resolve(String key) {
+                String resolvedValue = null;
+
+                // child
+                resolvedValue = statements.get(key);
+
+                // parent
+                if(null==resolvedValue && parentContext!=null)
+                    resolvedValue = parentContext.resolve(key);
+
+                return resolvedValue;
+            }
+        });
+
         this.procedures.put(procedure.getId(), procedure);
     }
+
 
     /**
      * Command entry point
@@ -83,6 +108,7 @@ public class InteractionCoordinator implements FrameworkContract,
 
     @Override
     public void onReset() {
+        statements.clear();
         bus.fireEvent(new SystemEvent(new QName(PROJECT_NAMESPACE, "reset")));
     }
 

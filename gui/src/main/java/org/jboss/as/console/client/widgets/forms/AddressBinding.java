@@ -1,11 +1,11 @@
 package org.jboss.as.console.client.widgets.forms;
 
 import org.jboss.dmr.client.ModelNode;
+import org.jboss.mbui.gui.behaviour.StatementContext;
 
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.NoSuchElementException;
 
 import static org.jboss.dmr.client.ModelDescriptionConstants.ADDRESS;
@@ -67,14 +67,8 @@ public class AddressBinding {
         return asResource(new ModelNode(), args);
     }
 
-    /**
-     * Turns this address into a ModelNode with an address property.
-     *
-     * @param args parameters for address wildcards
-     * @return a ModelNode with an address property
-     */
-    public ModelNode asResource(Map<String,String> args) {
-        return asResource(new ModelNode(), args);
+    public ModelNode asResource(StatementContext context) {
+        return asResource(new ModelNode(), context);
     }
 
     /**
@@ -117,18 +111,7 @@ public class AddressBinding {
         return model;
     }
 
-    /**
-     * Turns this address into a ModelNode with an address property.<br/>
-     * This method allows to specify a base address prefix (i.e server vs. domain addressing).
-     *
-     * @param baseAddress
-     * @param args parameters for address wildcards
-     * @return a ModelNode with an address property
-     */
-    public ModelNode asResource(ModelNode baseAddress, Map<String,String> args) {
-
-        assert getNumWildCards() ==args.size() :
-                "Address arguments don't match number of wildcards: "+getNumWildCards()+" -> "+ args.keySet();
+    public ModelNode asResource(ModelNode baseAddress, StatementContext context) {
 
         ModelNode model = new ModelNode();
         model.get(ADDRESS).set(baseAddress);
@@ -144,7 +127,7 @@ public class AddressBinding {
             if(key_ref.startsWith("{"))
             {
                 key_ref = key_ref.substring(1, key_ref.length()-1);
-                resolved_key = args.get(key_ref);
+                resolved_key = context.resolve(key_ref);
             }
             else
             {
@@ -154,7 +137,7 @@ public class AddressBinding {
             if(value_ref.startsWith("{"))
             {
                 value_ref = value_ref.substring(1, value_ref.length()-1);
-                resolved_value = args.get(value_ref);
+                resolved_value = context.resolve(value_ref);
             }
             else
             {

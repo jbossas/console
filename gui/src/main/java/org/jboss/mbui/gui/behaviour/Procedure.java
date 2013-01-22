@@ -14,11 +14,8 @@ public class Procedure {
     private QName requiredSource;
     private QName id;
 
-    public Procedure(QName resource, QName source, ModelDrivenCommand command) {
-        this.command = command;
-        this.requiredSource = source;
-        this.id = resource;
-    }
+    protected InteractionCoordinator coordinator;
+    protected StatementContext statementContext;
 
     public Procedure(QName id, QName source) {
         this.id = id;
@@ -66,5 +63,13 @@ public class Procedure {
         {
             return this.requiredSource.equalsIgnoreSuffix(source);
         }
+    }
+
+    void setCoordinator(InteractionCoordinator coordinator) {
+        this.coordinator = coordinator;
+    }
+
+    void setStatementContext(StatementContext statementContext) {
+        this.statementContext = statementContext;
     }
 }

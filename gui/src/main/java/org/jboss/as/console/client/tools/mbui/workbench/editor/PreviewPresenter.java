@@ -19,7 +19,6 @@
 package org.jboss.as.console.client.tools.mbui.workbench.editor;
 
 import com.allen_sauer.gwt.log.client.Log;
-import com.google.gwt.core.client.Scheduler;
 import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.Presenter;
@@ -30,28 +29,7 @@ import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
-import org.jboss.as.console.client.widgets.forms.AddressBinding;
-import org.jboss.mbui.gui.behaviour.ModelDrivenCommand;
-import org.jboss.mbui.gui.behaviour.PresentationEvent;
-import org.jboss.mbui.gui.behaviour.Procedure;
-import org.jboss.mbui.gui.behaviour.as7.AddressContext;
-import org.jboss.mbui.gui.behaviour.as7.LoadResourceProcedure;
-import org.jboss.mbui.gui.behaviour.as7.SaveChangesetProcedure;
-import org.jboss.mbui.model.mapping.Mapping;
-import org.jboss.mbui.model.mapping.MappingType;
-import org.jboss.mbui.model.mapping.as7.ResourceMapping;
-import org.jboss.mbui.model.structure.Dialog;
-import org.jboss.mbui.model.structure.InteractionUnit;
-import org.jboss.mbui.model.structure.QName;
-import org.jboss.mbui.gui.reification.Context;
-import org.jboss.mbui.gui.behaviour.InteractionCoordinator;
-import org.jboss.mbui.gui.reification.strategy.ContextKey;
-import org.jboss.mbui.gui.reification.strategy.ReificationWidget;
-import org.jboss.mbui.gui.reification.ReificationPipeline;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
-import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
-import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
-import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.tx.model.TransactionManager;
 import org.jboss.as.console.client.tools.mbui.workbench.ApplicationPresenter;
 import org.jboss.as.console.client.tools.mbui.workbench.ReifyEvent;
@@ -61,14 +39,22 @@ import org.jboss.as.console.client.tools.mbui.workbench.repository.Sample;
 import org.jboss.as.console.client.tools.mbui.workbench.repository.TransactionSample;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.as.console.client.widgets.forms.EntityAdapter;
-import org.jboss.dmr.client.ModelNode;
+import org.jboss.mbui.gui.behaviour.InteractionCoordinator;
+import org.jboss.mbui.gui.behaviour.Procedure;
+import org.jboss.mbui.gui.behaviour.StatementContext;
+import org.jboss.mbui.gui.behaviour.as7.LoadResourceProcedure;
+import org.jboss.mbui.gui.behaviour.as7.SaveChangesetProcedure;
+import org.jboss.mbui.gui.reification.Context;
+import org.jboss.mbui.gui.reification.ReificationPipeline;
+import org.jboss.mbui.gui.reification.strategy.ContextKey;
+import org.jboss.mbui.gui.reification.strategy.ReificationWidget;
+import org.jboss.mbui.model.structure.InteractionUnit;
+import org.jboss.mbui.model.structure.QName;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import static org.jboss.as.console.client.tools.mbui.workbench.NameTokens.preview;
-import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 
 /**
  *
@@ -118,8 +104,18 @@ public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, Preview
         final TransactionSample transactionSample = new TransactionSample();
         final DataSourceSample dataSourceSample = new DataSourceSample();
 
-        final InteractionCoordinator txCoordinator = new InteractionCoordinator(transactionSample.getDialog());
-        final InteractionCoordinator dsCoordinator = new InteractionCoordinator(dataSourceSample.getDialog());
+        StatementContext statementContext = new StatementContext() {
+            @Override
+            public String resolve(String key) {
+                String resolvedValue = null;
+                if("selected.profile".equals(key))
+                    resolvedValue = Console.MODULES.getCurrentSelectedProfile().getName();
+                return resolvedValue;
+            }
+        };
+
+        final InteractionCoordinator txCoordinator = new InteractionCoordinator(transactionSample.getDialog(), statementContext);
+        final InteractionCoordinator dsCoordinator = new InteractionCoordinator(dataSourceSample.getDialog(), statementContext);
 
         coordinators.put(transactionSample.getName(), txCoordinator);
         coordinators.put(dataSourceSample.getName(), dsCoordinator);
@@ -127,27 +123,15 @@ public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, Preview
         // setup behaviour hooks
         final QName datasourceResource = new QName("org.jboss.datasource", "datasources");
         final QName transactionManagerResource = new QName("org.jboss.transactions", "transactionManager");
-        AddressContext addressContext = new AddressContext() {
-            @Override
-            public Map<String,String> resolve() {
-                Map<String,String> contextProperties = new HashMap<String,String>();
-                contextProperties.put("selected.profile", Console.MODULES.getCurrentSelectedProfile().getName());
-                return contextProperties;
-            }
-        };
 
         // --------- TX behaviour ------------
         Procedure saveTxAttributes = new SaveChangesetProcedure(
                 transactionManagerResource,
-                txCoordinator,
-                dispatcher,
-                addressContext);
+                dispatcher);
 
         Procedure loadTxAttributes = new LoadResourceProcedure(
                 transactionManagerResource,
-                txCoordinator,
-                dispatcher,
-                addressContext);
+                dispatcher);
 
         txCoordinator.registerProcedure(saveTxAttributes);
         txCoordinator.registerProcedure(loadTxAttributes);
@@ -156,15 +140,11 @@ public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, Preview
 
         Procedure saveDsAttributes = new SaveChangesetProcedure(
                 datasourceResource,
-                dsCoordinator,
-                dispatcher,
-                addressContext);
+                dispatcher);
 
         Procedure loadDsAttributes = new LoadResourceProcedure(
                 datasourceResource,
-                dsCoordinator,
-                dispatcher,
-                addressContext);
+                dispatcher);
 
         dsCoordinator.registerProcedure(saveDsAttributes);
         dsCoordinator.registerProcedure(loadDsAttributes);

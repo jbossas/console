@@ -8,7 +8,6 @@ import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.as.console.client.widgets.forms.AddressBinding;
 import org.jboss.dmr.client.ModelNode;
-import org.jboss.mbui.gui.behaviour.InteractionCoordinator;
 import org.jboss.mbui.gui.behaviour.ModelDrivenCommand;
 import org.jboss.mbui.gui.behaviour.PresentationEvent;
 import org.jboss.mbui.gui.behaviour.Procedure;
@@ -17,8 +16,6 @@ import org.jboss.mbui.model.mapping.as7.ResourceMapping;
 import org.jboss.mbui.model.structure.Dialog;
 import org.jboss.mbui.model.structure.InteractionUnit;
 import org.jboss.mbui.model.structure.QName;
-
-import java.util.Map;
 
 import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 
@@ -31,18 +28,13 @@ public class LoadResourceProcedure extends Procedure {
     private final static QName RESULT_ID = QName.valueOf("org.jboss.as:form-update");
 
     private final DispatchAsync dispatcher;
-    private final InteractionCoordinator coordinator;
-    private final AddressContext addressContext;
 
     public LoadResourceProcedure (
             final QName source,
-            InteractionCoordinator coordinator,
-            DispatchAsync dispatcher, AddressContext addressContext) {
+            DispatchAsync dispatcher) {
 
         super(ID, source);
-        this.coordinator = coordinator;
         this.dispatcher = dispatcher;
-        this.addressContext = addressContext;
 
         setCommand(new ModelDrivenCommand() {
             @Override
@@ -60,8 +52,8 @@ public class LoadResourceProcedure extends Procedure {
 
     private void loadResource(final String name, AddressBinding address) {
 
-        Map<String,String> args = addressContext.resolve();
-        ModelNode operation = address.asResource(args);
+
+        ModelNode operation = address.asResource(statementContext);
         operation.get(OP).set(READ_RESOURCE_OPERATION);
         operation.get(INCLUDE_RUNTIME).set(true);
 
