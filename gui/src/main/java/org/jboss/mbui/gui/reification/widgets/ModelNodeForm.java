@@ -58,7 +58,7 @@ public class ModelNodeForm extends AbstractForm<ModelNode> {
                         }
 
                         // values
-                        else if(value!=null)
+                        else if(value!=null && value.isDefined())
                         {
                             item.setUndefined(false);
                             item.setValue(downCast(value));
@@ -171,7 +171,7 @@ public class ModelNodeForm extends AbstractForm<ModelNode> {
     @Override
     public void cancel() {
         clearValues();
-        if(editedEntity!=null) edit(editedEntity);
+        if(editedEntity!=null && editedEntity.isDefined()) edit(editedEntity);
     }
 
     @Override
@@ -261,6 +261,8 @@ public class ModelNodeForm extends AbstractForm<ModelNode> {
                 });
             }
         }
+
+        refreshPlainView();
     }
 
     interface FormItemVisitor {

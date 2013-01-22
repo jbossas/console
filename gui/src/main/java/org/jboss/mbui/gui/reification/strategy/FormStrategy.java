@@ -18,21 +18,11 @@
  */
 package org.jboss.mbui.gui.reification.strategy;
 
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.web.bindery.event.shared.EventBus;
-import org.jboss.mbui.gui.behaviour.InteractionEvent;
-import org.jboss.mbui.gui.behaviour.PresentationEvent;
-import org.jboss.mbui.model.structure.InteractionUnit;
-import org.jboss.mbui.model.structure.QName;
-import org.jboss.mbui.model.mapping.MappingType;
-import org.jboss.mbui.model.mapping.as7.ResourceAttribute;
-import org.jboss.mbui.model.mapping.as7.ResourceMapping;
-import org.jboss.mbui.gui.reification.Context;
-import org.jboss.mbui.gui.reification.ReificationStrategy;
-import org.jboss.mbui.gui.behaviour.SystemEvent;
-import org.jboss.mbui.gui.reification.widgets.ModelNodeForm;
 import org.jboss.as.console.client.shared.help.StaticHelpPanel;
 import org.jboss.as.console.client.widgets.forms.FormToolStrip;
 import org.jboss.ballroom.client.widgets.forms.CheckBoxItem;
@@ -42,6 +32,17 @@ import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
 import org.jboss.dmr.client.ModelNode;
 import org.jboss.dmr.client.ModelType;
 import org.jboss.dmr.client.Property;
+import org.jboss.mbui.gui.behaviour.InteractionEvent;
+import org.jboss.mbui.gui.behaviour.PresentationEvent;
+import org.jboss.mbui.gui.behaviour.SystemEvent;
+import org.jboss.mbui.gui.reification.Context;
+import org.jboss.mbui.gui.reification.ReificationStrategy;
+import org.jboss.mbui.gui.reification.widgets.ModelNodeForm;
+import org.jboss.mbui.model.mapping.MappingType;
+import org.jboss.mbui.model.mapping.as7.ResourceAttribute;
+import org.jboss.mbui.model.mapping.as7.ResourceMapping;
+import org.jboss.mbui.model.structure.InteractionUnit;
+import org.jboss.mbui.model.structure.QName;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -225,17 +226,23 @@ public class FormStrategy implements ReificationStrategy<ReificationWidget>
 
                 @Override
                 public void onSystemEvent(SystemEvent event) {
-                    form.cancel();
+                    form.clearValues();
 
-                    // request loading of data
-                    InteractionEvent reset =
-                            new InteractionEvent(QName.valueOf("org.jboss.as:load"));
 
-                    // update interaction units
-                    coordinator.fireEventFromSource(
-                            reset,
-                            interactionUnit.getId()
-                    );
+                    Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+                        @Override
+                        public void execute() {
+                            // request loading of data
+                            InteractionEvent reset =
+                                    new InteractionEvent(QName.valueOf("org.jboss.as:load"));
+
+                            // update interaction units
+                            coordinator.fireEventFromSource(
+                                    reset,
+                                    interactionUnit.getId()
+                            );
+                        }
+                    });
                 }
             });
 
