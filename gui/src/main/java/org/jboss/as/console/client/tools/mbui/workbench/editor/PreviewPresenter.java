@@ -125,29 +125,49 @@ public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, Preview
         coordinators.put(dataSourceSample.getName(), dsCoordinator);
 
         // setup behaviour hooks
-
+        final QName datasourceResource = new QName("org.jboss.datasource", "datasources");
         final QName transactionManagerResource = new QName("org.jboss.transactions", "transactionManager");
         AddressContext addressContext = new AddressContext() {
             @Override
-            public String[] resolve() {
-                return new String[] {Console.MODULES.getCurrentSelectedProfile().getName()};
+            public Map<String,String> resolve() {
+                Map<String,String> contextProperties = new HashMap<String,String>();
+                contextProperties.put("selected.profile", Console.MODULES.getCurrentSelectedProfile().getName());
+                return contextProperties;
             }
         };
 
-        Procedure saveAttributes = new SaveChangesetProcedure(
+        // --------- TX behaviour ------------
+        Procedure saveTxAttributes = new SaveChangesetProcedure(
                 transactionManagerResource,
                 txCoordinator,
                 dispatcher,
                 addressContext);
 
-        Procedure loadBasicAttributes = new LoadResourceProcedure(
+        Procedure loadTxAttributes = new LoadResourceProcedure(
                 transactionManagerResource,
                 txCoordinator,
                 dispatcher,
                 addressContext);
 
-        txCoordinator.registerProcedure(saveAttributes);
-        txCoordinator.registerProcedure(loadBasicAttributes);
+        txCoordinator.registerProcedure(saveTxAttributes);
+        txCoordinator.registerProcedure(loadTxAttributes);
+
+        // --------- DS behaviour ------------
+
+        Procedure saveDsAttributes = new SaveChangesetProcedure(
+                datasourceResource,
+                dsCoordinator,
+                dispatcher,
+                addressContext);
+
+        Procedure loadDsAttributes = new LoadResourceProcedure(
+                datasourceResource,
+                dsCoordinator,
+                dispatcher,
+                addressContext);
+
+        dsCoordinator.registerProcedure(saveDsAttributes);
+        dsCoordinator.registerProcedure(loadDsAttributes);
 
     }
 

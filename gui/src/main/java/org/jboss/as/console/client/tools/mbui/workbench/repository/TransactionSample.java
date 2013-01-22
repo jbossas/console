@@ -61,7 +61,7 @@ public class TransactionSample implements Sample
 
         // entities
         Mapping global = new ResourceMapping(ns)
-                .setAddress("/profile={0}/subsystem=transactions");
+                .setAddress("/profile={selected.profile}/subsystem=transactions");
 
         Mapping basicAttributesMapping = new ResourceMapping(ns)
                 .addAttributes(

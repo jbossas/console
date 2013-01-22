@@ -18,6 +18,7 @@ import org.jboss.mbui.model.structure.InteractionUnit;
 import org.jboss.mbui.model.structure.QName;
 
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A default procedure that writes attributes change sets to resource.
@@ -66,7 +67,7 @@ public class SaveChangesetProcedure extends Procedure {
         private void saveResource(final String name, AddressBinding address, HashMap<String, Object> changeset) {
             ModelNodeAdapter adapter = new ModelNodeAdapter();
 
-            String[] args = addressContext.resolve();
+            Map<String,String> args = addressContext.resolve();
             ModelNode operation = adapter.fromChangeset(
                     changeset,
                     address.asResource(args));

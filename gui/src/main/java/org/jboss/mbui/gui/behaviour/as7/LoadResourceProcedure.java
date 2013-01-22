@@ -18,6 +18,8 @@ import org.jboss.mbui.model.structure.Dialog;
 import org.jboss.mbui.model.structure.InteractionUnit;
 import org.jboss.mbui.model.structure.QName;
 
+import java.util.Map;
+
 import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 
 /**
@@ -58,7 +60,7 @@ public class LoadResourceProcedure extends Procedure {
 
     private void loadResource(final String name, AddressBinding address) {
 
-        String[] args = addressContext.resolve();
+        Map<String,String> args = addressContext.resolve();
         ModelNode operation = address.asResource(args);
         operation.get(OP).set(READ_RESOURCE_OPERATION);
         operation.get(INCLUDE_RUNTIME).set(true);

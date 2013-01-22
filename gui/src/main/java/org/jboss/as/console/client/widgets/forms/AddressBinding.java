@@ -2,8 +2,10 @@ package org.jboss.as.console.client.widgets.forms;
 
 import org.jboss.dmr.client.ModelNode;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 import static org.jboss.dmr.client.ModelDescriptionConstants.ADDRESS;
@@ -66,6 +68,16 @@ public class AddressBinding {
     }
 
     /**
+     * Turns this address into a ModelNode with an address property.
+     *
+     * @param args parameters for address wildcards
+     * @return a ModelNode with an address property
+     */
+    public ModelNode asResource(Map<String,String> args) {
+        return asResource(new ModelNode(), args);
+    }
+
+    /**
      * Turns this address into a ModelNode with an address property.<br/>
      * This method allows to specify a base address prefix (i.e server vs. domain addressing).
      *
@@ -76,7 +88,7 @@ public class AddressBinding {
     public ModelNode asResource(ModelNode baseAddress, String... args) {
 
         assert getNumWildCards() ==args.length :
-                "Address arguments don't match number of wildcards: "+args.length+","+getNumWildCards();
+                "Address arguments don't match number of wildcards: "+getNumWildCards()+" -> "+ Arrays.toString(args);
 
         ModelNode model = new ModelNode();
         model.get(ADDRESS).set(baseAddress);
@@ -106,15 +118,56 @@ public class AddressBinding {
     }
 
     /**
-     * Turns this address into a subresource address,
-     * including the address and child-type properties.
-
+     * Turns this address into a ModelNode with an address property.<br/>
+     * This method allows to specify a base address prefix (i.e server vs. domain addressing).
      *
+     * @param baseAddress
      * @param args parameters for address wildcards
-     * @return  ModelNode including address and child-type property
+     * @return a ModelNode with an address property
      */
-    public ModelNode asSubresource(String... args) {
-        return asSubresource(new ModelNode(), args);
+    public ModelNode asResource(ModelNode baseAddress, Map<String,String> args) {
+
+        assert getNumWildCards() ==args.size() :
+                "Address arguments don't match number of wildcards: "+getNumWildCards()+" -> "+ args.keySet();
+
+        ModelNode model = new ModelNode();
+        model.get(ADDRESS).set(baseAddress);
+
+        for(String[] tuple : address)
+        {
+            String key_ref = tuple[0];
+            String value_ref = tuple[1];
+
+            String resolved_key = null;
+            String resolved_value = null;
+
+            if(key_ref.startsWith("{"))
+            {
+                key_ref = key_ref.substring(1, key_ref.length()-1);
+                resolved_key = args.get(key_ref);
+            }
+            else
+            {
+                resolved_key = key_ref;
+            }
+
+            if(value_ref.startsWith("{"))
+            {
+                value_ref = value_ref.substring(1, value_ref.length()-1);
+                resolved_value = args.get(value_ref);
+            }
+            else
+            {
+                resolved_value = value_ref;
+            }
+
+            assert resolved_key!=null : "The parameter '"+key_ref+"' cannot be resolved";
+            assert resolved_value!=null : "The parameter '"+value_ref+"' cannot be resolved";
+
+            model.get(ADDRESS).add(resolved_key, resolved_value);
+        }
+
+        return model;
     }
 
     /**
@@ -134,7 +187,7 @@ public class AddressBinding {
         int wildcards = (numWildCards - 1) > 0 ? numWildCards-1 : 0;
 
         assert wildcards == args.length :
-                "Address arguments don't match number of wildcards: "+args.length+","+wildcards;
+                "Address arguments don't match number of wildcards: "+wildcards+" -> "+ Arrays.toString(args);
 
         ModelNode model = new ModelNode();
         model.get(ADDRESS).set(baseAddress);

@@ -57,18 +57,18 @@ public class DataSourceSample implements Sample
 
     public Dialog build()
     {
-        String namespace = "org.jboss.ds";
+        String namespace = "org.jboss.datasource";
 
         // mappings
         ResourceMapping global = new ResourceMapping(namespace)
-                .setAddress("/profile={0}/subsystem=datasources/data-source={1}");
+                .setAddress("/profile={selected.profile}/subsystem=datasources/data-source={selected.entity}");
 
         Mapping tableMapping = new ResourceMapping(namespace)
-                .addAttribute(new ResourceAttribute("${resource.name}", "Name"))
+                .addAttribute(new ResourceAttribute("${selected.entity}", "Name"))
                 .addAttributes("jndi-name", "enabled");
 
         Mapping basicAttributesMapping = new ResourceMapping(namespace)
-                .addAttribute(new ResourceAttribute("${resource.name}", "Name"))
+                .addAttribute(new ResourceAttribute("${selected.entity}", "Name"))
                 .addAttributes("jndi-name", "enabled", "driver-name", "share-prepared-statements",
                         "prepared-statements-cache-size");
 
@@ -83,9 +83,9 @@ public class DataSourceSample implements Sample
                     .add(new Select(namespace, "datasourceTable", "DatasourceList"))
                     .addMapping(tableMapping)
                     .start(new Container(namespace, "datasourceAttributes", "Datasource", Choice))
-                        .add(new Form(namespace, "basicAttributes", "Attributes"))
+                        .add(new Form(namespace, "datasources#basicAttributes", "Attributes"))
                         .addMapping(basicAttributesMapping)
-                        .add(new Form(namespace, "connectionAttributes", "Connection"))
+                        .add(new Form(namespace, "datasources#connectionAttributes", "Connection"))
                         .addMapping(connectionAttributesMapping)
                     .end()
                 .end()
