@@ -19,6 +19,7 @@
 package org.jboss.mbui.gui.reification.strategy;
 
 import com.google.gwt.user.client.ui.IsWidget;
+import org.jboss.mbui.model.structure.InteractionUnit;
 
 /**
  * @author Harald Pehl
@@ -26,5 +27,6 @@ import com.google.gwt.user.client.ui.IsWidget;
  */
 public interface ReificationWidget extends IsWidget
 {
+    public InteractionUnit getInteractionUnit();
     public void add(ReificationWidget widget);
 }

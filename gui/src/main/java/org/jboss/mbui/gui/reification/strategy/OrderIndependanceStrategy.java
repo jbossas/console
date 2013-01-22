@@ -20,11 +20,11 @@ package org.jboss.mbui.gui.reification.strategy;
 
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import org.jboss.mbui.model.structure.Container;
-import org.jboss.mbui.model.structure.InteractionUnit;
+import org.jboss.as.console.client.layout.SimpleLayout;
 import org.jboss.mbui.gui.reification.Context;
 import org.jboss.mbui.gui.reification.ReificationStrategy;
-import org.jboss.as.console.client.layout.SimpleLayout;
+import org.jboss.mbui.model.structure.Container;
+import org.jboss.mbui.model.structure.InteractionUnit;
 
 import static org.jboss.mbui.model.structure.TemporalOperator.OrderIndependance;
 
@@ -59,16 +59,19 @@ public class OrderIndependanceStrategy implements ReificationStrategy<Reificatio
     class SimpleLayoutAdapter implements ReificationWidget
     {
         final WidgetStrategy delegate;
+        final InteractionUnit interactionUnit;
 
         SimpleLayoutAdapter(final InteractionUnit interactionUnit, Context context)
         {
+            this.interactionUnit = interactionUnit;
+
             if(interactionUnit.hasParent())
             {
                 final VerticalPanel panel = new VerticalPanel();
                 panel.setStyleName("fill-layout-width");
                 this.delegate = new WidgetStrategy() {
                     @Override
-                    public void add(Widget widget) {
+                    public void add(InteractionUnit unit, Widget widget) {
                         panel.add(widget);
                     }
 
@@ -86,7 +89,7 @@ public class OrderIndependanceStrategy implements ReificationStrategy<Reificatio
 
                 this.delegate = new WidgetStrategy() {
                     @Override
-                    public void add(Widget widget) {
+                    public void add(InteractionUnit unit, Widget widget) {
                         builder.addContent("TODO: NAME", widget);
                     }
 
@@ -100,12 +103,17 @@ public class OrderIndependanceStrategy implements ReificationStrategy<Reificatio
         }
 
         @Override
+        public InteractionUnit getInteractionUnit() {
+            return interactionUnit;
+        }
+
+        @Override
         public void add(final ReificationWidget widget)
         {
 
             if (widget!= null)
             {
-                delegate.add(widget.asWidget());
+                delegate.add(widget.getInteractionUnit(), widget.asWidget());
             }
         }
 

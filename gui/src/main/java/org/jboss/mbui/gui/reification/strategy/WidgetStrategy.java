@@ -1,6 +1,7 @@
 package org.jboss.mbui.gui.reification.strategy;
 
 import com.google.gwt.user.client.ui.Widget;
+import org.jboss.mbui.model.structure.InteractionUnit;
 
 /**
  * @author Heiko Braun
@@ -8,7 +9,7 @@ import com.google.gwt.user.client.ui.Widget;
  */
 interface WidgetStrategy
 {
-    void add(Widget widget);
+    void add(InteractionUnit unit, Widget widget);
 
     //void add(Widget widget, String name);
 

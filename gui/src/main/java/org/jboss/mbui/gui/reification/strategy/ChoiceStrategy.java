@@ -61,9 +61,12 @@ public class ChoiceStrategy implements ReificationStrategy<ReificationWidget>
     class TabPanelAdapter  implements ReificationWidget
     {
         final WidgetStrategy delegate;
+        final InteractionUnit interactionUnit;
 
         TabPanelAdapter(final InteractionUnit interactionUnit)
         {
+
+            this.interactionUnit = interactionUnit;
 
             if(interactionUnit.hasParent())
             {
@@ -80,8 +83,8 @@ public class ChoiceStrategy implements ReificationStrategy<ReificationWidget>
 
                 this.delegate = new WidgetStrategy() {
                     @Override
-                    public void add(Widget widget) {
-                        tabPanel.add(widget, "InnerTab-"+tabPanel.getWidgetCount());
+                    public void add(InteractionUnit unit, Widget widget) {
+                        tabPanel.add(widget, unit.getName());
                     }
 
                     @Override
@@ -97,11 +100,11 @@ public class ChoiceStrategy implements ReificationStrategy<ReificationWidget>
 
                 this.delegate = new WidgetStrategy() {
                     @Override
-                    public void add(Widget widget) {
+                    public void add(InteractionUnit unit, Widget widget) {
                         final VerticalPanel vpanel = new VerticalPanel();
                         vpanel.setStyleName("rhs-content-panel");
                         vpanel.add(widget);
-                        tabLayoutpanel.add(vpanel, "OuterTab-" + tabLayoutpanel.getWidgetCount());
+                        tabLayoutpanel.add(vpanel, unit.getName());
                     }
 
                     @Override
@@ -114,11 +117,16 @@ public class ChoiceStrategy implements ReificationStrategy<ReificationWidget>
         }
 
         @Override
+        public InteractionUnit getInteractionUnit() {
+            return interactionUnit;
+        }
+
+        @Override
         public void add(final ReificationWidget widget)
         {
             if (widget != null)
             {
-                delegate.add(widget.asWidget());
+                delegate.add(widget.getInteractionUnit(), widget.asWidget());
             }
         }
 

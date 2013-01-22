@@ -174,6 +174,11 @@ public class FormStrategy implements ReificationStrategy<ReificationWidget>
         }
 
         @Override
+        public InteractionUnit getInteractionUnit() {
+            return interactionUnit;
+        }
+
+        @Override
         public void add(final ReificationWidget widget)
         {
             throw new UnsupportedOperationException();
