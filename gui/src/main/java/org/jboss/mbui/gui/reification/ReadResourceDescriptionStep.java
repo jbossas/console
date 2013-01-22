@@ -101,7 +101,7 @@ public class ReadResourceDescriptionStep extends ReificationStep
                             context.set(MODEL_DESCRIPTIONS, descriptionMap);
 
                         }
-                        ResourceMapping mapping = visitor.stepReference.get(step).getMapping(RESOURCE);
+                        ResourceMapping mapping = visitor.stepReference.get(step).findMapping(RESOURCE);
                         descriptionMap.put(mapping.getNamespace(), description);
                     }
 
@@ -145,6 +145,8 @@ public class ReadResourceDescriptionStep extends ReificationStep
                 @Override
                 public boolean appliesTo(final ResourceMapping candidate)
                 {
+                    // the read-resource operation only needs the address of a resource
+                    // hence we can skip mapping without address declarations (i.e. just attributes)
                     return candidate.getAddress() != null;
                 }
             });

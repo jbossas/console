@@ -99,7 +99,7 @@ public class FormStrategy implements ReificationStrategy<ReificationWidget>
             List<Property> attributeDescriptions = modelDescription.get("attributes").asPropertyList();
 
             ResourceMapping resourceMapping = (ResourceMapping)
-                    this.interactionUnit.getMapping(MappingType.RESOURCE);
+                    this.interactionUnit.findMapping(MappingType.RESOURCE);
 
             List<ResourceAttribute> attributes = resourceMapping.getAttributes();
             List<FormItem> items = new ArrayList<FormItem>(attributes.size());
@@ -240,7 +240,7 @@ public class FormStrategy implements ReificationStrategy<ReificationWidget>
             });
 
 
-            // handle the results of function calls (statements)
+            // handle the results of function calls
             coordinator.addHandler(PresentationEvent.TYPE, new PresentationEvent.Handler()
             {
                 @Override

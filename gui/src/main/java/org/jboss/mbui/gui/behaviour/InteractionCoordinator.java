@@ -2,6 +2,7 @@ package org.jboss.mbui.gui.behaviour;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.user.client.Window;
 import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.Event;
 import com.google.web.bindery.event.shared.EventBus;
@@ -110,7 +111,6 @@ public class InteractionCoordinator implements FrameworkContract,
 
     @Override
     public void onReset() {
-        statements.clear();
         bus.fireEvent(new SystemEvent(new QName(PROJECT_NAMESPACE, "reset")));
     }
 
@@ -145,9 +145,9 @@ public class InteractionCoordinator implements FrameworkContract,
         }
         else
         {
-            System.out.println("No procedure for " +event);
+            Window.alert("No procedure for " + event);
+            System.out.println("No procedure for " + event);
         }
-
     }
 
     @Override
@@ -196,6 +196,9 @@ public class InteractionCoordinator implements FrameworkContract,
             statements.put(event.getKey(), event.getValue());
         else
             statements.remove(event.getKey());
+
+        // when statement change, the system will be resetted
+        onReset();
 
         // diagnose
         statements.dump();

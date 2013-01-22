@@ -28,8 +28,10 @@ import com.google.gwt.view.client.SingleSelectionModel;
 import com.google.web.bindery.event.shared.EventBus;
 import org.jboss.ballroom.client.widgets.tables.DefaultPager;
 import org.jboss.dmr.client.ModelNode;
+import org.jboss.mbui.gui.behaviour.InteractionEvent;
 import org.jboss.mbui.gui.behaviour.PresentationEvent;
 import org.jboss.mbui.gui.behaviour.StatementEvent;
+import org.jboss.mbui.gui.behaviour.SystemEvent;
 import org.jboss.mbui.gui.reification.Context;
 import org.jboss.mbui.gui.reification.ReificationStrategy;
 import org.jboss.mbui.gui.reification.widgets.ModelNodeCellTable;
@@ -86,7 +88,7 @@ public class SelectStrategy implements ReificationStrategy<ReificationWidget>
             this.interactionUnit = interactionUnit;
 
             ResourceMapping resourceMapping = (ResourceMapping)
-                    this.interactionUnit.getMapping(MappingType.RESOURCE);
+                    this.interactionUnit.findMapping(MappingType.RESOURCE);
 
             List<ResourceAttribute> attributes = resourceMapping.getAttributes();
             for (ResourceAttribute attribute : attributes)
@@ -125,16 +127,19 @@ public class SelectStrategy implements ReificationStrategy<ReificationWidget>
                     ModelNode selection = selectionModel.getSelectedObject();
 
                     if(selection!=null) {
+                        // create a select statement
                         coordinator.fireEventFromSource(
                                 new StatementEvent(
                                         QName.valueOf("org.jboss.as:select"),
                                         "selected.entity",
                                         selection.get("entity.key").asString()),   // synthetic key (convention), see LoadResourceProcedure
                                 this);
+
+
                     }
                     else
                     {
-                        // clear this particular key
+                        // clear the select statement
                         coordinator.fireEventFromSource(
                                 new StatementEvent(
                                         QName.valueOf("org.jboss.as:select"),
@@ -145,7 +150,33 @@ public class SelectStrategy implements ReificationStrategy<ReificationWidget>
                 }
             });
 
-            // handle the results of function calls (statements)
+
+              // handle resets within this scope
+            coordinator.addHandler(SystemEvent.TYPE, new SystemEvent.Handler() {
+                @Override
+                public boolean accepts(SystemEvent event) {
+                    QName reset = new QName("org.jboss.as", "reset");
+                    return event.getId().equals(reset);
+                }
+
+                @Override
+                public void onSystemEvent(SystemEvent event) {
+                    dataProvider.getList().clear();
+                    dataProvider.refresh();
+
+                    // request loading of data
+                    InteractionEvent reset =
+                            new InteractionEvent(QName.valueOf("org.jboss.as:load"));
+
+                    // update interaction units
+                    coordinator.fireEventFromSource(
+                            reset,
+                            interactionUnit.getId()
+                    );
+                }
+            });
+
+            // handle the results of function calls
             coordinator.addHandler(PresentationEvent.TYPE, new PresentationEvent.Handler()
             {
                 @Override
@@ -156,7 +187,8 @@ public class SelectStrategy implements ReificationStrategy<ReificationWidget>
                 @Override
                 public void onPresentationEvent(PresentationEvent event) {
                     List<ModelNode> entities = (List<ModelNode>)event.getPayload();
-                    dataProvider.setList(entities);
+                    dataProvider.getList().clear();
+                    dataProvider.getList().addAll(entities);
                 }
             });
         }

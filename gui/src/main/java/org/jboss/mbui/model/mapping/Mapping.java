@@ -20,6 +20,8 @@ package org.jboss.mbui.model.mapping;
 
 /**
  * @author Harald Pehl
+ * @author Heiko Braun
+ *
  * @date 10/25/2012
  */
 public abstract class Mapping
@@ -61,4 +63,13 @@ public abstract class Mapping
     {
         return type;
     }
+
+    /**
+     * Mapping exist in a hierarchical structure.
+     * A nested (child) mapping can complement it's declarations with the parent mapping available to it.
+     *
+     * @param parent
+     */
+    public abstract void complementFrom(Mapping parent);
+
 }

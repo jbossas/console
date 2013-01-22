@@ -60,6 +60,7 @@ public class ResourceMapping extends Mapping
         return this;
     }
 
+    // TODO: Required? What's the purpose?
     public ResourceMapping addAttribute(final ResourceAttribute attribute)
     {
         if (attribute != null)
@@ -77,5 +78,17 @@ public class ResourceMapping extends Mapping
     public List<ResourceAttribute> getAttributes()
     {
         return attributes;
+    }
+
+    @Override
+    public void complementFrom(Mapping parent) {
+        if(parent instanceof ResourceMapping)
+        {
+            ResourceMapping parentResourceMapping = (ResourceMapping)parent;
+
+            // complementFrom address if not available
+            if(null==this.address)
+                this.address = parentResourceMapping.getAddress();
+        }
     }
 }

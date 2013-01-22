@@ -47,7 +47,7 @@ public class LoadResourceProcedure extends Procedure {
 
                 InteractionUnit source = dialog.findUnit(getRequiredSource());
 
-                ResourceMapping resourceMapping = source.getMapping(MappingType.RESOURCE);
+                ResourceMapping resourceMapping = source.findMapping(MappingType.RESOURCE);
                 AddressBinding address = AddressBinding.fromString(resourceMapping.getAddress());
 
                 loadResource(source.getName(), address);

@@ -121,7 +121,7 @@ public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, Preview
         coordinators.put(dataSourceSample.getName(), dsCoordinator);
 
         // setup behaviour hooks
-        final QName datasourceResource = new QName("org.jboss.datasource", "datasources");
+        final QName datasourcesResource = new QName("org.jboss.datasource", "datasources");
         final QName transactionManagerResource = new QName("org.jboss.transactions", "transactionManager");
 
         // --------- TX behaviour ------------
@@ -139,11 +139,11 @@ public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, Preview
         // --------- DS behaviour ------------
 
         Procedure saveDsAttributes = new SaveChangesetProcedure(
-                datasourceResource,
+                datasourcesResource,
                 dispatcher);
 
         Procedure loadDsAttributes = new LoadResourceProcedure(
-                datasourceResource,
+                datasourcesResource,
                 dispatcher);
 
         dsCoordinator.registerProcedure(saveDsAttributes);

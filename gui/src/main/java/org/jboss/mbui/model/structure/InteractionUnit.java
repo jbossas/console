@@ -22,6 +22,7 @@ import org.jboss.mbui.model.behaviour.Consumer;
 import org.jboss.mbui.model.behaviour.Producer;
 import org.jboss.mbui.model.behaviour.Resource;
 import org.jboss.mbui.model.behaviour.ResourceType;
+import org.jboss.mbui.model.mapping.as7.ResourceMapping;
 import org.jboss.mbui.model.structure.impl.ResourceConsumption;
 import org.jboss.mbui.model.structure.impl.ResourceProduction;
 import org.jboss.mbui.model.mapping.Mapping;
@@ -112,18 +113,14 @@ public abstract class InteractionUnit implements Consumer, Producer
         return mappings.get(type) != null;
     }
 
-    public <T extends Mapping> T getMapping(final MappingType type)
+    private <T extends Mapping> T getMapping(final MappingType type)
     {
         return (T) mappings.get(type);
     }
 
-    public Collection<Mapping> getMappings()
-    {
-        return mappings.values();
-    }
-
     /**
-     * Finds a specific mapping over a hierarchy of interaction units following a bottom up approach.
+     * Finds the first mapping of a type within the hierarchy.
+     * Uses parent delegation if the mapping cannot be found locally.
      *
      * @param type
      * @param <T>
@@ -136,9 +133,10 @@ public abstract class InteractionUnit implements Consumer, Producer
     }
 
     /**
-     * Finds a specific mapping over a hierarchy of interaction units following a bottom up approach.
+     * Finds the first mapping of a type within the hierarchy.
+     * Uses parent delegation if the mapping cannot be found locally.
      * <p/>
-     * The mapping is only returned if the predicate matches.
+     * The predicate needs to apply.
      *
      * @param type
      * @param predicate Use {@code null} to ignore
@@ -156,11 +154,21 @@ public abstract class InteractionUnit implements Consumer, Producer
             {
                 mapping = (predicate.appliesTo(mapping)) ? mapping : null;
             }
+
+            // complement the mapping (i.e. resource address at a higher level)
+            if(mapping!=null && parent!=null)
+            {
+                Mapping parentMapping = parent.findMapping(type);
+                if(parentMapping!=null)
+                    mapping.complementFrom(parentMapping);
+            }
+
         }
         if (mapping == null && parent != null)
         {
             mapping = parent.findMapping(type);
         }
+
         return mapping;
     }
 
