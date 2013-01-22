@@ -17,3 +17,6 @@
 
 (* = currently unused)
 
+## Namespaces 
+
+- org.jboss.as : reserved for core events (as7 console semantics)
