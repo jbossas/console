@@ -26,6 +26,7 @@ import com.google.web.bindery.event.shared.EventBus;
 import org.jboss.as.console.client.shared.help.StaticHelpPanel;
 import org.jboss.as.console.client.widgets.forms.FormToolStrip;
 import org.jboss.ballroom.client.widgets.forms.CheckBoxItem;
+import org.jboss.ballroom.client.widgets.forms.ComboBoxItem;
 import org.jboss.ballroom.client.widgets.forms.FormItem;
 import org.jboss.ballroom.client.widgets.forms.NumberBoxItem;
 import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
@@ -45,8 +46,10 @@ import org.jboss.mbui.model.structure.InteractionUnit;
 import org.jboss.mbui.model.structure.QName;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Harald Pehl
@@ -137,6 +140,7 @@ public class FormStrategy implements ReificationStrategy<ReificationWidget>
                     helpTexts.appendHtmlConstant("</td>");
                     helpTexts.appendHtmlConstant("</tr>");
 
+                    boolean required = !attr.getValue().get("nillable").asBoolean();
                     ModelType type = ModelType.valueOf(attrValue.get("type").asString());
                     //System.out.println(attr.getName()+">"+type);
                     switch(type)
@@ -147,19 +151,36 @@ public class FormStrategy implements ReificationStrategy<ReificationWidget>
                             break;
                         case DOUBLE:
                             NumberBoxItem num = new NumberBoxItem(attr.getName(), label);
+                            num.setRequired(required);
                             items.add(num);
                             break;
                         case LONG:
                             NumberBoxItem num2 = new NumberBoxItem(attr.getName(), label);
+                            num2.setRequired(required);
                             items.add(num2);
                             break;
                         case INT:
                             NumberBoxItem num3 = new NumberBoxItem(attr.getName(), label);
+                            num3.setRequired(required);
                             items.add(num3);
                             break;
                         case STRING:
-                            TextBoxItem tb = new TextBoxItem(attr.getName(), label);
-                            items.add(tb);
+                            if(attrValue.get("allowed").isDefined())
+                            {
+                                List<ModelNode> allowed = attrValue.get("allowed").asList();
+                                Set<String> allowedValues = new HashSet<String>(allowed.size());
+                                for(ModelNode value : allowed)
+                                    allowedValues.add(value.asString());
+
+                                ComboBoxItem combo = new ComboBoxItem(attr.getName(), label);
+                                combo.setValueMap(allowedValues);
+                            }
+                            else
+                            {
+                                TextBoxItem tb = new TextBoxItem(attr.getName(), label);
+                                tb.setRequired(required);
+                                items.add(tb);
+                            }
                             break;
                         default:
                             throw new RuntimeException("Unsupported ModelType "+type);

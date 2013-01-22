@@ -75,7 +75,7 @@ public class DataSourceSample implements Sample
                         "prepared-statements-cache-size");
 
         Mapping connectionAttributesMapping = new ResourceMapping(namespace)
-                .addAttributes("connection-url", "new-connection-sql", "jta", "use-ccm");
+                .addAttributes("connection-url", "new-connection-sql", "transaction-isolation", "jta", "use-ccm");
 
         // UI
         InteractionUnit root = new Builder()
