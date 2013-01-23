@@ -71,7 +71,7 @@ public class DataSourceSample implements Sample
                 .addAttributes("entity.key","jndi-name", "enabled");
 
         Mapping basicAttributesMapping = new ResourceMapping(namespace)
-                .addAttributes("entity.key", "jndi-name", "enabled", "driver-name", "share-prepared-statements",
+                .addAttributes("entity.key", "jndi-name", "enabled", "datasource-class", "driver-name", "share-prepared-statements",
                         "prepared-statements-cache-size");
 
         Mapping connectionAttributesMapping = new ResourceMapping(namespace)

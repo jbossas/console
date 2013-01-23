@@ -16,14 +16,31 @@ public class Procedure {
 
     protected InteractionCoordinator coordinator;
     protected StatementContext statementContext;
+    protected Precondition precondition;
+
+    public final static Precondition NOT_GUARDED = new Precondition() {
+        @Override
+        public boolean isMet(StatementContext context) {
+            return true;
+        }
+    };
 
     public Procedure(QName id, QName source) {
         this.id = id;
         this.requiredSource = source;
+        this.precondition = NOT_GUARDED;
     }
 
     public void setCommand(ModelDrivenCommand command) {
         this.command = command;
+    }
+
+    public void setPrecondition(Precondition precondition) {
+        this.precondition = precondition;
+    }
+
+    Precondition getPrecondition() {
+        return precondition;
     }
 
     public QName getRequiredSource() {

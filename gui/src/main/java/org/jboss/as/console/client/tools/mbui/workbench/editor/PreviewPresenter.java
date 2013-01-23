@@ -40,6 +40,7 @@ import org.jboss.as.console.client.tools.mbui.workbench.repository.TransactionSa
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.as.console.client.widgets.forms.EntityAdapter;
 import org.jboss.mbui.gui.behaviour.InteractionCoordinator;
+import org.jboss.mbui.gui.behaviour.Precondition;
 import org.jboss.mbui.gui.behaviour.Procedure;
 import org.jboss.mbui.gui.behaviour.StatementContext;
 import org.jboss.mbui.gui.behaviour.as7.LoadResourceProcedure;
@@ -138,6 +139,13 @@ public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, Preview
 
         // --------- DS behaviour ------------
 
+        final Precondition selectedEntity = new Precondition() {
+            @Override
+            public boolean isMet(StatementContext statementContext) {
+                return statementContext.resolve("selected.entity")!=null;
+            }
+        };
+
         Procedure saveDsAttributes = new SaveChangesetProcedure(
                 datasourcesResource,
                 dispatcher);
@@ -149,6 +157,7 @@ public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, Preview
         Procedure loadDatasource = new LoadResourceProcedure(
                        QName.valueOf("org.jboss.datasource:datasource"),
                        dispatcher);
+        loadDatasource.setPrecondition(selectedEntity);
 
         dsCoordinator.registerProcedure(saveDsAttributes);
         dsCoordinator.registerProcedure(loadDatasources);

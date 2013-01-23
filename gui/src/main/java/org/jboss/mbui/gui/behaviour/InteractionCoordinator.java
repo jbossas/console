@@ -37,6 +37,7 @@ public class InteractionCoordinator implements FrameworkContract,
     private Dialog dialog;
     private StatementRegistry statements = new StatementRegistry();
     private StatementContext parentContext;
+    private final StatementContext statementContext;
 
     @Inject
     public InteractionCoordinator(Dialog dialog, StatementContext parentContext) {
@@ -49,6 +50,23 @@ public class InteractionCoordinator implements FrameworkContract,
         bus.addHandler(StatementEvent.TYPE, this);
 
         this.parentContext = parentContext;
+
+        // simple parent delegation mechanism to resolve statement values
+        this.statementContext = new StatementContext() {
+            @Override
+            public String resolve(String key) {
+                String resolvedValue = null;
+
+                // child
+                resolvedValue = statements.get(key);
+
+                // parent
+                if (null == resolvedValue && InteractionCoordinator.this.parentContext != null)
+                    resolvedValue = InteractionCoordinator.this.parentContext.resolve(key);
+
+                return resolvedValue;
+            }
+        };
     }
 
     public EventBus getLocalBus()
@@ -65,24 +83,9 @@ public class InteractionCoordinator implements FrameworkContract,
             procedures.put(procedure.getId(), collection);
         }
 
+        // provide context
         procedure.setCoordinator(this);
-
-        // simple parent delegation mechanism to resolve statement values
-        procedure.setStatementContext(new StatementContext() {
-            @Override
-            public String resolve(String key) {
-                String resolvedValue = null;
-
-                // child
-                resolvedValue = statements.get(key);
-
-                // parent
-                if(null==resolvedValue && parentContext!=null)
-                    resolvedValue = parentContext.resolve(key);
-
-                return resolvedValue;
-            }
-        });
+        procedure.setStatementContext(statementContext);
 
         collection.add(procedure);
     }
@@ -158,7 +161,7 @@ public class InteractionCoordinator implements FrameworkContract,
             Window.alert("No procedure for " + event);
             System.out.println("No procedure for " + event);
         }
-        else
+        else if(execution.getPrecondition().isMet(statementContext))   // guarded
         {
             try {
                 execution.getCommand().execute(InteractionCoordinator.this.dialog, event.getPayload());
