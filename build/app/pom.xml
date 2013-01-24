@@ -11,7 +11,7 @@
     <parent>
         <groupId>org.jboss.as</groupId>
         <artifactId>jboss-as-console-build</artifactId>
-        <version>1.5.0.Final</version>
+        <version>1.5.1-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
