@@ -11,15 +11,18 @@ import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedSourceVersion;
 import javax.lang.model.element.AnnotationMirror;
+import javax.lang.model.element.AnnotationValue;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.type.TypeMirror;
 import javax.tools.FileObject;
 import javax.tools.JavaFileObject;
 import javax.tools.StandardLocation;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -68,6 +71,7 @@ public class SPIProcessor extends AbstractProcessor {
     private List<String> discoveredExtensions;
     private List<ExtensionDeclaration> discoveredBindings;
     private List<String> discoveredBeanFactories;
+    private List<String> categoryClasses;
     private List<SubsystemExtensionMetaData> subsystemDeclararions;
     private List<RuntimeExtensionMetaData> runtimeExtensions;
     private Set<String> modules = new LinkedHashSet<String>();
@@ -82,6 +86,7 @@ public class SPIProcessor extends AbstractProcessor {
         this.discoveredExtensions = new ArrayList<String>();
         this.discoveredBindings= new ArrayList<ExtensionDeclaration>();
         this.discoveredBeanFactories = new ArrayList<String>();
+        this.categoryClasses = new ArrayList<String>();
         this.subsystemDeclararions = new ArrayList<SubsystemExtensionMetaData>();
         this.runtimeExtensions = new ArrayList<RuntimeExtensionMetaData>();
         this.nameTokens = new HashSet<String>();
@@ -254,6 +259,13 @@ public class SPIProcessor extends AbstractProcessor {
                         element.getSimpleName().toString();
                 System.out.println("Factory: " + fqn);
                 discoveredBeanFactories.add(fqn);
+            } else if (annotationType.equals("com.google.web.bindery.autobean.shared.AutoBeanFactory.Category")) {
+                final Collection<? extends AnnotationValue> values = mirror.getElementValues().values();
+                if (values.size() > 0) {
+                    for (AnnotationValue categoryClass : (List<? extends AnnotationValue>)values.iterator().next().getValue()) {
+                        categoryClasses.add(((TypeMirror)categoryClass.getValue()).toString());
+                    }
+                }
             }
         }
     }
@@ -326,6 +338,7 @@ public class SPIProcessor extends AbstractProcessor {
     private void writeBeanFactoryFile() throws Exception{
         Map<String, Object> model = new HashMap<String, Object>();
         model.put("extensions", discoveredBeanFactories);
+        model.put("categoryClasses", categoryClasses);
 
         JavaFileObject sourceFile = filer.createSourceFile(BEAN_FACTORY_FILENAME);
         OutputStream output = sourceFile.openOutputStream();
