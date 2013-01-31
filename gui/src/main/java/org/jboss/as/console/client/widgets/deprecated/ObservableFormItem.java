@@ -47,7 +47,22 @@ public class ObservableFormItem extends FormItem {
             observer.itemAction(action, this);
         }
     }
-    
+
+    @Override
+    public void setExpressionValue(String expr) {
+        wrapped.setExpressionValue(expr);
+    }
+
+    @Override
+    public boolean isExpressionValue() {
+        return wrapped.isExpressionValue();
+    }
+
+    @Override
+    public String asExpressionValue() {
+        return wrapped.asExpressionValue();
+    }
+
     public PropertyBinding getPropertyBinding() {
         return this.propBinding;
     }
