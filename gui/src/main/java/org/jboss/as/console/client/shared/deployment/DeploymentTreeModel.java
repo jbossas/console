@@ -87,7 +87,7 @@ public class DeploymentTreeModel implements TreeViewModel
     {
         @Template(
                 "<div style=\"padding-right:20px;position:relative;zoom:1;\"><div>{0}</div><div style=\"margin-top:-9px;position:absolute;top:50%;right:0;line-height:0px;\">{1}</div></div>")
-        SafeHtml deployment(String depployment, SafeHtml icon);
+        SafeHtml deployment(String deployment, SafeHtml icon);
     }
 
 
@@ -116,7 +116,8 @@ public class DeploymentTreeModel implements TreeViewModel
             }
             AbstractImagePrototype proto = AbstractImagePrototype.create(res);
             SafeHtml imageHtml = SafeHtmlUtils.fromTrustedString(proto.getHTML());
-            sb.append(DEPLOYMENT_TEMPLATES.deployment(value.getName(), imageHtml));
+            String name = value.getName().length()>30 ? value.getName().substring(0,25)+" ..." : value.getName();
+            sb.append(DEPLOYMENT_TEMPLATES.deployment(name, imageHtml));
         }
     }
 }
