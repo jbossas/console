@@ -21,6 +21,7 @@ package org.jboss.as.console.client.widgets.browser;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.cellview.client.CellBrowser;
+import com.google.gwt.user.cellview.client.PageSizePager;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.HasData;
 import com.google.gwt.view.client.TreeViewModel;
@@ -50,7 +51,19 @@ public class DefaultCellBrowser extends CellBrowser
     {
         // by returning null we can prevent the "flickering" of the "show more" link
         // see http://stackoverflow.com/a/6827755/1538056
-        return null;
+        //return null;
+
+
+        PageSizePager pager = new PageSizePager(Integer.MAX_VALUE);
+
+        // removes the text "Show More" during loading
+        display.setRowCount(0);
+
+        // increase the visible range so that no one ever needs to page
+        display.setVisibleRange(0, Integer.MAX_VALUE);
+        pager.setDisplay(display);
+
+        return pager;
     }
 
     public static class Builder<T> extends CellBrowser.Builder
