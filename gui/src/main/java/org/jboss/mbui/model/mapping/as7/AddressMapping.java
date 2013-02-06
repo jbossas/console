@@ -10,7 +10,7 @@ import java.util.NoSuchElementException;
 import static org.jboss.dmr.client.ModelDescriptionConstants.ADDRESS;
 
 /**
- * Address mapping of domain references used within the MBUI model.
+ * Address mapping of domain references used within the interface model.
  * Typically as part of a {@link ResourceMapping}.
  * <p/>
  * The mapping currently supports three different types of address value declarations:
