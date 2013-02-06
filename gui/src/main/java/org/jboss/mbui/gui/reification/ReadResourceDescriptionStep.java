@@ -93,10 +93,14 @@ public class ReadResourceDescriptionStep extends ReificationStep
                     for (String step : visitor.stepReference.keySet())
                     {
                         ModelNode stepResponse = response.get(RESULT).get(step);
-                        assert ModelType.OBJECT == stepResponse.getType() : "Unexpected response type "+stepResponse.getType();
+
                         //System.out.println("<<"+stepResponse);
 
-                        ModelNode description = stepResponse.get(RESULT).asObject();
+                        // might be a LIST response type (resource=*:read-resource-description)
+                        ModelNode description = ModelType.LIST==stepResponse.get(RESULT).getType() ?
+                                stepResponse.get(RESULT).asList().get(0).get(RESULT).asObject() :
+                                stepResponse.get(RESULT).asObject();
+
                         Map<String, ModelNode> descriptionMap = context.get(MODEL_DESCRIPTIONS);
                         if (descriptionMap == null)
                         {
@@ -143,8 +147,8 @@ public class ReadResourceDescriptionStep extends ReificationStep
 
         private void addStep(InteractionUnit interactionUnit)
         {
-            StatementContext statementContext = context.get(ContextKey.STATEMENTS);
-            assert statementContext!=null : "StatementContext not provided";
+            final StatementContext delegate = context.get(ContextKey.STATEMENTS);
+            assert delegate!=null : "StatementContext not provided";
 
             ResourceMapping mapping = interactionUnit.findMapping(RESOURCE, new Predicate<ResourceMapping>()
             {
@@ -162,7 +166,20 @@ public class ReadResourceDescriptionStep extends ReificationStep
                 if (!resolvedAdresses.contains(address))
                 {
                     AddressMapping addressMapping = AddressMapping.fromString(address);
-                    ModelNode op = addressMapping.asResource(statementContext);
+                    ModelNode op = addressMapping.asResource(new StatementContext() {
+                        @Override
+                        public String resolve(String key) {
+                            // fallback strategy for values that are created at runtime, i.e. datasource={selected.entity}
+                            String resolved = delegate.resolve(key);
+                            if(null==resolved) resolved="*";
+                            return resolved;
+                        }
+
+                        @Override
+                        public String[] resolveTuple(String key) {
+                            return delegate.resolveTuple(key);
+                        }
+                    });
                     op.get(OP).set(READ_RESOURCE_DESCRIPTION_OPERATION);
                     steps.add(op);
 

@@ -98,7 +98,7 @@ public class FormStrategy implements ReificationStrategy<ReificationWidget>
             this.form.setNumColumns(2);
             this.form.setEnabled(false);
 
-            assert modelDescription.hasDefined("attributes") : "Invalid model description";
+            assert modelDescription.hasDefined("attributes") : "Invalid model description. Expected child 'attributes'";
 
             List<Property> attributeDescriptions = modelDescription.get("attributes").asPropertyList();
 
