@@ -66,7 +66,18 @@ public class InteractionCoordinator implements FrameworkContract,
 
                 return resolvedValue;
             }
+
+            @Override
+            public String[] resolveTuple(String key) {
+                if (InteractionCoordinator.this.parentContext != null)
+                    return InteractionCoordinator.this.parentContext.resolveTuple(key);
+                return null;
+            }
         };
+    }
+
+    public StatementContext getStatementContext() {
+        return statementContext;
     }
 
     public EventBus getLocalBus()

@@ -6,7 +6,6 @@ import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
-import org.jboss.as.console.client.widgets.forms.AddressBinding;
 import org.jboss.dmr.client.ModelNode;
 import org.jboss.dmr.client.ModelType;
 import org.jboss.dmr.client.Property;
@@ -14,6 +13,7 @@ import org.jboss.mbui.gui.behaviour.ModelDrivenCommand;
 import org.jboss.mbui.gui.behaviour.PresentationEvent;
 import org.jboss.mbui.gui.behaviour.Procedure;
 import org.jboss.mbui.model.mapping.MappingType;
+import org.jboss.mbui.model.mapping.as7.AddressMapping;
 import org.jboss.mbui.model.mapping.as7.ResourceMapping;
 import org.jboss.mbui.model.structure.Dialog;
 import org.jboss.mbui.model.structure.InteractionUnit;
@@ -48,14 +48,14 @@ public class LoadResourceProcedure extends Procedure {
                 InteractionUnit source = dialog.findUnit(getRequiredSource());
 
                 ResourceMapping resourceMapping = source.findMapping(MappingType.RESOURCE);
-                AddressBinding address = AddressBinding.fromString(resourceMapping.getAddress());
+                AddressMapping address = AddressMapping.fromString(resourceMapping.getAddress());
 
                 loadResource(source.getName(), address);
             }
         });
     }
 
-    private void loadResource(final String name, AddressBinding address) {
+    private void loadResource(final String name, AddressMapping address) {
 
 
         final ModelNode operation = address.asResource(statementContext);

@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.as.console.client.tools.mbui.workbench.editor;
+package org.jboss.as.console.client.tools.mbui.workbench.preview;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.inject.Inject;
@@ -43,6 +43,7 @@ import org.jboss.mbui.gui.behaviour.InteractionCoordinator;
 import org.jboss.mbui.gui.behaviour.Precondition;
 import org.jboss.mbui.gui.behaviour.Procedure;
 import org.jboss.mbui.gui.behaviour.StatementContext;
+import org.jboss.mbui.gui.behaviour.as7.CoreGUIContext;
 import org.jboss.mbui.gui.behaviour.as7.LoadResourceProcedure;
 import org.jboss.mbui.gui.behaviour.as7.SaveChangesetProcedure;
 import org.jboss.mbui.gui.reification.Context;
@@ -105,15 +106,11 @@ public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, Preview
         final TransactionSample transactionSample = new TransactionSample();
         final DataSourceSample dataSourceSample = new DataSourceSample();
 
-        StatementContext statementContext = new StatementContext() {
-            @Override
-            public String resolve(String key) {
-                String resolvedValue = null;
-                if("selected.profile".equals(key))
-                    resolvedValue = Console.MODULES.getCurrentSelectedProfile().getName();
-                return resolvedValue;
-            }
-        };
+        // context
+        CoreGUIContext statementContext = new CoreGUIContext(
+                Console.MODULES.getCurrentSelectedProfile(),
+                Console.MODULES.getCurrentUser()
+        );
 
         final InteractionCoordinator txCoordinator = new InteractionCoordinator(transactionSample.getDialog(), statementContext);
         final InteractionCoordinator dsCoordinator = new InteractionCoordinator(dataSourceSample.getDialog(), statementContext);
@@ -142,7 +139,7 @@ public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, Preview
         final Precondition selectedEntity = new Precondition() {
             @Override
             public boolean isMet(StatementContext statementContext) {
-                return statementContext.resolve("selected.entity")!=null;
+                return dsCoordinator.getStatementContext().resolve("selected.entity")!=null;
             }
         };
 
@@ -205,6 +202,7 @@ public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, Preview
 
             // make the coordinator bus available to the model components
             context.set(ContextKey.COORDINATOR, getActiveCoordinator().getLocalBus());
+            context.set(ContextKey.STATEMENTS, getActiveCoordinator().getStatementContext());
 
             reificationPipeline.execute(interactionUnit, context, new SimpleCallback<Boolean>()
             {

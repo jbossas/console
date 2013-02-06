@@ -24,5 +24,5 @@ package org.jboss.mbui.gui.reification.strategy;
  */
 public enum ContextKey
 {
-    WIDGET, MODEL_DESCRIPTIONS, PROPERTIES, COORDINATOR
+    WIDGET, MODEL_DESCRIPTIONS, PROPERTIES, COORDINATOR, STATEMENTS
 }

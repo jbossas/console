@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Mapping for a concrete resource in the DMA model.
+ * Mapping for a concrete resource in the DMR model.
  *
  * @author Harald Pehl
  * @date 10/25/2012

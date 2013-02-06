@@ -61,11 +61,11 @@ public class DataSourceSample implements Sample
 
         // maps to a collection of datasources
         ResourceMapping datasourceCollection = new ResourceMapping(namespace)
-                .setAddress("/profile={selected.profile}/subsystem=datasources/data-source=*");
+                .setAddress("/{selected.profile}/subsystem=datasources/data-source=*");
 
         // maps to a specific datasource
         ResourceMapping singleDataSource = new ResourceMapping(namespace)
-                        .setAddress("/profile={selected.profile}/subsystem=datasources/data-source={selected.entity}");
+                        .setAddress("/{selected.profile}/subsystem=datasources/data-source={selected.entity}");
 
         Mapping tableMapping = new ResourceMapping(namespace)
                 .addAttributes("entity.key","jndi-name", "enabled");

@@ -21,7 +21,7 @@ package org.jboss.as.console.client.tools.mbui.workbench.gin;
 import com.google.gwt.inject.client.Ginjector;
 import com.google.inject.Provider;
 import org.jboss.as.console.client.tools.mbui.workbench.ApplicationPresenter;
-import org.jboss.as.console.client.tools.mbui.workbench.editor.PreviewPresenter;
+import org.jboss.as.console.client.tools.mbui.workbench.preview.PreviewPresenter;
 import org.jboss.as.console.spi.GinExtension;
 
 /**

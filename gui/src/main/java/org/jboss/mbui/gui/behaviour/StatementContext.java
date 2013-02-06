@@ -6,4 +6,5 @@ package org.jboss.mbui.gui.behaviour;
  */
 public interface StatementContext {
     String resolve(String key);
+    String[] resolveTuple(String key);
 }

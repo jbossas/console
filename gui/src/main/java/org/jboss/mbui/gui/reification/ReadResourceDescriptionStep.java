@@ -21,6 +21,10 @@ package org.jboss.mbui.gui.reification;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
+import org.jboss.dmr.client.ModelType;
+import org.jboss.mbui.gui.behaviour.StatementContext;
+import org.jboss.mbui.gui.reification.strategy.ContextKey;
+import org.jboss.mbui.model.mapping.as7.AddressMapping;
 import org.jboss.mbui.model.structure.Container;
 import org.jboss.mbui.model.structure.InteractionUnit;
 import org.jboss.mbui.model.structure.impl.InteractionUnitVisitor;
@@ -29,7 +33,6 @@ import org.jboss.mbui.model.mapping.as7.ResourceMapping;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
-import org.jboss.as.console.client.widgets.forms.AddressBinding;
 import org.jboss.dmr.client.ModelNode;
 
 import java.util.ArrayList;
@@ -90,10 +93,10 @@ public class ReadResourceDescriptionStep extends ReificationStep
                     for (String step : visitor.stepReference.keySet())
                     {
                         ModelNode stepResponse = response.get(RESULT).get(step);
+                        assert ModelType.OBJECT == stepResponse.getType() : "Unexpected response type "+stepResponse.getType();
                         //System.out.println("<<"+stepResponse);
 
-                        List<ModelNode> list = stepResponse.get(RESULT).asList();
-                        ModelNode description = list.get(0).get(RESULT).asObject();
+                        ModelNode description = stepResponse.get(RESULT).asObject();
                         Map<String, ModelNode> descriptionMap = context.get(MODEL_DESCRIPTIONS);
                         if (descriptionMap == null)
                         {
@@ -140,6 +143,9 @@ public class ReadResourceDescriptionStep extends ReificationStep
 
         private void addStep(InteractionUnit interactionUnit)
         {
+            StatementContext statementContext = context.get(ContextKey.STATEMENTS);
+            assert statementContext!=null : "StatementContext not provided";
+
             ResourceMapping mapping = interactionUnit.findMapping(RESOURCE, new Predicate<ResourceMapping>()
             {
                 @Override
@@ -155,14 +161,8 @@ public class ReadResourceDescriptionStep extends ReificationStep
                 String address = mapping.getAddress();
                 if (!resolvedAdresses.contains(address))
                 {
-                    List<String[]> addressTokens = AddressBinding.parseAddressString(address);
-                    AddressBinding addressBinding = new AddressBinding(addressTokens);
-
-                    String[] args = new String[addressBinding.getNumWildCards()];
-                    for (int i = 0; i < addressBinding.getNumWildCards(); i++)
-                        args[i] = "*";
-
-                    ModelNode op = addressBinding.asResource(args);
+                    AddressMapping addressMapping = AddressMapping.fromString(address);
+                    ModelNode op = addressMapping.asResource(statementContext);
                     op.get(OP).set(READ_RESOURCE_DESCRIPTION_OPERATION);
                     steps.add(op);
 

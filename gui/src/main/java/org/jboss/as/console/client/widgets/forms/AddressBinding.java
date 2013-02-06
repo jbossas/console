@@ -1,7 +1,6 @@
 package org.jboss.as.console.client.widgets.forms;
 
 import org.jboss.dmr.client.ModelNode;
-import org.jboss.mbui.gui.behaviour.StatementContext;
 
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -67,10 +66,6 @@ public class AddressBinding {
         return asResource(new ModelNode(), args);
     }
 
-    public ModelNode asResource(StatementContext context) {
-        return asResource(new ModelNode(), context);
-    }
-
     /**
      * Turns this address into a ModelNode with an address property.<br/>
      * This method allows to specify a base address prefix (i.e server vs. domain addressing).
@@ -106,48 +101,6 @@ public class AddressBinding {
             }
 
             model.get(ADDRESS).add(parent, child);
-        }
-
-        return model;
-    }
-
-    public ModelNode asResource(ModelNode baseAddress, StatementContext context) {
-
-        ModelNode model = new ModelNode();
-        model.get(ADDRESS).set(baseAddress);
-
-        for(String[] tuple : address)
-        {
-            String key_ref = tuple[0];
-            String value_ref = tuple[1];
-
-            String resolved_key = null;
-            String resolved_value = null;
-
-            if(key_ref.startsWith("{"))
-            {
-                key_ref = key_ref.substring(1, key_ref.length()-1);
-                resolved_key = context.resolve(key_ref);
-            }
-            else
-            {
-                resolved_key = key_ref;
-            }
-
-            if(value_ref.startsWith("{"))
-            {
-                value_ref = value_ref.substring(1, value_ref.length()-1);
-                resolved_value = context.resolve(value_ref);
-            }
-            else
-            {
-                resolved_value = value_ref;
-            }
-
-            assert resolved_key!=null : "The parameter '"+key_ref+"' cannot be resolved";
-            assert resolved_value!=null : "The parameter '"+value_ref+"' cannot be resolved";
-
-            model.get(ADDRESS).add(resolved_key, resolved_value);
         }
 
         return model;
@@ -227,10 +180,6 @@ public class AddressBinding {
             address.add(nextToken.split("="));
         }
         return address;
-    }
-
-    public static AddressBinding fromString(String address) {
-        return new AddressBinding(AddressBinding.parseAddressString(address));
     }
 
     public static class StringTokenizer {
