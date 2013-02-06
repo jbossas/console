@@ -10,11 +10,23 @@ import java.util.NoSuchElementException;
 import static org.jboss.dmr.client.ModelDescriptionConstants.ADDRESS;
 
 /**
+ * Address mapping of domain references used within the MBUI model.
+ * Typically as part of a {@link ResourceMapping}.
+ * <p/>
+ * The mapping currently supports three different types of address value declarations:
+ *
  * <ul>
  *     <li>token: key=value</li>
- *     <li>value expression: some.key={resolved.value}</li>
- *     <li>token expression: {some.name}</li>
+ *     <li>value expression: some.key={value.ref}</li>
+ *     <li>token expression: {some.tuple}</li>
  * </ul>
+ *
+ * A token is a fully qualified address tuple without any parameters, i.e. "subsystem=default".<br/>
+ * A value expression carries a parameter for one part of the tuple, i.e. "subsystem={name}".<br/>
+ * A token expression references a full tuple, with both the key and the value part, i.e "{selected.profile}/subsystem=datasources".<p/>
+ *
+ * All expression are resolved against the {@link StatementContext}.
+ *
  * @author Heiko Braun
  * @date 9/23/11
  */
