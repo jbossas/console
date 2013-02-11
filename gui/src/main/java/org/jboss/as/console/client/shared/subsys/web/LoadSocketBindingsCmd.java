@@ -30,6 +30,7 @@ import org.jboss.dmr.client.ModelDescriptionConstants;
 import org.jboss.dmr.client.ModelNode;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,199 +49,210 @@ public class LoadSocketBindingsCmd {
     private int syncCounter;
     private Map<String,String> sgbBind;
     private String finalSGB = "standard-sockets";
-	
-	public LoadSocketBindingsCmd(DispatchAsync dispatcher) {
-		this.dispatcher = dispatcher;
-	}
-	
 
-   public void loadSocketBindingGroupForName(String groupName, final AsyncCallback<List<String>> callback)
-   {
-       ModelNode op = new ModelNode();
-       op.get(ModelDescriptionConstants.OP).set(ModelDescriptionConstants.READ_CHILDREN_NAMES_OPERATION);
-       op.get(ModelDescriptionConstants.ADDRESS).add("socket-binding-group", groupName);
-       op.get(ModelDescriptionConstants.CHILD_TYPE).set("socket-binding");
-       
-       dispatcher.execute(new DMRAction(op), new AsyncCallback<DMRResponse>() {
-           @Override
-           public void onFailure(Throwable caught) {
-               callback.onFailure(caught);
-           }
+    public LoadSocketBindingsCmd(DispatchAsync dispatcher) {
+        this.dispatcher = dispatcher;
+    }
 
-           @Override
-           public void onSuccess(DMRResponse result) {
-               ModelNode response = result.get();
-               if(ModelAdapter.wasSuccess(response))
-               {
-                   List<ModelNode> payload = response.get("result").asList();
 
-                   List<String> records = new ArrayList<String>(payload.size());
-                   for(ModelNode binding : payload)
-                   {
-                	   if(binding.asString().contains("socket-binding")){}
-                       records.add(binding.asString());
-                   }
-                   callback.onSuccess(records);
-               }
-               else
-               {
-                   callback.onFailure(new RuntimeException("Failed to load socket binding groups"));
-               }
-           }
-       });
-   }
-   
-   
-   private void loadServerGroupNames(final AsyncCallback<List<String>> callback)
-   {
-       ModelNode op = new ModelNode();
-       op.get(ModelDescriptionConstants.OP).set(ModelDescriptionConstants.READ_CHILDREN_NAMES_OPERATION);
-       op.get(ModelDescriptionConstants.OP_ADDR).setEmptyList();
-       op.get(ModelDescriptionConstants.CHILD_TYPE).set("server-group");
-       
-       dispatcher.execute(new DMRAction(op), new AsyncCallback<DMRResponse>() {
-           @Override
-           public void onFailure(Throwable caught) {
-               callback.onFailure(caught);
-           }
+    public void loadSocketBindingGroupForName(String groupName, final AsyncCallback<List<String>> callback)
+    {
+        ModelNode op = new ModelNode();
+        op.get(ModelDescriptionConstants.OP).set(ModelDescriptionConstants.READ_CHILDREN_NAMES_OPERATION);
+        op.get(ModelDescriptionConstants.ADDRESS).add("socket-binding-group", groupName);
+        op.get(ModelDescriptionConstants.CHILD_TYPE).set("socket-binding");
 
-           @Override
-           public void onSuccess(DMRResponse result) {
-               ModelNode response = result.get();
-               if(ModelAdapter.wasSuccess(response))
-               {
-                   List<ModelNode> payload = response.get("result").asList();
+        dispatcher.execute(new DMRAction(op), new AsyncCallback<DMRResponse>() {
+            @Override
+            public void onFailure(Throwable caught) {
+                callback.onFailure(caught);
+            }
 
-                   List<String> records = new ArrayList<String>(payload.size());
-                   for(ModelNode binding : payload)
-                   {
-                       records.add(binding.asString());
-                   }
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = result.get();
+                if(ModelAdapter.wasSuccess(response))
+                {
+                    List<ModelNode> payload = response.get("result").asList();
 
-                   callback.onSuccess(records);
-               }
-               else
-               {
-                   callback.onFailure(new RuntimeException("Failed to load socket binding groups"));
-               }
-           }
-       });
-   }
-   
-   private void getSocketBindingGroupForServerGroup(final String groupName, final AsyncCallback<String[]> callback) {
-           ModelNode op = new ModelNode();
-           op.get(ModelDescriptionConstants.OP).set(ModelDescriptionConstants.READ_RESOURCE_OPERATION);
-           op.get(ModelDescriptionConstants.ADDRESS).add("server-group", groupName);
-           op.get(RECURSIVE).set(true);
-           op.get(INCLUDE_RUNTIME).set(true);
+                    List<String> records = new ArrayList<String>(payload.size());
+                    for(ModelNode binding : payload)
+                    {
+                        if(binding.asString().contains("socket-binding")){}
+                        records.add(binding.asString());
+                    }
+                    callback.onSuccess(records);
+                }
+                else
+                {
+                    callback.onFailure(new RuntimeException("Failed to load socket binding groups"));
+                }
+            }
+        });
+    }
 
-           dispatcher.execute(new DMRAction(op), new AsyncCallback<DMRResponse>() {
-               @Override
-               public void onFailure(Throwable caught) {
-                   callback.onFailure(caught);
-               }
 
-               @Override
-               public void onSuccess(DMRResponse result) {
-                   ModelNode response = result.get();
-                   if(ModelAdapter.wasSuccess(response))
-                   {
-                       List<ModelNode> payload = response.get("result").asList();
+    private void loadServerGroupNames(final AsyncCallback<List<String>> callback)
+    {
+        ModelNode op = new ModelNode();
+        op.get(ModelDescriptionConstants.OP).set(ModelDescriptionConstants.READ_CHILDREN_NAMES_OPERATION);
+        op.get(ModelDescriptionConstants.OP_ADDR).setEmptyList();
+        op.get(ModelDescriptionConstants.CHILD_TYPE).set("server-group");
 
-                       List<String> records = new ArrayList<String>(payload.size());
-                       String profile = null;
-                       String sbgRef = null;
-                       for(ModelNode binding : payload)
-                       {
-                           if(binding.asString().contains("\"profile\"")){
-                        	   profile = sanitizeProperty(binding.asString());
-                           }
-                           if(binding.asString().contains("\"socket-binding-group\"")){
-                        	   sbgRef = sanitizeProperty(binding.asString());
-                           }
-                           records.add(binding.asString());
-                       }
-                       
-                       callback.onSuccess(new String[]{profile,sbgRef});
-                   }
-                   else
-                   {
-                       callback.onFailure(new RuntimeException("Failed load server config " + groupName));
-                   }
+        dispatcher.execute(new DMRAction(op), new AsyncCallback<DMRResponse>() {
+            @Override
+            public void onFailure(Throwable caught) {
+                callback.onFailure(caught);
+            }
 
-               }
-           });
-   }
-   
-   public void loadSocketBindingGroupForSelectedProfile(final AsyncCallback<List<String>> callback) {
-	   final String selectedProfile = Console.MODULES.getCurrentSelectedProfile().getName();
-	   if(selectedProfile != null){
-	       this.loadServerGroupNames(new SimpleCallback<List<String>>() {
-	           @Override
-	           public void onSuccess(final List<String> groupNames) {
-	        	   sgbBind = new HashMap<String,String>(); 
-	               for(final String groupName : groupNames){
-	        	       getSocketBindingGroupForServerGroup(groupName, new SimpleCallback<String[]>() {
-	        	           @Override
-	        	           public void onSuccess(String[] result) {
-	        	        	   sgbBind.put(result[0], result[1]);
-	        	        	   if(sync(groupNames.size())){
-	        	        		   loadSocketBindingGroupForName(finalSGB,new SimpleCallback<List<String>>() {
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = result.get();
+                if(ModelAdapter.wasSuccess(response))
+                {
+                    List<ModelNode> payload = response.get("result").asList();
 
-									@Override
-									public void onSuccess(List<String> result) {
-										callback.onSuccess(result);
-									}
-	        	        			   
-	        	        		   });
-	        	        	   }
-	        	           }
-	        	           @Override
-	        		        public void onFailure(Throwable caught) {
-	        		        	super.onFailure(caught);
-	        		        	// increase syncCounter in case of Failure to prevent to show empty list of sockets, but rather show standard-sockets one
-	        		        	syncCounter++;
-	        		        }
-	        	       });
-	               }
-	           }
-	       });
-	   }
-	   else{
-		   loadSocketBindingGroupForName(finalSGB,new SimpleCallback<List<String>>() {
+                    List<String> records = new ArrayList<String>(payload.size());
+                    for(ModelNode binding : payload)
+                    {
+                        records.add(binding.asString());
+                    }
 
-				@Override
-				public void onSuccess(List<String> result) {
-					callback.onSuccess(result);
-				}
-   			   
-   		   });
-	   }
-   }
-   
-   private String sanitizeProperty(String value){
-	   String prop = value;
-	   String propSubstr = prop.substring(prop.indexOf("=>"),prop.length());
-	   int beginIndex = propSubstr.indexOf("\"");
-	   int endIndex = propSubstr.lastIndexOf("\"");
-	   return propSubstr.substring(beginIndex + 1, endIndex);
-	   
-   }
-   
-   private boolean sync(int maxCounts){
-	   this.syncCounter++;
-	   if(this.syncCounter == maxCounts){
-    	   final String selectedProfile = Console.MODULES.getCurrentSelectedProfile().getName();
-    	   if(this.sgbBind.containsKey(selectedProfile)) {
-    		   this.finalSGB = this.sgbBind.get(selectedProfile);
-    	   }
-    	   else{
-    		   this.finalSGB = "standard-sockets";
-    	   }
-    	   this.syncCounter = 0;
-    	   this.sgbBind = new HashMap<String,String>();
-    	   return true;
-	   }
-	   return false;
-   }
+                    callback.onSuccess(records);
+                }
+                else
+                {
+                    callback.onFailure(new RuntimeException("Failed to load socket binding groups"));
+                }
+            }
+        });
+    }
+
+    private void getSocketBindingGroupForServerGroup(final String groupName, final AsyncCallback<String[]> callback) {
+        ModelNode op = new ModelNode();
+        op.get(ModelDescriptionConstants.OP).set(ModelDescriptionConstants.READ_RESOURCE_OPERATION);
+        op.get(ModelDescriptionConstants.ADDRESS).add("server-group", groupName);
+        op.get(RECURSIVE).set(true);
+        op.get(INCLUDE_RUNTIME).set(true);
+
+        dispatcher.execute(new DMRAction(op), new AsyncCallback<DMRResponse>() {
+            @Override
+            public void onFailure(Throwable caught) {
+                callback.onFailure(caught);
+            }
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = result.get();
+                if(ModelAdapter.wasSuccess(response))
+                {
+                    List<ModelNode> payload = response.get("result").asList();
+
+                    List<String> records = new ArrayList<String>(payload.size());
+                    String profile = null;
+                    String sbgRef = null;
+                    for(ModelNode binding : payload)
+                    {
+                        if(binding.asString().contains("\"profile\"")){
+                            profile = sanitizeProperty(binding.asString());
+                        }
+                        if(binding.asString().contains("\"socket-binding-group\"")){
+                            sbgRef = sanitizeProperty(binding.asString());
+                        }
+                        records.add(binding.asString());
+                    }
+
+                    callback.onSuccess(new String[]{profile,sbgRef});
+                }
+                else
+                {
+                    callback.onFailure(new RuntimeException("Failed load server config " + groupName));
+                }
+
+            }
+        });
+    }
+
+    public void loadSocketBindingGroupForSelectedProfile(final AsyncCallback<List<String>> callback) {
+        final String selectedProfile = Console.MODULES.getCurrentSelectedProfile().getName();
+        if(selectedProfile != null){
+            this.loadServerGroupNames(new SimpleCallback<List<String>>() {
+                @Override
+                public void onSuccess(final List<String> groupNames) {
+                    sgbBind = new HashMap<String,String>();
+                    if(groupNames.isEmpty())
+                    {
+                        //edge case:  no server groups exist
+                        callback.onSuccess(Collections.EMPTY_LIST);
+                    }
+                    else
+                    {
+
+                        // regular case
+
+                        for(final String groupName : groupNames){
+                            getSocketBindingGroupForServerGroup(groupName, new SimpleCallback<String[]>() {
+                                @Override
+                                public void onSuccess(String[] result) {
+                                    sgbBind.put(result[0], result[1]);
+                                    if(sync(groupNames.size())){
+                                        loadSocketBindingGroupForName(finalSGB,new SimpleCallback<List<String>>() {
+
+                                            @Override
+                                            public void onSuccess(List<String> result) {
+                                                callback.onSuccess(result);
+                                            }
+
+                                        });
+                                    }
+                                }
+                                @Override
+                                public void onFailure(Throwable caught) {
+                                    super.onFailure(caught);
+                                    // increase syncCounter in case of Failure to prevent to show empty list of sockets, but rather show standard-sockets one
+                                    syncCounter++;
+                                }
+                            });
+                        }
+                    }
+                }
+            });
+        }
+        else{
+            loadSocketBindingGroupForName(finalSGB,new SimpleCallback<List<String>>() {
+
+                @Override
+                public void onSuccess(List<String> result) {
+                    callback.onSuccess(result);
+                }
+
+            });
+        }
+    }
+
+    private String sanitizeProperty(String value){
+        String prop = value;
+        String propSubstr = prop.substring(prop.indexOf("=>"),prop.length());
+        int beginIndex = propSubstr.indexOf("\"");
+        int endIndex = propSubstr.lastIndexOf("\"");
+        return propSubstr.substring(beginIndex + 1, endIndex);
+
+    }
+
+    private boolean sync(int maxCounts){
+        this.syncCounter++;
+        if(this.syncCounter == maxCounts){
+            final String selectedProfile = Console.MODULES.getCurrentSelectedProfile().getName();
+            if(this.sgbBind.containsKey(selectedProfile)) {
+                this.finalSGB = this.sgbBind.get(selectedProfile);
+            }
+            else{
+                this.finalSGB = "standard-sockets";
+            }
+            this.syncCounter = 0;
+            this.sgbBind = new HashMap<String,String>();
+            return true;
+        }
+        return false;
+    }
 }
