@@ -25,6 +25,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.cellview.client.Column;
+import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
@@ -38,6 +39,7 @@ import org.jboss.as.console.client.widgets.forms.FormToolStrip;
 import org.jboss.ballroom.client.widgets.forms.CheckBoxItem;
 import org.jboss.ballroom.client.widgets.forms.ComboBoxItem;
 import org.jboss.ballroom.client.widgets.forms.Form;
+import org.jboss.ballroom.client.widgets.forms.SuggestBoxItem;
 import org.jboss.ballroom.client.widgets.forms.TextItem;
 import org.jboss.ballroom.client.widgets.icons.Icons;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
@@ -46,6 +48,7 @@ import org.jboss.ballroom.client.widgets.tools.ToolStrip;
 import org.jboss.ballroom.client.widgets.window.Feedback;
 import org.jboss.dmr.client.ModelNode;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -60,7 +63,8 @@ public class ConnectorList {
 
     private WebPresenter presenter;
     private Form<HttpConnector> form;
-    private ComboBoxItem socketBinding;
+    private SuggestBoxItem socketBinding;
+    private MultiWordSuggestOracle oracle;
 
     public ConnectorList(WebPresenter presenter) {
         this.presenter = presenter;
@@ -181,8 +185,11 @@ public class ConnectorList {
 
 
         TextItem name = new TextItem("name", "Name");
-        socketBinding = new ComboBoxItem("socketBinding", "Socket Binding");
-        socketBinding.setValueMap(new String[]{});
+        socketBinding = new SuggestBoxItem("socketBinding", "Socket Binding");
+
+        oracle = new MultiWordSuggestOracle();
+        oracle.addAll(Collections.EMPTY_LIST);
+        socketBinding.setOracle(oracle);
 
         ComboBoxItem protocol = new ComboBoxItem("protocol", "Protocol");
         ComboBoxItem scheme = new ComboBoxItem("scheme", "Scheme");
@@ -232,6 +239,6 @@ public class ConnectorList {
     }
     
     public void setSocketBindigs(List<String> socketBindings){
-    	this.socketBinding.setValueMap(socketBindings);
+        oracle.addAll(socketBindings);
     }
 }
