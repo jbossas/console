@@ -49,12 +49,13 @@ import org.jboss.as.console.client.shared.subsys.security.model.SecurityDomain;
 import org.jboss.as.console.client.shared.viewframework.FrameworkView;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.as.console.client.widgets.forms.EntityAdapter;
-import org.jboss.dmr.client.ModelDescriptionConstants;
 import org.jboss.dmr.client.ModelNode;
 import org.jboss.dmr.client.Property;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 
 /**
  * @author David Bosschaert
@@ -62,7 +63,7 @@ import java.util.List;
  */
 public class SecurityDomainsPresenter
         extends Presenter<SecurityDomainsPresenter.MyView, SecurityDomainsPresenter.MyProxy>
-    {
+{
 
     private static final String CLASSIC = "classic";
     private static final String SECURITY_DOMAIN = "security-domain";
@@ -158,24 +159,24 @@ public class SecurityDomainsPresenter
 
     @Deprecated
     private void loadAuthFlagValues(final String type, final String attrName) {
-        ModelNode operation = createOperation(ModelDescriptionConstants.READ_RESOURCE_DESCRIPTION_OPERATION);
-        operation.get(ModelDescriptionConstants.ADDRESS).add(SECURITY_DOMAIN, "*");
-        operation.get(ModelDescriptionConstants.ADDRESS).add(type, CLASSIC);
+        ModelNode operation = createOperation(READ_RESOURCE_DESCRIPTION_OPERATION);
+        operation.get(ADDRESS).add(SECURITY_DOMAIN, "*");
+        operation.get(ADDRESS).add(type, CLASSIC);
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
             public void onSuccess(DMRResponse result) {
                 ModelNode response = result.get();
-                List<ModelNode> res = response.get(ModelDescriptionConstants.RESULT).asList();
+                List<ModelNode> res = response.get(RESULT).asList();
                 if (res.size() == 0)
                     return;
 
-                ModelNode attrDesc = res.get(0).get(ModelDescriptionConstants.RESULT,
-                        ModelDescriptionConstants.ATTRIBUTES, attrName,
-                        ModelDescriptionConstants.VALUE_TYPE, "flag");
+                ModelNode attrDesc = res.get(0).get(RESULT,
+                        ATTRIBUTES, attrName,
+                        VALUE_TYPE, "flag");
 
                 List<String> values = new ArrayList<String>();
-                for (ModelNode option : attrDesc.get(ModelDescriptionConstants.ALLOWED).asList()) {
+                for (ModelNode option : attrDesc.get(ALLOWED).asList()) {
                     values.add(option.asString());
                 }
 
@@ -186,15 +187,15 @@ public class SecurityDomainsPresenter
 
     public void updateDomainSelection(final SecurityDomain domain) {
         // load sub-elements which are not automatically loaded by the framework
-        ModelNode operation = createOperation(ModelDescriptionConstants.READ_RESOURCE_OPERATION);
-        operation.get(ModelDescriptionConstants.ADDRESS).add(SECURITY_DOMAIN, domain.getName());
-        operation.get(ModelDescriptionConstants.RECURSIVE).set(true);
+        ModelNode operation = createOperation(READ_RESOURCE_OPERATION);
+        operation.get(ADDRESS).add(SECURITY_DOMAIN, domain.getName());
+        operation.get(RECURSIVE).set(true);
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
             public void onSuccess(DMRResponse result) {
                 ModelNode response = result.get();
-                ModelNode model = response.get(ModelDescriptionConstants.RESULT);
+                ModelNode model = response.get(RESULT);
 
                 loadGeneric(model, domain, AUTHORIZATION_IDENTIFIER, "policy-modules", AuthorizationPolicyProvider.class,
                         new CustomLoadHandler<AuthorizationPolicyProvider>() {
@@ -310,7 +311,7 @@ public class SecurityDomainsPresenter
         saveGeneric(domainName, list, AUDIT_IDENTIFIER, "provider-modules", resourceExists,
                 new CustomSaveHandler<GenericSecurityDomainData>());
     }
-    
+
     public void removeAuthorization(String domainName, List<AuthorizationPolicyProvider> list) {
         removeGeneric(domainName, list, AUTHORIZATION_IDENTIFIER, "policy-modules",
                 new CustomAuthSaveFieldhandler<AuthorizationPolicyProvider>());
@@ -331,62 +332,16 @@ public class SecurityDomainsPresenter
                     }
                 });
     }
-    
-    
+
+
     public void removeAudit(String domainName, List<GenericSecurityDomainData> list) {
         removeGeneric(domainName, list, AUDIT_IDENTIFIER, "provider-modules",
                 new CustomSaveHandler<GenericSecurityDomainData>());
     }
-    
-    
+
+
     public <T extends GenericSecurityDomainData> void removeGeneric(final String domainName, List<T> list, String type, String attrName,
-            CustomSaveHandler<T> customHandler) {
-
-    	ModelNode operation = null;
-
-        ModelNode valueList = new ModelNode();
-        valueList.setEmptyList();
-
-        for (T pm : list) {
-            ModelNode n = new ModelNode();
-            n.get("code").set(pm.getCode());
-
-            if (customHandler != null) {
-                customHandler.setInModel(n, pm);
-            }
-
-            List<PropertyRecord> props = pm.getProperties();
-            if (props != null)
-                n.get("module-options").set(entityAdapter.fromEntityPropertyList(props));
-
-            valueList.add(n);
-        }
-
-            operation = createOperation(ModelDescriptionConstants.REMOVE);
-            operation.get(ModelDescriptionConstants.ADDRESS).add(SECURITY_DOMAIN, domainName);
-            operation.get(ModelDescriptionConstants.ADDRESS).add(type, CLASSIC);
-            operation.get(ModelDescriptionConstants.NAME).set(attrName);
-
-            if(list.size()>0)
-                operation.get("value").set(valueList);
-            else
-                operation.get("value").setEmptyList();
-
-        
-        dispatcher.execute(new DMRAction(operation),
-                new SimpleDMRResponseHandler(ModelDescriptionConstants.REMOVE,
-                        attrName, domainName, new Command() {
-                    @Override
-                    public void execute() {
-                        getView().loadSecurityDomain(domainName);
-                    }
-                }));
-    }
-    
-
-    // TODO: https://issues.jboss.org/browse/AS7-2936
-    public <T extends GenericSecurityDomainData> void saveGeneric(final String domainName, List<T> list, String type, String attrName, boolean resourceExists,
-                                                                  CustomSaveHandler<T> customHandler) {
+                                                                    CustomSaveHandler<T> customHandler) {
 
         ModelNode operation = null;
 
@@ -408,31 +363,83 @@ public class SecurityDomainsPresenter
             valueList.add(n);
         }
 
-        if (resourceExists) {
-            operation = createOperation(ModelDescriptionConstants.WRITE_ATTRIBUTE_OPERATION);
-            operation.get(ModelDescriptionConstants.ADDRESS).add(SECURITY_DOMAIN, domainName);
-            operation.get(ModelDescriptionConstants.ADDRESS).add(type, CLASSIC);
-            operation.get(ModelDescriptionConstants.NAME).set(attrName);
+        operation = createOperation(REMOVE);
+        operation.get(ADDRESS).add(SECURITY_DOMAIN, domainName);
+        operation.get(ADDRESS).add(type, CLASSIC);
+        operation.get(NAME).set(attrName);
 
-            if(list.size()>0)
-                operation.get("value").set(valueList);
-            else
-                operation.get("value").setEmptyList();
+        if(list.size()>0)
+            operation.get("value").set(valueList);
+        else
+            operation.get("value").setEmptyList();
 
-        } else {
-            operation = createOperation(ModelDescriptionConstants.ADD);
-            operation.get(ModelDescriptionConstants.ADDRESS).add(SECURITY_DOMAIN, domainName);
-            operation.get(ModelDescriptionConstants.ADDRESS).add(type, CLASSIC);
 
-             if(list.size()>0)
-                operation.get(attrName).set(valueList);
-            else
-                operation.get(attrName).setEmptyList();
+        dispatcher.execute(new DMRAction(operation),
+                new SimpleDMRResponseHandler(REMOVE,
+                        attrName, domainName, new Command() {
+                    @Override
+                    public void execute() {
+                        getView().loadSecurityDomain(domainName);
+                    }
+                }));
+    }
+
+
+    // TODO: https://issues.jboss.org/browse/AS7-2936
+    public <T extends GenericSecurityDomainData> void saveGeneric(final String domainName, List<T> list, String type, String attrName, boolean resourceExists,
+                                                                  CustomSaveHandler<T> customHandler) {
+
+        ModelNode valueList = new ModelNode();
+        valueList.setEmptyList();
+
+        ModelNode composite = new ModelNode();
+        composite.get(OP).set(COMPOSITE);
+        composite.get(ADDRESS).setEmptyList();
+
+        List<ModelNode> steps = new ArrayList<ModelNode>();
+
+        // payload
+        for (T pm : list) {
+            ModelNode n = new ModelNode();
+            n.get("code").set(pm.getCode());
+
+            if (customHandler != null) {
+                customHandler.setInModel(n, pm);
+            }
+
+            List<PropertyRecord> props = pm.getProperties();
+            if (props != null)
+                n.get("module-options").set(entityAdapter.fromEntityPropertyList(props));
+
+            valueList.add(n);
+        }
+
+        // parent exists?
+        if (!resourceExists) {
+
+            ModelNode createParentOp = createOperation(ADD);
+            createParentOp.get(ADDRESS).add(SECURITY_DOMAIN, domainName);
+            createParentOp.get(ADDRESS).add(type, CLASSIC);
+            steps.add(createParentOp);
 
         }
-        
-        dispatcher.execute(new DMRAction(operation),
-                new SimpleDMRResponseHandler(ModelDescriptionConstants.WRITE_ATTRIBUTE_OPERATION,
+
+        ModelNode writeAttrOp = createOperation(WRITE_ATTRIBUTE_OPERATION);
+        writeAttrOp.get(ADDRESS).add(SECURITY_DOMAIN, domainName);
+        writeAttrOp.get(ADDRESS).add(type, CLASSIC);
+        writeAttrOp.get(NAME).set(attrName);
+
+        if(list.size()>0)
+            writeAttrOp.get(VALUE).set(valueList);
+        else
+            writeAttrOp.get(VALUE).setEmptyList();
+
+        steps.add(writeAttrOp);
+
+        composite.get(STEPS).set(steps);
+
+        dispatcher.execute(new DMRAction(composite),
+                new SimpleDMRResponseHandler(WRITE_ATTRIBUTE_OPERATION,
                         attrName, domainName, new Command() {
                     @Override
                     public void execute() {
@@ -443,28 +450,28 @@ public class SecurityDomainsPresenter
 
 
     public void getDescription(String type, final DescriptionCallBack callback) {
-        ModelNode operation = createOperation(ModelDescriptionConstants.READ_RESOURCE_DESCRIPTION_OPERATION);
-        operation.get(ModelDescriptionConstants.ADDRESS).add(SECURITY_DOMAIN, "*");
-        operation.get(ModelDescriptionConstants.ADDRESS).add(type, CLASSIC);
+        ModelNode operation = createOperation(READ_RESOURCE_DESCRIPTION_OPERATION);
+        operation.get(ADDRESS).add(SECURITY_DOMAIN, "*");
+        operation.get(ADDRESS).add(type, CLASSIC);
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
             public void onSuccess(DMRResponse result) {
                 ModelNode response = result.get();
-                List<ModelNode> resList = response.get(ModelDescriptionConstants.RESULT).asList();
+                List<ModelNode> resList = response.get(RESULT).asList();
                 if (resList.size() == 0)
                     return;
 
-                callback.setDescription(resList.get(0).get(ModelDescriptionConstants.RESULT));
+                callback.setDescription(resList.get(0).get(RESULT));
             }
         });
     }
 
     private ModelNode createOperation(String operator) {
         ModelNode operation = new ModelNode();
-        operation.get(ModelDescriptionConstants.OP).set(operator);
-        operation.get(ModelDescriptionConstants.ADDRESS).set(Baseadress.get());
-        operation.get(ModelDescriptionConstants.ADDRESS).add(ModelDescriptionConstants.SUBSYSTEM, SECURITY_SUBSYSTEM);
+        operation.get(OP).set(operator);
+        operation.get(ADDRESS).set(Baseadress.get());
+        operation.get(ADDRESS).add(SUBSYSTEM, SECURITY_SUBSYSTEM);
         return operation;
     }
 

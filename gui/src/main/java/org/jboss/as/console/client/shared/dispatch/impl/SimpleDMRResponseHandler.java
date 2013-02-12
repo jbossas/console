@@ -18,12 +18,12 @@
  */
 package org.jboss.as.console.client.shared.dispatch.impl;
 
+import com.allen_sauer.gwt.log.client.Log;
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import org.jboss.as.console.client.Console;
 import org.jboss.dmr.client.ModelNode;
-
-import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 
 /**
  * @author David Bosschaert
@@ -43,19 +43,26 @@ public class SimpleDMRResponseHandler implements AsyncCallback<DMRResponse> {
 
     @Override
     public void onFailure(Throwable caught) {
-        Console.error(Console.CONSTANTS.common_error_failure() + " " + operation + " " + entityName, caught.getMessage());
+        Log.error("Failed to modify security resource", caught);
+        Console.error(Console.MESSAGES.modificationFailed(entityName) , caught.getMessage());
     }
 
     @Override
     public void onSuccess(DMRResponse result) {
         ModelNode response = result.get();
-        boolean success = response.get(OUTCOME).asString().equals(SUCCESS);
-        if (success)
-            Console.info(Console.CONSTANTS.common_label_success() + " " + operation + " " + entityName + ": " + id);
-        else
-            Console.error(Console.CONSTANTS.common_error_failure() + " " + operation + " " + entityName + ": " + id,
-                response.get(FAILURE_DESCRIPTION).asString());
 
-        Console.schedule(callback);
+        if (response.isFailure())
+        {
+            Console.error(
+                    Console.MESSAGES.modificationFailed(entityName+ ": " + id) ,
+                    response.getFailureDescription()
+            );
+        }
+        else
+        {
+            Console.info(Console.CONSTANTS.common_label_success() + " " + operation + " " + entityName + ": " + id);
+        }
+
+        Scheduler.get().scheduleDeferred(callback);
     }
 }
