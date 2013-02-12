@@ -1050,9 +1050,8 @@ public class MsgDestinationsPresenter extends Presenter<MsgDestinationsPresenter
         operation.get("entries").setEmptyList();
         operation.get("entries").add(entity.getJndiName());
 
-        // TODO: https://issues.jboss.org/browse/AS7-4377
         ModelNode connector = new ModelNode();
-        connector.get(entity.getConnector()).set(ModelType.UNDEFINED);
+        connector.get(entity.getConnector()).set(new ModelNode());   // means undefined ...
         operation.get("connector").set(connector);
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
