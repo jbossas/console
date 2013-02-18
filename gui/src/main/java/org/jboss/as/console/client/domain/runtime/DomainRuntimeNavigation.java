@@ -152,6 +152,7 @@ class DomainRuntimeNavigation {
 
         metricLeaf.removeItems();
         runtimeLeaf.removeItems();
+        runtimeLeaf.setVisible(true);
 
         if(subsystems.isEmpty()) return;
 
@@ -184,6 +185,9 @@ class DomainRuntimeNavigation {
         metricLeaf.addItem(subsystemGroup);
         subsystemGroup.setState(true);
         platformGroup.setState(true);
+
+        // empty runtime operations
+        runtimeLeaf.setVisible(runtimeLeaf.getChildCount()>0);
 
         navigation.expandTopLevel();
 
