@@ -253,7 +253,7 @@ public class StandaloneDeploymentPresenter
         operation.get(OP).set(ADD);
         operation.get(ADDRESS).add("deployment", entity.getName());
         operation.get("name").set(entity.getName());
-        operation.get("runtime-name").set(entity.getName());
+        operation.get("runtime-name").set(entity.getRuntimeName());
         List<ModelNode> content = new ArrayList<ModelNode>(1);
         ModelNode path = new ModelNode();
         path.get("path").set(entity.getPath());
