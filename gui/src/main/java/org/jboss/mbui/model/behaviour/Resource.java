@@ -44,7 +44,7 @@ public class Resource<T extends Enum<T>> {
 
     @Override
     public String toString() {
-        return "Event{" +
+        return "Resource {" +
                 "id='" + id + '\'' +
                 ", type=" + type +
                 '}';

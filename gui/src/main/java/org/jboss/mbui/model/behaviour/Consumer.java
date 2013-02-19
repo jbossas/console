@@ -10,6 +10,8 @@ import java.util.Set;
  */
 public interface Consumer extends SupportsConsumption {
 
+    boolean doesConsume();
+
     Set<Resource<ResourceType>> getInputs();
 
     void setInputs(Resource<ResourceType>... resources);

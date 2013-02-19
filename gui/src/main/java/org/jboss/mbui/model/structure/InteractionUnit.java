@@ -228,9 +228,20 @@ public abstract class InteractionUnit implements Consumer, Producer
         this.name = name;
     }
 
-    public boolean doesProduce()
-    {
+
+    @Override
+    public boolean doesConsume() {
+        return resourceConsumption.doesConsume();
+    }
+
+    @Override
+    public boolean doesProduce() {
         return resourceProduction.doesProduce();
+    }
+
+    public boolean doesProduce(Resource<ResourceType> resource)
+    {
+        return resourceProduction.doesProduce(resource);
     }
 
     @Override

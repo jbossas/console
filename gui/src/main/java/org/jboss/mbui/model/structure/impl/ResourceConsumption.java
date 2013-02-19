@@ -21,6 +21,11 @@ public class ResourceConsumption implements Consumer {
     }
 
     @Override
+    public boolean doesConsume() {
+        return consumedTypes!=null && !consumedTypes.isEmpty();
+    }
+
+    @Override
     public boolean doesConsume(Resource<ResourceType> resource) {
         boolean match = false;
 

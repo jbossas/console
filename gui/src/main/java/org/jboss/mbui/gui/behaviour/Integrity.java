@@ -10,7 +10,6 @@ import org.jboss.mbui.model.behaviour.Resource;
 import java.util.Set;
 
 /**
- * TODO: the producer verification is missing ...
  *
  * @author Heiko Braun
  * @date 11/16/12
@@ -25,15 +24,21 @@ public class Integrity {
         container.accept(new InteractionUnitVisitor() {
             @Override
             public void startVisit(Container container) {
-                if(container.doesProduce())
-                    assertConsumer(container, err);
+                if (container.doesProduce())
+                    assertConsumer(container, behaviours, err);
+
+                if (container.doesConsume())
+                    assertProducer(container, behaviours, err);
 
             }
 
             @Override
             public void visit(InteractionUnit interactionUnit) {
-                if(interactionUnit.doesProduce())
-                    assertConsumer(interactionUnit, err);
+                if (interactionUnit.doesProduce())
+                    assertConsumer(interactionUnit, behaviours, err);
+
+                if (interactionUnit.doesConsume())
+                    assertProducer(interactionUnit, behaviours, err);
 
             }
 
@@ -41,38 +46,51 @@ public class Integrity {
             public void endVisit(Container container) {
 
             }
-
-            /**
-             * Assertion that a consumer exists for the produced resources of an interaction unit.
-             *
-             * @param unit
-             * @param exception
-             */
-            void assertConsumer(InteractionUnit unit, IntegrityErrors exception)
-            {
-                // check each declared trigger against existing behaviours
-                Set<Resource<ResourceType>> producedTypes = unit.getOutputs();
-
-                for(Resource<ResourceType> event : producedTypes)
-                {
-                    boolean match = false;
-                    for(Behaviour candidate : behaviours)
-                    {
-                        if(candidate.doesConsume(event))
-                        {
-                            match = true;
-                            break;
-                        }
-                    }
-
-                    if(!match)
-                        exception.add(unit.getId(), "no behaviour for <<"+event.getId()+">>");
-                }
-
-            }
         });
 
         if(err.needsToBeRaised())
             throw err;
+    }
+
+    /**
+     * Assertion that a consumer exists for the produced resources of an interaction unit.
+     *
+     * @param unit
+     * @param err
+     */
+    private static void assertConsumer(InteractionUnit unit, Set<Behaviour> behaviours, IntegrityErrors err) {
+
+        Set<Resource<ResourceType>> producedTypes = unit.getOutputs();
+
+        for (Resource<ResourceType> resource : producedTypes) {
+            boolean match = false;
+            for (Behaviour candidate : behaviours) {
+                if (candidate.doesConsume(resource)) {
+                    match = true;
+                    break;
+                }
+            }
+
+            if (!match)
+                err.add(unit.getId(), "Missing consumer for <<" + resource + ">>");
+        }
+
+    }
+
+    private static void assertProducer(InteractionUnit unit, Set<Behaviour> behaviours, IntegrityErrors err) {
+        Set<Resource<ResourceType>> consumedTypes = unit.getInputs();
+
+        for (Resource<ResourceType> resource : consumedTypes) {
+            boolean match = false;
+            for (Behaviour candidate : behaviours) {
+                if (candidate.doesProduce(resource)) {
+                    match = true;
+                    break;
+                }
+            }
+
+            if (!match)
+                err.add(unit.getId(), "Missing producer for <<" + resource + ">>");
+        }
     }
 }

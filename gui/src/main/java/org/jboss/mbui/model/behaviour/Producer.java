@@ -10,6 +10,8 @@ import java.util.Set;
  */
 public interface Producer extends SupportsProduction {
 
+    boolean doesProduce();
+
     void setOutputs(Resource<ResourceType>... resources);
 
     public Set<Resource<ResourceType>> getOutputs();

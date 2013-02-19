@@ -19,6 +19,7 @@
 package org.jboss.mbui.model.structure;
 
 import org.jboss.mbui.gui.behaviour.IntegrityErrors;
+import org.jboss.mbui.model.Dialog;
 import org.jboss.mbui.model.behaviour.Behaviour;
 import org.jboss.mbui.model.behaviour.Resource;
 import org.jboss.mbui.model.behaviour.ResourceType;
@@ -65,15 +66,15 @@ public class InteractionUnitTest
 
         InteractionUnit container = new Builder()
                 .start(new Container(NAMESPACE, "window", "Window", TemporalOperator.OrderIndependance))
-                    .add(textInput)
-                    .add(submit)
-                    .add(close)
+                .add(textInput)
+                .add(submit)
+                .add(close)
                 .end()
                 .build();
 
         assertFalse("Should not produce events by default", submit.doesProduce());
 
-        Resource<ResourceType> submitEvent = new Resource<ResourceType>(NAMESPACE, "submit", Event);
+        final Resource<ResourceType> submitEvent = new Resource<ResourceType>(NAMESPACE, "submit", Event);
         submit.setOutputs(submitEvent);
 
         assertTrue("submit should produce events", submit.doesProduce());
@@ -82,18 +83,33 @@ public class InteractionUnitTest
         );
 
 
-        Behaviour handleSubmit = new Behaviour(NAMESPACE, "handleSubmit", submitEvent);
+        Behaviour handleSubmit = new TestProcedure(NAMESPACE, "handleSubmit")
+        {
+            {
+                setInputs(submitEvent);
+            }
+        };
         assertTrue("Behaviour should be triggered by submitEvent", handleSubmit.doesConsume(submitEvent));
+
+        final Resource<ResourceType> presentationData = new Resource<ResourceType>(NAMESPACE, "data", Presentation);
+        Behaviour resourcePresentation = new TestProcedure(NAMESPACE, "updateDisplay")
+        {
+            {
+                setOutputs(presentationData);
+            }
+        };
+        container.setInputs(presentationData);
 
         // integrity checks
         final Set<Behaviour> behaviours = new HashSet<Behaviour>();
         behaviours.add(handleSubmit);
+        behaviours.add(resourcePresentation);
 
         // the integrity check will pass
         try {
             verifyIntegrity(container, behaviours);
         } catch (IntegrityErrors e) {
-            throw new AssertionError("Should nto raise error");
+            throw new AssertionError("Should not raise error: "+e.getMessage());
         }
 
         // create a derivation that causes the integrity check to fail
@@ -110,18 +126,23 @@ public class InteractionUnitTest
     }
 
     private void verifyIntegrity(InteractionUnit container, final Set<Behaviour> behaviours)
-        throws IntegrityErrors {
+            throws IntegrityErrors {
         Integrity.check(container, behaviours);
     }
 
     @Test
     public void behaviourResolution()
     {
-        Resource<ResourceType> submitEvent = new Resource<ResourceType>(NAMESPACE, "submitName", Event);
+        final Resource<ResourceType> submitEvent = new Resource<ResourceType>(NAMESPACE, "submitName", Event);
         Resource<ResourceType> deviceRotation = new Resource<ResourceType>(NAMESPACE, "deviceRotation", Event);
         Resource<ResourceType> loadData = new Resource<ResourceType>(NAMESPACE, "loadData", Event);
 
-        Behaviour behaviour = new Behaviour(NAMESPACE, "onSubmitName", submitEvent);
+        Behaviour behaviour = new TestProcedure(NAMESPACE, "onSubmitName")
+        {
+            {
+                setInputs(submitEvent);
+            }
+        };
 
         assertTrue("Behaviour can be triggered by submitEvent", behaviour.doesConsume(submitEvent));
 
@@ -137,12 +158,12 @@ public class InteractionUnitTest
         InteractionUnit root = new Builder()
                 .start(new Container(NAMESPACE, "root", "Root", OrderIndependance))
                 .addMapping(new ResourceMapping(NAMESPACE).setAddress("root"))
-                    .add(new Select(NAMESPACE, "table", "Table"))
-                        .start(new Container(NAMESPACE, "forms", "Forms", Choice))
-                            .add(basicAttributes)
-                            .addMapping(new ResourceMapping(NAMESPACE).setAddress("basicAttributes"))
-                            .add(new Form(NAMESPACE, "extendedAttributes", "Basic Attributes"))
-                        .end()
+                .add(new Select(NAMESPACE, "table", "Table"))
+                .start(new Container(NAMESPACE, "forms", "Forms", Choice))
+                .add(basicAttributes)
+                .addMapping(new ResourceMapping(NAMESPACE).setAddress("basicAttributes"))
+                .add(new Form(NAMESPACE, "extendedAttributes", "Basic Attributes"))
+                .end()
                 .end().build();
 
         // TODO: find resource mapping type & namespace is what we actual needs I think.

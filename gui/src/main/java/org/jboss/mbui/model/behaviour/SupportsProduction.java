@@ -7,5 +7,5 @@ package org.jboss.mbui.model.behaviour;
  * @date 2/19/13
  */
 public interface SupportsProduction {
-    boolean doesProduce();
+    boolean doesProduce(Resource<ResourceType> resource);
 }

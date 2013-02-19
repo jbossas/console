@@ -20,9 +20,27 @@ public class ResourceProduction implements Producer {
 
     }
 
-    @Override
-    public boolean doesProduce() {
+    public boolean doesProduce()
+    {
         return producedTypes!=null && !producedTypes.isEmpty();
+    }
+
+    @Override
+    public boolean doesProduce(Resource<ResourceType> resource) {
+        boolean match = false;
+
+        if(producedTypes!=null)
+        {
+            for(Resource<ResourceType> candidate : producedTypes)
+            {
+                if(candidate.equals(resource))
+                {
+                    match = true;
+                    break;
+                }
+            }
+        }
+        return match;
     }
 
     @Override

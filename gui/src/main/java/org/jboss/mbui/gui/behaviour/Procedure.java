@@ -78,6 +78,17 @@ public abstract class Procedure implements Behaviour, Consumer, Producer {
 
     // --- Consumer ----
 
+
+    @Override
+    public boolean doesConsume() {
+        return consumption.doesConsume();
+    }
+
+    @Override
+    public boolean doesProduce() {
+        return production.doesProduce();
+    }
+
     /**
      * Does consume if the resource and the origin (if given) matches.
      *
@@ -104,8 +115,8 @@ public abstract class Procedure implements Behaviour, Consumer, Producer {
     // --- Consumer ----
     
     @Override
-    public boolean doesProduce() {
-        return production.doesProduce();
+    public boolean doesProduce(Resource<ResourceType> resource) {
+        return production.doesProduce(resource);
     }
 
     @Override
