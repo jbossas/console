@@ -6,6 +6,7 @@ package org.jboss.mbui.model.behaviour;
  */
 public enum ResourceType {
 
+    System, // produced by system, framework or other context of use
     Event, // produced by interaction units, consumed by behaviours
     Presentation // produced by transitions, consumed by interaction units
 }

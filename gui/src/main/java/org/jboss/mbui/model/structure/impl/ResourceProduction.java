@@ -1,8 +1,8 @@
 package org.jboss.mbui.model.structure.impl;
 
 import org.jboss.mbui.model.behaviour.Producer;
-import org.jboss.mbui.model.behaviour.ResourceType;
 import org.jboss.mbui.model.behaviour.Resource;
+import org.jboss.mbui.model.behaviour.ResourceType;
 
 import java.util.HashSet;
 import java.util.Set;

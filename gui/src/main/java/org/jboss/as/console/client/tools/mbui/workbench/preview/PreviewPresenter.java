@@ -124,6 +124,8 @@ public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, Preview
         final QName transactionManagerResource = new QName("org.jboss.transactions", "transactionManager");
 
         // --------- TX behaviour ------------
+        // parse the behaviour model and register implicit behaviour
+
         Procedure saveTxAttributes = new SaveChangesetProcedure(
                 transactionManagerResource,
                 dispatcher);

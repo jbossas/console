@@ -18,6 +18,7 @@
  */
 package org.jboss.mbui.model.structure;
 
+import org.jboss.mbui.gui.behaviour.IntegrityErrors;
 import org.jboss.mbui.model.behaviour.Behaviour;
 import org.jboss.mbui.model.behaviour.Resource;
 import org.jboss.mbui.model.behaviour.ResourceType;
@@ -25,7 +26,6 @@ import org.jboss.mbui.model.structure.as7.Form;
 import org.jboss.mbui.model.mapping.Predicate;
 import org.jboss.mbui.model.mapping.as7.ResourceMapping;
 import org.jboss.mbui.gui.behaviour.Integrity;
-import org.jboss.mbui.gui.behaviour.IntegrityException;
 import org.jboss.mbui.model.structure.impl.Builder;
 import org.junit.Before;
 import org.junit.Test;
@@ -92,7 +92,7 @@ public class InteractionUnitTest
         // the integrity check will pass
         try {
             verifyIntegrity(container, behaviours);
-        } catch (IntegrityException e) {
+        } catch (IntegrityErrors e) {
             throw new AssertionError("Should nto raise error");
         }
 
@@ -102,7 +102,7 @@ public class InteractionUnitTest
 
         try {
             verifyIntegrity(container, behaviours);
-        } catch (IntegrityException err) {
+        } catch (IntegrityErrors err) {
 
             java.lang.System.out.print(err.getMessage());
             // all good, this is expected
@@ -110,7 +110,7 @@ public class InteractionUnitTest
     }
 
     private void verifyIntegrity(InteractionUnit container, final Set<Behaviour> behaviours)
-        throws IntegrityException{
+        throws IntegrityErrors {
         Integrity.check(container, behaviours);
     }
 

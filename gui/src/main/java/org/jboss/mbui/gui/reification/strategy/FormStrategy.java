@@ -39,6 +39,8 @@ import org.jboss.mbui.gui.behaviour.SystemEvent;
 import org.jboss.mbui.gui.reification.Context;
 import org.jboss.mbui.gui.reification.ReificationStrategy;
 import org.jboss.mbui.gui.reification.widgets.ModelNodeForm;
+import org.jboss.mbui.model.behaviour.Resource;
+import org.jboss.mbui.model.behaviour.ResourceType;
 import org.jboss.mbui.model.mapping.MappingType;
 import org.jboss.mbui.model.mapping.as7.ResourceAttribute;
 import org.jboss.mbui.model.mapping.as7.ResourceMapping;
@@ -50,6 +52,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import static org.jboss.mbui.model.behaviour.ResourceType.*;
 
 /**
  * @author Harald Pehl
@@ -290,7 +294,16 @@ public class FormStrategy implements ReificationStrategy<ReificationWidget>
                 }
             });
 
-            // TODO: register implicit behaviour with model
+
+            // Register inputs and outputs
+
+            Resource<ResourceType> saveEvent = new Resource<ResourceType>(QName.valueOf("org.jboss.as:save"), Event);
+            Resource<ResourceType> loadEvent = new Resource<ResourceType>(QName.valueOf("org.jboss.as:load"), Event);
+            Resource<ResourceType> reset = new Resource<ResourceType>(QName.valueOf("org.jboss.as:reset"), System);
+            Resource<ResourceType> update = new Resource<ResourceType>(getInteractionUnit().getId(), Presentation);
+
+            getInteractionUnit().setOutputs(saveEvent, loadEvent);
+            getInteractionUnit().setInputs(reset, update);
 
             return layout;
         }

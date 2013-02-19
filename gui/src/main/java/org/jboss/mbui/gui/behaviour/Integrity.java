@@ -10,28 +10,30 @@ import org.jboss.mbui.model.behaviour.Resource;
 import java.util.Set;
 
 /**
+ * TODO: the producer verification is missing ...
+ *
  * @author Heiko Braun
  * @date 11/16/12
  */
 public class Integrity {
 
     public static void check(InteractionUnit container, final Set<Behaviour> behaviours)
-            throws IntegrityException {
+            throws IntegrityErrors {
 
-        final IntegrityException err = new IntegrityException();
+        final IntegrityErrors err = new IntegrityErrors();
 
         container.accept(new InteractionUnitVisitor() {
             @Override
             public void startVisit(Container container) {
                 if(container.doesProduce())
-                    checkDeclared(container, err);
+                    assertConsumer(container, err);
 
             }
 
             @Override
             public void visit(InteractionUnit interactionUnit) {
                 if(interactionUnit.doesProduce())
-                    checkDeclared(interactionUnit, err);
+                    assertConsumer(interactionUnit, err);
 
             }
 
@@ -40,7 +42,13 @@ public class Integrity {
 
             }
 
-            void checkDeclared(InteractionUnit unit, IntegrityException exception)
+            /**
+             * Assertion that a consumer exists for the produced resources of an interaction unit.
+             *
+             * @param unit
+             * @param exception
+             */
+            void assertConsumer(InteractionUnit unit, IntegrityErrors exception)
             {
                 // check each declared trigger against existing behaviours
                 Set<Resource<ResourceType>> producedTypes = unit.getOutputs();
@@ -58,7 +66,7 @@ public class Integrity {
                     }
 
                     if(!match)
-                        err.add(unit.getId(), "no behaviour for <<"+event.getId()+">>");
+                        exception.add(unit.getId(), "no behaviour for <<"+event.getId()+">>");
                 }
 
             }

@@ -9,7 +9,7 @@ import java.util.Map;
  * @author Heiko Braun
  * @date 11/16/12
  */
-public class IntegrityException extends Exception {
+public class IntegrityErrors extends Exception {
     Map<QName, String> errorneousElements = new HashMap<QName, String>();
 
     public void add(QName element, String message)
@@ -26,7 +26,7 @@ public class IntegrityException extends Exception {
             sb.append(errorneousElements.get(e));
             sb.append("\n");
         }
-        return "Errors on "+sb.toString();    //To change body of overridden methods use File | Settings | File Templates.
+        return "Errors on "+sb.toString();
     }
 
     public boolean needsToBeRaised() {
