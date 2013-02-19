@@ -12,9 +12,9 @@ import org.jboss.mbui.model.structure.QName;
  * @author Heiko Braun
  * @date 11/15/12
  */
-public class PresentationEvent extends GwtEvent<PresentationEvent.Handler> {
+public class PresentationEvent extends GwtEvent<PresentationEvent.PresentationHandler> {
 
-    public static final Type TYPE = new Type<Handler>();
+    public static final Type TYPE = new Type<PresentationHandler>();
 
     private QName id;
 
@@ -48,17 +48,17 @@ public class PresentationEvent extends GwtEvent<PresentationEvent.Handler> {
     }
 
     @Override
-    public Type<Handler> getAssociatedType() {
+    public Type<PresentationHandler> getAssociatedType() {
         return TYPE;
     }
 
     @Override
-    protected void dispatch(Handler listener) {
+    protected void dispatch(PresentationHandler listener) {
         if(listener.accepts(this))
             listener.onPresentationEvent(this);
     }
 
-    public interface Handler extends EventHandler {
+    public interface PresentationHandler extends EventHandler {
         boolean accepts(PresentationEvent event);
         void onPresentationEvent(PresentationEvent event);
     }

@@ -11,9 +11,9 @@ import org.jboss.mbui.model.structure.QName;
  * @author Heiko Braun
  * @date 11/15/12
  */
-public class StatementEvent extends GwtEvent<StatementEvent.Handler> {
+public class StatementEvent extends GwtEvent<StatementEvent.StatementHandler> {
 
-    public static final Type TYPE = new Type<Handler>();
+    public static final Type TYPE = new Type<StatementHandler>();
 
     private QName id;
     private final String key;
@@ -40,17 +40,17 @@ public class StatementEvent extends GwtEvent<StatementEvent.Handler> {
     }
 
     @Override
-    public Type<Handler> getAssociatedType() {
+    public Type<StatementHandler> getAssociatedType() {
         return TYPE;
     }
 
     @Override
-    protected void dispatch(Handler listener) {
+    protected void dispatch(StatementHandler listener) {
         if(listener.accepts(this))
             listener.onStatementEvent(this);
     }
 
-    public interface Handler extends EventHandler {
+    public interface StatementHandler extends EventHandler {
         boolean accepts(StatementEvent event);
         void onStatementEvent(StatementEvent event);
     }

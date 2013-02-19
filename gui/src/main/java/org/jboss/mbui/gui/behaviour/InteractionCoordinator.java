@@ -27,7 +27,8 @@ import java.util.Map;
  * @date 11/15/12
  */
 public class InteractionCoordinator implements FrameworkContract,
-        InteractionEvent.Handler, PresentationEvent.Handler, NavigationEvent.Handler, StatementEvent.Handler {
+        InteractionEvent.InteractionHandler, NavigationEvent.NavigationHandler,
+        StatementEvent.StatementHandler {
 
     private static final String PROJECT_NAMESPACE = "org.jboss.as";
 
@@ -44,8 +45,8 @@ public class InteractionCoordinator implements FrameworkContract,
         this.dialog = dialog;
         this.bus = new SimpleEventBus();
 
+        // coordinator handles all events except presentation & system events
         bus.addHandler(InteractionEvent.TYPE, this);
-        bus.addHandler(PresentationEvent.TYPE, this);
         bus.addHandler(NavigationEvent.TYPE, this);
         bus.addHandler(StatementEvent.TYPE, this);
 
@@ -170,7 +171,7 @@ public class InteractionCoordinator implements FrameworkContract,
         if(null==execution)
         {
             Window.alert("No procedure for " + event);
-            System.out.println("No procedure for " + event);
+            Log.warn("No procedure for " + event);
         }
         else if(execution.getPrecondition().isMet(statementContext))   // guarded
         {
@@ -180,21 +181,6 @@ public class InteractionCoordinator implements FrameworkContract,
                 Log.error("Failed to execute procedure "+execution, e);
             }
         }
-
-    }
-
-    @Override
-    public boolean accepts(PresentationEvent event) {
-        return true;
-    }
-
-    /**
-     * Find the IU and pass it the data.
-     *
-     * @param event
-     */
-    @Override
-    public void onPresentationEvent(PresentationEvent event) {
 
     }
 
@@ -212,6 +198,7 @@ public class InteractionCoordinator implements FrameworkContract,
      */
     @Override
     public void onNavigationEvent(NavigationEvent event) {
+        // TODO
     }
 
 
@@ -230,7 +217,7 @@ public class InteractionCoordinator implements FrameworkContract,
         else
             statements.remove(event.getKey());
 
-        // when statement change, the system will be resetted
+        // when statement change, the system will be reset
         onReset();
 
         // diagnose

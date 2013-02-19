@@ -278,7 +278,7 @@ public class FormStrategy implements ReificationStrategy<ReificationWidget>
 
 
             // handle the results of function calls
-            coordinator.addHandler(PresentationEvent.TYPE, new PresentationEvent.Handler()
+            coordinator.addHandler(PresentationEvent.TYPE, new PresentationEvent.PresentationHandler()
             {
                 @Override
                 public boolean accepts(PresentationEvent event) {
