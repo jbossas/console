@@ -1,5 +1,6 @@
 package org.jboss.mbui.model.mapping.as7;
 
+import com.allen_sauer.gwt.log.client.Log;
 import org.jboss.dmr.client.ModelNode;
 import org.jboss.mbui.gui.behaviour.StatementContext;
 
@@ -74,9 +75,19 @@ public class AddressMapping {
                     resolved_value = token_ref.split("=");
                 }
 
-                assert resolved_value!=null : "The token expression '"+token_ref+"' cannot be resolved";
+                // TODO: is it safe to suppress token expressions that cannot be resolved?
+                // i.e /{selected.profile}/subsystem=foobar/ on a standalone server?
 
-                model.get(ADDRESS).add(resolved_value[0], resolved_value[1]);
+                if(null==resolved_value)
+                {
+                    Log.warn("The token expression '"+token_ref+"' cannot be resolved");
+                    //assert resolved_value!=null : "The token expression '"+token_ref+"' cannot be resolved";
+                }
+                else
+                {
+                    model.get(ADDRESS).add(resolved_value[0], resolved_value[1]);
+                }
+
             }
             else
             {
