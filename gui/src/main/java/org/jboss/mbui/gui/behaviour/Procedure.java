@@ -11,8 +11,8 @@ import org.jboss.mbui.model.structure.impl.ResourceProduction;
 import java.util.Set;
 
 /**
- * An executable behaviour.
- * Corresponds to {@link org.jboss.mbui.model.behaviour.Behaviour} of the interface model.
+ * Represents the behaviour of a dialog model. Procedures are selected for execution by matching a {@link Producer}'s output
+ * to a {@link Consumer}'s input. Producers are typically concrete interaction units (widgets) or procedures themselves.
  *
  * @author Heiko Braun
  * @date 11/16/12
