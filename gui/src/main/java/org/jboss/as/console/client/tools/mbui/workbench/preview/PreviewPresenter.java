@@ -120,6 +120,7 @@ public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, Preview
 
         // setup behaviour hooks
         final QName datasourcesResource = new QName("org.jboss.datasource", "datasources");
+        final QName datasourceResource = new QName("org.jboss.datasource", "datasource");
         final QName transactionManagerResource = new QName("org.jboss.transactions", "transactionManager");
 
         // --------- TX behaviour ------------
@@ -143,17 +144,10 @@ public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, Preview
             }
         };
 
-        Procedure saveDsAttributes = new SaveChangesetProcedure(
-                datasourcesResource,
-                dispatcher);
+        Procedure saveDsAttributes = new SaveChangesetProcedure(datasourceResource,dispatcher);
+        Procedure loadDatasources = new LoadResourceProcedure(datasourcesResource,dispatcher);
 
-        Procedure loadDatasources = new LoadResourceProcedure(
-                datasourcesResource,
-                dispatcher);
-
-        Procedure loadDatasource = new LoadResourceProcedure(
-                       QName.valueOf("org.jboss.datasource:datasource"),
-                       dispatcher);
+        Procedure loadDatasource = new LoadResourceProcedure(datasourceResource,dispatcher);
         loadDatasource.setPrecondition(selectedEntity);
 
         dsCoordinator.registerProcedure(saveDsAttributes);
