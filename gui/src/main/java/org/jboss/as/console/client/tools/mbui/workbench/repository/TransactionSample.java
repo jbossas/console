@@ -28,8 +28,7 @@ import org.jboss.mbui.model.structure.as7.ImplicitBehaviour;
 import org.jboss.mbui.model.mapping.Mapping;
 import org.jboss.mbui.model.mapping.as7.ResourceMapping;
 
-import static org.jboss.mbui.model.structure.TemporalOperator.Choice;
-import static org.jboss.mbui.model.structure.TemporalOperator.OrderIndependance;
+import static org.jboss.mbui.model.structure.TemporalOperator.*;
 
 /**
  * @author Harald Pehl
@@ -74,7 +73,7 @@ public class TransactionSample implements Sample
         Mapping recoveryMapping = new ResourceMapping(ns)
                 .addAttributes("recovery-listener", "socket-binding");
 
-        Container overview = new Container(ns, "transactionManager", "TransactionManager", OrderIndependance);
+        Container overview = new Container(ns, "transactionManager", "TransactionManager", Concurrency);
         Form basicAttributes = new Form(ns, "transactionManager#basicAttributes", "Attributes");
         Container details = new Container(ns, "configGroups", "Details", Choice);
         Form processAttributes = new Form(ns, "transactionManager#processAttributes", "Process ID");

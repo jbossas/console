@@ -35,6 +35,7 @@ import static org.jboss.mbui.model.structure.TemporalOperator.Choice;
  * Strategy for a container with temporal operator == Choice.
  *
  * @author Harald Pehl
+ * @author Heiko Braun
  * @date 11/01/2012
  */
 public class ChoiceStrategy implements ReificationStrategy<ReificationWidget>
@@ -68,7 +69,7 @@ public class ChoiceStrategy implements ReificationStrategy<ReificationWidget>
 
             this.interactionUnit = interactionUnit;
 
-            if(interactionUnit.hasParent())
+            if(interactionUnit.hasParent()) // nested tab panel
             {
                 final TabPanel tabPanel = new TabPanel();
                 tabPanel.setStyleName("default-tabpanel");
@@ -93,7 +94,7 @@ public class ChoiceStrategy implements ReificationStrategy<ReificationWidget>
                     }
                 };
             }
-            else
+            else    // top level tab panel
             {
                 final DefaultTabLayoutPanel tabLayoutpanel = new DefaultTabLayoutPanel(40, Style.Unit.PX);
                 tabLayoutpanel.addStyleName("default-tabpanel");

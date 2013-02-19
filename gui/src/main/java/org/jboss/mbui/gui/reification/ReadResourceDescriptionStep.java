@@ -112,7 +112,6 @@ public class ReadResourceDescriptionStep extends ReificationStep
                         descriptionMap.put(mapping.getNamespace(), description);
                     }
 
-                    System.out.println("Finished " + getName());
                     outcome.onSuccess(!response.isFailure());
                     next(iterator, outcome);
                 }

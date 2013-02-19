@@ -19,10 +19,43 @@
 package org.jboss.mbui.model.structure;
 
 /**
+ *
+ *
+ * Operators allow for putting tasks (InteractionUnits) on one hierarchical level into certain explicitly temporal orders.
+ *
  * @author Harald Pehl
+ * @author Heiko Braun
+ *
  * @date 10/31/2012
  */
 public enum TemporalOperator
 {
-    Choice, Sequence, OrderIndependance, Concurrency, Deactivation
+    /**
+     * Exactly one of two tasks will be fulfilled.
+     */
+    Choice,
+
+    /**
+     * The tasks must be accomplished in the given order. The second task
+     * must wait until the first one has been fulfilled.
+     */
+    Sequence,
+
+    /**
+     * The two tasks can be accomplished in any arbitrary
+     * order. However, when the first task has been performed, the second one has to wait for
+     * the first one to be finalized or aborted.
+     */
+    OrderIndependance,
+
+    /**
+     * The two tasks can be accomplished in any arbitrary order, even
+     * in parallel at the same time (i.e., concurrently).
+     */
+    Concurrency,
+
+    /**
+     * The second task interrupts and deactivates the first task.
+     */
+    Deactivation
 }

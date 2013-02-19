@@ -26,16 +26,16 @@ import org.jboss.mbui.gui.reification.ReificationStrategy;
 import org.jboss.mbui.model.structure.Container;
 import org.jboss.mbui.model.structure.InteractionUnit;
 
-import static org.jboss.mbui.model.structure.TemporalOperator.OrderIndependance;
+import static org.jboss.mbui.model.structure.TemporalOperator.Concurrency;
 
 /**
- * Strategy for a container with temporal operator == OrderIndependance.
+ * Strategy for a container with temporal operator Concurrency.
  *
  * @author Harald Pehl
  * @author Heiko Braun
  * @date 11/01/2012
  */
-public class OrderIndependanceStrategy implements ReificationStrategy<ReificationWidget>
+public class ConcurrencyStrategy implements ReificationStrategy<ReificationWidget>
 {
     @Override
     public ReificationWidget reify(final InteractionUnit interactionUnit, final Context context)
@@ -52,7 +52,7 @@ public class OrderIndependanceStrategy implements ReificationStrategy<Reificatio
     public boolean appliesTo(final InteractionUnit interactionUnit)
     {
         return (interactionUnit instanceof Container) && (((Container) interactionUnit)
-                .getTemporalOperator() == OrderIndependance);
+                .getTemporalOperator() == Concurrency);
     }
 
 

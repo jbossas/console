@@ -19,12 +19,12 @@
 package org.jboss.mbui.gui.reification;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import org.jboss.mbui.gui.reification.strategy.ConcurrencyStrategy;
 import org.jboss.mbui.model.structure.Container;
 import org.jboss.mbui.model.structure.InteractionUnit;
 import org.jboss.mbui.model.structure.impl.InteractionUnitVisitor;
 import org.jboss.mbui.gui.reification.strategy.ChoiceStrategy;
 import org.jboss.mbui.gui.reification.strategy.FormStrategy;
-import org.jboss.mbui.gui.reification.strategy.OrderIndependanceStrategy;
 import org.jboss.mbui.gui.reification.strategy.ReificationWidget;
 import org.jboss.mbui.gui.reification.strategy.SelectStrategy;
 
@@ -52,7 +52,7 @@ public class BuildUserInterfaceStep extends ReificationStep
         // order is important! add specific strategies first!
         this.strategies.add(new FormStrategy());
         this.strategies.add(new SelectStrategy());
-        this.strategies.add(new OrderIndependanceStrategy());
+        this.strategies.add(new ConcurrencyStrategy());
         this.strategies.add(new ChoiceStrategy());
 
     }

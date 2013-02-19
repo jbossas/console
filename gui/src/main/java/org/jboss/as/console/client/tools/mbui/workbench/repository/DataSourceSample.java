@@ -26,11 +26,9 @@ import org.jboss.mbui.model.structure.InteractionUnit;
 import org.jboss.mbui.model.structure.Select;
 import org.jboss.mbui.model.structure.as7.Form;
 import org.jboss.mbui.model.mapping.Mapping;
-import org.jboss.mbui.model.mapping.as7.ResourceAttribute;
 import org.jboss.mbui.model.mapping.as7.ResourceMapping;
 
-import static org.jboss.mbui.model.structure.TemporalOperator.Choice;
-import static org.jboss.mbui.model.structure.TemporalOperator.OrderIndependance;
+import static org.jboss.mbui.model.structure.TemporalOperator.*;
 
 /**
  * @author Harald Pehl
@@ -81,7 +79,7 @@ public class DataSourceSample implements Sample
         InteractionUnit root = new Builder()
             .start(new Container(namespace, "datasources", "Datasources", Choice))
             .addMapping(datasourceCollection)
-                .start(new Container(namespace, "regularDS", "Regular", OrderIndependance))
+                .start(new Container(namespace, "regularDS", "Regular", Concurrency))
                     .add(new Select(namespace, "datasources", "DatasourceList"))
                     .addMapping(tableMapping)
                     .start(new Container(namespace, "datasource", "Datasource", Choice))
@@ -92,7 +90,7 @@ public class DataSourceSample implements Sample
                             .addMapping(connectionAttributesMapping)
                     .end()
                 .end()
-                .start(new Container(namespace, "xsDS", "XA", OrderIndependance))
+                .start(new Container(namespace, "xsDS", "XA", Concurrency))
                 .end()
             .end().build();
 
