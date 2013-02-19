@@ -87,6 +87,9 @@
                                 <include>**/*.*</include>
                             </includes>
                         </fileset>
+                        <fileset>
+                            <directory>gwt-unitCache</directory>
+                        </fileset>
                     </filesets>
                 </configuration>
             </plugin>
