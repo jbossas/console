@@ -7,6 +7,9 @@ import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.Event;
 import com.google.web.bindery.event.shared.EventBus;
 import com.google.web.bindery.event.shared.SimpleEventBus;
+import org.jboss.mbui.model.behaviour.Consumer;
+import org.jboss.mbui.model.behaviour.Resource;
+import org.jboss.mbui.model.behaviour.ResourceType;
 import org.jboss.mbui.model.structure.Dialog;
 import org.jboss.mbui.model.structure.QName;
 
@@ -151,21 +154,23 @@ public class InteractionCoordinator implements FrameworkContract,
     @Override
     public void onInteractionEvent(final InteractionEvent event) {
         QName id = event.getId();
-        Object source = event.getSource();
+        QName source = (QName)event.getSource();
 
         final List<Procedure> collection = procedures.get(id);
         Procedure execution = null;
 
         if(collection!=null)
         {
-            for(Procedure candidate : collection)
+            for(Procedure consumer : collection) {
+                Resource<ResourceType> resource = new Resource<ResourceType>(id, ResourceType.Event);
+                resource.setSource(source);
 
-                if(candidate.getId().equals(id)
-                        && candidate.doesMatch(id, source))
+                if(consumer.doesConsume(resource))
                 {
-                    execution = candidate;
+                    execution = consumer;
                     break;
                 }
+            }
         }
 
         if(null==execution)

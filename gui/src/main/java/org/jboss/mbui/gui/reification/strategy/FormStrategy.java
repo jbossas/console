@@ -282,8 +282,13 @@ public class FormStrategy implements ReificationStrategy<ReificationWidget>
             {
                 @Override
                 public boolean accepts(PresentationEvent event) {
+                    boolean isFormUpdate = event.getId().equalsIgnoreSuffix(QName.valueOf("org.jboss.as:form-update"));
+                    boolean matchingId = event.getTarget().equalsIgnoreSuffix(getInteractionUnit().getId());
+
                     // only single resources accepted (might be collection, see LoadResourceProcedure)
-                    return (event.getPayload() instanceof ModelNode);
+                    boolean payloadMatches = event.getPayload() instanceof ModelNode;
+
+                    return isFormUpdate && matchingId && payloadMatches;
                 }
 
                 @Override

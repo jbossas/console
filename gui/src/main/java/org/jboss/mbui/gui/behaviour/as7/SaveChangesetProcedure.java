@@ -9,6 +9,8 @@ import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.dmr.client.ModelNode;
 import org.jboss.mbui.gui.behaviour.ModelDrivenCommand;
 import org.jboss.mbui.gui.behaviour.Procedure;
+import org.jboss.mbui.model.behaviour.Resource;
+import org.jboss.mbui.model.behaviour.ResourceType;
 import org.jboss.mbui.model.mapping.MappingType;
 import org.jboss.mbui.model.mapping.as7.AddressMapping;
 import org.jboss.mbui.model.mapping.as7.ResourceMapping;
@@ -47,7 +49,7 @@ public class SaveChangesetProcedure extends Procedure {
             @Override
             public void execute(Dialog dialog, HashMap data) {
 
-                InteractionUnit source = dialog.findUnit(getRequiredSource());
+                InteractionUnit source = dialog.findUnit(getRequiredOrigin());
 
                 ResourceMapping resourceMapping = source.findMapping(MappingType.RESOURCE);
                 AddressMapping address = AddressMapping.fromString(resourceMapping.getAddress());
@@ -55,6 +57,11 @@ public class SaveChangesetProcedure extends Procedure {
                 saveResource(source.getName(), address, data);
             }
         });
+
+        // behaviour model meta data
+        setInputs(new Resource<ResourceType>(ID, ResourceType.Event));
+
+        // TODO: Strictly speaking this should emit system events instead of calling the coordinator API directly
     }
 
     private void saveResource(final String name, AddressMapping address, HashMap<String, Object> changeset) {
@@ -74,6 +81,7 @@ public class SaveChangesetProcedure extends Procedure {
                 else
                     Console.info(Console.MESSAGES.modified(name));
 
+                // arguable ...
                 Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
                     @Override
                     public void execute() {

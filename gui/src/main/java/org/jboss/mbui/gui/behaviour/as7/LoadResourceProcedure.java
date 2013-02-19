@@ -12,6 +12,8 @@ import org.jboss.dmr.client.Property;
 import org.jboss.mbui.gui.behaviour.ModelDrivenCommand;
 import org.jboss.mbui.gui.behaviour.PresentationEvent;
 import org.jboss.mbui.gui.behaviour.Procedure;
+import org.jboss.mbui.model.behaviour.Resource;
+import org.jboss.mbui.model.behaviour.ResourceType;
 import org.jboss.mbui.model.mapping.MappingType;
 import org.jboss.mbui.model.mapping.as7.AddressMapping;
 import org.jboss.mbui.model.mapping.as7.ResourceMapping;
@@ -29,6 +31,7 @@ import static org.jboss.dmr.client.ModelDescriptionConstants.*;
  * @date 1/21/13
  */
 public class LoadResourceProcedure extends Procedure {
+
     private final static QName ID = new QName("org.jboss.as", "load");
     private final static QName RESULT_ID = QName.valueOf("org.jboss.as:form-update");
 
@@ -45,7 +48,7 @@ public class LoadResourceProcedure extends Procedure {
             @Override
             public void execute(Dialog dialog, Object data) {
 
-                InteractionUnit source = dialog.findUnit(getRequiredSource());
+                InteractionUnit source = dialog.findUnit(getRequiredOrigin());
 
                 ResourceMapping resourceMapping = source.findMapping(MappingType.RESOURCE);
                 AddressMapping address = AddressMapping.fromString(resourceMapping.getAddress());
@@ -53,6 +56,10 @@ public class LoadResourceProcedure extends Procedure {
                 loadResource(source.getName(), address);
             }
         });
+
+        // behaviour model meta data
+        setInputs(new Resource<ResourceType>(ID, ResourceType.Event));
+        setOutputs(new Resource<ResourceType>(RESULT_ID, ResourceType.Presentation));
     }
 
     private void loadResource(final String name, AddressMapping address) {
@@ -98,7 +105,7 @@ public class LoadResourceProcedure extends Procedure {
                         }
 
                         // source and target are the same
-                        presentation.setTarget(getRequiredSource());
+                        presentation.setTarget(getRequiredOrigin());
 
                         coordinator.fireEvent(presentation);
                     }
@@ -124,6 +131,6 @@ public class LoadResourceProcedure extends Procedure {
 
     @Override
     public String toString() {
-        return "LoadResource "+getRequiredSource();
+        return "LoadResource "+ getRequiredOrigin();
     }
 }
