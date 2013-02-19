@@ -18,17 +18,18 @@
  */
 package org.jboss.as.console.client.tools.mbui.workbench.repository;
 
-import org.jboss.mbui.model.structure.Dialog;
-import org.jboss.mbui.model.structure.QName;
-import org.jboss.mbui.model.structure.impl.Builder;
-import org.jboss.mbui.model.structure.Container;
-import org.jboss.mbui.model.structure.InteractionUnit;
-import org.jboss.mbui.model.structure.as7.Form;
-import org.jboss.mbui.model.structure.as7.ImplicitBehaviour;
+import org.jboss.mbui.model.Dialog;
 import org.jboss.mbui.model.mapping.Mapping;
 import org.jboss.mbui.model.mapping.as7.ResourceMapping;
+import org.jboss.mbui.model.structure.Container;
+import org.jboss.mbui.model.structure.InteractionUnit;
+import org.jboss.mbui.model.structure.QName;
+import org.jboss.mbui.model.structure.as7.Form;
+import org.jboss.mbui.model.structure.as7.ImplicitBehaviour;
+import org.jboss.mbui.model.structure.impl.Builder;
 
-import static org.jboss.mbui.model.structure.TemporalOperator.*;
+import static org.jboss.mbui.model.structure.TemporalOperator.Choice;
+import static org.jboss.mbui.model.structure.TemporalOperator.Concurrency;
 
 /**
  * @author Harald Pehl
@@ -97,5 +98,8 @@ public class TransactionSample implements Sample
         Dialog dialog = new Dialog(QName.valueOf("org.jboss.as7:transaction-subsystem"), root);
         return dialog;
     }
+
+
+
 }
 

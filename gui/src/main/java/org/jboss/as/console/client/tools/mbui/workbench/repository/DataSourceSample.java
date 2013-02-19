@@ -18,7 +18,7 @@
  */
 package org.jboss.as.console.client.tools.mbui.workbench.repository;
 
-import org.jboss.mbui.model.structure.Dialog;
+import org.jboss.mbui.model.Dialog;
 import org.jboss.mbui.model.structure.QName;
 import org.jboss.mbui.model.structure.impl.Builder;
 import org.jboss.mbui.model.structure.Container;

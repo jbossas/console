@@ -119,7 +119,7 @@ public class InteractionUnitTest
     {
         Resource<ResourceType> submitEvent = new Resource<ResourceType>(NAMESPACE, "submitName", Event);
         Resource<ResourceType> deviceRotation = new Resource<ResourceType>(NAMESPACE, "deviceRotation", Event);
-        Resource<ResourceType> loadData = new Resource<ResourceType>(NAMESPACE, "loadData", Event   );
+        Resource<ResourceType> loadData = new Resource<ResourceType>(NAMESPACE, "loadData", Event);
 
         Behaviour behaviour = new Behaviour(NAMESPACE, "onSubmitName", submitEvent);
 

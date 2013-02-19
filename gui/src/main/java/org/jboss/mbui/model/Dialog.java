@@ -1,10 +1,10 @@
-package org.jboss.mbui.model.structure;
+package org.jboss.mbui.model;
 
-import org.jboss.mbui.model.behaviour.Behaviour;
+import org.jboss.mbui.model.behaviour.BehaviourResolution;
+import org.jboss.mbui.model.structure.Container;
+import org.jboss.mbui.model.structure.InteractionUnit;
+import org.jboss.mbui.model.structure.QName;
 import org.jboss.mbui.model.structure.impl.InteractionUnitVisitor;
-
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * A dialog contains a set of hierarchically structured abstract interaction objects,
@@ -16,7 +16,7 @@ import java.util.Set;
 public class Dialog {
     private QName id;
     private InteractionUnit root;
-    private Set<Behaviour> behaviours = new HashSet<Behaviour>();
+    //private BehaviourResolution behaviour;
 
     public Dialog(QName id, InteractionUnit root) {
         this.id = id;
@@ -31,9 +31,13 @@ public class Dialog {
         return root;
     }
 
-    public Set<Behaviour> getBehaviourModel() {
-        return behaviours;
+    /*public void setBehaviour(BehaviourResolution behaviour) {
+        this.behaviour = behaviour;
     }
+
+    public BehaviourResolution getBehaviour() {
+        return behaviour;
+    } */
 
     public InteractionUnit findUnit(final QName id) {
 

@@ -8,9 +8,7 @@ import java.util.Set;
  * @author Heiko Braun
  * @date 10/31/12
  */
-public interface Producer {
-
-    boolean doesProduce();
+public interface Producer extends SupportsProduction {
 
     void setOutputs(Resource<ResourceType>... resources);
 

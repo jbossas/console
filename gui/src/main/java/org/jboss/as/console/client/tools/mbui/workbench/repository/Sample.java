@@ -18,8 +18,7 @@
  */
 package org.jboss.as.console.client.tools.mbui.workbench.repository;
 
-import org.jboss.mbui.model.structure.Dialog;
-import org.jboss.mbui.model.structure.InteractionUnit;
+import org.jboss.mbui.model.Dialog;
 
 /**
  * @author Harald Pehl

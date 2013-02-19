@@ -8,9 +8,7 @@ import java.util.Set;
  * @author Heiko Braun
  * @date 10/31/12
  */
-public interface Consumer {
-
-    boolean doesConsume(Resource<ResourceType> resource);
+public interface Consumer extends SupportsConsumption {
 
     Set<Resource<ResourceType>> getInputs();
 

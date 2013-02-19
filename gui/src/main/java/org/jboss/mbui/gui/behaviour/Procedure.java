@@ -1,5 +1,6 @@
 package org.jboss.mbui.gui.behaviour;
 
+import org.jboss.mbui.model.behaviour.Behaviour;
 import org.jboss.mbui.model.behaviour.Consumer;
 import org.jboss.mbui.model.behaviour.Producer;
 import org.jboss.mbui.model.behaviour.Resource;
@@ -12,12 +13,12 @@ import java.util.Set;
 
 /**
  * Represents the behaviour of a dialog model. Procedures are selected for execution by matching a {@link Producer}'s output
- * to a {@link Consumer}'s input. Producers are typically concrete interaction units (widgets) or procedures themselves.
+ * to a {@link Procedure}'s input. Producers are typically interaction units or procedures themselves.
  *
  * @author Heiko Braun
  * @date 11/16/12
  */
-public abstract class Procedure implements Consumer, Producer {
+public abstract class Procedure implements Behaviour, Consumer, Producer {
 
     private ModelDrivenCommand command;
     private QName requiredOrigin;

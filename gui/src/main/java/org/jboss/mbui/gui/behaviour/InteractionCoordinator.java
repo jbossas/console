@@ -7,10 +7,11 @@ import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.Event;
 import com.google.web.bindery.event.shared.EventBus;
 import com.google.web.bindery.event.shared.SimpleEventBus;
-import org.jboss.mbui.model.behaviour.Consumer;
+import org.jboss.mbui.model.behaviour.Behaviour;
+import org.jboss.mbui.model.behaviour.BehaviourResolution;
 import org.jboss.mbui.model.behaviour.Resource;
 import org.jboss.mbui.model.behaviour.ResourceType;
-import org.jboss.mbui.model.structure.Dialog;
+import org.jboss.mbui.model.Dialog;
 import org.jboss.mbui.model.structure.QName;
 
 import java.util.ArrayList;
