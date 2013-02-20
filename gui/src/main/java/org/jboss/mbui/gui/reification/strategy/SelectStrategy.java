@@ -191,6 +191,8 @@ public class SelectStrategy implements ReificationStrategy<ReificationWidget>
                     dataProvider.getList().addAll(entities);
                 }
             });
+
+            // TODO: register inputs & outputs
         }
 
         @Override

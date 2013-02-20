@@ -92,6 +92,9 @@ public class InteractionCoordinator implements FrameworkContract,
 
     public void registerProcedure(Procedure procedure)
     {
+
+        // TODO: verification of behaviour model
+
         List<Procedure> collection = procedures.get(procedure.getId());
         if(null==collection)
         {
