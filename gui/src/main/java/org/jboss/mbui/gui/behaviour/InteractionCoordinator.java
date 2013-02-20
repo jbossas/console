@@ -7,8 +7,6 @@ import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.Event;
 import com.google.web.bindery.event.shared.EventBus;
 import com.google.web.bindery.event.shared.SimpleEventBus;
-import org.jboss.mbui.model.behaviour.Behaviour;
-import org.jboss.mbui.model.behaviour.BehaviourResolution;
 import org.jboss.mbui.model.behaviour.Resource;
 import org.jboss.mbui.model.behaviour.ResourceType;
 import org.jboss.mbui.model.Dialog;
@@ -35,6 +33,9 @@ public class InteractionCoordinator implements FrameworkContract,
         StatementEvent.StatementHandler {
 
     private static final String PROJECT_NAMESPACE = "org.jboss.as";
+    final static SystemEvent RESET = new SystemEvent(new QName(PROJECT_NAMESPACE, "reset"));
+    final static SystemEvent BIND = new SystemEvent(new QName(PROJECT_NAMESPACE, "bind"));
+    final static SystemEvent REVEAL = new SystemEvent(new QName(PROJECT_NAMESPACE, "reveal"));
 
     // a bus scoped to this coordinator and the associated models
     private EventBus bus;
@@ -129,18 +130,18 @@ public class InteractionCoordinator implements FrameworkContract,
     //  ----- System events ------
     @Override
     public void onBind() {
-        bus.fireEvent(new SystemEvent(new QName(PROJECT_NAMESPACE, "bind")));
+        bus.fireEvent(BIND);
     }
 
     @Override
     public void onReveal() {
-        bus.fireEvent(new SystemEvent(new QName(PROJECT_NAMESPACE, "reveal")));
+        bus.fireEvent(REVEAL);
 
     }
 
     @Override
     public void onReset() {
-        bus.fireEvent(new SystemEvent(new QName(PROJECT_NAMESPACE, "reset")));
+        bus.fireEvent(RESET);
     }
 
     //  ----- Event handling ------

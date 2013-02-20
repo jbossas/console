@@ -35,6 +35,8 @@ import org.jboss.mbui.gui.behaviour.SystemEvent;
 import org.jboss.mbui.gui.reification.Context;
 import org.jboss.mbui.gui.reification.ReificationStrategy;
 import org.jboss.mbui.gui.reification.widgets.ModelNodeCellTable;
+import org.jboss.mbui.model.behaviour.Resource;
+import org.jboss.mbui.model.behaviour.ResourceType;
 import org.jboss.mbui.model.mapping.MappingType;
 import org.jboss.mbui.model.mapping.as7.ResourceAttribute;
 import org.jboss.mbui.model.mapping.as7.ResourceMapping;
@@ -52,6 +54,11 @@ import java.util.List;
  */
 public class SelectStrategy implements ReificationStrategy<ReificationWidget>
 {
+
+    final static QName SELECT_ID = QName.valueOf("org.jboss.as:select");
+    final static QName RESET_ID = QName.valueOf("org.jboss.as:reset");
+    final static QName LOAD_ID = QName.valueOf("org.jboss.as:load");
+
     @Override
     public ReificationWidget reify(final InteractionUnit interactionUnit, final Context context)
     {
@@ -126,11 +133,12 @@ public class SelectStrategy implements ReificationStrategy<ReificationWidget>
                     // create statement
                     ModelNode selection = selectionModel.getSelectedObject();
 
+
                     if(selection!=null) {
                         // create a select statement
                         coordinator.fireEventFromSource(
                                 new StatementEvent(
-                                        QName.valueOf("org.jboss.as:select"),
+                                        SELECT_ID,
                                         "selected.entity",
                                         selection.get("entity.key").asString()),   // synthetic key (convention), see LoadResourceProcedure
                                 this);
@@ -142,7 +150,7 @@ public class SelectStrategy implements ReificationStrategy<ReificationWidget>
                         // clear the select statement
                         coordinator.fireEventFromSource(
                                 new StatementEvent(
-                                        QName.valueOf("org.jboss.as:select"),
+                                        SELECT_ID,
                                         "selected.entity",
                                         null),
                                 this);
@@ -155,8 +163,8 @@ public class SelectStrategy implements ReificationStrategy<ReificationWidget>
             coordinator.addHandler(SystemEvent.TYPE, new SystemEvent.Handler() {
                 @Override
                 public boolean accepts(SystemEvent event) {
-                    QName reset = new QName("org.jboss.as", "reset");
-                    return event.getId().equals(reset);
+
+                    return event.getId().equals(RESET_ID);
                 }
 
                 @Override
@@ -165,8 +173,7 @@ public class SelectStrategy implements ReificationStrategy<ReificationWidget>
                     dataProvider.refresh();
 
                     // request loading of data
-                    InteractionEvent reset =
-                            new InteractionEvent(QName.valueOf("org.jboss.as:load"));
+                    InteractionEvent reset = new InteractionEvent(LOAD_ID);
 
                     // update interaction units
                     coordinator.fireEventFromSource(
@@ -192,7 +199,18 @@ public class SelectStrategy implements ReificationStrategy<ReificationWidget>
                 }
             });
 
-            // TODO: register inputs & outputs
+            // Register inputs & outputs
+
+            getInteractionUnit().setInputs(
+                    new Resource<ResourceType>(RESET_ID, ResourceType.System),
+                    new Resource<ResourceType>(getInteractionUnit().getId(), ResourceType.Presentation)
+                    );
+
+            getInteractionUnit().setOutputs(
+                    new Resource<ResourceType>(LOAD_ID, ResourceType.Event),
+                    new Resource<ResourceType>(SELECT_ID, ResourceType.Statement)
+            );
+
         }
 
         @Override

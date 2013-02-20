@@ -62,6 +62,12 @@ import static org.jboss.mbui.model.behaviour.ResourceType.*;
  */
 public class FormStrategy implements ReificationStrategy<ReificationWidget>
 {
+
+    private static final QName SAVE_ID = QName.valueOf("org.jboss.as:save");
+    private static final QName LOAD_ID = QName.valueOf("org.jboss.as:load");
+    private static final QName RESET_ID = QName.valueOf("org.jboss.as:reset");
+    private static final QName UPDATE_ID = QName.valueOf("org.jboss.as:form-update");
+
     @Override
     public ReificationWidget reify(final InteractionUnit interactionUnit, final Context context)
     {
@@ -223,13 +229,11 @@ public class FormStrategy implements ReificationStrategy<ReificationWidget>
                         @Override
                         public void onSave(Map<String, Object> changeset) {
 
-                            InteractionEvent transitionEvent = new InteractionEvent(
-                                    QName.valueOf("org.jboss.as:save"));
-
-                            transitionEvent.setPayload(form.getChangedValues());
+                            InteractionEvent saveEvent = new InteractionEvent(SAVE_ID);
+                            saveEvent.setPayload(form.getChangedValues());
 
                             coordinator.fireEventFromSource(
-                                    transitionEvent,
+                                    saveEvent,
                                     interactionUnit.getId()
                             );
                         }
@@ -250,8 +254,7 @@ public class FormStrategy implements ReificationStrategy<ReificationWidget>
             coordinator.addHandler(SystemEvent.TYPE, new SystemEvent.Handler() {
                 @Override
                 public boolean accepts(SystemEvent event) {
-                    QName reset = new QName("org.jboss.as", "reset");
-                    return event.getId().equals(reset);
+                    return event.getId().equals(RESET_ID);
                 }
 
                 @Override
@@ -263,12 +266,11 @@ public class FormStrategy implements ReificationStrategy<ReificationWidget>
                         @Override
                         public void execute() {
                             // request loading of data
-                            InteractionEvent reset =
-                                    new InteractionEvent(QName.valueOf("org.jboss.as:load"));
+                            InteractionEvent loadEvent = new InteractionEvent(LOAD_ID);
 
                             // update interaction units
                             coordinator.fireEventFromSource(
-                                    reset,
+                                    loadEvent,
                                     interactionUnit.getId()
                             );
                         }
@@ -282,7 +284,7 @@ public class FormStrategy implements ReificationStrategy<ReificationWidget>
             {
                 @Override
                 public boolean accepts(PresentationEvent event) {
-                    boolean isFormUpdate = event.getId().equalsIgnoreSuffix(QName.valueOf("org.jboss.as:form-update"));
+                    boolean isFormUpdate = event.getId().equalsIgnoreSuffix(UPDATE_ID);
                     boolean matchingId = event.getTarget().equalsIgnoreSuffix(getInteractionUnit().getId());
 
                     // only single resources accepted (might be collection, see LoadResourceProcedure)
@@ -302,9 +304,9 @@ public class FormStrategy implements ReificationStrategy<ReificationWidget>
 
             // Register inputs and outputs
 
-            Resource<ResourceType> saveEvent = new Resource<ResourceType>(QName.valueOf("org.jboss.as:save"), Event);
-            Resource<ResourceType> loadEvent = new Resource<ResourceType>(QName.valueOf("org.jboss.as:load"), Event);
-            Resource<ResourceType> reset = new Resource<ResourceType>(QName.valueOf("org.jboss.as:reset"), System);
+            Resource<ResourceType> saveEvent = new Resource<ResourceType>(SAVE_ID, Event);
+            Resource<ResourceType> loadEvent = new Resource<ResourceType>(LOAD_ID, Event);
+            Resource<ResourceType> reset = new Resource<ResourceType>(RESET_ID, System);
             Resource<ResourceType> update = new Resource<ResourceType>(getInteractionUnit().getId(), Presentation);
 
             getInteractionUnit().setOutputs(saveEvent, loadEvent);
