@@ -199,33 +199,31 @@ public class DeploymentStep1 {
         description.getElement().setAttribute("style", "padding-bottom:15px;");
         layout.add(description);
         layout.add(form);
-
-
-        // Unmanaged form
-        VerticalPanel unmanagedPanel = new VerticalPanel();
-        unmanagedPanel.setStyleName("window-content");
-
-        String unmanagedText = "<h3>" + Console.CONSTANTS.common_label_step() + "1/1: Specify Deployment</h3>";
-        unmanagedPanel.add(new HTML(unmanagedText));
-
-        unmanagedForm = new Form<DeploymentRecord>(DeploymentRecord.class);
-        TextAreaItem path = new TextAreaItem("path", "Path");
-        TextBoxItem relativeTo= new TextBoxItem("relativeTo", "Relative To", false);
-
-        TextBoxItem name = new TextBoxItem("name", "Name");
-        TextBoxItem runtimeName = new TextBoxItem("runtimeName", "Runtime Name");
-        CheckBoxItem archive = new CheckBoxItem("archive", "Is Archive?");
-        archive.setValue(true);
-        unmanagedForm.setFields(path, relativeTo, archive, name, runtimeName);
-        unmanagedPanel.add(unmanagedForm.asWidget());
-
-
-        // Composite view
-
         tabs.add(layout, "Managed");
-        tabs.add(unmanagedPanel, "Unmanaged");
-        tabs.selectTab(0);
 
+        // Unmanaged form only for new deployments
+        if (!wizard.isUpdate())
+        {
+            VerticalPanel unmanagedPanel = new VerticalPanel();
+            unmanagedPanel.setStyleName("window-content");
+
+            String unmanagedText = "<h3>" + Console.CONSTANTS.common_label_step() + "1/1: Specify Deployment</h3>";
+            unmanagedPanel.add(new HTML(unmanagedText));
+
+            unmanagedForm = new Form<DeploymentRecord>(DeploymentRecord.class);
+            TextAreaItem path = new TextAreaItem("path", "Path");
+            TextBoxItem relativeTo= new TextBoxItem("relativeTo", "Relative To", false);
+
+            TextBoxItem name = new TextBoxItem("name", "Name");
+            TextBoxItem runtimeName = new TextBoxItem("runtimeName", "Runtime Name");
+            CheckBoxItem archive = new CheckBoxItem("archive", "Is Archive?");
+            archive.setValue(true);
+            unmanagedForm.setFields(path, relativeTo, archive, name, runtimeName);
+            unmanagedPanel.add(unmanagedForm.asWidget());
+            tabs.add(unmanagedPanel, "Unmanaged");
+        }
+
+        tabs.selectTab(0);
         return new WindowContentBuilder(tabs, options).build();
     }
 
