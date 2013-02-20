@@ -217,4 +217,9 @@ public class NewDeploymentWizard  {
         presenter.onCreateUnmanaged(entity);
 
     }
+
+    public boolean isUpdate()
+    {
+        return isUpdate;
+    }
 }
