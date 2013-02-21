@@ -232,12 +232,17 @@ public class StandaloneDeploymentPresenter
     @Override
     public void updateDeployment(DeploymentRecord record)
     {
-        launchNewDeploymentDialoge(record, true);
+        launchDeploymentDialoge("Update Deployment", record, true);
     }
 
     public void launchNewDeploymentDialoge(DeploymentRecord record, boolean isUpdate)
     {
-        window = new DefaultWindow(Console.MESSAGES.createTitle("Deployment"));
+        launchDeploymentDialoge(Console.MESSAGES.createTitle("Deployment"), record, isUpdate);
+    }
+
+    private void launchDeploymentDialoge(String title, DeploymentRecord record, boolean isUpdate)
+    {
+        window = new DefaultWindow(title);
         window.setWidth(480);
         window.setHeight(450);
         window.trapWidget(new NewDeploymentWizard(this, window, isUpdate, record).asWidget());
