@@ -30,7 +30,7 @@ import java.util.Map;
  */
 public class InteractionCoordinator implements FrameworkContract,
         InteractionEvent.InteractionHandler, NavigationEvent.NavigationHandler,
-        StatementEvent.StatementHandler {
+        StatementEvent.StatementHandler, BehaviourExecution {
 
     private static final String PROJECT_NAMESPACE = "org.jboss.as";
     final static SystemEvent RESET = new SystemEvent(new QName(PROJECT_NAMESPACE, "reset"));
@@ -91,6 +91,7 @@ public class InteractionCoordinator implements FrameworkContract,
         return this.bus;
     }
 
+    @Override
     public void registerProcedure(Procedure procedure)
     {
 

@@ -178,6 +178,7 @@ public abstract class InteractionUnit implements Consumer, Producer
     @Override
     public Set<Resource<ResourceType>> getInputs()
     {
+        assert resourceConsumption.getInputs()!=null : "Check doesConsume() before calling getInputs()";
         return resourceConsumption.getInputs();
     }
 
@@ -265,6 +266,7 @@ public abstract class InteractionUnit implements Consumer, Producer
     }
 
     public Set<Resource<ResourceType>> getOutputs() {
+        assert resourceProduction.getOutputs()!=null : "Check doesProduce() before calling getOutputs()";
         return resourceProduction.getOutputs();
     }
 }

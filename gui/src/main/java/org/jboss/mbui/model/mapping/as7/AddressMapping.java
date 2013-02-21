@@ -57,6 +57,9 @@ public class AddressMapping {
         for(Token token: address)
         {
 
+            // TODO: the parsing of the token structure should not be done repeatedly
+            // Make it part of the initialisation
+
             if(!token.hasKey())
             {
                 // a single token or token expression

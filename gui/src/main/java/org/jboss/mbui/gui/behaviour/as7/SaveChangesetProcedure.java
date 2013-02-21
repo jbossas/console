@@ -35,26 +35,29 @@ import java.util.HashMap;
  */
 public class SaveChangesetProcedure extends Procedure {
 
-    private final static QName ID = new QName("org.jboss.as", "save");
-    private final DispatchAsync dispatcher;
+    public final static QName ID = new QName("org.jboss.as", "save");
+    private DispatchAsync dispatcher;
+    private Dialog dialog;
+
+    private InteractionUnit unit;
+    private AddressMapping address;
 
     public SaveChangesetProcedure(
+            Dialog dialog,
             final QName source,
             DispatchAsync dispatcher) {
 
         super(ID, source);
+        this.dialog = dialog;
         this.dispatcher = dispatcher;
+
+        init();
 
         setCommand(new ModelDrivenCommand<HashMap>() {
             @Override
             public void execute(Dialog dialog, HashMap data) {
 
-                InteractionUnit source = dialog.findUnit(getRequiredOrigin());
-
-                ResourceMapping resourceMapping = source.findMapping(MappingType.RESOURCE);
-                AddressMapping address = AddressMapping.fromString(resourceMapping.getAddress());
-
-                saveResource(source.getName(), address, data);
+                saveResource(unit.getName(), address, data);
             }
         });
 
@@ -62,6 +65,13 @@ public class SaveChangesetProcedure extends Procedure {
         setInputs(new Resource<ResourceType>(ID, ResourceType.Event));
 
         // TODO: Strictly speaking this should emit system events instead of calling the coordinator API directly
+    }
+
+    private void init() {
+        unit = dialog.findUnit(getRequiredOrigin());
+
+        ResourceMapping resourceMapping = unit.findMapping(MappingType.RESOURCE);
+        address = AddressMapping.fromString(resourceMapping.getAddress());
     }
 
     private void saveResource(final String name, AddressMapping address, HashMap<String, Object> changeset) {
@@ -81,7 +91,8 @@ public class SaveChangesetProcedure extends Procedure {
                 else
                     Console.info(Console.MESSAGES.modified(name));
 
-                // arguable ...
+                // arguable: does each save lead to a reset?
+                // arguable: calling reset directly opposed to invoking a procedure...
                 Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
                     @Override
                     public void execute() {

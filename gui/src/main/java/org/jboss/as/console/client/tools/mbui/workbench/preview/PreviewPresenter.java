@@ -44,6 +44,7 @@ import org.jboss.mbui.gui.behaviour.Precondition;
 import org.jboss.mbui.gui.behaviour.Procedure;
 import org.jboss.mbui.gui.behaviour.StatementContext;
 import org.jboss.mbui.gui.behaviour.as7.CoreGUIContext;
+import org.jboss.mbui.gui.behaviour.as7.ImplictBehaviour;
 import org.jboss.mbui.gui.behaviour.as7.LoadResourceProcedure;
 import org.jboss.mbui.gui.behaviour.as7.SaveChangesetProcedure;
 import org.jboss.mbui.gui.reification.Context;
@@ -74,8 +75,6 @@ public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, Preview
     private final ReificationPipeline reificationPipeline;
     private DispatchAsync dispatcher;
     private HashMap<String, ReificationWidget> cachedWidgets = new HashMap<String, ReificationWidget>();
-    private final ApplicationMetaData metaData;
-    private final EntityAdapter<TransactionManager> txAdapter;
 
     public interface MyView extends View
     {
@@ -92,15 +91,12 @@ public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, Preview
     public PreviewPresenter(
             final EventBus eventBus, final MyView view,
             final MyProxy proxy, final ReificationPipeline reificationPipeline,
-            final ApplicationMetaData metaData,
             final DispatchAsync dispatcher)
     {
         super(eventBus, view, proxy);
         this.reificationPipeline = reificationPipeline;
-        this.metaData = metaData;
-        this.dispatcher = dispatcher;
 
-        this.txAdapter = new EntityAdapter<TransactionManager>(TransactionManager.class, metaData);
+        this.dispatcher = dispatcher;
 
         // these would be created/stored differently. This is just an example
         final TransactionSample transactionSample = new TransactionSample();
@@ -117,44 +113,6 @@ public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, Preview
 
         coordinators.put(transactionSample.getName(), txCoordinator);
         coordinators.put(dataSourceSample.getName(), dsCoordinator);
-
-        // setup behaviour hooks
-        final QName datasourcesResource = new QName("org.jboss.datasource", "datasources");
-        final QName datasourceResource = new QName("org.jboss.datasource", "datasource");
-        final QName transactionManagerResource = new QName("org.jboss.transactions", "transactionManager");
-
-        // --------- TX behaviour ------------
-        // parse the behaviour model and register implicit behaviour
-
-        Procedure saveTxAttributes = new SaveChangesetProcedure(
-                transactionManagerResource,
-                dispatcher);
-
-        Procedure loadTxAttributes = new LoadResourceProcedure(
-                transactionManagerResource,
-                dispatcher);
-
-        txCoordinator.registerProcedure(saveTxAttributes);
-        txCoordinator.registerProcedure(loadTxAttributes);
-
-        // --------- DS behaviour ------------
-
-        final Precondition selectedEntity = new Precondition() {
-            @Override
-            public boolean isMet(StatementContext statementContext) {
-                return dsCoordinator.getStatementContext().resolve("selected.entity")!=null;
-            }
-        };
-
-        Procedure saveDsAttributes = new SaveChangesetProcedure(datasourceResource,dispatcher);
-        Procedure loadDatasources = new LoadResourceProcedure(datasourcesResource,dispatcher);
-
-        Procedure loadDatasource = new LoadResourceProcedure(datasourceResource,dispatcher);
-        loadDatasource.setPrecondition(selectedEntity);
-
-        dsCoordinator.registerProcedure(saveDsAttributes);
-        dsCoordinator.registerProcedure(loadDatasources);
-        dsCoordinator.registerProcedure(loadDatasource);
 
     }
 
@@ -187,12 +145,16 @@ public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, Preview
     @Override
     public void onReify(final ReifyEvent event)
     {
-        // TODO: dialog models would ned to be stored for later retrieval in a real world app
-        Sample sample = event.getSample();
+        // TODO: dialog models would need to be stored for later retrieval in a real world app
+        final Sample sample = event.getSample();
         selectedSample = sample.getName();
+
 
         if(cachedWidgets.get(selectedSample)==null)
         {
+
+            // Step1: reification of the structure
+
             InteractionUnit interactionUnit = sample.getDialog().getInterfaceModel();
             final Context context = new Context();
 
@@ -212,6 +174,11 @@ public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, Preview
                         {
                             cachedWidgets.put(selectedSample, widget);
                             getView().show(widget);
+
+                            // Step 2: Parse model and register default behaviour
+
+                            new ImplictBehaviour(sample.getDialog(), dispatcher).register(getActiveCoordinator());
+
                         }
                     }
                     else
@@ -220,11 +187,14 @@ public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, Preview
                     }
                 }
             });
+
+
         }
         else
         {
             getView().show(cachedWidgets.get(selectedSample));
         }
+
     }
 
     // in a real this would be wired Presenter.onReset()
