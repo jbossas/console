@@ -15,4 +15,13 @@ public class TestProcedure extends Procedure {
     public TestProcedure(QName id, QName requiredOrigin) {
         super(id, requiredOrigin);
     }
+
+    public TestProcedure(QName id) {
+        super(id, null);
+    }
+
+    @Override
+    public QName getJustification() {
+        return null;
+    }
 }

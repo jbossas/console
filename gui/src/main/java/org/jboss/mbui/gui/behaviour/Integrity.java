@@ -1,12 +1,14 @@
 package org.jboss.mbui.gui.behaviour;
 
 import org.jboss.mbui.model.behaviour.Behaviour;
+import org.jboss.mbui.model.behaviour.Resource;
 import org.jboss.mbui.model.behaviour.ResourceType;
 import org.jboss.mbui.model.structure.Container;
 import org.jboss.mbui.model.structure.InteractionUnit;
+import org.jboss.mbui.model.structure.QName;
 import org.jboss.mbui.model.structure.impl.InteractionUnitVisitor;
-import org.jboss.mbui.model.behaviour.Resource;
 
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -16,7 +18,7 @@ import java.util.Set;
  */
 public class Integrity {
 
-    public static void check(InteractionUnit container, final Set<Behaviour> behaviours)
+    public static void check(InteractionUnit container, final Map<QName, Set<Procedure>> behaviours)
             throws IntegrityErrors {
 
         final IntegrityErrors err = new IntegrityErrors();
@@ -58,34 +60,48 @@ public class Integrity {
      * @param unit
      * @param err
      */
-    private static void assertConsumer(InteractionUnit unit, Set<Behaviour> behaviours, IntegrityErrors err) {
+    private static void assertConsumer(InteractionUnit unit, Map<QName, Set<Procedure>> behaviours, IntegrityErrors err) {
 
         Set<Resource<ResourceType>> producedTypes = unit.getOutputs();
 
         for (Resource<ResourceType> resource : producedTypes) {
             boolean match = false;
-            for (Behaviour candidate : behaviours) {
-                if (candidate.doesConsume(resource)) {
-                    match = true;
-                    break;
+
+            for(QName id : behaviours.keySet())
+            {
+                for (Behaviour candidate : behaviours.get(id)) {
+                    if (candidate.doesConsume(resource) ) {
+                        match = candidate.getJustification() == null || unit.getId().equals(candidate.getJustification());
+                        break;
+                    }
                 }
             }
-
             if (!match)
                 err.add(unit.getId(), "Missing consumer for <<" + resource + ">>");
         }
 
     }
 
-    private static void assertProducer(InteractionUnit unit, Set<Behaviour> behaviours, IntegrityErrors err) {
+    /**
+     * Assertion that a producer exists for the consumed resources of an interaction unit.
+     *
+     * @param unit
+     * @param behaviours
+     * @param err
+     */
+    private static void assertProducer(InteractionUnit unit, Map<QName, Set<Procedure>> behaviours, IntegrityErrors err) {
         Set<Resource<ResourceType>> consumedTypes = unit.getInputs();
 
         for (Resource<ResourceType> resource : consumedTypes) {
             boolean match = false;
-            for (Behaviour candidate : behaviours) {
-                if (candidate.doesProduce(resource)) {
-                    match = true;
-                    break;
+
+            for(QName id : behaviours.keySet())
+            {
+                for (Behaviour candidate : behaviours.get(id)) {
+                    if (candidate.doesProduce(resource)) {
+                        match = candidate.getJustification() == null || unit.getId().equals(candidate.getJustification());
+                        break;
+                    }
                 }
             }
 

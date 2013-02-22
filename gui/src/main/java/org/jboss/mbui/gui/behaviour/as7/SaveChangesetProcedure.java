@@ -68,7 +68,7 @@ public class SaveChangesetProcedure extends Procedure {
     }
 
     private void init() {
-        unit = dialog.findUnit(getRequiredOrigin());
+        unit = dialog.findUnit(getJustification());
 
         ResourceMapping resourceMapping = unit.findMapping(MappingType.RESOURCE);
         address = AddressMapping.fromString(resourceMapping.getAddress());

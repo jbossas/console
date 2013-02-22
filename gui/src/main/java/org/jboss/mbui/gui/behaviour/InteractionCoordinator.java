@@ -7,17 +7,15 @@ import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.Event;
 import com.google.web.bindery.event.shared.EventBus;
 import com.google.web.bindery.event.shared.SimpleEventBus;
+import org.jboss.mbui.gui.behaviour.as7.BehaviourMap;
+import org.jboss.mbui.model.Dialog;
 import org.jboss.mbui.model.behaviour.Resource;
 import org.jboss.mbui.model.behaviour.ResourceType;
-import org.jboss.mbui.model.Dialog;
 import org.jboss.mbui.model.structure.QName;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * A coordinator acts as the middleman between a framework (i.e. GWTP), the structure (interface model)
@@ -41,7 +39,7 @@ public class InteractionCoordinator implements FrameworkContract,
 
     // a bus scoped to this coordinator and the associated models
     private EventBus bus;
-    private Map<QName, List<Procedure>> procedures = new HashMap<QName, List<Procedure>>();
+    private BehaviourMap<Procedure> procedures = new BehaviourMap<Procedure>();
     private Dialog dialog;
     private StatementRegistry statements = new StatementRegistry();
     private StatementContext parentContext;
@@ -100,36 +98,23 @@ public class InteractionCoordinator implements FrameworkContract,
      * @param procedure
      */
     @Override
-    public void registerProcedure(Procedure procedure)
+    public void addProcedure(Procedure procedure)
     {
 
         // TODO: verification of behaviour model
         // known behaviour -> accept
         // unknown behaviour -> issue warning
 
-        List<Procedure> collection = procedures.get(procedure.getId());
-        if(null==collection)
-        {
-            collection = new ArrayList<Procedure>();
-            procedures.put(procedure.getId(), collection);
-        }
-
         // provide context
         procedure.setCoordinator(this);
         procedure.setStatementContext(statementContext);
 
-        // Some procedures share the same ID, but are further distinguished (i.e by origin)
-        // We need to check if they are equal and prevent registration of
-        // multiple procedures that are of the kind AND discriminator.
-
-        if(collection.contains(procedure))
-            throw new RuntimeException("Procedure already registered:"+ procedure);
-
-        collection.add(procedure);
+        procedures.add(procedure);
     }
 
-    public Map<QName, List<Procedure>> listProcedures() {
-        return Collections.unmodifiableMap(procedures);
+    @Override
+    public Map<QName, Set<Procedure>> listProcedures() {
+        return procedures.list();
     }
 
     /**
@@ -182,7 +167,7 @@ public class InteractionCoordinator implements FrameworkContract,
         QName id = event.getId();
         QName source = (QName)event.getSource();
 
-        final List<Procedure> collection = procedures.get(id);
+        final Set<Procedure> collection = procedures.get(id);
         Procedure execution = null;
 
         if(collection!=null)

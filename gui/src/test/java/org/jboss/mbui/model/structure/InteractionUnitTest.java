@@ -18,28 +18,26 @@
  */
 package org.jboss.mbui.model.structure;
 
+import org.jboss.mbui.gui.behaviour.Integrity;
 import org.jboss.mbui.gui.behaviour.IntegrityErrors;
 import org.jboss.mbui.gui.behaviour.Procedure;
-import org.jboss.mbui.model.Dialog;
+import org.jboss.mbui.gui.behaviour.as7.BehaviourMap;
 import org.jboss.mbui.model.behaviour.Behaviour;
 import org.jboss.mbui.model.behaviour.Resource;
 import org.jboss.mbui.model.behaviour.ResourceType;
-import org.jboss.mbui.model.structure.as7.Form;
 import org.jboss.mbui.model.mapping.Predicate;
 import org.jboss.mbui.model.mapping.as7.ResourceMapping;
-import org.jboss.mbui.gui.behaviour.Integrity;
+import org.jboss.mbui.model.structure.as7.Form;
 import org.jboss.mbui.model.structure.impl.Builder;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import static org.jboss.mbui.TestNamespace.NAMESPACE;
+import static org.jboss.mbui.model.behaviour.ResourceType.Event;
+import static org.jboss.mbui.model.behaviour.ResourceType.Presentation;
+import static org.jboss.mbui.model.mapping.MappingType.RESOURCE;
 import static org.jboss.mbui.model.structure.TemporalOperator.Choice;
 import static org.jboss.mbui.model.structure.TemporalOperator.OrderIndependance;
-import static org.jboss.mbui.model.behaviour.ResourceType.*;
-import static org.jboss.mbui.model.mapping.MappingType.RESOURCE;
 import static org.junit.Assert.*;
 
 /**
@@ -84,7 +82,7 @@ public class InteractionUnitTest
         );
 
 
-        Behaviour handleSubmit = new TestProcedure(NAMESPACE, "handleSubmit")
+        TestProcedure handleSubmit = new TestProcedure(NAMESPACE, "handleSubmit")
         {
             {
                 setInputs(submitEvent);
@@ -93,7 +91,7 @@ public class InteractionUnitTest
         assertTrue("Behaviour should be triggered by submitEvent", handleSubmit.doesConsume(submitEvent));
 
         final Resource<ResourceType> presentationData = new Resource<ResourceType>(NAMESPACE, "data", Presentation);
-        Behaviour resourcePresentation = new TestProcedure(NAMESPACE, "updateDisplay")
+        TestProcedure resourcePresentation = new TestProcedure(NAMESPACE, "updateDisplay")
         {
             {
                 setOutputs(presentationData);
@@ -102,7 +100,7 @@ public class InteractionUnitTest
         container.setInputs(presentationData);
 
         // integrity checks
-        final Set<Behaviour> behaviours = new HashSet<Behaviour>();
+        final BehaviourMap<TestProcedure> behaviours = new BehaviourMap<TestProcedure>();
         behaviours.add(handleSubmit);
         behaviours.add(resourcePresentation);
 
@@ -126,7 +124,7 @@ public class InteractionUnitTest
         }
     }
 
-    private void verifyIntegrity(InteractionUnit container, final Set<Behaviour> behaviours)
+    private void verifyIntegrity(InteractionUnit container, BehaviourMap behaviours)
             throws IntegrityErrors {
         Integrity.check(container, behaviours);
     }
@@ -143,6 +141,7 @@ public class InteractionUnitTest
             {
                 setInputs(submitEvent);
             }
+
         };
 
         assertTrue("Behaviour can be triggered by submitEvent", behaviour.doesConsume(submitEvent));
@@ -193,11 +192,11 @@ public class InteractionUnitTest
     @Test
     public void testProcedureEquality()
     {
-        Procedure proc1 = new Procedure(QName.valueOf("foo.bar:proc")) {};
-        Procedure proc2 = new Procedure(QName.valueOf("foo.bar:proc")) {};
-        Procedure proc3 = new Procedure(QName.valueOf("foo.bar:proc"), QName.valueOf("some:origin")) {};
-        Procedure proc4 = new Procedure(QName.valueOf("foo.bar:proc2")) {};
-        Procedure proc5 = new Procedure(QName.valueOf("foo.bar:proc"), QName.valueOf("some:origin")) {};
+        Procedure proc1 = new TestProcedure(QName.valueOf("foo.bar:proc")) {};
+        Procedure proc2 = new TestProcedure(QName.valueOf("foo.bar:proc")) {};
+        Procedure proc3 = new TestProcedure(QName.valueOf("foo.bar:proc"), QName.valueOf("some:origin")) {};
+        Procedure proc4 = new TestProcedure(QName.valueOf("foo.bar:proc2")) {};
+        Procedure proc5 = new TestProcedure(QName.valueOf("foo.bar:proc"), QName.valueOf("some:origin")) {};
 
         assertEquals(proc1, proc2);
         assertFalse(proc2.equals(proc3));

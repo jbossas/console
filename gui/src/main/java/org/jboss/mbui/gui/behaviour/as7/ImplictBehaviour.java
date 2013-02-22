@@ -46,7 +46,7 @@ public class ImplictBehaviour {
         });
     }
 
-    private void registerDefaultBehaviour(InteractionUnit unit, BehaviourExecution behaviourContract) {
+    private void registerDefaultBehaviour(InteractionUnit unit, BehaviourExecution behaviourExecution) {
 
         // map consumers to outputs of interaction units
         if(unit.doesProduce())
@@ -54,9 +54,9 @@ public class ImplictBehaviour {
             for(Resource<ResourceType> resource : unit.getOutputs())
             {
                 if(LoadResourceProcedure.ID.equals(resource.getId()))
-                    behaviourContract.registerProcedure(new LoadResourceProcedure(dialog, unit.getId(), contract.getDispatcher()));
+                    behaviourExecution.addProcedure(new LoadResourceProcedure(dialog, unit.getId(), contract.getDispatcher()));
                 else if(SaveChangesetProcedure.ID.equals(resource.getId()))
-                    behaviourContract.registerProcedure(new SaveChangesetProcedure(dialog, unit.getId(), contract.getDispatcher()));
+                    behaviourExecution.addProcedure(new SaveChangesetProcedure(dialog, unit.getId(), contract.getDispatcher()));
             }
         }
 
@@ -65,7 +65,7 @@ public class ImplictBehaviour {
         {
             for(Resource<ResourceType> resource : unit.getInputs())
             {
-                // TODO: Some of these inout are implicitly satisfied with the procedures registered as consumers above ...
+                // TODO: Some of these inputs are implicitly satisfied with the procedures registered as consumers above ...
                 System.out.println("Unit "+unit.getId()+" lacks producer for " + resource);
                 // currently none available ...
             }

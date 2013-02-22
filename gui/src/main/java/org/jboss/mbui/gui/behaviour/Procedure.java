@@ -21,7 +21,7 @@ import java.util.Set;
 public abstract class Procedure implements Behaviour, Consumer, Producer {
 
     private ModelDrivenCommand command;
-    private QName requiredOrigin;
+    private QName justification;
     private QName id;
 
     private ResourceProduction production = new ResourceProduction();
@@ -40,13 +40,13 @@ public abstract class Procedure implements Behaviour, Consumer, Producer {
 
     public Procedure(QName id) {
         this.id = id;
-        this.requiredOrigin = null;
+        this.justification = null;
         this.precondition = NOT_GUARDED;
     }
 
-    public Procedure(QName id, QName requiredOrigin) {
+    public Procedure(QName id, QName justification) {
         this.id = id;
-        this.requiredOrigin = requiredOrigin;
+        this.justification = justification;
         this.precondition = NOT_GUARDED;
     }
 
@@ -62,8 +62,8 @@ public abstract class Procedure implements Behaviour, Consumer, Producer {
         return precondition;
     }
 
-    public QName getRequiredOrigin() {
-        return requiredOrigin;
+    public QName getJustification() {
+        return justification;
     }
 
     public ModelDrivenCommand getCommand() {
@@ -104,7 +104,7 @@ public abstract class Procedure implements Behaviour, Consumer, Producer {
     @Override
     public boolean doesConsume(Resource<ResourceType> resource) {
         boolean resourceMatches = consumption.doesConsume(resource);
-        boolean originMatches = (requiredOrigin == null) || requiredOrigin.equalsIgnoreSuffix(resource.getSource());
+        boolean originMatches = (justification == null) || justification.equalsIgnoreSuffix(resource.getSource());
         return resourceMatches && originMatches;
     }
 
@@ -143,7 +143,7 @@ public abstract class Procedure implements Behaviour, Consumer, Producer {
         Procedure procedure = (Procedure) o;
 
         if (!id.equals(procedure.id)) return false;
-        if (requiredOrigin != null ? !requiredOrigin.equals(procedure.requiredOrigin) : procedure.requiredOrigin != null)
+        if (justification != null ? !justification.equals(procedure.justification) : procedure.justification != null)
             return false;
 
         return true;
@@ -151,7 +151,7 @@ public abstract class Procedure implements Behaviour, Consumer, Producer {
 
     @Override
     public int hashCode() {
-        int result = requiredOrigin != null ? requiredOrigin.hashCode() : 0;
+        int result = justification != null ? justification.hashCode() : 0;
         result = 31 * result + id.hashCode();
         return result;
     }

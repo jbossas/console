@@ -70,7 +70,7 @@ public class LoadResourceProcedure extends Procedure {
     }
 
     private void init() {
-        unit = dialog.findUnit(getRequiredOrigin());
+        unit = dialog.findUnit(getJustification());
 
         ResourceMapping resourceMapping = unit.findMapping(MappingType.RESOURCE);
         address = AddressMapping.fromString(resourceMapping.getAddress());
@@ -153,7 +153,7 @@ public class LoadResourceProcedure extends Procedure {
                         }
 
                         // unit and target are the same
-                        presentation.setTarget(getRequiredOrigin());
+                        presentation.setTarget(getJustification());
 
                         coordinator.fireEvent(presentation);
                     }
@@ -179,6 +179,6 @@ public class LoadResourceProcedure extends Procedure {
 
     @Override
     public String toString() {
-        return "LoadResource "+ getRequiredOrigin();
+        return "LoadResource "+ getJustification();
     }
 }

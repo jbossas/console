@@ -37,6 +37,7 @@ import org.jboss.as.console.client.tools.mbui.workbench.repository.DataSourceSam
 import org.jboss.as.console.client.tools.mbui.workbench.repository.Sample;
 import org.jboss.as.console.client.tools.mbui.workbench.repository.TransactionSample;
 import org.jboss.mbui.gui.behaviour.Integrity;
+import org.jboss.mbui.gui.behaviour.IntegrityErrors;
 import org.jboss.mbui.gui.behaviour.InteractionCoordinator;
 import org.jboss.mbui.gui.behaviour.as7.CoreGUIContext;
 import org.jboss.mbui.gui.behaviour.as7.CoreGUIContract;
@@ -172,9 +173,17 @@ public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, Preview
 
                             new ImplictBehaviour(sample.getDialog(), new CoreGUIContract()).register(getActiveCoordinator());
 
-                            // Step 3: Verify integrity
+                            try {
+                                 // Step 3: Verify integrity
+                                Integrity.check(
+                                        sample.getDialog().getInterfaceModel(),
+                                        getActiveCoordinator().listProcedures()
+                                );
+                            } catch (IntegrityErrors integrityErrors) {
 
-                            //Integrity.check(sample.getDialog().getInterfaceModel(), getActiveCoordinator().listProcedures());
+                                if(integrityErrors.needsToBeRaised())
+                                    throw new RuntimeException("Integrity check failed", integrityErrors);
+                            }
 
                         }
                     }
