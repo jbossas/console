@@ -28,7 +28,6 @@ import com.gwtplatform.mvp.client.annotations.ProxyStandard;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import org.jboss.as.console.client.Console;
-import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.tools.mbui.workbench.ApplicationPresenter;
 import org.jboss.as.console.client.tools.mbui.workbench.ReifyEvent;
@@ -36,17 +35,19 @@ import org.jboss.as.console.client.tools.mbui.workbench.ResetEvent;
 import org.jboss.as.console.client.tools.mbui.workbench.repository.DataSourceSample;
 import org.jboss.as.console.client.tools.mbui.workbench.repository.Sample;
 import org.jboss.as.console.client.tools.mbui.workbench.repository.TransactionSample;
-import org.jboss.mbui.gui.behaviour.Integrity;
-import org.jboss.mbui.gui.behaviour.IntegrityErrors;
 import org.jboss.mbui.gui.behaviour.InteractionCoordinator;
 import org.jboss.mbui.gui.behaviour.as7.CoreGUIContext;
-import org.jboss.mbui.gui.behaviour.as7.CoreGUIContract;
-import org.jboss.mbui.gui.behaviour.as7.ImplictBehaviour;
 import org.jboss.mbui.gui.reification.Context;
-import org.jboss.mbui.gui.reification.ReificationPipeline;
-import org.jboss.mbui.gui.reification.strategy.ContextKey;
+import org.jboss.mbui.gui.reification.ContextKey;
+import org.jboss.mbui.gui.reification.pipeline.BuildUserInterfaceStep;
+import org.jboss.mbui.gui.reification.pipeline.ImplictBehaviourStep;
+import org.jboss.mbui.gui.reification.pipeline.IntegrityStep;
+import org.jboss.mbui.gui.reification.pipeline.ReificationPipeline;
+import org.jboss.mbui.gui.reification.preparation.PopulateContext;
+import org.jboss.mbui.gui.reification.preparation.ReadResourceDescription;
+import org.jboss.mbui.gui.reification.preparation.ReificationPreperation;
 import org.jboss.mbui.gui.reification.strategy.ReificationWidget;
-import org.jboss.mbui.model.structure.InteractionUnit;
+import org.jboss.mbui.model.Dialog;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -54,42 +55,22 @@ import java.util.Map;
 import static org.jboss.as.console.client.tools.mbui.workbench.NameTokens.preview;
 
 /**
- *
  * @author Harald Pehl
  * @author Heiko Braun
- *
  * @date 10/30/2012
  */
 public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, PreviewPresenter.MyProxy>
         implements ReifyEvent.ReifyHandler, ResetEvent.Handler
 {
-
     private Map<String, InteractionCoordinator> coordinators = new HashMap<String, InteractionCoordinator>();
     private String selectedSample = null;
-    private final ReificationPipeline reificationPipeline;
     private DispatchAsync dispatcher;
     private HashMap<String, ReificationWidget> cachedWidgets = new HashMap<String, ReificationWidget>();
-
-    public interface MyView extends View
-    {
-        void show(ReificationWidget interactionUnit);
-    }
-
-    @ProxyStandard
-    @NameToken(preview)
-    public interface MyProxy extends ProxyPlace<PreviewPresenter>
-    {
-    }
-
     @Inject
-    public PreviewPresenter(
-            final EventBus eventBus, final MyView view,
-            final MyProxy proxy, final ReificationPipeline reificationPipeline,
+    public PreviewPresenter(final EventBus eventBus, final MyView view, final MyProxy proxy,
             final DispatchAsync dispatcher)
     {
         super(eventBus, view, proxy);
-        this.reificationPipeline = reificationPipeline;
-
         this.dispatcher = dispatcher;
 
         // these would be created/stored differently. This is just an example
@@ -102,28 +83,27 @@ public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, Preview
                 Console.MODULES.getCurrentUser()
         );
 
-        final InteractionCoordinator txCoordinator = new InteractionCoordinator(transactionSample.getDialog(), statementContext);
-        final InteractionCoordinator dsCoordinator = new InteractionCoordinator(dataSourceSample.getDialog(), statementContext);
+        final InteractionCoordinator txCoordinator = new InteractionCoordinator(transactionSample.getDialog(),
+                statementContext);
+        final InteractionCoordinator dsCoordinator = new InteractionCoordinator(dataSourceSample.getDialog(),
+                statementContext);
 
         coordinators.put(transactionSample.getName(), txCoordinator);
         coordinators.put(dataSourceSample.getName(), dsCoordinator);
-
-    }
-
-    public DispatchAsync getDispatcher() {
-        return dispatcher;
     }
 
     private InteractionCoordinator getActiveCoordinator()
     {
-        if(null==selectedSample)
+        if (null == selectedSample)
+        {
             throw new RuntimeException("No sample selected (requires reification/onBind)");
-
+        }
         return coordinators.get(selectedSample);
     }
 
     @Override
-    protected void onBind() {
+    protected void onBind()
+    {
         super.onBind();
         getEventBus().addHandler(ReifyEvent.getType(), this);
         getEventBus().addHandler(ResetEvent.TYPE, this);
@@ -143,58 +123,47 @@ public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, Preview
         final Sample sample = event.getSample();
         selectedSample = sample.getName();
 
-
-        if(cachedWidgets.get(selectedSample)==null)
+        if (cachedWidgets.get(selectedSample) == null)
         {
-
-            // Step1: reification of the structure
-
-            InteractionUnit interactionUnit = sample.getDialog().getInterfaceModel();
+            // top level interaction unit & context
+            final Dialog dialog = sample.getDialog();
             final Context context = new Context();
 
-            // make the coordinator bus available to the model components
-            context.set(ContextKey.COORDINATOR, getActiveCoordinator().getLocalBus());
-            context.set(ContextKey.STATEMENTS, getActiveCoordinator().getStatementContext());
+            // prepare reification
+            // TODO Should all preparations be in one place?
+            PopulateContext populateContext = new PopulateContext(getActiveCoordinator().getLocalBus(),
+                    getActiveCoordinator(),
+                    getActiveCoordinator().getStatementContext());
+            populateContext.prepare(dialog, context);
 
-            reificationPipeline.execute(interactionUnit, context, new SimpleCallback<Boolean>()
+            ReificationPreperation readResourceDescription = new ReadResourceDescription(dispatcher);
+            readResourceDescription.prepareAsync(dialog, context, new ReificationPreperation.Callback()
             {
                 @Override
-                public void onSuccess(final Boolean successful)
+                public void onSuccess()
                 {
-                    if (successful)
+                    // setup & start the reification pipeline
+                    ReificationPipeline pipeline = new ReificationPipeline(
+                            new BuildUserInterfaceStep(),
+                            new ImplictBehaviourStep(dispatcher),
+                            new IntegrityStep());
+                    pipeline.execute(dialog, context);
+
+                    // show result
+                    ReificationWidget widget = context.get(ContextKey.WIDGET);
+                    if (widget != null)
                     {
-                        ReificationWidget widget = context.get(ContextKey.WIDGET);
-                        if (widget != null)
-                        {
-                            cachedWidgets.put(selectedSample, widget);
-                            getView().show(widget);
-
-                            // Step 2: Parse model and register default behaviour
-
-                            new ImplictBehaviour(sample.getDialog(), new CoreGUIContract()).register(getActiveCoordinator());
-
-                            try {
-                                 // Step 3: Verify integrity
-                                Integrity.check(
-                                        sample.getDialog().getInterfaceModel(),
-                                        getActiveCoordinator().listProcedures()
-                                );
-                            } catch (IntegrityErrors integrityErrors) {
-
-                                if(integrityErrors.needsToBeRaised())
-                                    throw new RuntimeException("Integrity check failed", integrityErrors);
-                            }
-
-                        }
-                    }
-                    else
-                    {
-                        Log.error("Reification failed");
+                        cachedWidgets.put(selectedSample, widget);
+                        getView().show(widget);
                     }
                 }
+
+                @Override
+                public void onError(final Throwable caught)
+                {
+                    Log.error("Reification failed: " + caught.getMessage());
+                }
             });
-
-
         }
         else
         {
@@ -205,7 +174,19 @@ public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, Preview
 
     // in a real this would be wired Presenter.onReset()
     @Override
-    public void doReset() {
+    public void doReset()
+    {
         getActiveCoordinator().onReset();
+    }
+
+    public interface MyView extends View
+    {
+        void show(ReificationWidget interactionUnit);
+    }
+
+    @ProxyStandard
+    @NameToken(preview)
+    public interface MyProxy extends ProxyPlace<PreviewPresenter>
+    {
     }
 }

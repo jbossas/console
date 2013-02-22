@@ -22,7 +22,6 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.layout.SimpleLayout;
 import org.jboss.mbui.gui.reification.Context;
-import org.jboss.mbui.gui.reification.ReificationStrategy;
 import org.jboss.mbui.model.structure.Container;
 import org.jboss.mbui.model.structure.InteractionUnit;
 

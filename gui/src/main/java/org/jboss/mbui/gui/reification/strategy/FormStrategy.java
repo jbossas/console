@@ -37,7 +37,7 @@ import org.jboss.mbui.gui.behaviour.InteractionEvent;
 import org.jboss.mbui.gui.behaviour.PresentationEvent;
 import org.jboss.mbui.gui.behaviour.SystemEvent;
 import org.jboss.mbui.gui.reification.Context;
-import org.jboss.mbui.gui.reification.ReificationStrategy;
+import org.jboss.mbui.gui.reification.ContextKey;
 import org.jboss.mbui.gui.reification.widgets.ModelNodeForm;
 import org.jboss.mbui.model.behaviour.Resource;
 import org.jboss.mbui.model.behaviour.ResourceType;
@@ -54,6 +54,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static org.jboss.mbui.model.behaviour.ResourceType.*;
+import static org.jboss.mbui.model.behaviour.ResourceType.System;
 
 /**
  * @author Harald Pehl
@@ -78,10 +79,10 @@ public class FormStrategy implements ReificationStrategy<ReificationWidget>
             ModelNode modelDescription = descriptions.get(interactionUnit.getId().getNamespaceURI());
             assert modelDescription!=null : "Model description is required to execute FormStrategy";
 
-            EventBus coordinator = context.get(ContextKey.COORDINATOR);
-            assert coordinator!=null : "Coordinator bus is required to execute FormStrategy";
+            EventBus eventBus = context.get(ContextKey.EVENTBUS);
+            assert eventBus!=null : "Coordinator bus is required to execute FormStrategy";
 
-            adapter = new FormAdapter(interactionUnit, coordinator, modelDescription);
+            adapter = new FormAdapter(interactionUnit, eventBus, modelDescription);
         }
         return adapter;
     }

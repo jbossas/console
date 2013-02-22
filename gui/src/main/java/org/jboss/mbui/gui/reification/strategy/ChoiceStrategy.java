@@ -26,7 +26,6 @@ import com.google.gwt.user.client.ui.Widget;
 import org.jboss.mbui.model.structure.Container;
 import org.jboss.mbui.model.structure.InteractionUnit;
 import org.jboss.mbui.gui.reification.Context;
-import org.jboss.mbui.gui.reification.ReificationStrategy;
 import org.jboss.as.console.client.widgets.tabs.DefaultTabLayoutPanel;
 
 import static org.jboss.mbui.model.structure.TemporalOperator.Choice;
