@@ -38,6 +38,12 @@ public abstract class Procedure implements Behaviour, Consumer, Producer {
         }
     };
 
+    public Procedure(QName id) {
+        this.id = id;
+        this.requiredOrigin = null;
+        this.precondition = NOT_GUARDED;
+    }
+
     public Procedure(QName id, QName requiredOrigin) {
         this.id = id;
         this.requiredOrigin = requiredOrigin;
@@ -113,7 +119,7 @@ public abstract class Procedure implements Behaviour, Consumer, Producer {
     }
 
     // --- Consumer ----
-    
+
     @Override
     public boolean doesProduce(Resource<ResourceType> resource) {
         return production.doesProduce(resource);
@@ -127,5 +133,26 @@ public abstract class Procedure implements Behaviour, Consumer, Producer {
     @Override
     public Set<Resource<ResourceType>> getOutputs() {
         return production.getOutputs();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Procedure)) return false;
+
+        Procedure procedure = (Procedure) o;
+
+        if (!id.equals(procedure.id)) return false;
+        if (requiredOrigin != null ? !requiredOrigin.equals(procedure.requiredOrigin) : procedure.requiredOrigin != null)
+            return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = requiredOrigin != null ? requiredOrigin.hashCode() : 0;
+        result = 31 * result + id.hashCode();
+        return result;
     }
 }

@@ -36,8 +36,10 @@ import org.jboss.as.console.client.tools.mbui.workbench.ResetEvent;
 import org.jboss.as.console.client.tools.mbui.workbench.repository.DataSourceSample;
 import org.jboss.as.console.client.tools.mbui.workbench.repository.Sample;
 import org.jboss.as.console.client.tools.mbui.workbench.repository.TransactionSample;
+import org.jboss.mbui.gui.behaviour.Integrity;
 import org.jboss.mbui.gui.behaviour.InteractionCoordinator;
 import org.jboss.mbui.gui.behaviour.as7.CoreGUIContext;
+import org.jboss.mbui.gui.behaviour.as7.CoreGUIContract;
 import org.jboss.mbui.gui.behaviour.as7.ImplictBehaviour;
 import org.jboss.mbui.gui.reification.Context;
 import org.jboss.mbui.gui.reification.ReificationPipeline;
@@ -168,7 +170,11 @@ public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, Preview
 
                             // Step 2: Parse model and register default behaviour
 
-                            new ImplictBehaviour(sample.getDialog(), dispatcher).register(getActiveCoordinator());
+                            new ImplictBehaviour(sample.getDialog(), new CoreGUIContract()).register(getActiveCoordinator());
+
+                            // Step 3: Verify integrity
+
+                            //Integrity.check(sample.getDialog().getInterfaceModel(), getActiveCoordinator().listProcedures());
 
                         }
                     }

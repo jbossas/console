@@ -1,6 +1,5 @@
 package org.jboss.mbui.gui.behaviour.as7;
 
-import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.mbui.gui.behaviour.BehaviourExecution;
 import org.jboss.mbui.model.Dialog;
 import org.jboss.mbui.model.behaviour.Resource;
@@ -17,12 +16,12 @@ import org.jboss.mbui.model.structure.impl.InteractionUnitVisitor;
  */
 public class ImplictBehaviour {
 
-    private DispatchAsync dispatcher;
+    private ProcedureContract contract;
     private final Dialog dialog;
 
-    public ImplictBehaviour(final Dialog dialog, DispatchAsync dispatcher) {
+    public ImplictBehaviour(final Dialog dialog, ProcedureContract contract) {
         this.dialog = dialog;
-        this.dispatcher = dispatcher;
+        this.contract = contract;
     }
 
     public void register(final BehaviourExecution behaviourExecution) {
@@ -55,9 +54,9 @@ public class ImplictBehaviour {
             for(Resource<ResourceType> resource : unit.getOutputs())
             {
                 if(LoadResourceProcedure.ID.equals(resource.getId()))
-                    behaviourContract.registerProcedure(new LoadResourceProcedure(dialog, unit.getId(), dispatcher));
+                    behaviourContract.registerProcedure(new LoadResourceProcedure(dialog, unit.getId(), contract.getDispatcher()));
                 else if(SaveChangesetProcedure.ID.equals(resource.getId()))
-                    behaviourContract.registerProcedure(new SaveChangesetProcedure(dialog, unit.getId(), dispatcher));
+                    behaviourContract.registerProcedure(new SaveChangesetProcedure(dialog, unit.getId(), contract.getDispatcher()));
             }
         }
 

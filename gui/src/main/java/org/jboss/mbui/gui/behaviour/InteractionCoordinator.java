@@ -13,7 +13,9 @@ import org.jboss.mbui.model.Dialog;
 import org.jboss.mbui.model.structure.QName;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -91,11 +93,19 @@ public class InteractionCoordinator implements FrameworkContract,
         return this.bus;
     }
 
+    /**
+     * Procedures of same kind (same ID) can coexist if they can be further distinguished.<br/>
+     * A typical example stock procedures (save, load, etc) that are registered for different origins (interaction units).
+     *
+     * @param procedure
+     */
     @Override
     public void registerProcedure(Procedure procedure)
     {
 
         // TODO: verification of behaviour model
+        // known behaviour -> accept
+        // unknown behaviour -> issue warning
 
         List<Procedure> collection = procedures.get(procedure.getId());
         if(null==collection)
@@ -108,9 +118,19 @@ public class InteractionCoordinator implements FrameworkContract,
         procedure.setCoordinator(this);
         procedure.setStatementContext(statementContext);
 
+        // Some procedures share the same ID, but are further distinguished (i.e by origin)
+        // We need to check if they are equal and prevent registration of
+        // multiple procedures that are of the kind AND discriminator.
+
+        if(collection.contains(procedure))
+            throw new RuntimeException("Procedure already registered:"+ procedure);
+
         collection.add(procedure);
     }
 
+    public Map<QName, List<Procedure>> listProcedures() {
+        return Collections.unmodifiableMap(procedures);
+    }
 
     /**
      * Command entry point

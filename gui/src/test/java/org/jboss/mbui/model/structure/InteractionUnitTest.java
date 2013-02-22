@@ -19,6 +19,7 @@
 package org.jboss.mbui.model.structure;
 
 import org.jboss.mbui.gui.behaviour.IntegrityErrors;
+import org.jboss.mbui.gui.behaviour.Procedure;
 import org.jboss.mbui.model.Dialog;
 import org.jboss.mbui.model.behaviour.Behaviour;
 import org.jboss.mbui.model.behaviour.Resource;
@@ -186,5 +187,21 @@ public class InteractionUnitTest
         });
         assertNotNull(mapping);
         assertEquals("root", mapping.getAddress());
+    }
+
+
+    @Test
+    public void testProcedureEquality()
+    {
+        Procedure proc1 = new Procedure(QName.valueOf("foo.bar:proc")) {};
+        Procedure proc2 = new Procedure(QName.valueOf("foo.bar:proc")) {};
+        Procedure proc3 = new Procedure(QName.valueOf("foo.bar:proc"), QName.valueOf("some:origin")) {};
+        Procedure proc4 = new Procedure(QName.valueOf("foo.bar:proc2")) {};
+        Procedure proc5 = new Procedure(QName.valueOf("foo.bar:proc"), QName.valueOf("some:origin")) {};
+
+        assertEquals(proc1, proc2);
+        assertFalse(proc2.equals(proc3));
+        assertFalse(proc1.equals(proc4));
+        assertEquals(proc3, proc5);
     }
 }
