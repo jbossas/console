@@ -33,7 +33,7 @@ import org.jboss.mbui.gui.behaviour.PresentationEvent;
 import org.jboss.mbui.gui.behaviour.StatementEvent;
 import org.jboss.mbui.gui.behaviour.SystemEvent;
 import org.jboss.mbui.gui.reification.Context;
-import org.jboss.mbui.gui.reification.ReificationStrategy;
+import org.jboss.mbui.gui.reification.ContextKey;
 import org.jboss.mbui.gui.reification.widgets.ModelNodeCellTable;
 import org.jboss.mbui.model.behaviour.Resource;
 import org.jboss.mbui.model.behaviour.ResourceType;
@@ -63,13 +63,13 @@ public class SelectStrategy implements ReificationStrategy<ReificationWidget>
     public ReificationWidget reify(final InteractionUnit interactionUnit, final Context context)
     {
 
-        EventBus coordinator = context.get(ContextKey.COORDINATOR);
-        assert coordinator!=null : "Coordinator bus is required to execute FormStrategy";
+        EventBus eventBus = context.get(ContextKey.EVENTBUS);
+        assert eventBus!=null : "Coordinator bus is required to execute FormStrategy";
 
         ModelNodeCellTableAdapter adapter = null;
         if (interactionUnit != null)
         {
-            adapter = new ModelNodeCellTableAdapter(interactionUnit, coordinator);
+            adapter = new ModelNodeCellTableAdapter(interactionUnit, eventBus);
         }
 
         return adapter;

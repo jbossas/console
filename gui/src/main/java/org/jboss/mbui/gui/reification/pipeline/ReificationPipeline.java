@@ -16,46 +16,42 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.mbui.gui.reification;
+package org.jboss.mbui.gui.reification.pipeline;
 
-import java.util.EnumMap;
-import java.util.Map;
+import org.jboss.mbui.gui.reification.Context;
+import org.jboss.mbui.model.Dialog;
+
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
+ * Entry point for reification of an abstract model to a concrete interface. The reification is split up into several
+ * {@link ReificationStep}s which are executed synchronously in the given order.
+ *
  * @author Harald Pehl
- * @date 10/25/2012
+ * @date 11/12/2012
  */
-public class Context
+public class ReificationPipeline
 {
-    private final Map<ContextKey, Object> data;
+    private final List<ReificationStep> steps;
 
-    public Context()
+
+    public ReificationPipeline(ReificationStep... steps)
     {
-        this.data = new EnumMap<ContextKey, Object>(ContextKey.class);
+        // order is important!
+        this.steps = new LinkedList<ReificationStep>();
+        this.steps.addAll(Arrays.asList(steps));
     }
 
-    public <T> Context set(final ContextKey key, final T value)
+    public void execute(final Dialog dialog, final Context context)
     {
-        data.put(key, value);
-        return this;
-    }
+        assert dialog != null : "Dialog must not be null";
+        assert context != null : "Context unit must not be null";
 
-    public <T> T get(final ContextKey name)
-    {
-        Object value = data.get(name);
-        assert value != null : "Context key " + name + " expected";
-        return (T) value;
-    }
-
-    public boolean has(final ContextKey name)
-    {
-        Object value = data.get(name);
-        return value != null;
-    }
-
-    @Override
-    public String toString()
-    {
-        return "Context " + data;
+        for (ReificationStep step : steps)
+        {
+            step.execute(dialog, context);
+        }
     }
 }

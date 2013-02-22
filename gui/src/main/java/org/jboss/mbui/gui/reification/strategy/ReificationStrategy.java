@@ -18,11 +18,16 @@
  */
 package org.jboss.mbui.gui.reification.strategy;
 
+import org.jboss.mbui.gui.reification.Context;
+import org.jboss.mbui.model.structure.InteractionUnit;
+
 /**
  * @author Harald Pehl
- * @date 11/14/2012
+ * @date 10/25/2012
  */
-public enum ContextKey
+public interface ReificationStrategy<T>
 {
-    WIDGET, MODEL_DESCRIPTIONS, PROPERTIES, COORDINATOR, STATEMENTS
+    T reify(InteractionUnit interactionUnit, Context context);
+
+    boolean appliesTo(InteractionUnit interactionUnit);
 }

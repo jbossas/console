@@ -16,12 +16,11 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.mbui.gui.reification;
+package org.jboss.mbui.gui.reification.pipeline;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
-import org.jboss.mbui.model.structure.InteractionUnit;
-
-import java.util.Iterator;
+import org.jboss.mbui.gui.reification.Context;
+import org.jboss.mbui.gui.reification.ReificationException;
+import org.jboss.mbui.model.Dialog;
 
 /**
  * @author Harald Pehl
@@ -30,41 +29,22 @@ import java.util.Iterator;
 public abstract class ReificationStep
 {
     private final String name;
-    protected InteractionUnit toplevelUnit;
-    protected Context context;
 
     protected ReificationStep(final String name)
     {
         this.name = name;
     }
 
-    public void init(final InteractionUnit interactionUnit, final Context context)
-    {
-        this.toplevelUnit = interactionUnit;
-        this.context = context;
+    public abstract void execute(Dialog dialog,  Context context) throws ReificationException;
 
-        assert !toplevelUnit.hasParent() : "Top level units are not expected to have parents";
-    }
-
-    public boolean isValid()
+    @Override
+    public String toString()
     {
-        return toplevelUnit != null && context != null;
+        return "Step: " + name;
     }
 
     public String getName()
     {
         return name;
-    }
-
-    public abstract void execute(Iterator<ReificationStep> iterator, AsyncCallback<Boolean> outcome);
-
-    protected final void next(final Iterator<ReificationStep> iterator, AsyncCallback<Boolean> outcome)
-    {
-        if (iterator.hasNext())
-        {
-            ReificationStep nextAction = iterator.next();
-            System.out.println("Next " + nextAction.getName());
-            nextAction.execute(iterator, outcome);
-        }
     }
 }

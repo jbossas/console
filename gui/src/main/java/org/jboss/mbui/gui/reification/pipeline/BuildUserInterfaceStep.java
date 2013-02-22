@@ -16,24 +16,27 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.mbui.gui.reification;
+package org.jboss.mbui.gui.reification.pipeline;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
+import org.jboss.mbui.gui.reification.Context;
+import org.jboss.mbui.gui.reification.ReificationException;
+import org.jboss.mbui.gui.reification.StructureLogger;
+import org.jboss.mbui.gui.reification.strategy.ChoiceStrategy;
 import org.jboss.mbui.gui.reification.strategy.ConcurrencyStrategy;
+import org.jboss.mbui.gui.reification.strategy.FormStrategy;
+import org.jboss.mbui.gui.reification.strategy.ReificationStrategy;
+import org.jboss.mbui.gui.reification.strategy.ReificationWidget;
+import org.jboss.mbui.gui.reification.strategy.SelectStrategy;
+import org.jboss.mbui.model.Dialog;
 import org.jboss.mbui.model.structure.Container;
 import org.jboss.mbui.model.structure.InteractionUnit;
 import org.jboss.mbui.model.structure.impl.InteractionUnitVisitor;
-import org.jboss.mbui.gui.reification.strategy.ChoiceStrategy;
-import org.jboss.mbui.gui.reification.strategy.FormStrategy;
-import org.jboss.mbui.gui.reification.strategy.ReificationWidget;
-import org.jboss.mbui.gui.reification.strategy.SelectStrategy;
 
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Stack;
 
-import static org.jboss.mbui.gui.reification.strategy.ContextKey.WIDGET;
+import static org.jboss.mbui.gui.reification.ContextKey.WIDGET;
 
 /**
  * @author Harald Pehl
@@ -58,24 +61,25 @@ public class BuildUserInterfaceStep extends ReificationStep
     }
 
     @Override
-    public void execute(Iterator<ReificationStep> iterator, AsyncCallback<Boolean> outcome)
+    public void execute(final Dialog dialog, final Context context) throws ReificationException
     {
-        if (isValid())
-        {
-            assert !toplevelUnit.hasParent() : "Entry point interaction units are not expected to have parents";
-            BuildUserInterfaceVisitor visitor = new BuildUserInterfaceVisitor();
-            toplevelUnit.accept(visitor);
-            System.out.println(logger.flush());
-            context.set(WIDGET, visitor.root);
-            System.out.println("Finished " + getName());
-        }
-        outcome.onSuccess(Boolean.TRUE);
-        next(iterator, outcome);
+        BuildUserInterfaceVisitor visitor = new BuildUserInterfaceVisitor(context);
+        dialog.getInterfaceModel().accept(visitor);
+        System.out.println(logger.flush());
+        context.set(WIDGET, visitor.root);
+        System.out.println("Finished " + getName());
     }
 
 
     class BuildUserInterfaceVisitor implements InteractionUnitVisitor
     {
+        final Context context;
+
+        BuildUserInterfaceVisitor(final Context context)
+        {
+            this.context = context;
+        }
+
         ReificationWidget root;
         Stack<ReificationWidget> container = new Stack<ReificationWidget>();
 

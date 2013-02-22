@@ -20,9 +20,6 @@ package org.jboss.as.console.client.tools.mbui.workbench.gin;
 
 import com.google.inject.Singleton;
 import com.gwtplatform.mvp.client.gin.AbstractPresenterModule;
-import org.jboss.mbui.gui.reification.BuildUserInterfaceStep;
-import org.jboss.mbui.gui.reification.ReadResourceDescriptionStep;
-import org.jboss.mbui.gui.reification.ReificationPipeline;
 import org.jboss.as.console.client.tools.mbui.workbench.ApplicationPresenter;
 import org.jboss.as.console.client.tools.mbui.workbench.ApplicationView;
 import org.jboss.as.console.client.tools.mbui.workbench.FooterPresenter;
@@ -59,9 +56,6 @@ public class WorkbenchModule extends AbstractPresenterModule
         bindPresenterWidget(RepositoryPresenter.class, RepositoryPresenter.MyView.class, RepositoryView.class);
 
         // Application
-        bind(ReificationPipeline.class).in(Singleton.class);
-        bind(BuildUserInterfaceStep.class).in(Singleton.class);
-        bind(ReadResourceDescriptionStep.class).in(Singleton.class);
         bind(SampleRepository.class).in(Singleton.class);
     }
 }
