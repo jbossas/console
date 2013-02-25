@@ -94,7 +94,7 @@ public class AddressingDetails {
         TextBoxItem dlQ = new TextBoxItem("deadLetterQueue", "Dead Letter Address");
         TextBoxItem expQ= new TextBoxItem("expiryQueue", "Expiry Address");
         NumberBoxItem redelivery = new NumberBoxItem("redeliveryDelay", "Redelivery Delay");
-        NumberBoxItem maxDelivery = new NumberBoxItem("maxDelivery", "Max Delivery Attepmts");
+        NumberBoxItem maxDelivery = new NumberBoxItem("maxDelivery", "Max Delivery Attempts");
 
         form.setFields(dlQ, expQ, redelivery, maxDelivery);
 
@@ -165,8 +165,8 @@ public class AddressingDetails {
         MultipleToOneLayout layout = new MultipleToOneLayout()
                 .setPlain(true)
                 .setHeadlineWidget(serverName)
-                .setDescription("An address setting defines some attributes that are defined against an address wildcard rather than a specific queue.")
-                .setMaster("TODO", addrTable)
+                .setDescription("An address setting defines the attributes that are applied to any address that matches the address setting's name (that can contain wildcards).")
+                .setMaster("Available Address Settings", addrTable)
                 .setMasterTools(tableTools.asWidget())
                 .setDetail("Details", formPanel);
 
