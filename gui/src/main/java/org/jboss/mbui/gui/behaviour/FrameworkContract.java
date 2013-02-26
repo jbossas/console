@@ -9,8 +9,9 @@ package org.jboss.mbui.gui.behaviour;
 public interface FrameworkContract {
 
     void onBind();
-    //void prepareFromRequest();
-    void onReveal();
     void onReset();
-    //void prepareRequest();
+
+    void addStatement(String key, String value);
+    void removeStatement(String key);
+
 }

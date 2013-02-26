@@ -8,12 +8,13 @@ import com.google.web.bindery.event.shared.Event;
 import com.google.web.bindery.event.shared.EventBus;
 import com.google.web.bindery.event.shared.SimpleEventBus;
 import org.jboss.mbui.gui.behaviour.as7.BehaviourMap;
+import org.jboss.mbui.gui.behaviour.as7.SelectStatementProcedure;
+import org.jboss.mbui.gui.behaviour.as7.Tuple;
 import org.jboss.mbui.model.Dialog;
 import org.jboss.mbui.model.behaviour.Resource;
 import org.jboss.mbui.model.behaviour.ResourceType;
 import org.jboss.mbui.model.structure.QName;
 
-import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
@@ -80,6 +81,10 @@ public class InteractionCoordinator implements FrameworkContract,
                 return null;
             }
         };
+
+
+        // global procedures
+        procedures.add(new SelectStatementProcedure(this));
     }
 
     public StatementContext getStatementContext() {
@@ -137,12 +142,6 @@ public class InteractionCoordinator implements FrameworkContract,
     @Override
     public void onBind() {
         bus.fireEvent(BIND);
-    }
-
-    @Override
-    public void onReveal() {
-        bus.fireEvent(REVEAL);
-
     }
 
     @Override
@@ -228,15 +227,17 @@ public class InteractionCoordinator implements FrameworkContract,
 
         Log.debug("StatementEvent " + event.getKey() + "=" + event.getValue());
 
-        if(event.getValue()!=null)
-            statements.put(event.getKey(), event.getValue());
-        else
-            statements.remove(event.getKey());
+        Procedure stmtProcedure = procedures.get(SelectStatementProcedure.ID).iterator().next();
+        stmtProcedure.getCommand().execute(dialog, new Tuple(event.getKey(), event.getValue()));
+    }
 
-        // when statement change, the system will be reset
-        onReset();
+    @Override
+    public void addStatement(String key, String value) {
+        statements.put(key, value);
+    }
 
-        // diagnose
-        statements.dump();
+    @Override
+    public void removeStatement(String key) {
+        statements.remove(key);
     }
 }
