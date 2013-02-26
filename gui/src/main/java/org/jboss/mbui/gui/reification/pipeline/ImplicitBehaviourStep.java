@@ -83,32 +83,7 @@ public class ImplicitBehaviourStep extends ReificationStep
             for(Resource<ResourceType> input : unit.getInputs())
             {
                 // Some of these inputs are implicitly satisfied with the procedures registered as consumers above ...
-                // Match input requirements against existing behaviours
-                // TODO: Does this catch all ?
-                /*boolean matchedOutput = false;
-                Map<QName,Set<Procedure>> existing  = behaviourExecution.listProcedures();
-                for(QName id : existing.keySet())
-                {
-                    Set<Procedure> procedures = existing.get(id);
-                    for(Procedure proc : procedures)
-                    {
-                        if(proc.doesProduce())
-                        {
-                            for(Resource<ResourceType> output : proc.getOutputs())
-                            {
-                                if(output.equals(input))
-                                {
-                                    matchedOutput = true;
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                }
-
-                if(!matchedOutput)
-                    System.out.println("Unit "+unit.getId()+" lacks producer for " + input);
-                    */
+                // Apart from that, there are currently none known behaviours to be registered
             }
         }
     }
