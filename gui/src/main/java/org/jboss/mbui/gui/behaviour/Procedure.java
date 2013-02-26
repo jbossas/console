@@ -104,7 +104,7 @@ public abstract class Procedure implements Behaviour, Consumer, Producer {
     @Override
     public boolean doesConsume(Resource<ResourceType> resource) {
         boolean resourceMatches = consumption.doesConsume(resource);
-        boolean originMatches = (justification == null) || justification.equalsIgnoreSuffix(resource.getSource());
+        boolean originMatches = (justification == null) || justification.equals(resource.getSource());
         return resourceMatches && originMatches;
     }
 

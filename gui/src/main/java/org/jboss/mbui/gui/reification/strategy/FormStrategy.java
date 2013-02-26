@@ -67,7 +67,6 @@ public class FormStrategy implements ReificationStrategy<ReificationWidget>
     private static final QName SAVE_ID = QName.valueOf("org.jboss.as:save");
     private static final QName LOAD_ID = QName.valueOf("org.jboss.as:load");
     private static final QName RESET_ID = QName.valueOf("org.jboss.as:reset");
-    private static final QName UPDATE_ID = QName.valueOf("org.jboss.as:form-update");
 
     @Override
     public ReificationWidget reify(final InteractionUnit interactionUnit, final Context context)
@@ -285,13 +284,12 @@ public class FormStrategy implements ReificationStrategy<ReificationWidget>
             {
                 @Override
                 public boolean accepts(PresentationEvent event) {
-                    boolean isFormUpdate = event.getId().equalsIgnoreSuffix(UPDATE_ID);
-                    boolean matchingId = event.getTarget().equalsIgnoreSuffix(getInteractionUnit().getId());
+                    boolean matchingId = event.getTarget().equals(getInteractionUnit().getId());
 
                     // only single resources accepted (might be collection, see LoadResourceProcedure)
                     boolean payloadMatches = event.getPayload() instanceof ModelNode;
 
-                    return isFormUpdate && matchingId && payloadMatches;
+                    return matchingId && payloadMatches;
                 }
 
                 @Override

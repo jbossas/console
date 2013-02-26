@@ -100,9 +100,12 @@ public class Integrity {
                 for (Behaviour candidate : behaviours.get(id)) {
                     if (candidate.doesProduce(resource)) {
                         match = candidate.getJustification() == null || unit.getId().equals(candidate.getJustification());
-                        break;
                     }
+
+                    if(match)break;
                 }
+
+                if(match)break;
             }
 
             if (!match)

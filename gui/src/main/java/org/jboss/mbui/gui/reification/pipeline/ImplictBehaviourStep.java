@@ -2,6 +2,7 @@ package org.jboss.mbui.gui.reification.pipeline;
 
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.mbui.gui.behaviour.BehaviourExecution;
+import org.jboss.mbui.gui.behaviour.Procedure;
 import org.jboss.mbui.gui.behaviour.as7.LoadResourceProcedure;
 import org.jboss.mbui.gui.behaviour.as7.SaveChangesetProcedure;
 import org.jboss.mbui.gui.reification.Context;
@@ -12,7 +13,11 @@ import org.jboss.mbui.model.behaviour.Resource;
 import org.jboss.mbui.model.behaviour.ResourceType;
 import org.jboss.mbui.model.structure.Container;
 import org.jboss.mbui.model.structure.InteractionUnit;
+import org.jboss.mbui.model.structure.QName;
 import org.jboss.mbui.model.structure.impl.InteractionUnitVisitor;
+
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Naive implementation to register the implicit behaviour (Procedure) with the coordinator.
@@ -58,7 +63,7 @@ public class ImplictBehaviourStep extends ReificationStep
         });
     }
 
-    private void registerDefaultBehaviour(Dialog dialog, InteractionUnit unit, BehaviourExecution behaviourContract) {
+    private void registerDefaultBehaviour(Dialog dialog, InteractionUnit unit, BehaviourExecution behaviourExecution) {
 
         // map consumers to outputs of interaction units
         if(unit.doesProduce())
@@ -66,20 +71,44 @@ public class ImplictBehaviourStep extends ReificationStep
             for(Resource<ResourceType> resource : unit.getOutputs())
             {
                 if(LoadResourceProcedure.ID.equals(resource.getId()))
-                    behaviourContract.addProcedure(new LoadResourceProcedure(dialog, unit.getId(), dispatcher));
+                    behaviourExecution.addProcedure(new LoadResourceProcedure(dialog, unit.getId(), dispatcher));
                 else if(SaveChangesetProcedure.ID.equals(resource.getId()))
-                    behaviourContract.addProcedure(new SaveChangesetProcedure(dialog, unit.getId(), dispatcher));
+                    behaviourExecution.addProcedure(new SaveChangesetProcedure(dialog, unit.getId(), dispatcher));
             }
         }
 
         // map producers to inputs of interaction units
         if(unit.doesConsume())
         {
-            for(Resource<ResourceType> resource : unit.getInputs())
+            for(Resource<ResourceType> input : unit.getInputs())
             {
-                // TODO: Some of these inout are implicitly satisfied with the procedures registered as consumers above ...
-                System.out.println("Unit "+unit.getId()+" lacks producer for " + resource);
-                // currently none available ...
+                // Some of these inputs are implicitly satisfied with the procedures registered as consumers above ...
+                // Match input requirements against existing behaviours
+                // TODO: Does this catch all ?
+                /*boolean matchedOutput = false;
+                Map<QName,Set<Procedure>> existing  = behaviourExecution.listProcedures();
+                for(QName id : existing.keySet())
+                {
+                    Set<Procedure> procedures = existing.get(id);
+                    for(Procedure proc : procedures)
+                    {
+                        if(proc.doesProduce())
+                        {
+                            for(Resource<ResourceType> output : proc.getOutputs())
+                            {
+                                if(output.equals(input))
+                                {
+                                    matchedOutput = true;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if(!matchedOutput)
+                    System.out.println("Unit "+unit.getId()+" lacks producer for " + input);
+                    */
             }
         }
     }

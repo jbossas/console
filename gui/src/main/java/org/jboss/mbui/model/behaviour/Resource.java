@@ -57,7 +57,7 @@ public class Resource<T extends Enum<T>> {
 
         Resource event = (Resource) o;
 
-        if (!id.equals(event.id)) return false;
+        if (!id.equalsIgnoreSuffix(event.id)) return false;
         if (!type.equals(event.type)) return false;
 
         return true;

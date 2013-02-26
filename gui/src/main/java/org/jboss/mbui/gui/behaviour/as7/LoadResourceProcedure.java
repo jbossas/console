@@ -14,12 +14,12 @@ import org.jboss.mbui.gui.behaviour.Precondition;
 import org.jboss.mbui.gui.behaviour.PresentationEvent;
 import org.jboss.mbui.gui.behaviour.Procedure;
 import org.jboss.mbui.gui.behaviour.StatementContext;
+import org.jboss.mbui.model.Dialog;
 import org.jboss.mbui.model.behaviour.Resource;
 import org.jboss.mbui.model.behaviour.ResourceType;
 import org.jboss.mbui.model.mapping.MappingType;
 import org.jboss.mbui.model.mapping.as7.AddressMapping;
 import org.jboss.mbui.model.mapping.as7.ResourceMapping;
-import org.jboss.mbui.model.Dialog;
 import org.jboss.mbui.model.structure.InteractionUnit;
 import org.jboss.mbui.model.structure.QName;
 
@@ -37,7 +37,6 @@ import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 public class LoadResourceProcedure extends Procedure {
 
     public final static QName ID = new QName("org.jboss.as", "load");
-    private final static QName RESULT_ID = QName.valueOf("org.jboss.as:form-update");
 
     private final DispatchAsync dispatcher;
     private final Dialog dialog;
@@ -66,7 +65,7 @@ public class LoadResourceProcedure extends Procedure {
 
         // behaviour model meta data
         setInputs(new Resource<ResourceType>(ID, ResourceType.Event));
-        setOutputs(new Resource<ResourceType>(RESULT_ID, ResourceType.Presentation));
+        setOutputs(new Resource<ResourceType>(source, ResourceType.Presentation));
     }
 
     private void init() {
@@ -129,7 +128,7 @@ public class LoadResourceProcedure extends Procedure {
                     @Override
                     public void execute() {
 
-                        PresentationEvent presentation = new PresentationEvent(RESULT_ID);
+                        PresentationEvent presentation = new PresentationEvent(getJustification());
 
                         // the result is either a single resource or a collection
                         ModelNode result = response.get(RESULT);
