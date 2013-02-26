@@ -37,7 +37,7 @@ public class IntegrityStep extends ReificationStep
 
             if (integrityErrors.needsToBeRaised())
             {
-                Log.error("Integrity errors: " + integrityErrors.getMessage());
+                Log.error(integrityErrors.getMessage());
                 //                throw new RuntimeException("Integrity check failed", integrityErrors);
             }
         }
