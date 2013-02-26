@@ -25,11 +25,11 @@ import java.util.Set;
  * @author Heiko Braun
  * @date 2/21/13
  */
-public class ImplictBehaviourStep extends ReificationStep
+public class ImplicitBehaviourStep extends ReificationStep
 {
     private final DispatchAsync dispatcher;
 
-    public ImplictBehaviourStep(DispatchAsync dispatcher)
+    public ImplicitBehaviourStep(DispatchAsync dispatcher)
     {
         super("implicit behaviour");
         this.dispatcher = dispatcher;

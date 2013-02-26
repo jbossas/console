@@ -40,7 +40,7 @@ import org.jboss.mbui.gui.behaviour.as7.CoreGUIContext;
 import org.jboss.mbui.gui.reification.Context;
 import org.jboss.mbui.gui.reification.ContextKey;
 import org.jboss.mbui.gui.reification.pipeline.BuildUserInterfaceStep;
-import org.jboss.mbui.gui.reification.pipeline.ImplictBehaviourStep;
+import org.jboss.mbui.gui.reification.pipeline.ImplicitBehaviourStep;
 import org.jboss.mbui.gui.reification.pipeline.IntegrityStep;
 import org.jboss.mbui.gui.reification.pipeline.ReificationPipeline;
 import org.jboss.mbui.gui.reification.preparation.PopulateContext;
@@ -145,7 +145,7 @@ public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, Preview
                     // setup & start the reification pipeline
                     ReificationPipeline pipeline = new ReificationPipeline(
                             new BuildUserInterfaceStep(),
-                            new ImplictBehaviourStep(dispatcher),
+                            new ImplicitBehaviourStep(dispatcher),
                             new IntegrityStep());
                     pipeline.execute(dialog, context);
 
