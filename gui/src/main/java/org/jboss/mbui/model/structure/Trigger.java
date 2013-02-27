@@ -9,13 +9,13 @@ package org.jboss.mbui.model.structure;
  */
 public class Trigger extends InteractionUnit {
 
-    protected Trigger(String namespace, String id) {
-        super(namespace, id);
+    public Trigger(String namespace, String id, String label) {
+        super(namespace, id, label);
     }
 
     @Override
     public String toString()
     {
-        return "Trigger {" + getId() + '}';
+        return "Trigger {" + getId() + ", label="+getName()+"}";
     }
 }

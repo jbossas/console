@@ -20,6 +20,8 @@ package org.jboss.as.console.client.tools.mbui.workbench.repository;
 
 import org.jboss.mbui.model.Dialog;
 import org.jboss.mbui.model.structure.QName;
+import org.jboss.mbui.model.structure.Trigger;
+import org.jboss.mbui.model.structure.as7.ToolStrip;
 import org.jboss.mbui.model.structure.impl.Builder;
 import org.jboss.mbui.model.structure.Container;
 import org.jboss.mbui.model.structure.InteractionUnit;
@@ -84,6 +86,11 @@ public class DataSourceSample implements Sample
                     .addMapping(tableMapping)
                     .start(new Container(namespace, "datasource", "Datasource", Choice))
                         .addMapping(singleDataSource)
+                                .start(new ToolStrip(namespace, "datasources", "Tools"))
+                                    .add(new Trigger(namespace, "datasources", "Add"))
+                                    .add(new Trigger(namespace, "datasources", "Remove"))
+                                    .add(new Trigger(namespace, "datasources", "Disable"))
+                                .end()
                             .add(new Form(namespace, "datasource#basicAttributes", "Attributes"))
                             .addMapping(basicAttributesMapping)
                             .add(new Form(namespace, "datasource#connectionAttributes", "Connection"))
