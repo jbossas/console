@@ -56,6 +56,8 @@ import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.shared.properties.PropertyRecordCategory;
 import org.jboss.as.console.client.shared.runtime.ext.Extension;
 import org.jboss.as.console.client.shared.runtime.jpa.model.JPADeployment;
+import org.jboss.as.console.client.shared.runtime.tx.TXParticipant;
+import org.jboss.as.console.client.shared.runtime.tx.TXRecord;
 import org.jboss.as.console.client.shared.subsys.configadmin.model.ConfigAdminData;
 import org.jboss.as.console.client.shared.subsys.deploymentscanner.model.DeploymentScanner;
 import org.jboss.as.console.client.shared.subsys.ejb3.model.AsyncService;
@@ -291,4 +293,7 @@ public interface CoreBeanFactory {
     AutoBean<Path> path();
 
     AutoBean<Extension> extension();
+
+    AutoBean<TXRecord> txRecord();
+    AutoBean<TXParticipant> txParticipant();
 }

@@ -121,6 +121,8 @@ import org.jboss.as.console.client.shared.runtime.jpa.JPAMetricPresenter;
 import org.jboss.as.console.client.shared.runtime.jpa.JPAMetricsView;
 import org.jboss.as.console.client.shared.runtime.naming.JndiPresenter;
 import org.jboss.as.console.client.shared.runtime.naming.JndiView;
+import org.jboss.as.console.client.shared.runtime.tx.TXLogPresenter;
+import org.jboss.as.console.client.shared.runtime.tx.TXLogView;
 import org.jboss.as.console.client.shared.runtime.tx.TXMetricPresenter;
 import org.jboss.as.console.client.shared.runtime.tx.TXMetricViewImpl;
 import org.jboss.as.console.client.shared.runtime.web.WebMetricPresenter;
@@ -586,6 +588,11 @@ public class CoreUIModule extends AbstractPresenterModule {
                 TXMetricPresenter.MyView.class,
                 TXMetricViewImpl.class,
                 TXMetricPresenter.MyProxy.class);
+
+        bindPresenter(TXLogPresenter.class,
+                        TXLogPresenter.MyView.class,
+                        TXLogView.class,
+                        TXLogPresenter.MyProxy.class);
 
         bindPresenter(JpaPresenter.class,
                 JpaPresenter.MyView.class,

@@ -76,6 +76,7 @@ import org.jboss.as.console.client.shared.runtime.env.EnvironmentPresenter;
 import org.jboss.as.console.client.shared.runtime.jms.JMSMetricPresenter;
 import org.jboss.as.console.client.shared.runtime.jpa.JPAMetricPresenter;
 import org.jboss.as.console.client.shared.runtime.naming.JndiPresenter;
+import org.jboss.as.console.client.shared.runtime.tx.TXLogPresenter;
 import org.jboss.as.console.client.shared.runtime.tx.TXMetricPresenter;
 import org.jboss.as.console.client.shared.runtime.web.WebMetricPresenter;
 import org.jboss.as.console.client.shared.runtime.ws.WebServiceRuntimePresenter;
@@ -298,6 +299,7 @@ public interface CoreUI {
     AsyncProvider<StandaloneRuntimePresenter> getRuntimePresenter();
     AsyncProvider<DomainRuntimePresenter> getDomainRuntimePresenter();
     AsyncProvider<TXMetricPresenter> getTXMetricPresenter();
+    AsyncProvider<TXLogPresenter> getTXLogPresenter();
 
     AsyncProvider<JacOrbPresenter> getJacOrbPresenter();
     AsyncProvider<JpaPresenter> getJpaPresenter();

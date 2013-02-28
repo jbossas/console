@@ -43,7 +43,7 @@ public class TXMetricViewImpl extends SuspendableViewImpl implements TXMetricPre
         this.rollbackMetric = new TXRollbackView();
 
         SimpleLayout layout = new SimpleLayout()
-                .setTitle("Transactions")
+                .setTitle("Transaction Manager")
                 .setHeadline("Transaction Metrics")
                 .setDescription(Console.CONSTANTS.subys_tx_metric_desc())
                 .setTopLevelTools(toolStrip.asWidget())

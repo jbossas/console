@@ -69,6 +69,7 @@ public class NameTokens {
     public static final String DomainRuntimePresenter = "domain-runtime";
 
     public static final String TXMetrics = "tx-metrics";
+    public static final String TXLogs = "tx-logs";
     public static final String JpaPresenter = "jpa";
     public static final String MailPresenter = "mail";
     public static final String JMXPresenter = "jmx";
