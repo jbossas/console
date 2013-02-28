@@ -98,7 +98,7 @@ public class ContentRepositoryPanel implements IsWidget
         deploymentData.addDataDisplay(deploymentsTable);
 
         SafeHtmlBuilder tableFooter = new SafeHtmlBuilder();
-        tableFooter.appendHtmlConstant("<span style='font-size:10px;color:#A7ABB4;'>[1] File System Deployment</span>");
+        tableFooter.appendHtmlConstant("<span style='font-size:10px;color:#A7ABB4;'>[1] "+Console.MESSAGES.deployment_filesystem()+"</span>");
 
         Form<DeploymentRecord> form = new Form<DeploymentRecord>(DeploymentRecord.class);
         form.setNumColumns(2);
@@ -154,7 +154,7 @@ public class ContentRepositoryPanel implements IsWidget
                     }
                 }));
 
-        toolStrip.addToolButtonRight(new ToolButton("Assign",
+        toolStrip.addToolButtonRight(new ToolButton(Console.CONSTANTS.common_label_assign(),
                 new ClickHandler()
                 {
                     @Override
@@ -169,7 +169,7 @@ public class ContentRepositoryPanel implements IsWidget
                     }
                 }));
 
-        toolStrip.addToolButtonRight(new ToolButton("Replace",
+        toolStrip.addToolButtonRight(new ToolButton(Console.CONSTANTS.common_label_replace(),
                 new ClickHandler()
                 {
                     @Override
@@ -200,8 +200,8 @@ public class ContentRepositoryPanel implements IsWidget
                 .setMasterTools(toolStrip)
                 .setMasterFooter(new HTML(tableFooter.toSafeHtml()))
                 .setDescription(
-                        "The content repository contains all deployed content. Contents need to be assigned to sever groups in order to become effective.")
-                .addDetail(Console.CONSTANTS.common_label_attributes(), form.asWidget())
+                        Console.MESSAGES.deployment_repo_description())
+                .addDetail("Attributes", form.asWidget())
                 .addDetail("Path", form2.asWidget());
         return layout.build();
     }

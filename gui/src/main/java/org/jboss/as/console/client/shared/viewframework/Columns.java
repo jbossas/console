@@ -37,7 +37,7 @@ public class Columns {
     } 
 
     public static class NameColumn extends TextColumn<NamedEntity> {
-        public static final String LABEL = Console.CONSTANTS.common_label_name();
+        public static final String LABEL = "Name";//Console.CONSTANTS.common_label_name();
         
         @Override
         public String getValue(NamedEntity record) {

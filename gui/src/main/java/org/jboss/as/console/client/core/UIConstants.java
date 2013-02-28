@@ -632,4 +632,18 @@ public interface UIConstants extends Constants {
     String help_close_help();
 
     String common_label_copy();
+
+    String common_label_export();
+
+    String common_label_replace();
+
+    String common_label_assign();
+
+    String common_label_done();
+
+    String commom_label_filter();
+
+    String common_label_probe();
+
+    String common_label_recover();
 }

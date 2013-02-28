@@ -69,7 +69,7 @@ public class SocketGroupList {
         SimpleLayout layoutBuilder = new SimpleLayout()
                 .setPlain(true)
                 .setHeadline("Socket Binding Groups")
-                .setDescription("Please chose a group from below for specific settings.")
+                .setDescription(Console.MESSAGES.pleaseChoseanItem())
                 .addContent(Console.MESSAGES.available("Groups"), table);
 
         return layoutBuilder.build();

@@ -158,4 +158,24 @@ public interface UIMessages extends Messages {
     String server_reload_confirm(String p0);
 
     String subsys_jca_err_ds_enabled(String name);
+
+    String pleaseChoseanItem();
+
+    String path_description();
+
+    String topology_description();
+
+    String topology_no_server();
+
+    String extensions_description();
+
+    String deployment_repo_description();
+
+    String deployment_filesystem();
+
+    String deployments_for_group();
+
+    String environment_description();
+
+    String transaction_log_description();
 }

@@ -1,4 +1,4 @@
 #!/bin/sh
 
-find ./target/i18n/ -name "*.properties" | xargs wc -l
+find ./src/main -name "*.properties" | xargs wc -l
 

@@ -114,7 +114,7 @@ public class HostServerTable {
         tools.setStyleName("fill-layout-width");
         if(description!=null)
             tools.add(new HTML(description));
-        InlineLink refresh = new InlineLink("Refresh");
+        InlineLink refresh = new InlineLink(Console.CONSTANTS.common_label_refresh());
         refresh.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent clickEvent) {
@@ -238,7 +238,7 @@ public class HostServerTable {
         ScrollPanel scroll = new ScrollPanel(millerPanel);
         layout.add(scroll);
 
-        DefaultButton doneBtn = new DefaultButton("Done", new ClickHandler() {
+        DefaultButton doneBtn = new DefaultButton(Console.CONSTANTS.common_label_done(), new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 popup.hide();

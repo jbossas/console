@@ -102,14 +102,14 @@ public class ExtensionView
                 .setTitle("Extensions")
                 .setPlain(true)
                 .setHeadline("Subsystem Extensions")
-                .setDescription("The list of installed extensions. Each extension reflects a subsystem.")
+                .setDescription(Console.MESSAGES.extensions_description())
                 .setMaster(Console.MESSAGES.available("Extensions"), extensionTable)
-                .addDetail(Console.CONSTANTS.common_label_attributes(), form.asWidget());
+                .addDetail("Attributes", form.asWidget());
 
 
         // debug util only available in hosted mode
         ToolStrip tools = new ToolStrip();
-        tools.addToolButtonRight(new ToolButton("Export", new ClickHandler() {
+        tools.addToolButtonRight(new ToolButton(Console.CONSTANTS.common_label_export(), new ClickHandler() {
             @Override
             public void onClick(ClickEvent clickEvent) {
                 presenter.onDumpVersions();

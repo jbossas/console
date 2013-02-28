@@ -70,7 +70,7 @@ public class ServerGroupDeploymentBrowser
                 keyProvider);
 
         ToolStrip tools = new ToolStrip();
-        tools.addToolButtonRight(new ToolButton("Assign", new
+        tools.addToolButtonRight(new ToolButton(Console.CONSTANTS.common_label_assign(), new
                 ClickHandler()
                 {
                     @Override
@@ -113,7 +113,7 @@ public class ServerGroupDeploymentBrowser
         deploymentBrowser = new DeploymentBrowser(deploymentStore, selectionModel);
 
         header = new ContentHeaderLabel();
-        description = new ContentDescription("Deployments assigned to this server group.");
+        description = new ContentDescription(Console.MESSAGES.deployments_for_group());
         SimpleLayout layout = new SimpleLayout()
                 .setPlain(true)
                 .setHeadlineWidget(header)

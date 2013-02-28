@@ -128,7 +128,7 @@ public class EnvironmentProperties {
         });
 
         ToolStrip toolStrip = new ToolStrip();
-        final HTML label = new HTML("Filter:&nbsp;");
+        final HTML label = new HTML(Console.CONSTANTS.commom_label_filter()+":&nbsp;");
         label.getElement().setAttribute("style", "padding-top:8px;");
         toolStrip.addToolWidget(label);
         toolStrip.addToolWidget(filter);
@@ -136,10 +136,10 @@ public class EnvironmentProperties {
         MultipleToOneLayout layout = new MultipleToOneLayout()
                 .setTitle("Environment")
                 .setHeadline("Environment Properties")
-                .setDescription("A map of names and values of all system properties.")
+                .setDescription(Console.MESSAGES.environment_description())
                 .setMaster("", propertyTable)
                 .setMasterTools(toolStrip.asWidget())
-                .addDetail(Console.CONSTANTS.common_label_attributes(), form.asWidget());
+                .addDetail("Attributes", form.asWidget());
 
         return layout.build();
     }

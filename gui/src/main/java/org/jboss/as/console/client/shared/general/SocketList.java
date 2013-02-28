@@ -62,7 +62,7 @@ public class SocketList {
 
         ToolStrip toolstrip = new ToolStrip();
 
-        ToolButton addBtn = new ToolButton("Add", new ClickHandler() {
+        ToolButton addBtn = new ToolButton(Console.CONSTANTS.common_label_add(), new ClickHandler() {
 
             @Override
             public void onClick(ClickEvent event) {
@@ -72,7 +72,7 @@ public class SocketList {
         addBtn.ensureDebugId(Console.DEBUG_CONSTANTS.debug_label_add_socketBindingView());
         toolstrip.addToolButtonRight(addBtn);
 
-        ToolButton removeBtn = new ToolButton("Remove", new ClickHandler() {
+        ToolButton removeBtn = new ToolButton(Console.CONSTANTS.common_label_delete(), new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 final SocketBinding editedEntity = form.getEditedEntity();

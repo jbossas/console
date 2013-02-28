@@ -108,7 +108,7 @@ public class ParticipantsPanel {
 
 
         ToolStrip tools = new ToolStrip();
-        tools.addToolButtonRight(new ToolButton("Recover", new ClickHandler(){
+        tools.addToolButtonRight(new ToolButton(Console.CONSTANTS.common_label_recover(), new ClickHandler(){
             @Override
             public void onClick(ClickEvent clickEvent) {
                 final TXParticipant selection = getSelectedRecord();
@@ -128,7 +128,7 @@ public class ParticipantsPanel {
             }
         }));
 
-        tools.addToolButtonRight(new ToolButton("Refresh", new ClickHandler(){
+        tools.addToolButtonRight(new ToolButton(Console.CONSTANTS.common_label_refresh(), new ClickHandler(){
             @Override
             public void onClick(ClickEvent clickEvent) {
                 final TXParticipant selection = getSelectedRecord();

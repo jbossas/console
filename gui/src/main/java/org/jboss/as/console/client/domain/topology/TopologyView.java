@@ -100,7 +100,7 @@ public class TopologyView extends SuspendableViewImpl implements TopologyPresent
                 .setTitle("Topology")
                 .setPlain(true)
                 .setHeadline("Hosts, groups and server instances")
-                .setDescription("An overview of all hosts, groups and server instances in the domain.");
+                .setDescription(Console.MESSAGES.topology_description());
 
         container = new FlowPanel();
         display = new HostsDisplay();
@@ -138,7 +138,7 @@ public class TopologyView extends SuspendableViewImpl implements TopologyPresent
         if (groups == null || groups.isEmpty())
         {
             // no server/groups available ...
-            Hint blank = new Hint("No server available!");
+            Hint blank = new Hint(Console.MESSAGES.topology_no_server());
             container.clear();
             container.insert(blank, 0);
             return;

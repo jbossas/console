@@ -155,7 +155,7 @@ public class TXLogView extends SuspendableViewImpl implements TXLogPresenter.MyV
 
 
         ToolStrip probe = new ToolStrip();
-        probe.addToolButtonRight(new ToolButton("Probe", new ClickHandler() {
+        probe.addToolButtonRight(new ToolButton(Console.CONSTANTS.common_label_probe(), new ClickHandler() {
             @Override
             public void onClick(ClickEvent clickEvent) {
                 presenter.onProbe(true);
@@ -165,7 +165,7 @@ public class TXLogView extends SuspendableViewImpl implements TXLogPresenter.MyV
         MultipleToOneLayout layout = new MultipleToOneLayout()
                 .setTitle("Transaction Manager")
                 .setHeadline("Transaction Recovery Logs")
-                .setDescription("The persistent information that the transaction manager stores for the purpose of recovering a transaction in the event of failure. The probe operation will add and remove transactions from the model as the corresponding real transactions start and finish the prepare and commit phases. A stuck transaction will remain in the model until either it is completed or explicitly removed by the delete operation.")
+                .setDescription(Console.MESSAGES.transaction_log_description())
                 .setTopLevelTools(probe.asWidget())
                 .setMaster("Transactions", table)
                 .setMasterTools(tools)

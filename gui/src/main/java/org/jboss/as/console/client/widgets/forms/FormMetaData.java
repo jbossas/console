@@ -34,7 +34,7 @@ import java.util.Set;
  * @author Stan Silvert ssilvert@redhat.com (C) 2011 Red Hat Inc.
  */
 public class FormMetaData {
-    public static final String DEFAULT_TAB = Console.CONSTANTS.common_label_attributes();
+    public static final String DEFAULT_TAB = "Attributes";//Console.CONSTANTS.common_label_attributes();
     public static final String CUSTOM_TAB = "CUSTOM";
 
     private Comparator<PropertyBinding> orderComparator = new Comparator<PropertyBinding>() {

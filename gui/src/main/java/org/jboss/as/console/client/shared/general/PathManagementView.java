@@ -41,7 +41,7 @@ public class PathManagementView extends SuspendableViewImpl implements PathManag
     public Widget createWidget() {
         ToolStrip toolstrip = new ToolStrip();
 
-        ToolButton addBtn = new ToolButton("Add", new ClickHandler() {
+        ToolButton addBtn = new ToolButton(Console.CONSTANTS.common_label_add(), new ClickHandler() {
 
             @Override
             public void onClick(ClickEvent event) {
@@ -51,7 +51,7 @@ public class PathManagementView extends SuspendableViewImpl implements PathManag
 
         toolstrip.addToolButtonRight(addBtn);
 
-        ToolButton removeBtn = new ToolButton("Remove", new ClickHandler() {
+        ToolButton removeBtn = new ToolButton(Console.CONSTANTS.common_label_delete(), new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 final Path editedEntity = form.getEditedEntity();
@@ -154,10 +154,10 @@ public class PathManagementView extends SuspendableViewImpl implements PathManag
         MultipleToOneLayout layout = new MultipleToOneLayout()
                 .setTitle("Paths")
                 .setHeadline("Path References")
-                .setDescription("A named filesystem path, but without a requirement to specify the actual path. If no actual path is specified, acts as a placeholder in the model (e.g. at the domain level) until a fully specified path definition is applied at a lower level (e.g. at the host level, where available addresses are known.)")
+                .setDescription(Console.MESSAGES.path_description())
                 .setMaster(Console.MESSAGES.available("Paths"), table)
                 .setMasterTools(toolstrip)
-                .addDetail(Console.CONSTANTS.common_label_attributes(), formLayout.build());
+                .addDetail("Attributes", formLayout.build());
 
 
         return layout.build();
