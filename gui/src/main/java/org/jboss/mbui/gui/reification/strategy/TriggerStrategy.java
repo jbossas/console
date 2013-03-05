@@ -6,6 +6,7 @@ import org.jboss.ballroom.client.widgets.tools.ToolButton;
 import org.jboss.mbui.gui.reification.Context;
 import org.jboss.mbui.gui.reification.ContextKey;
 import org.jboss.mbui.model.structure.InteractionUnit;
+import org.jboss.mbui.model.structure.Trigger;
 import org.jboss.mbui.model.structure.as7.ToolStrip;
 
 /**
@@ -29,7 +30,7 @@ public class TriggerStrategy implements ReificationStrategy<ReificationWidget> {
 
     @Override
     public boolean appliesTo(InteractionUnit interactionUnit) {
-        return interactionUnit instanceof ToolStrip;
+        return interactionUnit instanceof Trigger;
     }
 
     class TriggerAdapter implements ReificationWidget

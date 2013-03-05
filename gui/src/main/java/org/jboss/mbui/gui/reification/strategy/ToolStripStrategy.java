@@ -52,8 +52,8 @@ public class ToolStripStrategy implements ReificationStrategy<ReificationWidget>
         @Override
         public void add(ReificationWidget widget) {
 
-            System.out.println("Add "+ widget.getInteractionUnit() + " to ToolStrip");
-            //tools.addToolWidgetRight(widget.asWidget());
+            //System.out.println("Add "+ widget.getInteractionUnit() + " to " + unit);
+            tools.addToolWidgetRight(widget.asWidget());
         }
 
         @Override

@@ -16,6 +16,6 @@ public class ToolStrip extends Container {
     @Override
     public String toString()
     {
-        return "ToolStrip{" + getId() + '}';
+        return "ToolStrip {" + getId() + '}';
     }
 }

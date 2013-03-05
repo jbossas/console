@@ -126,6 +126,7 @@ public class ChoiceStrategy implements ReificationStrategy<ReificationWidget>
         {
             if (widget != null)
             {
+                //System.out.println("Add "+widget.getInteractionUnit() +" to " + getInteractionUnit());
                 delegate.add(widget.getInteractionUnit(), widget.asWidget());
             }
         }

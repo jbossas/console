@@ -18,7 +18,6 @@
  */
 package org.jboss.mbui.gui.reification.pipeline;
 
-import com.allen_sauer.gwt.log.client.Log;
 import org.jboss.mbui.gui.reification.Context;
 import org.jboss.mbui.gui.reification.ReificationException;
 import org.jboss.mbui.gui.reification.StructureLogger;
@@ -56,8 +55,8 @@ public class BuildUserInterfaceStep extends ReificationStep
         super("build ui");
         this.strategies = new LinkedList<ReificationStrategy<ReificationWidget>>();
         // order is important! add specific strategies first!
-        this.strategies.add(new TriggerStrategy());
         this.strategies.add(new ToolStripStrategy());
+        this.strategies.add(new TriggerStrategy());
         this.strategies.add(new FormStrategy());
         this.strategies.add(new SelectStrategy());
         this.strategies.add(new ConcurrencyStrategy());
@@ -141,6 +140,7 @@ public class BuildUserInterfaceStep extends ReificationStep
             {
                 if (strategy.appliesTo(interactionUnit))
                 {
+                    //System.out.println("Matching strategy "+strategy.getClass()+ " to " + interactionUnit);
                     match = strategy;
                     break;
                 }
