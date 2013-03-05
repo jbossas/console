@@ -48,6 +48,7 @@ import static org.jboss.mbui.model.mapping.MappingType.RESOURCE;
 
 /**
  * TODO Implement caching for resource descriptions (memory, local storage, ...)
+ *
  * @author Harald Pehl
  * @date 11/12/2012
  */
@@ -64,7 +65,7 @@ public class ReadResourceDescription extends ReificationPreperation
     @Override
     public void prepare(final Dialog dialog, final Context context)
     {
-        throw new UnsupportedOperationException("Only async preperation is suported");
+        throw new UnsupportedOperationException("Only async preparation is supported");
     }
 
     @Override
