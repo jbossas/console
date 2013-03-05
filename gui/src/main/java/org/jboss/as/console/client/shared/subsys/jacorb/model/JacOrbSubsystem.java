@@ -195,7 +195,7 @@ public interface JacOrbSubsystem extends NamedEntity, HasProperties {
               localLabel="subsys_jacorb_security",
               formItemTypeForEdit="COMBO_BOX",
               formItemTypeForAdd="COMBO_BOX",
-              acceptedValues={"off", "on"},
+              acceptedValues={"off", "on", "identity", "client"},
               order=160,
               localTabName ="subsys_jacorb_initializersTab")
     public String getSecurity();
