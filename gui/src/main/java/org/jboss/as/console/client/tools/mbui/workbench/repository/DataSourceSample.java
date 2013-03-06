@@ -85,8 +85,8 @@ public class DataSourceSample implements Sample
                     .start(new Container(namespace, "regularDS", "Regular", Concurrency))
 
 
-                        // TODO: support anonymous trigger id's? This would reduce the verbosity of these decalrations.
-                        // Might be derived from the surrounding scope of the interaction unit.
+                        // TODO: support anonymous trigger id's? This would reduce the verbosity of these declarations.
+                        // Might be derived from the surrounding scope of the interaction unit. I.e. dialog ID + UUID
 
                         .start(new ToolStrip(namespace, "datasource", "Tools"))
                             .mappedBy(singleDataSource)
@@ -100,6 +100,11 @@ public class DataSourceSample implements Sample
                                     QName.valueOf("org.jboss.datasource:remove"),
                                     QName.valueOf("org.jboss.as:resource-operation#remove"),
                                     "Remove"))
+                            .add(new Trigger(
+                                QName.valueOf("org.jboss.datasource:enable"),
+                                QName.valueOf("org.jboss.as:resource-operation#enable"),
+                                "Enable"))
+
                             .add(new Trigger(
                                 QName.valueOf("org.jboss.datasource:disable"),
                                 QName.valueOf("org.jboss.as:resource-operation#disable"),

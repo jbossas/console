@@ -4,7 +4,7 @@ import com.google.gwt.user.client.Window;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.dmr.client.ModelNode;
 import org.jboss.dmr.client.Property;
-import org.jboss.mbui.gui.behaviour.ModelDrivenCommand;
+import org.jboss.mbui.gui.behaviour.InteractionCoordinator;
 import org.jboss.mbui.gui.behaviour.Precondition;
 import org.jboss.mbui.gui.behaviour.Procedure;
 import org.jboss.mbui.gui.behaviour.StatementContext;
@@ -21,8 +21,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static org.jboss.dmr.client.ModelDescriptionConstants.OP;
-
 /**
  * Executes an operation on a DMR resource.
  * <p/>
@@ -31,10 +29,12 @@ import static org.jboss.dmr.client.ModelDescriptionConstants.OP;
  * <p/>
  * The operation name is derived from the suffix of {@link Resource} being produced.
  *
+ * @see CommandFactory
+ *
  * @author Heiko Braun
  * @date 1/21/13
  */
-public class DMROperationProcedure extends Procedure {
+public class DMROperationProcedure extends Procedure implements OperationContext {
 
     public final static QName PREFIX = new QName("org.jboss.as", "resource-operation");
 
@@ -59,32 +59,28 @@ public class DMROperationProcedure extends Procedure {
 
         init();
 
-        setCommand(new ModelDrivenCommand() {
-            @Override
-            public void execute(Dialog dialog, Object data) {
-
-                boolean matchedDefault = false;
-
-                // TODO: move this part into initialisation phase of the procedure
-                // oit doesn't need to be executed every time
-                for(DEFAULT_OPERATION op : DEFAULT_OPERATION.values())
-                {
-                    if(op.name().equalsIgnoreCase(operationName))
-                    {
-                        matchedDefault = true;
-                    }
-                }
-
-                if(matchedDefault)
-                {
-                    invokeDefaultOp(operationName, address);
-                }
-                else
-                {
-                    invokeGenericOp(operationName, address);
-                }
+        // chose the right command delegate
+        boolean isDefaultOp = false;
+        for(DEFAULT_OPERATION op : DEFAULT_OPERATION.values())
+        {
+            if(op.name().equalsIgnoreCase(operationName))
+            {
+                isDefaultOp = true;
+                break;
             }
-        });
+        }
+
+        CommandFactory factory = new CommandFactory(dispatcher);
+        if(isDefaultOp)
+        {
+            // common, stock operations
+            setCommand(factory.createCommand(operationName, this));
+        }
+        else
+        {
+            // generic operations
+            setCommand(factory.createGenericCommand(operationName, this));
+        }
 
         // behaviour model meta data
         setInputs(new Resource<ResourceType>(id, ResourceType.Event));
@@ -143,71 +139,35 @@ public class DMROperationProcedure extends Procedure {
 
     }
 
-    private void invokeDefaultOp(final String operationName, AddressMapping address) {
 
-        System.out.println("default op");
-
-        final ModelNode operation = address.asResource(statementContext);
-        operation.get(OP).set(operationName);
-
-
-        System.out.println("> " + operation);
+    @Override
+    public Dialog getDialog() {
+        return dialog;
     }
 
-    private void invokeGenericOp(final String operationName, AddressMapping address) {
+    @Override
+    public InteractionUnit getUnit() {
+        return unit;
+    }
 
+    @Override
+    public AddressMapping getAddress() {
+        return address;
+    }
 
-        final ModelNode operation = address.asResource(statementContext);
-        operation.get(OP).set(operationName);
+    @Override
+    public DispatchAsync getDispatcher() {
+        return dispatcher;
+    }
 
+    @Override
+    public StatementContext getStatementContext() {
+        return statementContext;
+    }
 
-        System.out.println("> " + operation);
-        /*
-        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
-            @Override
-            public void onSuccess(DMRResponse dmrResponse) {
-                final  ModelNode response = dmrResponse.get();
-
-                if (response.isFailure())
-                    Console.error(Console.MESSAGES.failed("Operation " + operationName), response.getFailureDescription());
-
-                Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
-                    @Override
-                    public void execute() {
-
-                        PresentationEvent presentation = new PresentationEvent(getJustification());
-
-                        // the result is either a single resource or a collection
-                        ModelNode result = response.get(RESULT);
-                        if(ModelType.LIST==result.getType())
-                        {
-                            List<ModelNode> collection = result.asList();
-                            List normalized = new ArrayList<ModelNode>(collection.size());
-                            for(ModelNode model : collection)
-                            {
-                                ModelNode payload = model.get(RESULT).asObject();
-                                assignKeyFromAddressNode(payload, model.get(ADDRESS));
-                                normalized.add(payload);
-                            }
-                            presentation.setPayload(normalized);
-                        }
-                        else
-                        {
-                            ModelNode payload = result.asObject();
-                            assignKeyFromAddressNode(payload, operation.get(ADDRESS));
-                            presentation.setPayload(payload);
-                        }
-
-                        // unit and target are the same
-                        presentation.setTarget(getJustification());
-
-                        coordinator.fireEvent(presentation);
-                    }
-                });
-
-            }
-        });    */
-
+    @Override
+    public InteractionCoordinator getCoordinator() {
+        return super.coordinator;
     }
 
     /**

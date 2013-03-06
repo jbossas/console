@@ -55,9 +55,9 @@ import java.util.List;
 public class SelectStrategy implements ReificationStrategy<ReificationWidget>
 {
 
-    final static QName SELECT_ID = QName.valueOf("org.jboss.as:select");
-    final static QName RESET_ID = QName.valueOf("org.jboss.as:reset");
-    final static QName LOAD_ID = QName.valueOf("org.jboss.as:load");
+    public final static QName SELECT_ID = QName.valueOf("org.jboss.as:select");
+    public final static QName RESET_ID = QName.valueOf("org.jboss.as:reset");
+    public final static QName LOAD_ID = QName.valueOf("org.jboss.as:load");
 
     @Override
     public ReificationWidget reify(final InteractionUnit interactionUnit, final Context context)
