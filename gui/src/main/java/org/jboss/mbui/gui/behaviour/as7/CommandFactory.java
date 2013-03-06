@@ -74,20 +74,7 @@ public class CommandFactory {
                                             {
                                                 Console.info(Console.MESSAGES.deleted(label));
 
-                                                // clear the select statement
-                                                context.getCoordinator().fireEvent(
-                                                        new StatementEvent(
-                                                                SelectStrategy.SELECT_ID,
-                                                                "selected.entity",
-                                                                null)
-                                                );
-
-                                                Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
-                                                    @Override
-                                                    public void execute() {
-                                                        context.getCoordinator().onReset();
-                                                    }
-                                                });
+                                                clearReset(context);
 
                                             }
                                         }
@@ -97,6 +84,31 @@ public class CommandFactory {
                         });
             }
         };
+    }
+
+    /**
+     * TODO: This is considered a temporary solution.
+     *
+     * It's difficult to manage the states of all interaction units after modification to the model.
+     * This is a very naiv and pragmatic approach with certain (usability) drawbacks.
+     *
+     * @param context
+     */
+    private void clearReset(final OperationContext context) {
+        // clear the select statement
+        context.getCoordinator().fireEvent(
+                new StatementEvent(
+                        SelectStrategy.SELECT_ID,
+                        "selected.entity",
+                        null)
+        );
+
+        Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+            @Override
+            public void execute() {
+                context.getCoordinator().onReset();
+            }
+        });
     }
 
     private ModelDrivenCommand createAddCmd(OperationContext context) {
@@ -113,8 +125,6 @@ public class CommandFactory {
                 operation.get(OP).set(operationName);
                 final String label = operation.get(ADDRESS).asString();
 
-                System.out.println("> " + operation);
-
                 Feedback.confirm(
                         "Operation: " + operationName ,
                         "Invoke operation " +operationName+ " on " + label + "?",
@@ -123,7 +133,26 @@ public class CommandFactory {
                             public void onConfirmation(boolean confirmed) {
                                 if(confirmed)
                                 {
+                                    dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+                                        @Override
+                                        public void onSuccess(DMRResponse dmrResponse) {
+                                            ModelNode response = dmrResponse.get();
 
+                                            String msg = "Operation " +operationName+ " on " + label;
+
+                                            if(response.isFailure())
+                                            {
+                                                Console.error(Console.MESSAGES.failed(msg), response.getFailureDescription());
+                                            }
+                                            else
+                                            {
+                                                Console.info(Console.MESSAGES.successful(msg));
+
+                                                clearReset(context);
+
+                                            }
+                                        }
+                                    });
                                 }
                             }
                         }
