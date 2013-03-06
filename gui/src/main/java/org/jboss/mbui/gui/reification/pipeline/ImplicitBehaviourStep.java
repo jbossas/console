@@ -3,6 +3,7 @@ package org.jboss.mbui.gui.reification.pipeline;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.mbui.gui.behaviour.BehaviourExecution;
 import org.jboss.mbui.gui.behaviour.Procedure;
+import org.jboss.mbui.gui.behaviour.as7.DMROperationProcedure;
 import org.jboss.mbui.gui.behaviour.as7.LoadResourceProcedure;
 import org.jboss.mbui.gui.behaviour.as7.SaveChangesetProcedure;
 import org.jboss.mbui.gui.reification.Context;
@@ -14,6 +15,7 @@ import org.jboss.mbui.model.behaviour.ResourceType;
 import org.jboss.mbui.model.structure.Container;
 import org.jboss.mbui.model.structure.InteractionUnit;
 import org.jboss.mbui.model.structure.QName;
+import org.jboss.mbui.model.structure.Trigger;
 import org.jboss.mbui.model.structure.impl.InteractionUnitVisitor;
 
 import java.util.Map;
@@ -68,12 +70,26 @@ public class ImplicitBehaviourStep extends ReificationStep
         // map consumers to outputs of interaction units
         if(unit.doesProduce())
         {
-            for(Resource<ResourceType> resource : unit.getOutputs())
+            for(Resource<ResourceType> output : unit.getOutputs())
             {
-                if(LoadResourceProcedure.ID.equals(resource.getId()))
-                    behaviourExecution.addProcedure(new LoadResourceProcedure(dialog, unit.getId(), dispatcher));
-                else if(SaveChangesetProcedure.ID.equals(resource.getId()))
-                    behaviourExecution.addProcedure(new SaveChangesetProcedure(dialog, unit.getId(), dispatcher));
+                if(LoadResourceProcedure.ID.equals(output.getId()))
+                {
+                    behaviourExecution.addProcedure(
+                            new LoadResourceProcedure(dialog, unit.getId(), dispatcher)
+                    );
+                }
+                else if(SaveChangesetProcedure.ID.equals(output.getId()))
+                {
+                    behaviourExecution.addProcedure(
+                            new SaveChangesetProcedure(dialog, unit.getId(), dispatcher)
+                    );
+                }
+                else if(DMROperationProcedure.PREFIX.equalsIgnoreSuffix(output.getId()))
+                {
+                    behaviourExecution.addProcedure(
+                            new DMROperationProcedure(dialog, output.getId(), unit.getId(), dispatcher)
+                    );
+                }
             }
         }
 

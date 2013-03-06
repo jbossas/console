@@ -1,17 +1,11 @@
 package org.jboss.mbui.gui.behaviour.as7;
 
-import com.google.gwt.core.client.Scheduler;
-import org.jboss.as.console.client.Console;
-import org.jboss.as.console.client.domain.model.SimpleCallback;
+import com.google.gwt.user.client.Window;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
-import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
-import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.dmr.client.ModelNode;
-import org.jboss.dmr.client.ModelType;
 import org.jboss.dmr.client.Property;
 import org.jboss.mbui.gui.behaviour.ModelDrivenCommand;
 import org.jboss.mbui.gui.behaviour.Precondition;
-import org.jboss.mbui.gui.behaviour.PresentationEvent;
 import org.jboss.mbui.gui.behaviour.Procedure;
 import org.jboss.mbui.gui.behaviour.StatementContext;
 import org.jboss.mbui.model.Dialog;
@@ -23,33 +17,43 @@ import org.jboss.mbui.model.mapping.as7.ResourceMapping;
 import org.jboss.mbui.model.structure.InteractionUnit;
 import org.jboss.mbui.model.structure.QName;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static org.jboss.dmr.client.ModelDescriptionConstants.*;
+import static org.jboss.dmr.client.ModelDescriptionConstants.OP;
 
 /**
+ * Executes an operation on a DMR resource.
+ * <p/>
+ * The actual entity address is resolved from the {@link ResourceMapping}
+ * attached to the {@link InteractionUnit} that triggered this procedure (justification).
+ * <p/>
+ * The operation name is derived from the suffix of {@link Resource} being produced.
+ *
  * @author Heiko Braun
  * @date 1/21/13
  */
-public class LoadResourceProcedure extends Procedure {
+public class DMROperationProcedure extends Procedure {
 
-    public final static QName ID = new QName("org.jboss.as", "load");
+    public final static QName PREFIX = new QName("org.jboss.as", "resource-operation");
+
+    private enum DEFAULT_OPERATION { ADD, REMOVE };
 
     private final DispatchAsync dispatcher;
     private final Dialog dialog;
 
     private InteractionUnit unit;
     private AddressMapping address;
+    private String operationName;
 
-    public LoadResourceProcedure (
+    public DMROperationProcedure (
             final Dialog dialog,
+            final QName id,
             final QName justification,
             DispatchAsync dispatcher) {
 
-        super(ID, justification);
+        super(id, justification);
         this.dialog = dialog;
         this.dispatcher = dispatcher;
 
@@ -59,20 +63,47 @@ public class LoadResourceProcedure extends Procedure {
             @Override
             public void execute(Dialog dialog, Object data) {
 
-                loadResource(unit.getName(), address);
+                boolean matchedDefault = false;
+
+                // TODO: move this part into initialisation phase of the procedure
+                // oit doesn't need to be executed every time
+                for(DEFAULT_OPERATION op : DEFAULT_OPERATION.values())
+                {
+                    if(op.name().equalsIgnoreCase(operationName))
+                    {
+                        matchedDefault = true;
+                    }
+                }
+
+                if(matchedDefault)
+                {
+                    invokeDefaultOp(operationName, address);
+                }
+                else
+                {
+                    invokeGenericOp(operationName, address);
+                }
             }
         });
 
         // behaviour model meta data
-        setInputs(new Resource<ResourceType>(ID, ResourceType.Event));
-        setOutputs(new Resource<ResourceType>(justification, ResourceType.Presentation));
+        setInputs(new Resource<ResourceType>(id, ResourceType.Event));
+
     }
 
     private void init() {
         unit = dialog.findUnit(getJustification());
+        operationName = getId().getSuffix();
+
+        if(operationName==null)
+            throw new IllegalArgumentException("Illegal operation name mapping: "+ unit.getId()+ " (suffix required)");
 
         ResourceMapping resourceMapping = unit.findMapping(MappingType.RESOURCE);
         address = AddressMapping.fromString(resourceMapping.getAddress());
+
+
+        // TODO: Refactor init procedure into default precondition ...
+        // it appears in several procedures
 
         // check preconditions of the address token
         final Set<String> requiredStatements = new HashSet<String>();
@@ -100,7 +131,10 @@ public class LoadResourceProcedure extends Procedure {
                     for(String key : requiredStatements)
                     {
                         isMet = statementContext.resolve(key)!=null;
-                        if(!isMet) break; // exit upon first value expression that cannot be resolved
+                        if(!isMet) {
+                            Window.alert("Required statement not given: " + key);
+                            break; // exit upon first value expression that cannot be resolved
+                        }
                     }
                     return isMet;
                 }
@@ -109,20 +143,33 @@ public class LoadResourceProcedure extends Procedure {
 
     }
 
-    private void loadResource(final String name, AddressMapping address) {
+    private void invokeDefaultOp(final String operationName, AddressMapping address) {
+
+        System.out.println("default op");
+
+        final ModelNode operation = address.asResource(statementContext);
+        operation.get(OP).set(operationName);
+
+
+        System.out.println("> " + operation);
+    }
+
+    private void invokeGenericOp(final String operationName, AddressMapping address) {
 
 
         final ModelNode operation = address.asResource(statementContext);
-        operation.get(OP).set(READ_RESOURCE_OPERATION);
-        operation.get(INCLUDE_RUNTIME).set(true);
+        operation.get(OP).set(operationName);
 
+
+        System.out.println("> " + operation);
+        /*
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
             public void onSuccess(DMRResponse dmrResponse) {
                 final  ModelNode response = dmrResponse.get();
 
                 if (response.isFailure())
-                    Console.error(Console.MESSAGES.modificationFailed(name), response.getFailureDescription());
+                    Console.error(Console.MESSAGES.failed("Operation " + operationName), response.getFailureDescription());
 
                 Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
                     @Override
@@ -159,7 +206,7 @@ public class LoadResourceProcedure extends Procedure {
                 });
 
             }
-        });
+        });    */
 
     }
 
@@ -178,6 +225,6 @@ public class LoadResourceProcedure extends Procedure {
 
     @Override
     public String toString() {
-        return "LoadResource "+ getJustification();
+        return "DMROperation "+ getJustification();
     }
 }

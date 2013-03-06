@@ -26,7 +26,7 @@ import java.util.HashMap;
  * <p/>
  * The {@link org.jboss.mbui.gui.behaviour.StatementContext} is used to resolve the resource parent context (i.e. profile, server, host).
  * <p/>
- * The actual address is resolved from the {@link ResourceMapping} attached to the {@link InteractionUnit} that triggered this procedure.
+ * The actual address is resolved from the {@link ResourceMapping} attached to the {@link InteractionUnit} that triggered this procedure (justification).
  *
  * @see org.jboss.mbui.gui.behaviour.InteractionEvent#getSource()
  *
@@ -44,10 +44,10 @@ public class SaveChangesetProcedure extends Procedure {
 
     public SaveChangesetProcedure(
             Dialog dialog,
-            final QName source,
+            final QName justification,
             DispatchAsync dispatcher) {
 
-        super(ID, source);
+        super(ID, justification);
         this.dialog = dialog;
         this.dispatcher = dispatcher;
 

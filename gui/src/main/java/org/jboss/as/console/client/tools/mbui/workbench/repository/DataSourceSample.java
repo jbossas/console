@@ -65,7 +65,7 @@ public class DataSourceSample implements Sample
 
         // maps to a specific datasource
         ResourceMapping singleDataSource = new ResourceMapping(namespace)
-                        .setAddress("/{selected.profile}/subsystem=datasources/data-source={selected.entity}");
+                .setAddress("/{selected.profile}/subsystem=datasources/data-source={selected.entity}");
 
         Mapping tableMapping = new ResourceMapping(namespace)
                 .addAttributes("entity.key","jndi-name", "enabled");
@@ -79,27 +79,42 @@ public class DataSourceSample implements Sample
 
         // UI
         InteractionUnit root = new Builder()
-            .start(new Container(namespace, "datasources", "Datasources", Choice))
-            .addMapping(datasourceCollection)
+                .start(new Container(namespace, "datasources", "Datasources", Choice))
+                .addMapping(datasourceCollection)
                 .start(new Container(namespace, "regularDS", "Regular", Concurrency))
-                        .start(new ToolStrip(namespace, "datasources", "Tools"))
-                            .add(new Trigger(namespace, "datasources#add", "Add"))
-                            .add(new Trigger(namespace, "datasources#remove", "Remove"))
-                            .add(new Trigger(namespace, "datasources#disable", "Disable"))
-                        .end()
-                    .add(new Select(namespace, "datasources", "DatasourceList"))
+
+                .start(new ToolStrip(namespace, "datasource", "Tools"))
+                    .addMapping(singleDataSource)
+                    .add(new Trigger(
+                        QName.valueOf("org.jboss.datasource:add"),
+                        QName.valueOf("org.jboss.as:resource-operation#add"),
+                        "Add"))
+                            .addMapping(datasourceCollection)
+
+                    .add(new Trigger(
+                        QName.valueOf("org.jboss.datasource:remove"),
+                        QName.valueOf("org.jboss.as:resource-operation#remove"),
+                        "Remove"))
+                    .add(new Trigger(
+                        QName.valueOf("org.jboss.datasource:disable"),
+                        QName.valueOf("org.jboss.as:resource-operation#disable"),
+                        "Disable"))
+                .end()
+
+
+                .add(new Select(namespace, "datasources", "DatasourceList"))
                     .addMapping(tableMapping)
-                    .start(new Container(namespace, "datasource", "Datasource", Choice))
-                        .addMapping(singleDataSource)
-                            .add(new Form(namespace, "datasource#basicAttributes", "Attributes"))
-                            .addMapping(basicAttributesMapping)
-                            .add(new Form(namespace, "datasource#connectionAttributes", "Connection"))
-                            .addMapping(connectionAttributesMapping)
-                    .end()
+                .start(new Container(namespace, "datasource", "Datasource", Choice))
+                    .addMapping(singleDataSource)
+                    .add(new Form(namespace, "datasource#basicAttributes", "Attributes"))
+                        .addMapping(basicAttributesMapping)
+                    .add(new Form(namespace, "datasource#connectionAttributes", "Connection"))
+                        .addMapping(connectionAttributesMapping)
+                .end()
                 .end()
                 .start(new Container(namespace, "xsDS", "XA", Concurrency))
                 .end()
-            .end().build();
+                .end().build();
 
         Dialog dialog = new Dialog(QName.valueOf("org.jboss.as7:datasource-subsystem"), root);
         return dialog;

@@ -216,6 +216,14 @@ public class QName {
         return localPart;
     }
 
+    public String getSuffix() {
+        int i = localPart.indexOf("#");
+        if(i!=-1)
+            return localPart.substring(i+1, localPart.length());
+        else
+            return null;
+    }
+
     /**
      * <p>Get the prefix of this <code>QName</code>.</p>
      *

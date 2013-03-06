@@ -8,13 +8,9 @@ import org.jboss.ballroom.client.widgets.tools.ToolButton;
 import org.jboss.mbui.gui.behaviour.InteractionEvent;
 import org.jboss.mbui.gui.reification.Context;
 import org.jboss.mbui.gui.reification.ContextKey;
-import org.jboss.mbui.model.behaviour.Resource;
-import org.jboss.mbui.model.behaviour.ResourceType;
 import org.jboss.mbui.model.structure.InteractionUnit;
+import org.jboss.mbui.model.structure.QName;
 import org.jboss.mbui.model.structure.Trigger;
-import org.jboss.mbui.model.structure.as7.ToolStrip;
-
-import static org.jboss.mbui.model.behaviour.ResourceType.Event;
 
 /**
  * @author Heiko Braun
@@ -25,6 +21,10 @@ public class TriggerStrategy implements ReificationStrategy<ReificationWidget> {
     @Override
     public ReificationWidget reify(InteractionUnit interactionUnit, Context context) {
         TriggerAdapter adapter = null;
+
+        // requirement, see Trigger implementation
+        assert interactionUnit.doesProduce();
+
         if (interactionUnit != null)
         {
             EventBus eventBus = context.get(ContextKey.EVENTBUS);
@@ -56,18 +56,20 @@ public class TriggerStrategy implements ReificationStrategy<ReificationWidget> {
                 @Override
                 public void onClick(ClickEvent clickEvent) {
 
-                    InteractionEvent triggerEvent = new InteractionEvent(interactionUnit.getId());
+                    QName trigger = interactionUnit.getOutputs().iterator().next().getId();
+                    QName justification = interactionUnit.getId();
+
+                    InteractionEvent triggerEvent = new InteractionEvent(trigger);
 
                     eventBus.fireEventFromSource(
                             triggerEvent,
-                            interactionUnit.getId()
+                            justification
                     );
                 }
             });
 
-            // register model constraints
-            Resource<ResourceType> triggerDeclaration = new Resource<ResourceType>(interactionUnit.getId(), Event);
-            interactionUnit.setOutputs(triggerDeclaration);
+            // NOTE: the output is declared within the constructor of a trigger unit
+
         }
 
         @Override
