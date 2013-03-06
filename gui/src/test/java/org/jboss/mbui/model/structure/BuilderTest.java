@@ -57,7 +57,7 @@ public class BuilderTest
     @Test(expected = IllegalStateException.class)
     public void addMappingWithoutCurrent()
     {
-        cut.addMapping(mappingFixture);
+        cut.mappedBy(mappingFixture);
     }
 
     @Test(expected = IllegalStateException.class)

@@ -80,41 +80,51 @@ public class DataSourceSample implements Sample
         // UI
         InteractionUnit root = new Builder()
                 .start(new Container(namespace, "datasources", "Datasources", Choice))
-                .addMapping(datasourceCollection)
-                .start(new Container(namespace, "regularDS", "Regular", Concurrency))
+                .mappedBy(datasourceCollection)
 
-                .start(new ToolStrip(namespace, "datasource", "Tools"))
-                    .addMapping(singleDataSource)
-                    .add(new Trigger(
-                        QName.valueOf("org.jboss.datasource:add"),
-                        QName.valueOf("org.jboss.as:resource-operation#add"),
-                        "Add"))
-                            .addMapping(datasourceCollection)
-
-                    .add(new Trigger(
-                        QName.valueOf("org.jboss.datasource:remove"),
-                        QName.valueOf("org.jboss.as:resource-operation#remove"),
-                        "Remove"))
-                    .add(new Trigger(
-                        QName.valueOf("org.jboss.datasource:disable"),
-                        QName.valueOf("org.jboss.as:resource-operation#disable"),
-                        "Disable"))
-                .end()
+                    .start(new Container(namespace, "regularDS", "Regular", Concurrency))
 
 
-                .add(new Select(namespace, "datasources", "DatasourceList"))
-                    .addMapping(tableMapping)
-                .start(new Container(namespace, "datasource", "Datasource", Choice))
-                    .addMapping(singleDataSource)
-                    .add(new Form(namespace, "datasource#basicAttributes", "Attributes"))
-                        .addMapping(basicAttributesMapping)
-                    .add(new Form(namespace, "datasource#connectionAttributes", "Connection"))
-                        .addMapping(connectionAttributesMapping)
+                        // TODO: support anonymous trigger id's? This would reduce the verbosity of these decalrations.
+                        // Might be derived from the surrounding scope of the interaction unit.
+
+                        .start(new ToolStrip(namespace, "datasource", "Tools"))
+                            .mappedBy(singleDataSource)
+                            .add(new Trigger(
+                                QName.valueOf("org.jboss.datasource:add"),
+                                QName.valueOf("org.jboss.as:resource-operation#add"),
+                                "Add"))
+                                    .mappedBy(datasourceCollection)
+
+                            .add(new Trigger(
+                                    QName.valueOf("org.jboss.datasource:remove"),
+                                    QName.valueOf("org.jboss.as:resource-operation#remove"),
+                                    "Remove"))
+                            .add(new Trigger(
+                                QName.valueOf("org.jboss.datasource:disable"),
+                                QName.valueOf("org.jboss.as:resource-operation#disable"),
+                                "Disable"))
+                        .end()
+
+
+                        .add(new Select(namespace, "datasources", "DatasourceList"))
+                            .mappedBy(tableMapping)
+
+                        .start(new Container(namespace, "datasource", "Datasource", Choice))
+                            .mappedBy(singleDataSource)
+                                .add(new Form(namespace, "datasource#basicAttributes", "Attributes"))
+                                    .mappedBy(basicAttributesMapping)
+                                .add(new Form(namespace, "datasource#connectionAttributes", "Connection"))
+                                    .mappedBy(connectionAttributesMapping)
+                        .end()
+                    .end()
+
+                    .start(new Container(namespace, "xsDS", "XA", Concurrency))
+                    .end()
+
                 .end()
-                .end()
-                .start(new Container(namespace, "xsDS", "XA", Concurrency))
-                .end()
-                .end().build();
+
+                .build();
 
         Dialog dialog = new Dialog(QName.valueOf("org.jboss.as7:datasource-subsystem"), root);
         return dialog;

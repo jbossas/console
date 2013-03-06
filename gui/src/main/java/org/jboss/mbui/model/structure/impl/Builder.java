@@ -66,7 +66,7 @@ public final class Builder
         return this;
     }
 
-    public Builder addMapping(Mapping mapping)
+    public Builder mappedBy(Mapping mapping)
     {
         if (current == null)
         {

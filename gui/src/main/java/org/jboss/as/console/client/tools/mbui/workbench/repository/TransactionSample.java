@@ -82,11 +82,11 @@ public class TransactionSample implements Sample
         // structure & mapping
         InteractionUnit root = new Builder()
                 .start(overview)
-                .addMapping(global)
-                    .add(basicAttributes).addMapping(basicAttributesMapping)
+                .mappedBy(global)
+                    .add(basicAttributes).mappedBy(basicAttributesMapping)
                     .start(details)
-                        .add(processAttributes).addMapping(processMapping)
-                        .add(recoveryAttributes).addMapping(recoveryMapping)
+                        .add(processAttributes).mappedBy(processMapping)
+                        .add(recoveryAttributes).mappedBy(recoveryMapping)
                     .end()
                 .end()
                 .build();
