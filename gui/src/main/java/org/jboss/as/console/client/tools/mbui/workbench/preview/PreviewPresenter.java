@@ -44,6 +44,7 @@ import org.jboss.mbui.gui.reification.pipeline.ImplicitBehaviourStep;
 import org.jboss.mbui.gui.reification.pipeline.IntegrityStep;
 import org.jboss.mbui.gui.reification.pipeline.ReificationPipeline;
 import org.jboss.mbui.gui.reification.preparation.PopulateContext;
+import org.jboss.mbui.gui.reification.preparation.ReadOperationDescriptions;
 import org.jboss.mbui.gui.reification.preparation.ReadResourceDescription;
 import org.jboss.mbui.gui.reification.preparation.ReificationPreperation;
 import org.jboss.mbui.gui.reification.strategy.ReificationWidget;
@@ -68,7 +69,7 @@ public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, Preview
     private HashMap<String, ReificationWidget> cachedWidgets = new HashMap<String, ReificationWidget>();
     @Inject
     public PreviewPresenter(final EventBus eventBus, final MyView view, final MyProxy proxy,
-            final DispatchAsync dispatcher)
+                            final DispatchAsync dispatcher)
     {
         super(eventBus, view, proxy);
         this.dispatcher = dispatcher;
@@ -130,46 +131,82 @@ public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, Preview
             final Context context = new Context();
 
             // prepare reification
-            // TODO Should all preparations be in one place?
-            PopulateContext populateContext = new PopulateContext(getActiveCoordinator().getLocalBus(),
+
+
+            PopulateContext populateContext = new PopulateContext(
+                    getActiveCoordinator().getLocalBus(),
                     getActiveCoordinator(),
-                    getActiveCoordinator().getStatementContext());
+                    getActiveCoordinator().getStatementContext()
+            );
+
+            // Setup the context
             populateContext.prepare(dialog, context);
 
-            ReificationPreperation readResourceDescription = new ReadResourceDescription(dispatcher);
-            readResourceDescription.prepareAsync(dialog, context, new ReificationPreperation.Callback()
-            {
-                @Override
-                public void onSuccess()
-                {
-                    // setup & start the reification pipeline
-                    ReificationPipeline pipeline = new ReificationPipeline(
-                            new BuildUserInterfaceStep(),
-                            new ImplicitBehaviourStep(dispatcher),
-                            new IntegrityStep());
-                    pipeline.execute(dialog, context);
+            // Retrieve operation meta data
+            proceedWithOperationDescriptions(dialog, context);
 
-                    // show result
-                    ReificationWidget widget = context.get(ContextKey.WIDGET);
-                    if (widget != null)
-                    {
-                        cachedWidgets.put(selectedSample, widget);
-                        getView().show(widget);
-                    }
-                }
-
-                @Override
-                public void onError(final Throwable caught)
-                {
-                    Log.error("Reification failed: " + caught.getMessage());
-                }
-            });
         }
         else
         {
             getView().show(cachedWidgets.get(selectedSample));
         }
 
+    }
+
+    // 2.)  Retrieve operation meta data
+    private void proceedWithOperationDescriptions(final Dialog dialog, final Context context) {
+
+        ReadOperationDescriptions operationMetaData = new ReadOperationDescriptions(dispatcher);
+        operationMetaData.prepareAsync(dialog, context, new ReificationPreperation.Callback()
+        {
+            @Override
+            public void onError(Throwable caught) {
+                Log.error("Reification failed: " + caught.getMessage());
+            }
+
+            @Override
+            public void onSuccess() {
+
+                Log.info("Successfully retrieved operation meta data");
+                proceedWithResourceDescriptions(dialog, context);
+            }
+        });
+    }
+
+    // 3.) Retrieve resource meta data
+    private void proceedWithResourceDescriptions(final Dialog dialog, final Context context) {
+
+        ReificationPreperation readResourceDescription = new ReadResourceDescription(dispatcher);
+        readResourceDescription.prepareAsync(dialog, context, new ReificationPreperation.Callback()
+        {
+            @Override
+            public void onSuccess()
+            {
+
+                Log.info("Successfully retrieved resource meta data");
+
+                // setup & start the reification pipeline
+                ReificationPipeline pipeline = new ReificationPipeline(
+                        new BuildUserInterfaceStep(),
+                        new ImplicitBehaviourStep(dispatcher),
+                        new IntegrityStep());
+                pipeline.execute(dialog, context);
+
+                // show result
+                ReificationWidget widget = context.get(ContextKey.WIDGET);
+                if (widget != null)
+                {
+                    cachedWidgets.put(selectedSample, widget);
+                    getView().show(widget);
+                }
+            }
+
+            @Override
+            public void onError(final Throwable caught)
+            {
+                Log.error("Reification failed: " + caught.getMessage());
+            }
+        });
     }
 
     // in a real this would be wired Presenter.onReset()

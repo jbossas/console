@@ -117,6 +117,9 @@ public class CommandFactory {
 
     public ModelDrivenCommand createGenericCommand(final String operationName, final OperationContext context) {
 
+
+        // TODO: analyse the operation meta data and request users input (parameters) if necessary
+
         return new ModelDrivenCommand() {
             @Override
             public void execute(Dialog dialog, Object data) {
