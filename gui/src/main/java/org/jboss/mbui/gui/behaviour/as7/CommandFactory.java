@@ -112,7 +112,12 @@ public class CommandFactory {
     }
 
     private ModelDrivenCommand createAddCmd(OperationContext context) {
-        return null;
+        return new ModelDrivenCommand() {
+            @Override
+            public void execute(Dialog dialog, Object data) {
+
+            }
+        };
     }
 
     public ModelDrivenCommand createGenericCommand(final String operationName, final OperationContext context) {
