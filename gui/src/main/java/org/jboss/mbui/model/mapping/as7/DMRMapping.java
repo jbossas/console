@@ -30,25 +30,25 @@ import java.util.List;
  * @author Harald Pehl
  * @date 10/25/2012
  */
-public class ResourceMapping extends Mapping
+public class DMRMapping extends Mapping
 {
     private String address;
     private final List<ResourceAttribute> attributes;
 
-    public ResourceMapping(final String namespace)
+    public DMRMapping(final String namespace)
     {
-        super(MappingType.RESOURCE, namespace);
+        super(MappingType.DMR, namespace);
         this.attributes = new ArrayList<ResourceAttribute>();
     }
 
-    public ResourceMapping setAddress(String address)
+    public DMRMapping setAddress(String address)
     {
         assert address != null : "Address must not be null";
         this.address = address;
         return this;
     }
 
-    public ResourceMapping addAttributes(final String... attributes)
+    public DMRMapping addAttributes(final String... attributes)
     {
         for (String attribute : attributes)
         {
@@ -61,7 +61,7 @@ public class ResourceMapping extends Mapping
     }
 
     // TODO: Required? What's the purpose?
-    public ResourceMapping addAttribute(final ResourceAttribute attribute)
+    public DMRMapping addAttribute(final ResourceAttribute attribute)
     {
         if (attribute != null)
         {
@@ -82,13 +82,13 @@ public class ResourceMapping extends Mapping
 
     @Override
     public void complementFrom(Mapping parent) {
-        if(parent instanceof ResourceMapping)
+        if(parent instanceof DMRMapping)
         {
-            ResourceMapping parentResourceMapping = (ResourceMapping)parent;
+            DMRMapping parentDMRMapping = (DMRMapping)parent;
 
             // complementFrom address if not available
             if(null==this.address)
-                this.address = parentResourceMapping.getAddress();
+                this.address = parentDMRMapping.getAddress();
         }
     }
 }

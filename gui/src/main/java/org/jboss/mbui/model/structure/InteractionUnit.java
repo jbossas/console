@@ -22,7 +22,6 @@ import org.jboss.mbui.model.behaviour.Consumer;
 import org.jboss.mbui.model.behaviour.Producer;
 import org.jboss.mbui.model.behaviour.Resource;
 import org.jboss.mbui.model.behaviour.ResourceType;
-import org.jboss.mbui.model.mapping.as7.ResourceMapping;
 import org.jboss.mbui.model.structure.impl.ResourceConsumption;
 import org.jboss.mbui.model.structure.impl.ResourceProduction;
 import org.jboss.mbui.model.mapping.Mapping;
@@ -30,7 +29,6 @@ import org.jboss.mbui.model.mapping.MappingType;
 import org.jboss.mbui.model.mapping.Predicate;
 import org.jboss.mbui.model.structure.impl.InteractionUnitVisitor;
 
-import java.util.Collection;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Set;

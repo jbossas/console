@@ -26,7 +26,7 @@ import org.jboss.mbui.model.behaviour.Behaviour;
 import org.jboss.mbui.model.behaviour.Resource;
 import org.jboss.mbui.model.behaviour.ResourceType;
 import org.jboss.mbui.model.mapping.Predicate;
-import org.jboss.mbui.model.mapping.as7.ResourceMapping;
+import org.jboss.mbui.model.mapping.as7.DMRMapping;
 import org.jboss.mbui.model.structure.as7.Form;
 import org.jboss.mbui.model.structure.impl.Builder;
 import org.junit.Before;
@@ -35,7 +35,7 @@ import org.junit.Test;
 import static org.jboss.mbui.TestNamespace.NAMESPACE;
 import static org.jboss.mbui.model.behaviour.ResourceType.Event;
 import static org.jboss.mbui.model.behaviour.ResourceType.Presentation;
-import static org.jboss.mbui.model.mapping.MappingType.RESOURCE;
+import static org.jboss.mbui.model.mapping.MappingType.DMR;
 import static org.jboss.mbui.model.structure.TemporalOperator.Choice;
 import static org.jboss.mbui.model.structure.TemporalOperator.OrderIndependance;
 import static org.junit.Assert.*;
@@ -157,29 +157,29 @@ public class InteractionUnitTest
         Form basicAttributes = new Form(NAMESPACE, "basicAttributes", "Basic Attributes");
         InteractionUnit root = new Builder()
                 .start(new Container(NAMESPACE, "root", "Root", OrderIndependance))
-                .mappedBy(new ResourceMapping(NAMESPACE).setAddress("root"))
+                .mappedBy(new DMRMapping(NAMESPACE).setAddress("root"))
                 .add(new Select(NAMESPACE, "table", "Table"))
                 .start(new Container(NAMESPACE, "forms", "Forms", Choice))
                 .add(basicAttributes)
-                .mappedBy(new ResourceMapping(NAMESPACE).setAddress("basicAttributes"))
+                .mappedBy(new DMRMapping(NAMESPACE).setAddress("basicAttributes"))
                 .add(new Form(NAMESPACE, "extendedAttributes", "Basic Attributes"))
                 .end()
                 .end().build();
 
         // TODO: find resource mapping type & namespace is what we actual needs I think.
-        ResourceMapping mapping = basicAttributes.findMapping(RESOURCE, new Predicate<ResourceMapping>() {
+        DMRMapping mapping = basicAttributes.findMapping(DMR, new Predicate<DMRMapping>() {
             @Override
-            public boolean appliesTo(ResourceMapping candidate) {
+            public boolean appliesTo(DMRMapping candidate) {
                 return candidate.getNamespace().equals(NAMESPACE);
             }
         });
         assertNotNull(mapping);
         assertEquals("basicAttributes", mapping.getAddress());
 
-        mapping = basicAttributes.findMapping(RESOURCE, new Predicate<ResourceMapping>()
+        mapping = basicAttributes.findMapping(DMR, new Predicate<DMRMapping>()
         {
             @Override
-            public boolean appliesTo(final ResourceMapping candidate)
+            public boolean appliesTo(final DMRMapping candidate)
             {
                 return "root".equals(candidate.getAddress());
             }

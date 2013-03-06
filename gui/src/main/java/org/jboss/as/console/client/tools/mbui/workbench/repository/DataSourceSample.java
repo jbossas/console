@@ -19,6 +19,7 @@
 package org.jboss.as.console.client.tools.mbui.workbench.repository;
 
 import org.jboss.mbui.model.Dialog;
+import org.jboss.mbui.model.mapping.as7.DMRMapping;
 import org.jboss.mbui.model.structure.QName;
 import org.jboss.mbui.model.structure.Trigger;
 import org.jboss.mbui.model.structure.as7.ToolStrip;
@@ -28,7 +29,6 @@ import org.jboss.mbui.model.structure.InteractionUnit;
 import org.jboss.mbui.model.structure.Select;
 import org.jboss.mbui.model.structure.as7.Form;
 import org.jboss.mbui.model.mapping.Mapping;
-import org.jboss.mbui.model.mapping.as7.ResourceMapping;
 
 import static org.jboss.mbui.model.structure.TemporalOperator.*;
 
@@ -60,21 +60,21 @@ public class DataSourceSample implements Sample
         String namespace = "org.jboss.datasource";
 
         // maps to a collection of datasources
-        ResourceMapping datasourceCollection = new ResourceMapping(namespace)
+        DMRMapping datasourceCollection = new DMRMapping(namespace)
                 .setAddress("/{selected.profile}/subsystem=datasources/data-source=*");
 
         // maps to a specific datasource
-        ResourceMapping singleDataSource = new ResourceMapping(namespace)
+        DMRMapping singleDataSource = new DMRMapping(namespace)
                 .setAddress("/{selected.profile}/subsystem=datasources/data-source={selected.entity}");
 
-        Mapping tableMapping = new ResourceMapping(namespace)
+        Mapping tableMapping = new DMRMapping(namespace)
                 .addAttributes("entity.key","jndi-name", "enabled");
 
-        Mapping basicAttributesMapping = new ResourceMapping(namespace)
+        Mapping basicAttributesMapping = new DMRMapping(namespace)
                 .addAttributes("entity.key", "jndi-name", "enabled", "datasource-class", "driver-name", "share-prepared-statements",
                         "prepared-statements-cache-size");
 
-        Mapping connectionAttributesMapping = new ResourceMapping(namespace)
+        Mapping connectionAttributesMapping = new DMRMapping(namespace)
                 .addAttributes("connection-url", "new-connection-sql", "transaction-isolation", "jta", "use-ccm");
 
         // UI
@@ -91,9 +91,9 @@ public class DataSourceSample implements Sample
                         .start(new ToolStrip(namespace, "datasource", "Tools"))
                             .mappedBy(singleDataSource)
                             .add(new Trigger(
-                                QName.valueOf("org.jboss.datasource:add"),
-                                QName.valueOf("org.jboss.as:resource-operation#add"),
-                                "Add"))
+                                    QName.valueOf("org.jboss.datasource:add"),
+                                    QName.valueOf("org.jboss.as:resource-operation#add"),
+                                    "Add"))
                                     .mappedBy(datasourceCollection)
 
                             .add(new Trigger(
@@ -101,14 +101,14 @@ public class DataSourceSample implements Sample
                                     QName.valueOf("org.jboss.as:resource-operation#remove"),
                                     "Remove"))
                             .add(new Trigger(
-                                QName.valueOf("org.jboss.datasource:enable"),
-                                QName.valueOf("org.jboss.as:resource-operation#enable"),
-                                "Enable"))
+                                    QName.valueOf("org.jboss.datasource:enable"),
+                                    QName.valueOf("org.jboss.as:resource-operation#enable"),
+                                    "Enable"))
 
                             .add(new Trigger(
-                                QName.valueOf("org.jboss.datasource:disable"),
-                                QName.valueOf("org.jboss.as:resource-operation#disable"),
-                                "Disable"))
+                                    QName.valueOf("org.jboss.datasource:disable"),
+                                    QName.valueOf("org.jboss.as:resource-operation#disable"),
+                                    "Disable"))
                         .end()
 
 

@@ -19,7 +19,7 @@ import org.jboss.mbui.model.behaviour.Resource;
 import org.jboss.mbui.model.behaviour.ResourceType;
 import org.jboss.mbui.model.mapping.MappingType;
 import org.jboss.mbui.model.mapping.as7.AddressMapping;
-import org.jboss.mbui.model.mapping.as7.ResourceMapping;
+import org.jboss.mbui.model.mapping.as7.DMRMapping;
 import org.jboss.mbui.model.structure.InteractionUnit;
 import org.jboss.mbui.model.structure.QName;
 
@@ -71,8 +71,8 @@ public class LoadResourceProcedure extends Procedure {
     private void init() {
         unit = dialog.findUnit(getJustification());
 
-        ResourceMapping resourceMapping = unit.findMapping(MappingType.RESOURCE);
-        address = AddressMapping.fromString(resourceMapping.getAddress());
+        DMRMapping DMRMapping = unit.findMapping(MappingType.DMR);
+        address = AddressMapping.fromString(DMRMapping.getAddress());
 
         // check preconditions of the address token
         final Set<String> requiredStatements = new HashSet<String>();

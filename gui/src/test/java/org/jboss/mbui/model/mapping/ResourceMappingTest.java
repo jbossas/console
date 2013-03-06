@@ -18,7 +18,7 @@
  */
 package org.jboss.mbui.model.mapping;
 
-import org.jboss.mbui.model.mapping.as7.ResourceMapping;
+import org.jboss.mbui.model.mapping.as7.DMRMapping;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -32,12 +32,12 @@ import static org.junit.Assert.assertTrue;
  */
 public class ResourceMappingTest
 {
-    ResourceMapping cut;
+    DMRMapping cut;
 
     @Before
     public void setUp()
     {
-        cut = new ResourceMapping(NAMESPACE);
+        cut = new DMRMapping(NAMESPACE);
     }
 
     @Test

@@ -18,9 +18,9 @@
  */
 package org.jboss.mbui.model.structure;
 
+import org.jboss.mbui.model.mapping.as7.DMRMapping;
 import org.jboss.mbui.model.structure.as7.Form;
 import org.jboss.mbui.model.mapping.Mapping;
-import org.jboss.mbui.model.mapping.as7.ResourceMapping;
 import org.jboss.mbui.model.structure.impl.Builder;
 import org.junit.Before;
 import org.junit.Test;
@@ -45,7 +45,7 @@ public class BuilderTest
     {
         cut = new Builder();
         iuFixture = new TestableInteractionUnit(NAMESPACE, "test", "Test");
-        mappingFixture = new ResourceMapping(NAMESPACE);
+        mappingFixture = new DMRMapping(NAMESPACE);
     }
 
     @Test(expected = IllegalStateException.class)

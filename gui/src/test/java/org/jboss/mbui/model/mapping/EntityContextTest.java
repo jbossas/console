@@ -18,7 +18,7 @@
  */
 package org.jboss.mbui.model.mapping;
 
-import org.jboss.mbui.model.mapping.as7.ResourceMapping;
+import org.jboss.mbui.model.mapping.as7.DMRMapping;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -50,7 +50,7 @@ public class EntityContextTest
     @Test
     public void addMapping()
     {
-        ResourceMapping mapping = new ResourceMapping(NAMESPACE).setAddress("/foo=bar");
+        DMRMapping mapping = new DMRMapping(NAMESPACE).setAddress("/foo=bar");
         cut.addMapping(mapping);
         assertEquals(1, cut.getMappings().size());
         assertEquals(mapping, cut.getMappings().iterator().next());

@@ -12,7 +12,7 @@ import static org.jboss.dmr.client.ModelDescriptionConstants.ADDRESS;
 
 /**
  * Address mapping of domain references used within the interface model.
- * Typically as part of a {@link ResourceMapping}.
+ * Typically as part of a {@link DMRMapping}.
  * <p/>
  * The mapping currently supports three different types of address value declarations:
  *

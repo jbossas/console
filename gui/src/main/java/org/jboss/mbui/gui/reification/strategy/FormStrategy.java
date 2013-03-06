@@ -42,8 +42,8 @@ import org.jboss.mbui.gui.reification.widgets.ModelNodeForm;
 import org.jboss.mbui.model.behaviour.Resource;
 import org.jboss.mbui.model.behaviour.ResourceType;
 import org.jboss.mbui.model.mapping.MappingType;
+import org.jboss.mbui.model.mapping.as7.DMRMapping;
 import org.jboss.mbui.model.mapping.as7.ResourceAttribute;
-import org.jboss.mbui.model.mapping.as7.ResourceMapping;
 import org.jboss.mbui.model.structure.InteractionUnit;
 import org.jboss.mbui.model.structure.QName;
 
@@ -112,10 +112,10 @@ public class FormStrategy implements ReificationStrategy<ReificationWidget>
 
             List<Property> attributeDescriptions = modelDescription.get("attributes").asPropertyList();
 
-            ResourceMapping resourceMapping = (ResourceMapping)
-                    this.interactionUnit.findMapping(MappingType.RESOURCE);
+            DMRMapping DMRMapping = (DMRMapping)
+                    this.interactionUnit.findMapping(MappingType.DMR);
 
-            List<ResourceAttribute> attributes = resourceMapping.getAttributes();
+            List<ResourceAttribute> attributes = DMRMapping.getAttributes();
             List<FormItem> items = new ArrayList<FormItem>(attributes.size());
 
             helpTexts = new SafeHtmlBuilder();

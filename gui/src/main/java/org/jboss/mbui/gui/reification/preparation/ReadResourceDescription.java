@@ -30,7 +30,7 @@ import org.jboss.mbui.gui.reification.ContextKey;
 import org.jboss.mbui.model.Dialog;
 import org.jboss.mbui.model.mapping.Predicate;
 import org.jboss.mbui.model.mapping.as7.AddressMapping;
-import org.jboss.mbui.model.mapping.as7.ResourceMapping;
+import org.jboss.mbui.model.mapping.as7.DMRMapping;
 import org.jboss.mbui.model.structure.Container;
 import org.jboss.mbui.model.structure.InteractionUnit;
 import org.jboss.mbui.model.structure.impl.InteractionUnitVisitor;
@@ -44,7 +44,7 @@ import java.util.Set;
 
 import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 import static org.jboss.mbui.gui.reification.ContextKey.MODEL_DESCRIPTIONS;
-import static org.jboss.mbui.model.mapping.MappingType.RESOURCE;
+import static org.jboss.mbui.model.mapping.MappingType.DMR;
 
 /**
  * TODO Implement caching for resource descriptions (memory, local storage, ...)
@@ -109,7 +109,7 @@ public class ReadResourceDescription extends ReificationPreperation
                     {
                         context.set(MODEL_DESCRIPTIONS, new HashMap<String, ModelNode>());
                     }
-                    ResourceMapping mapping = visitor.stepReference.get(step).findMapping(RESOURCE);
+                    DMRMapping mapping = visitor.stepReference.get(step).findMapping(DMR);
                     context.<Map>get(MODEL_DESCRIPTIONS).put(mapping.getNamespace(), description);
                 }
                 callback.onSuccess();
@@ -153,10 +153,10 @@ public class ReadResourceDescription extends ReificationPreperation
             final StatementContext delegate = context.get(ContextKey.STATEMENTS);
             assert delegate != null : "StatementContext not provided";
 
-            ResourceMapping mapping = interactionUnit.findMapping(RESOURCE, new Predicate<ResourceMapping>()
+            DMRMapping mapping = interactionUnit.findMapping(DMR, new Predicate<DMRMapping>()
             {
                 @Override
-                public boolean appliesTo(final ResourceMapping candidate)
+                public boolean appliesTo(final DMRMapping candidate)
                 {
                     // the read-resource operation only needs the address of a resource
                     // hence we can skip mapping without address declarations (i.e. just attributes)

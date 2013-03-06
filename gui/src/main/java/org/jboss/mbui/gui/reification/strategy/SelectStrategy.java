@@ -38,8 +38,8 @@ import org.jboss.mbui.gui.reification.widgets.ModelNodeCellTable;
 import org.jboss.mbui.model.behaviour.Resource;
 import org.jboss.mbui.model.behaviour.ResourceType;
 import org.jboss.mbui.model.mapping.MappingType;
+import org.jboss.mbui.model.mapping.as7.DMRMapping;
 import org.jboss.mbui.model.mapping.as7.ResourceAttribute;
-import org.jboss.mbui.model.mapping.as7.ResourceMapping;
 import org.jboss.mbui.model.structure.InteractionUnit;
 import org.jboss.mbui.model.structure.QName;
 import org.jboss.mbui.model.structure.Select;
@@ -94,10 +94,10 @@ public class SelectStrategy implements ReificationStrategy<ReificationWidget>
             this.table = new ModelNodeCellTable(5);
             this.interactionUnit = interactionUnit;
 
-            ResourceMapping resourceMapping = (ResourceMapping)
-                    this.interactionUnit.findMapping(MappingType.RESOURCE);
+            DMRMapping DMRMapping = (DMRMapping)
+                    this.interactionUnit.findMapping(MappingType.DMR);
 
-            List<ResourceAttribute> attributes = resourceMapping.getAttributes();
+            List<ResourceAttribute> attributes = DMRMapping.getAttributes();
             for (ResourceAttribute attribute : attributes)
             {
                 final String attributeKey = attribute.getLabel() != null ? attribute.getLabel() : attribute.getName();

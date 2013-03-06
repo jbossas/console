@@ -20,7 +20,7 @@ package org.jboss.as.console.client.tools.mbui.workbench.repository;
 
 import org.jboss.mbui.model.Dialog;
 import org.jboss.mbui.model.mapping.Mapping;
-import org.jboss.mbui.model.mapping.as7.ResourceMapping;
+import org.jboss.mbui.model.mapping.as7.DMRMapping;
 import org.jboss.mbui.model.structure.Container;
 import org.jboss.mbui.model.structure.InteractionUnit;
 import org.jboss.mbui.model.structure.QName;
@@ -59,18 +59,18 @@ public class TransactionSample implements Sample
         String ns = "org.jboss.transactions";
 
         // entities
-        Mapping global = new ResourceMapping(ns)
+        Mapping global = new DMRMapping(ns)
                 .setAddress("/{selected.profile}/subsystem=transactions");
 
-        Mapping basicAttributesMapping = new ResourceMapping(ns)
+        Mapping basicAttributesMapping = new DMRMapping(ns)
                 .addAttributes(
                         "enable-statistics", "enable-tsm-status", "jts", "default-timeout",
                         "node-identifier", "use-hornetq-store");
 
-        Mapping processMapping = new ResourceMapping(ns)
+        Mapping processMapping = new DMRMapping(ns)
                 .addAttributes("process-id-uuid", "process-id-socket-binding");
 
-        Mapping recoveryMapping = new ResourceMapping(ns)
+        Mapping recoveryMapping = new DMRMapping(ns)
                 .addAttributes("recovery-listener", "socket-binding");
 
         Container overview = new Container(ns, "transactionManager", "TransactionManager", Concurrency);

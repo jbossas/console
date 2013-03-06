@@ -13,7 +13,7 @@ import org.jboss.mbui.model.behaviour.Resource;
 import org.jboss.mbui.model.behaviour.ResourceType;
 import org.jboss.mbui.model.mapping.MappingType;
 import org.jboss.mbui.model.mapping.as7.AddressMapping;
-import org.jboss.mbui.model.mapping.as7.ResourceMapping;
+import org.jboss.mbui.model.mapping.as7.DMRMapping;
 import org.jboss.mbui.model.Dialog;
 import org.jboss.mbui.model.structure.InteractionUnit;
 import org.jboss.mbui.model.structure.QName;
@@ -26,7 +26,7 @@ import java.util.HashMap;
  * <p/>
  * The {@link org.jboss.mbui.gui.behaviour.StatementContext} is used to resolve the resource parent context (i.e. profile, server, host).
  * <p/>
- * The actual address is resolved from the {@link ResourceMapping} attached to the {@link InteractionUnit} that triggered this procedure (justification).
+ * The actual address is resolved from the {@link org.jboss.mbui.model.mapping.as7.DMRMapping} attached to the {@link InteractionUnit} that triggered this procedure (justification).
  *
  * @see org.jboss.mbui.gui.behaviour.InteractionEvent#getSource()
  *
@@ -70,8 +70,8 @@ public class SaveChangesetProcedure extends Procedure {
     private void init() {
         unit = dialog.findUnit(getJustification());
 
-        ResourceMapping resourceMapping = unit.findMapping(MappingType.RESOURCE);
-        address = AddressMapping.fromString(resourceMapping.getAddress());
+        DMRMapping DMRMapping = unit.findMapping(MappingType.DMR);
+        address = AddressMapping.fromString(DMRMapping.getAddress());
     }
 
     private void saveResource(final String name, AddressMapping address, HashMap<String, Object> changeset) {

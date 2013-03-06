@@ -30,7 +30,7 @@ import org.jboss.mbui.model.Dialog;
 import org.jboss.mbui.model.behaviour.Resource;
 import org.jboss.mbui.model.behaviour.ResourceType;
 import org.jboss.mbui.model.mapping.as7.AddressMapping;
-import org.jboss.mbui.model.mapping.as7.ResourceMapping;
+import org.jboss.mbui.model.mapping.as7.DMRMapping;
 import org.jboss.mbui.model.structure.Container;
 import org.jboss.mbui.model.structure.InteractionUnit;
 import org.jboss.mbui.model.structure.QName;
@@ -45,7 +45,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static org.jboss.dmr.client.ModelDescriptionConstants.*;
-import static org.jboss.mbui.model.mapping.MappingType.RESOURCE;
+import static org.jboss.mbui.model.mapping.MappingType.DMR;
 
 /**
  *
@@ -167,7 +167,7 @@ public class ReadOperationDescriptions extends ReificationPreperation
             if(operationName==null)
                 throw new IllegalArgumentException("Illegal operation name mapping: "+ output.getId()+ " (suffix required)");
 
-            ResourceMapping mapping = interactionUnit.findMapping(RESOURCE);
+            DMRMapping mapping = interactionUnit.findMapping(DMR);
             String address = mapping.getAddress();
 
             if (!resolvedOperations.contains(output.getId()))

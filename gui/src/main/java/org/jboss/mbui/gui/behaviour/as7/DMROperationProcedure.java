@@ -13,7 +13,7 @@ import org.jboss.mbui.model.behaviour.Resource;
 import org.jboss.mbui.model.behaviour.ResourceType;
 import org.jboss.mbui.model.mapping.MappingType;
 import org.jboss.mbui.model.mapping.as7.AddressMapping;
-import org.jboss.mbui.model.mapping.as7.ResourceMapping;
+import org.jboss.mbui.model.mapping.as7.DMRMapping;
 import org.jboss.mbui.model.structure.InteractionUnit;
 import org.jboss.mbui.model.structure.QName;
 
@@ -24,7 +24,7 @@ import java.util.Set;
 /**
  * Executes an operation on a DMR resource.
  * <p/>
- * The actual entity address is resolved from the {@link ResourceMapping}
+ * The actual entity address is resolved from the {@link org.jboss.mbui.model.mapping.as7.DMRMapping}
  * attached to the {@link InteractionUnit} that triggered this procedure (justification).
  * <p/>
  * The operation name is derived from the suffix of {@link Resource} being produced.
@@ -94,8 +94,8 @@ public class DMROperationProcedure extends Procedure implements OperationContext
         if(operationName==null)
             throw new IllegalArgumentException("Illegal operation name mapping: "+ unit.getId()+ " (suffix required)");
 
-        ResourceMapping resourceMapping = unit.findMapping(MappingType.RESOURCE);
-        address = AddressMapping.fromString(resourceMapping.getAddress());
+        DMRMapping DMRMapping = unit.findMapping(MappingType.DMR);
+        address = AddressMapping.fromString(DMRMapping.getAddress());
 
 
         // TODO: Refactor init procedure into default precondition ...
