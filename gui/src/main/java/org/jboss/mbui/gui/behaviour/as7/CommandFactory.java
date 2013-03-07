@@ -411,6 +411,10 @@ public class CommandFactory {
         @Override
         public void execute() {
 
+            // TODO: clearing the form is necessary in order to re-use the dom elements
+            // but it also clears the default values. These need to associated with a FormItem
+            // by other means then calling FormItem.setValue()
+
             form.clearValues();
 
             String operationName = operationmetaData.get("operation-name").asString();
