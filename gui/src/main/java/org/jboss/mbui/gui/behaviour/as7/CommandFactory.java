@@ -30,6 +30,7 @@ import org.jboss.dmr.client.ModelNode;
 import org.jboss.dmr.client.ModelType;
 import org.jboss.dmr.client.Property;
 import org.jboss.mbui.gui.behaviour.ModelDrivenCommand;
+import org.jboss.mbui.gui.behaviour.StatementContext;
 import org.jboss.mbui.gui.behaviour.StatementEvent;
 import org.jboss.mbui.gui.reification.strategy.SelectStrategy;
 import org.jboss.mbui.gui.reification.widgets.ModelNodeForm;
@@ -38,9 +39,11 @@ import org.jboss.mbui.model.behaviour.Resource;
 import org.jboss.mbui.model.behaviour.ResourceType;
 import org.jboss.mbui.model.mapping.as7.ResourceAttribute;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import static org.jboss.dmr.client.ModelDescriptionConstants.*;
@@ -230,6 +233,7 @@ public class CommandFactory {
         private ModelNode operationmetaData;
         private List<Property> parameterMetaData;
         private Widget widget;
+        private ModelNodeForm form;
 
         private FormDelegate(OperationContext context, ModelNode operationMetaData) {
             this.context = context;
@@ -255,8 +259,11 @@ public class CommandFactory {
 
             // The form
 
-            final ModelNodeForm form = new ModelNodeForm();
+            form = new ModelNodeForm();
             List<FormItem> items = new ArrayList<FormItem>();
+
+            // each add operation requires an artificial parameter 'entity.key'
+            items.add(new TextBoxItem("entity.key", "Name", true));
 
             for(Property param : parameterMetaData)
             {
@@ -353,6 +360,7 @@ public class CommandFactory {
                                     if(!validation.hasErrors())
                                     {
                                         // proceed
+                                        invokeOperaton(form.getUpdatedEntity());
                                     }
                                 }
                             },
@@ -370,8 +378,32 @@ public class CommandFactory {
             this.widget = builder.build();
         }
 
+        private void invokeOperaton(final ModelNode inputParameter) {
+
+            // TODO: Clarification > Why are wildcards not resolved against the statement context?
+
+            String[] wildcards = inputParameter.hasDefined("entity.key") ?
+                    new String[] {inputParameter.get("entity.key").asString()} : new String[]{};
+
+            final ModelNode operation = context.getAddress().asResource(context.getStatementContext(), wildcards);
+            operation.get(OP).set(operationmetaData.get("operation-name").asString());
+
+            for(String param : inputParameter.keys())
+            {
+                if(!"entity.key".equals(param))
+                    operation.get(param).set(inputParameter.get(param));
+            }
+
+            System.out.println(operation);
+
+        }
+
         @Override
         public void execute() {
+
+
+            ModelNode blank = new ModelNode();
+            form.edit(blank);
 
             String operationName = operationmetaData.get("operation-name").asString();
             final ModelNode operation = context.getAddress().asResource(context.getStatementContext());
@@ -386,5 +418,6 @@ public class CommandFactory {
             window.setGlassEnabled(true);
             window.center();
         }
+
     }
 }

@@ -203,6 +203,8 @@ public class ModelNodeForm extends AbstractForm<ModelNode> {
     @Override
     public ModelNode getUpdatedEntity() {
 
+        assert getEditedEntity()!=null : "Need to call edit(ModelNode) before invoking getUpdatedEntity()";
+
         final ModelNode updatedModel = getEditedEntity().clone();
 
         for(Map<String, FormItem> groupItems : formItems.values())
@@ -218,7 +220,11 @@ public class ModelNodeForm extends AbstractForm<ModelNode> {
                         Class baseType = obj.getClass();
 
                         if (baseType == String.class) {
-                            node.set((String)obj);
+                            String stringValue = (String) obj;
+                            if(stringValue.startsWith("$"))
+                                node.setExpression(stringValue);
+                            else
+                                node.set(stringValue);
                         } else if (baseType == Long.class) {
                             node.set((Long)obj);
                         } else if (baseType == Integer.class) {

@@ -22,21 +22,24 @@ public class ModelNodeInspector {
 
         visitor.visit(bean, context);
 
-        for(Property prop : bean.asPropertyList()) {
-            PropertyContext propCtx = new PropertyContext(prop.getValue().getType());
+        if(bean.isDefined())
+        {
+            for(Property prop : bean.asPropertyList()) {
+                PropertyContext propCtx = new PropertyContext(prop.getValue().getType());
 
-            switch (propCtx.getType())
-            {
-                case OBJECT:
-                    visitor.visitReferenceProperty(prop.getName(), prop.getValue(), propCtx);
-                    visitor.endVisitReferenceProperty(prop.getName(), prop.getValue(), propCtx);
-                    break;
-                default:
-                    visitor.visitValueProperty(prop.getName(), prop.getValue(), propCtx);
-                    visitor.endVisitValueProperty(prop.getName(), prop.getValue(), propCtx);
-                    break;
+                switch (propCtx.getType())
+                {
+                    case OBJECT:
+                        visitor.visitReferenceProperty(prop.getName(), prop.getValue(), propCtx);
+                        visitor.endVisitReferenceProperty(prop.getName(), prop.getValue(), propCtx);
+                        break;
+                    default:
+                        visitor.visitValueProperty(prop.getName(), prop.getValue(), propCtx);
+                        visitor.endVisitValueProperty(prop.getName(), prop.getValue(), propCtx);
+                        break;
+                }
+
             }
-
         }
 
         visitor.endVisit(bean, context);

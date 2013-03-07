@@ -101,6 +101,9 @@ public class SelectStrategy implements ReificationStrategy<ReificationWidget>
             for (ResourceAttribute attribute : attributes)
             {
                 final String attributeKey = attribute.getLabel() != null ? attribute.getLabel() : attribute.getName();
+                // TODO: How doe we resolve the column names?
+                // See "entity.key" usage as well
+
                 table.addColumn(new Column<ModelNode, String>(new TextCell())
                 {
                     @Override

@@ -45,14 +45,16 @@ public class AddressMapping {
         address.add(new Token(parent, child));
     }
 
-    public ModelNode asResource(StatementContext context) {
-        return asResource(new ModelNode(), context);
+    public ModelNode asResource(StatementContext context, String... wildcards) {
+        return asResource(new ModelNode(), context, wildcards);
     }
 
-    public ModelNode asResource(ModelNode baseAddress, StatementContext context) {
+    public ModelNode asResource(ModelNode baseAddress, StatementContext context, String... wildcards) {
 
         ModelNode model = new ModelNode();
         model.get(ADDRESS).set(baseAddress);
+
+        int wildcardCount = 0;
 
         for(Token token: address)
         {
@@ -63,7 +65,7 @@ public class AddressMapping {
             if(!token.hasKey())
             {
                 // a single token or token expression
-                // without brackets it needs to be a valid token
+
                 String token_ref = token.getValue();
                 String[] resolved_value = null;
 
@@ -95,6 +97,7 @@ public class AddressMapping {
             else
             {
                 // a value expression. key and value of the expression might be resolved
+
                 String key_ref = token.getKey();
                 String value_ref = token.getValue();
 
@@ -124,7 +127,18 @@ public class AddressMapping {
                 assert resolved_key!=null : "The key '"+key_ref+"' cannot be resolved";
                 assert resolved_value!=null : "The value '"+value_ref+"' cannot be resolved";
 
-                model.get(ADDRESS).add(resolved_key, resolved_value);
+
+                // wildcards
+                String addressValue = resolved_value;
+
+                if ("*".equals(resolved_value)
+                        && wildcards.length>0)
+                {
+                    addressValue = wildcards[wildcardCount];
+                    wildcardCount++;
+                }
+
+                model.get(ADDRESS).add(resolved_key, addressValue);
             }
 
         }
