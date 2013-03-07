@@ -20,6 +20,7 @@ package org.jboss.mbui.gui.reification.strategy;
 
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.logical.shared.AttachEvent;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -104,7 +105,9 @@ public class ChoiceStrategy implements ReificationStrategy<ReificationWidget>
                         final VerticalPanel vpanel = new VerticalPanel();
                         vpanel.setStyleName("rhs-content-panel");
                         vpanel.add(widget);
-                        tabLayoutpanel.add(vpanel, unit.getName());
+
+                        ScrollPanel scroll = new ScrollPanel(vpanel);
+                        tabLayoutpanel.add(scroll, unit.getName());
                     }
 
                     @Override
