@@ -14,7 +14,6 @@ import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.as.console.client.shared.help.StaticHelpPanel;
-import org.jboss.as.console.client.shared.subsys.jca.wizard.NewDatasourceWizard;
 import org.jboss.as.console.client.widgets.ContentDescription;
 import org.jboss.ballroom.client.widgets.forms.CheckBoxItem;
 import org.jboss.ballroom.client.widgets.forms.ComboBoxItem;
@@ -30,20 +29,16 @@ import org.jboss.dmr.client.ModelNode;
 import org.jboss.dmr.client.ModelType;
 import org.jboss.dmr.client.Property;
 import org.jboss.mbui.gui.behaviour.ModelDrivenCommand;
-import org.jboss.mbui.gui.behaviour.StatementContext;
 import org.jboss.mbui.gui.behaviour.StatementEvent;
 import org.jboss.mbui.gui.reification.strategy.SelectStrategy;
 import org.jboss.mbui.gui.reification.widgets.ModelNodeForm;
 import org.jboss.mbui.model.Dialog;
 import org.jboss.mbui.model.behaviour.Resource;
 import org.jboss.mbui.model.behaviour.ResourceType;
-import org.jboss.mbui.model.mapping.as7.ResourceAttribute;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import static org.jboss.dmr.client.ModelDescriptionConstants.*;
@@ -234,6 +229,7 @@ public class CommandFactory {
         private List<Property> parameterMetaData;
         private Widget widget;
         private ModelNodeForm form;
+        private DefaultWindow window;
 
         private FormDelegate(OperationContext context, ModelNode operationMetaData) {
             this.context = context;
@@ -370,7 +366,12 @@ public class CommandFactory {
                                 @Override
                                 public void onClick(ClickEvent clickEvent) {
                                     // cancel
-                                    // TODO: what happens on cancel? navigation?
+                                    Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+                                        @Override
+                                        public void execute() {
+                                            window.hide();
+                                        }
+                                    });
                                 }
                             }
                     )
@@ -379,34 +380,17 @@ public class CommandFactory {
             this.widget = builder.build();
         }
 
-        private void invokeOperaton(final ModelNode inputParameter) {
-
-            // TODO: Clarification > Why are wildcards not resolved against the statement context?
-
-            String[] wildcards = inputParameter.hasDefined("entity.key") ?
-                    new String[] {inputParameter.get("entity.key").asString()} : new String[]{};
-
-            final ModelNode operation = context.getAddress().asResource(context.getStatementContext(), wildcards);
-            operation.get(OP).set(operationmetaData.get("operation-name").asString());
-
-            for(String param : inputParameter.keys())
-            {
-                if(!"entity.key".equals(param))
-                    operation.get(param).set(inputParameter.get(param));
-            }
-
-            System.out.println(operation);
-
-        }
 
         @Override
         public void execute() {
+
+            form.clearValues();
 
             String operationName = operationmetaData.get("operation-name").asString();
             final ModelNode operation = context.getAddress().asResource(context.getStatementContext());
             operation.get(OP).set(operationName);
 
-            DefaultWindow window = new DefaultWindow("Execute Operation");
+            window = new DefaultWindow("Execute Operation");
             window.setWidth(480);
             window.setHeight(450);
 
@@ -415,6 +399,60 @@ public class CommandFactory {
             window.setGlassEnabled(true);
             window.center();
         }
+
+        private void invokeOperaton(final ModelNode inputParameter) {
+
+            // TODO: Why are wildcards not resolved against the statement context?
+
+            final String operationName = operationmetaData.get("operation-name").asString();
+
+            String[] wildcards = inputParameter.hasDefined("entity.key") ?
+                    new String[] {inputParameter.get("entity.key").asString()} : new String[]{};
+
+            final ModelNode operation = context.getAddress().asResource(context.getStatementContext(), wildcards);
+            operation.get(OP).set(operationName);
+
+            for(String param : inputParameter.keys())
+            {
+                if(!"entity.key".equals(param))
+                    operation.get(param).set(inputParameter.get(param));
+            }
+
+            final String label = operation.get(ADDRESS).asString();
+
+            //System.out.println(operation);
+
+            // the actual invocation
+            dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+                @Override
+                public void onSuccess(DMRResponse dmrResponse) {
+                    ModelNode response = dmrResponse.get();
+
+                    String msg = "Operation " +operationName+ " on " + label;
+
+                    if(response.isFailure())
+                    {
+                        Console.error(Console.MESSAGES.failed(msg), response.getFailureDescription());
+                    }
+                    else
+                    {
+                        Console.info(Console.MESSAGES.successful(msg));
+
+                        clearReset(context);
+
+                        Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+                            @Override
+                            public void execute() {
+                                window.hide();
+                            }
+                        });
+
+                    }
+                }
+            });
+
+        }
+
 
     }
 }
