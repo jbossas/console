@@ -116,9 +116,6 @@ public class ReadOperationDescriptions extends ReificationPreperation
             }
         });
 
-
-        callback.onSuccess();
-
     }
 
 

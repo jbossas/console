@@ -132,7 +132,6 @@ public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, Preview
 
             // prepare reification
 
-
             PopulateContext populateContext = new PopulateContext(
                     getActiveCoordinator().getLocalBus(),
                     getActiveCoordinator(),
@@ -194,11 +193,10 @@ public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, Preview
 
                 // show result
                 ReificationWidget widget = context.get(ContextKey.WIDGET);
-                if (widget != null)
-                {
-                    cachedWidgets.put(selectedSample, widget);
-                    getView().show(widget);
-                }
+                assert widget !=null;
+
+                cachedWidgets.put(selectedSample, widget);
+                getView().show(widget);
             }
 
             @Override
