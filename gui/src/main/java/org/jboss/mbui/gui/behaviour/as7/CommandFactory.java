@@ -263,7 +263,8 @@ public class CommandFactory {
             List<FormItem> items = new ArrayList<FormItem>();
 
             // each add operation requires an artificial parameter 'entity.key'
-            items.add(new TextBoxItem("entity.key", "Name", true));
+            if("add".equals(operationmetaData.get("operation-name").asString()))
+                items.add(new TextBoxItem("entity.key", "Name", true));
 
             for(Property param : parameterMetaData)
             {
@@ -401,10 +402,6 @@ public class CommandFactory {
         @Override
         public void execute() {
 
-
-            ModelNode blank = new ModelNode();
-            form.edit(blank);
-
             String operationName = operationmetaData.get("operation-name").asString();
             final ModelNode operation = context.getAddress().asResource(context.getStatementContext());
             operation.get(OP).set(operationName);
@@ -413,7 +410,7 @@ public class CommandFactory {
             window.setWidth(480);
             window.setHeight(450);
 
-            window.setWidget(widget);
+            window.trapWidget(widget);
 
             window.setGlassEnabled(true);
             window.center();

@@ -203,9 +203,8 @@ public class ModelNodeForm extends AbstractForm<ModelNode> {
     @Override
     public ModelNode getUpdatedEntity() {
 
-        assert getEditedEntity()!=null : "Need to call edit(ModelNode) before invoking getUpdatedEntity()";
-
-        final ModelNode updatedModel = getEditedEntity().clone();
+        final ModelNode updatedModel = getEditedEntity()==null ?
+                new ModelNode() : getEditedEntity().clone();
 
         for(Map<String, FormItem> groupItems : formItems.values())
         {
