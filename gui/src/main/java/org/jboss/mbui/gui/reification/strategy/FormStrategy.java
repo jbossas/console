@@ -53,6 +53,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static org.jboss.dmr.client.ModelDescriptionConstants.DEFAULT;
 import static org.jboss.mbui.model.behaviour.ResourceType.*;
 import static org.jboss.mbui.model.behaviour.ResourceType.System;
 

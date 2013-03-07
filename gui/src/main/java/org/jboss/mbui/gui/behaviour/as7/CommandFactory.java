@@ -148,20 +148,21 @@ public class CommandFactory {
 
         final List<Property> parameterMetaData = operationDescription.get("request-properties").asPropertyList();
 
-        return new ModelDrivenCommand() {
-            @Override
-            public void execute(Dialog dialog, Object data) {
 
-                if(parameterMetaData.isEmpty())
-                {
-                    new FeedbackDelegate(operationName, context).execute();
-                }
-                else
-                {
-                    new FormDelegate(context,operationDescription).execute();
-                }
-            }
-        };
+        Delegation delegation = null;
+
+        if(parameterMetaData.isEmpty())
+        {
+            // simple feedback in case no parameters are required
+            delegation = new Delegation(new FeedbackDelegate(operationName, context));
+        }
+        else
+        {
+            // form with required parameter (acts as guard on its own)
+            delegation = new Delegation(new FormDelegate(context,operationDescription));
+        }
+
+        return delegation;
     }
 
     /**
@@ -220,7 +221,7 @@ public class CommandFactory {
 
 
     /**
-     * A delegate that prompt for (required) input parameter to an operation before it's invocation
+     * A delegate that prompts for (required) input parameter to an operation before it's invocation
      */
     private class FormDelegate implements Command {
 
@@ -271,7 +272,7 @@ public class CommandFactory {
                 String label = new String(stringArray).replace("-", " ");
                 ModelNode attrValue = param.getValue();
 
-                boolean required = param.getValue().get("required").asBoolean();
+                boolean required = param.getValue().get(REQUIRED).asBoolean();
 
                 // skip non-required parameters
                 if(!required) continue;
@@ -291,31 +292,45 @@ public class CommandFactory {
                 helpTexts.appendHtmlConstant("</td>");
                 helpTexts.appendHtmlConstant("</tr>");
 
-                ModelType type = ModelType.valueOf(attrValue.get("type").asString());
+                ModelType type = ModelType.valueOf(attrValue.get(TYPE).asString());
 
                 switch(type)
                 {
                     case BOOLEAN:
                         CheckBoxItem checkBoxItem = new CheckBoxItem(param.getName(), label);
                         items.add(checkBoxItem);
+                        if(param.getValue().hasDefined(DEFAULT))
+                            checkBoxItem.setValue(param.getValue().get(DEFAULT).asBoolean());
                         break;
                     case DOUBLE:
                         NumberBoxItem num = new NumberBoxItem(param.getName(), label);
                         num.setRequired(required);
                         items.add(num);
+
+                        if(param.getValue().hasDefined(DEFAULT))
+                            num.setValue(param.getValue().get(DEFAULT).asDouble());
+
                         break;
                     case LONG:
                         NumberBoxItem num2 = new NumberBoxItem(param.getName(), label);
                         num2.setRequired(required);
                         items.add(num2);
+
+                        if(param.getValue().hasDefined(DEFAULT))
+                            num2.setValue(param.getValue().get(DEFAULT).asLong());
+
                         break;
                     case INT:
                         NumberBoxItem num3 = new NumberBoxItem(param.getName(), label);
                         num3.setRequired(required);
                         items.add(num3);
+
+                        if(param.getValue().hasDefined(DEFAULT))
+                            num3.setValue(param.getValue().get(DEFAULT).asInt());
+
                         break;
                     case STRING:
-                        if(attrValue.get("allowed").isDefined())
+                        if(attrValue.hasDefined("allowed"))
                         {
                             List<ModelNode> allowed = attrValue.get("allowed").asList();
                             Set<String> allowedValues = new HashSet<String>(allowed.size());
@@ -324,13 +339,22 @@ public class CommandFactory {
 
                             ComboBoxItem combo = new ComboBoxItem(param.getName(), label);
                             combo.setValueMap(allowedValues);
+
+                            if(param.getValue().hasDefined(DEFAULT))
+                                combo.setValue(param.getValue().get(DEFAULT).asString());
+
                         }
                         else
                         {
                             TextBoxItem tb = new TextBoxItem(param.getName(), label);
                             tb.setRequired(required);
                             items.add(tb);
+
+                            if(param.getValue().hasDefined(DEFAULT))
+                                tb.setValue(param.getValue().get(DEFAULT).asString());
+
                         }
+
                         break;
                     default:
                         Log.warn("Ignore ModelType " + type);
@@ -454,5 +478,19 @@ public class CommandFactory {
         }
 
 
+    }
+
+    class Delegation implements ModelDrivenCommand {
+
+        private Command delegate;
+
+        Delegation(Command delegate) {
+            this.delegate = delegate;
+        }
+
+        @Override
+        public void execute(Dialog dialog, Object data) {
+            delegate.execute();
+        }
     }
 }
