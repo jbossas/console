@@ -44,6 +44,9 @@ import java.util.Set;
 import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 
 /**
+ *
+ * Encapsulates the creation of {@link ModelDrivenCommand}"s to be used with {@link DMROperationProcedure}'s.
+ *
  * @author Heiko Braun
  * @date 3/6/13
  */
