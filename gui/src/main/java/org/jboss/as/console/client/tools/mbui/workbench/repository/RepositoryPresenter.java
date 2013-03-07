@@ -18,12 +18,14 @@
  */
 package org.jboss.as.console.client.tools.mbui.workbench.repository;
 
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.PresenterWidget;
 import com.gwtplatform.mvp.client.View;
 import org.jboss.as.console.client.tools.mbui.workbench.ReifyEvent;
 import org.jboss.as.console.client.tools.mbui.workbench.ResetEvent;
+import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 
 /**
  * Lists the available interaction units and let the user create new interaction units.
@@ -58,6 +60,16 @@ public class RepositoryPresenter extends PresenterWidget<RepositoryPresenter.MyV
         getView().setPresenter(this);
     }
 
+    public void visualize(final Sample sample)
+    {
+        DialogVisualization visualization = new DialogVisualization(sample.getDialog());
+        DefaultWindow window = new DefaultWindow("Visualization");
+        window.setWidth(800);
+        window.setHeight(600);
+        window.trapWidget(new ScrollPanel(visualization.getChart()));
+        window.center();
+    }
+
     public void reify(final Sample sample)
     {
         ReifyEvent.fire(this, new ReifyEvent(sample));
@@ -66,5 +78,4 @@ public class RepositoryPresenter extends PresenterWidget<RepositoryPresenter.MyV
     public void reset() {
         ResetEvent.fire(this, new ResetEvent());
     }
-
 }

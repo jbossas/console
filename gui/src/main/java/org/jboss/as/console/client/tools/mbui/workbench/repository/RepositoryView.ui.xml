@@ -18,6 +18,7 @@
     <g:DockLayoutPanel unit="PX" addStyleNames="{style.repository}">
         <g:south size="100">
             <g:VerticalPanel addStyleNames="{style.list}">
+                <g:Button ui:field="visualize" addStyleNames="{style.button}">visualize</g:Button>
                 <g:Button ui:field="reify" addStyleNames="{style.button}">onBind</g:Button>
                 <g:Button ui:field="reset" addStyleNames="{style.button}">onReset</g:Button>
             </g:VerticalPanel>

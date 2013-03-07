@@ -19,6 +19,8 @@
 
 package org.jboss.as.console.client;
 
+import java.util.EnumSet;
+
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
@@ -44,6 +46,7 @@ import org.jboss.as.console.client.core.bootstrap.EagerLoadHosts;
 import org.jboss.as.console.client.core.bootstrap.EagerLoadProfiles;
 import org.jboss.as.console.client.core.bootstrap.ExecutionMode;
 import org.jboss.as.console.client.core.bootstrap.LoadCompatMatrix;
+import org.jboss.as.console.client.core.bootstrap.LoadGoogleViz;
 import org.jboss.as.console.client.core.bootstrap.LoadMainApp;
 import org.jboss.as.console.client.core.bootstrap.RegisterSubsystems;
 import org.jboss.as.console.client.core.bootstrap.RemoveLoadingPanel;
@@ -55,8 +58,6 @@ import org.jboss.as.console.client.plugins.RuntimeExtensionRegistry;
 import org.jboss.as.console.client.plugins.SubsystemRegistry;
 import org.jboss.as.console.client.shared.Preferences;
 import org.jboss.as.console.client.shared.help.HelpSystem;
-
-import java.util.EnumSet;
 
 /**
  * Main application entry point.
@@ -116,6 +117,7 @@ public class Console implements EntryPoint {
                 // ordered bootstrap
                 final BootstrapProcess bootstrap = new BootstrapProcess();
 
+                bootstrap.addHook(new LoadGoogleViz());
                 bootstrap.addHook(new ExecutionMode(MODULES.getBootstrapContext(), MODULES.getDispatchAsync()));
                 bootstrap.addHook(new TrackExecutionMode(MODULES.getBootstrapContext(), MODULES.getAnalytics()));
                 bootstrap.addHook(new LoadCompatMatrix(MODULES.modelVersions()));
@@ -124,9 +126,6 @@ public class Console implements EntryPoint {
                 bootstrap.addHook(new EagerLoadProfiles(MODULES.getProfileStore(), MODULES.getCurrentSelectedProfile()));
                 bootstrap.addHook(new EagerLoadHosts(MODULES.getDomainEntityManager()));
                 bootstrap.addHook(new RemoveLoadingPanel(loadingPanel));
-
-                // viz can be loaded in background ...
-                //bootstrap.addHook(new LoadGoogleViz());
 
                 bootstrap.execute( new AsyncCallback<Boolean>() {
                     @Override
