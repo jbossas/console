@@ -18,6 +18,8 @@
  */
 package org.jboss.as.console.client.tools.mbui.workbench.repository;
 
+import static com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy.BOUND_TO_SELECTION;
+
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
@@ -32,8 +34,6 @@ import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.ViewImpl;
-
-import static com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy.BOUND_TO_SELECTION;
 
 /**
  * @author Harald Pehl
@@ -67,6 +67,7 @@ public class RepositoryView extends ViewImpl implements RepositoryPresenter.MyVi
     private final SingleSelectionModel<Sample> selectionModel;
     private RepositoryPresenter presenter;
 
+    @UiField Button visualize;
     @UiField Button reify;
     @UiField Button reset;
     @UiField(provided = true) CellList<Sample> list;
@@ -99,6 +100,12 @@ public class RepositoryView extends ViewImpl implements RepositoryPresenter.MyVi
     public Widget asWidget()
     {
         return widget;
+    }
+
+    @UiHandler("visualize")
+    public void onVisualize(ClickEvent event)
+    {
+        presenter.visualize(selectionModel.getSelectedObject());
     }
 
     @UiHandler("reify")

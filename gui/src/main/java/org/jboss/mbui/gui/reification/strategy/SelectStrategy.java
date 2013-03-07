@@ -18,6 +18,8 @@
  */
 package org.jboss.mbui.gui.reification.strategy;
 
+import java.util.List;
+
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -43,8 +45,6 @@ import org.jboss.mbui.model.mapping.as7.ResourceAttribute;
 import org.jboss.mbui.model.structure.InteractionUnit;
 import org.jboss.mbui.model.structure.QName;
 import org.jboss.mbui.model.structure.Select;
-
-import java.util.List;
 
 /**
  * @author Harald Pehl
@@ -94,8 +94,7 @@ public class SelectStrategy implements ReificationStrategy<ReificationWidget>
             this.table = new ModelNodeCellTable(5);
             this.interactionUnit = interactionUnit;
 
-            DMRMapping DMRMapping = (DMRMapping)
-                    this.interactionUnit.findMapping(MappingType.DMR);
+            DMRMapping DMRMapping = this.interactionUnit.findMapping(MappingType.DMR);
 
             List<ResourceAttribute> attributes = DMRMapping.getAttributes();
             for (ResourceAttribute attribute : attributes)

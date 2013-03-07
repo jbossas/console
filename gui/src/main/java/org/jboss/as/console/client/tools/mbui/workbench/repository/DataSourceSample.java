@@ -18,19 +18,20 @@
  */
 package org.jboss.as.console.client.tools.mbui.workbench.repository;
 
+import static org.jboss.mbui.model.structure.TemporalOperator.Choice;
+import static org.jboss.mbui.model.structure.TemporalOperator.Concurrency;
+
 import org.jboss.mbui.model.Dialog;
+import org.jboss.mbui.model.mapping.Mapping;
 import org.jboss.mbui.model.mapping.as7.DMRMapping;
-import org.jboss.mbui.model.structure.QName;
-import org.jboss.mbui.model.structure.Trigger;
-import org.jboss.mbui.model.structure.as7.ToolStrip;
-import org.jboss.mbui.model.structure.impl.Builder;
 import org.jboss.mbui.model.structure.Container;
 import org.jboss.mbui.model.structure.InteractionUnit;
+import org.jboss.mbui.model.structure.QName;
 import org.jboss.mbui.model.structure.Select;
+import org.jboss.mbui.model.structure.Trigger;
 import org.jboss.mbui.model.structure.as7.Form;
-import org.jboss.mbui.model.mapping.Mapping;
-
-import static org.jboss.mbui.model.structure.TemporalOperator.*;
+import org.jboss.mbui.model.structure.as7.ToolStrip;
+import org.jboss.mbui.model.structure.impl.Builder;
 
 /**
  * @author Harald Pehl
@@ -88,7 +89,7 @@ public class DataSourceSample implements Sample
                         // TODO: support anonymous trigger id's? This would reduce the verbosity of these declarations.
                         // Might be derived from the surrounding scope of the interaction unit. I.e. dialog ID + UUID
 
-                        .start(new ToolStrip(namespace, "datasource", "Tools"))
+                        .start(new ToolStrip(namespace, "tools", "Tools"))
                             .mappedBy(singleDataSource)
                             .add(new Trigger(
                                     QName.valueOf("org.jboss.datasource:add"),
@@ -112,10 +113,10 @@ public class DataSourceSample implements Sample
                         .end()
 
 
-                        .add(new Select(namespace, "datasources", "DatasourceList"))
+                        .add(new Select(namespace, "list", "List"))
                             .mappedBy(tableMapping)
 
-                        .start(new Container(namespace, "datasource", "Datasource", Choice))
+                        .start(new Container(namespace, "details", "Details", Choice))
                             .mappedBy(singleDataSource)
                                 .add(new Form(namespace, "datasource#basicAttributes", "Attributes"))
                                     .mappedBy(basicAttributesMapping)

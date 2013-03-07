@@ -18,6 +18,11 @@
  */
 package org.jboss.as.console.client.tools.mbui.workbench.preview;
 
+import static org.jboss.as.console.client.tools.mbui.workbench.NameTokens.preview;
+
+import java.util.HashMap;
+import java.util.Map;
+
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
@@ -34,6 +39,7 @@ import org.jboss.as.console.client.tools.mbui.workbench.ReifyEvent;
 import org.jboss.as.console.client.tools.mbui.workbench.ResetEvent;
 import org.jboss.as.console.client.tools.mbui.workbench.repository.DataSourceSample;
 import org.jboss.as.console.client.tools.mbui.workbench.repository.Sample;
+import org.jboss.as.console.client.tools.mbui.workbench.repository.SecurityDomainsSample;
 import org.jboss.as.console.client.tools.mbui.workbench.repository.TransactionSample;
 import org.jboss.mbui.gui.behaviour.InteractionCoordinator;
 import org.jboss.mbui.gui.behaviour.as7.CoreGUIContext;
@@ -49,11 +55,6 @@ import org.jboss.mbui.gui.reification.preparation.ReadResourceDescription;
 import org.jboss.mbui.gui.reification.preparation.ReificationPreperation;
 import org.jboss.mbui.gui.reification.strategy.ReificationWidget;
 import org.jboss.mbui.model.Dialog;
-
-import java.util.HashMap;
-import java.util.Map;
-
-import static org.jboss.as.console.client.tools.mbui.workbench.NameTokens.preview;
 
 /**
  * @author Harald Pehl
@@ -77,6 +78,7 @@ public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, Preview
         // these would be created/stored differently. This is just an example
         final TransactionSample transactionSample = new TransactionSample();
         final DataSourceSample dataSourceSample = new DataSourceSample();
+        final SecurityDomainsSample securityDomainsSample = new SecurityDomainsSample();
 
         // context
         CoreGUIContext statementContext = new CoreGUIContext(
@@ -88,9 +90,12 @@ public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, Preview
                 statementContext);
         final InteractionCoordinator dsCoordinator = new InteractionCoordinator(dataSourceSample.getDialog(),
                 statementContext);
+        final InteractionCoordinator secCoordinator = new InteractionCoordinator(securityDomainsSample.getDialog(),
+                statementContext);
 
         coordinators.put(transactionSample.getName(), txCoordinator);
         coordinators.put(dataSourceSample.getName(), dsCoordinator);
+        coordinators.put(securityDomainsSample.getName(), secCoordinator);
     }
 
     private InteractionCoordinator getActiveCoordinator()

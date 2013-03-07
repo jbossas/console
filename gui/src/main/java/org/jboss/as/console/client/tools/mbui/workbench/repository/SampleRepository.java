@@ -33,6 +33,7 @@ public class SampleRepository
 
         samples.add(new DataSourceSample());
         samples.add(new TransactionSample());
+        samples.add(new SecurityDomainsSample());
 
         return samples;
     }
