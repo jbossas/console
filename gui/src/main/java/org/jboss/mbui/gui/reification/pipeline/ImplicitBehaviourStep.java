@@ -1,6 +1,7 @@
 package org.jboss.mbui.gui.reification.pipeline;
 
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
+import org.jboss.dmr.client.ModelNode;
 import org.jboss.mbui.gui.behaviour.BehaviourExecution;
 import org.jboss.mbui.gui.behaviour.Procedure;
 import org.jboss.mbui.gui.behaviour.as7.DMROperationProcedure;
@@ -18,6 +19,7 @@ import org.jboss.mbui.model.structure.QName;
 import org.jboss.mbui.model.structure.Trigger;
 import org.jboss.mbui.model.structure.impl.InteractionUnitVisitor;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -41,6 +43,8 @@ public class ImplicitBehaviourStep extends ReificationStep
     public void execute(final Dialog dialog, final Context context) throws ReificationException
     {
         final BehaviourExecution behaviourExecution = context.get(ContextKey.COORDINATOR);
+        final HashMap<QName, ModelNode> operationDescriptions = context.get(ContextKey.OPERATION_DESCRIPTIONS);
+
         InteractionUnit root = dialog.getInterfaceModel();
 
         root.accept(new InteractionUnitVisitor()
@@ -48,13 +52,13 @@ public class ImplicitBehaviourStep extends ReificationStep
             @Override
             public void startVisit(Container container)
             {
-                registerDefaultBehaviour(dialog, container, behaviourExecution);
+                registerDefaultBehaviour(dialog, container, behaviourExecution, operationDescriptions);
             }
 
             @Override
             public void visit(InteractionUnit interactionUnit)
             {
-                registerDefaultBehaviour(dialog, interactionUnit, behaviourExecution);
+                registerDefaultBehaviour(dialog, interactionUnit, behaviourExecution, operationDescriptions);
             }
 
             @Override
@@ -65,7 +69,11 @@ public class ImplicitBehaviourStep extends ReificationStep
         });
     }
 
-    private void registerDefaultBehaviour(Dialog dialog, InteractionUnit unit, BehaviourExecution behaviourExecution) {
+    private void registerDefaultBehaviour(
+            Dialog dialog,
+            InteractionUnit unit,
+            BehaviourExecution behaviourExecution,
+            HashMap<QName, ModelNode> operationDescriptions) {
 
         // map consumers to outputs of interaction units
         if(unit.doesProduce())
@@ -87,7 +95,7 @@ public class ImplicitBehaviourStep extends ReificationStep
                 else if(DMROperationProcedure.PREFIX.equalsIgnoreSuffix(output.getId()))
                 {
                     behaviourExecution.addProcedure(
-                            new DMROperationProcedure(dialog, output.getId(), unit.getId(), dispatcher)
+                            new DMROperationProcedure(dialog, output.getId(), unit.getId(), dispatcher, operationDescriptions)
                     );
                 }
             }

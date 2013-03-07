@@ -17,8 +17,11 @@ import org.jboss.mbui.model.mapping.as7.DMRMapping;
 import org.jboss.mbui.model.structure.InteractionUnit;
 import org.jboss.mbui.model.structure.QName;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -37,8 +40,7 @@ import java.util.Set;
 public class DMROperationProcedure extends Procedure implements OperationContext {
 
     public final static QName PREFIX = new QName("org.jboss.as", "resource-operation");
-
-    private enum DEFAULT_OPERATION { ADD, REMOVE };
+    private final Map<QName, ModelNode> operationDescriptions;
 
     private final DispatchAsync dispatcher;
     private final Dialog dialog;
@@ -47,40 +49,21 @@ public class DMROperationProcedure extends Procedure implements OperationContext
     private AddressMapping address;
     private String operationName;
 
-    public DMROperationProcedure (
+    public DMROperationProcedure(
             final Dialog dialog,
             final QName id,
             final QName justification,
-            DispatchAsync dispatcher) {
+            DispatchAsync dispatcher, Map<QName, ModelNode> operationDescriptions) {
 
         super(id, justification);
         this.dialog = dialog;
         this.dispatcher = dispatcher;
+        this.operationDescriptions = Collections.unmodifiableMap(operationDescriptions);
 
         init();
 
-        // chose the right command delegate
-        boolean isDefaultOp = false;
-        for(DEFAULT_OPERATION op : DEFAULT_OPERATION.values())
-        {
-            if(op.name().equalsIgnoreCase(operationName))
-            {
-                isDefaultOp = true;
-                break;
-            }
-        }
-
         CommandFactory factory = new CommandFactory(dispatcher);
-        if(isDefaultOp)
-        {
-            // common, stock operations
-            setCommand(factory.createCommand(operationName, this));
-        }
-        else
-        {
-            // generic operations
-            setCommand(factory.createGenericCommand(operationName, this));
-        }
+        setCommand(factory.createCommand(operationName, this));
 
         // behaviour model meta data
         setInputs(new Resource<ResourceType>(id, ResourceType.Event));
@@ -168,6 +151,11 @@ public class DMROperationProcedure extends Procedure implements OperationContext
     @Override
     public InteractionCoordinator getCoordinator() {
         return super.coordinator;
+    }
+
+    @Override
+    public Map<QName, ModelNode> getOperationDescriptions() {
+        return operationDescriptions;
     }
 
     /**

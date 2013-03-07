@@ -1,6 +1,7 @@
 package org.jboss.mbui.gui.behaviour.as7;
 
 import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.user.client.Command;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
@@ -8,10 +9,15 @@ import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.ballroom.client.widgets.window.Feedback;
 import org.jboss.dmr.client.ModelNode;
+import org.jboss.dmr.client.Property;
 import org.jboss.mbui.gui.behaviour.ModelDrivenCommand;
 import org.jboss.mbui.gui.behaviour.StatementEvent;
 import org.jboss.mbui.gui.reification.strategy.SelectStrategy;
 import org.jboss.mbui.model.Dialog;
+import org.jboss.mbui.model.behaviour.Resource;
+import org.jboss.mbui.model.behaviour.ResourceType;
+
+import java.util.List;
 
 import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 
@@ -31,16 +37,14 @@ public class CommandFactory {
             String operationName,
             OperationContext context)
     {
-        if(operationName.equalsIgnoreCase("add"))
-        {
-            return createAddCmd(context);
-        }
-        else if (operationName.equals("remove"))
+        if (operationName.equals("remove"))
         {
             return createRemoveCmd(context);
         }
-
-        throw new RuntimeException("Cannot resolve command to operation name: "+ operationName);
+        else
+        {
+            return createGenericCommand(operationName, context);
+        }
 
     }
 
@@ -111,61 +115,91 @@ public class CommandFactory {
         });
     }
 
-    private ModelDrivenCommand createAddCmd(OperationContext context) {
+    private ModelDrivenCommand createGenericCommand(final String operationName, final OperationContext context) {
+
+        assert context.getUnit().doesProduce() : "The unit associated with a command need to be a producer";
+
+        Resource<ResourceType> output = context.getUnit().getOutputs().iterator().next();
+        final ModelNode operationDescription = context.getOperationDescriptions().get(output.getId());
+
+        assert operationDescription!=null : "Operation meta data required for "+output.getId() + " on "+context.getUnit().getId();
+
+        final List<Property> parameter = operationDescription.get("request-properties").asPropertyList();
+
         return new ModelDrivenCommand() {
             @Override
             public void execute(Dialog dialog, Object data) {
 
+                if(parameter.isEmpty())
+                {
+                    new FeedbackDelegate(operationName, context).execute();
+                }
+                else
+                {
+                    System.out.println("! required parameter missing: " );
+                    for(Property param : parameter)
+                    {
+                        if(param.getValue().get("required").asBoolean())
+                        {
+                            System.out.println(param.getName());
+                        }
+                    }
+                }
             }
         };
     }
 
-    public ModelDrivenCommand createGenericCommand(final String operationName, final OperationContext context) {
+    /**
+     * Simple feedback for operations w/o (required) input parameter
+     */
+    private class FeedbackDelegate implements Command {
 
+        private OperationContext context;
+        private String operationName;
 
-        // TODO: analyse the operation meta data and request users input (parameters) if necessary
+        FeedbackDelegate(String operationName, OperationContext context) {
+            this.operationName = operationName;
+            this.context = context;
+        }
 
-        return new ModelDrivenCommand() {
-            @Override
-            public void execute(Dialog dialog, Object data) {
+        @Override
+        public void execute() {
+            final ModelNode operation = context.getAddress().asResource(context.getStatementContext());
+            operation.get(OP).set(operationName);
+            final String label = operation.get(ADDRESS).asString();
 
-                final ModelNode operation = context.getAddress().asResource(context.getStatementContext());
-                operation.get(OP).set(operationName);
-                final String label = operation.get(ADDRESS).asString();
+            Feedback.confirm(
+                    "Operation: " + operationName ,
+                    "Invoke operation " +operationName+ " on " + label + "?",
+                    new Feedback.ConfirmationHandler() {
+                        @Override
+                        public void onConfirmation(boolean confirmed) {
+                            if(confirmed)
+                            {
+                                dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+                                    @Override
+                                    public void onSuccess(DMRResponse dmrResponse) {
+                                        ModelNode response = dmrResponse.get();
 
-                Feedback.confirm(
-                        "Operation: " + operationName ,
-                        "Invoke operation " +operationName+ " on " + label + "?",
-                        new Feedback.ConfirmationHandler() {
-                            @Override
-                            public void onConfirmation(boolean confirmed) {
-                                if(confirmed)
-                                {
-                                    dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
-                                        @Override
-                                        public void onSuccess(DMRResponse dmrResponse) {
-                                            ModelNode response = dmrResponse.get();
+                                        String msg = "Operation " +operationName+ " on " + label;
 
-                                            String msg = "Operation " +operationName+ " on " + label;
-
-                                            if(response.isFailure())
-                                            {
-                                                Console.error(Console.MESSAGES.failed(msg), response.getFailureDescription());
-                                            }
-                                            else
-                                            {
-                                                Console.info(Console.MESSAGES.successful(msg));
-
-                                                clearReset(context);
-
-                                            }
+                                        if(response.isFailure())
+                                        {
+                                            Console.error(Console.MESSAGES.failed(msg), response.getFailureDescription());
                                         }
-                                    });
-                                }
+                                        else
+                                        {
+                                            Console.info(Console.MESSAGES.successful(msg));
+
+                                            clearReset(context);
+
+                                        }
+                                    }
+                                });
                             }
                         }
-                );
-            }
-        };
+                    }
+            );
+        }
     }
 }

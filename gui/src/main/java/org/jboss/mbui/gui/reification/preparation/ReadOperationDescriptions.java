@@ -103,14 +103,14 @@ public class ReadOperationDescriptions extends ReificationPreperation
 
                     if (!context.has(ContextKey.OPERATION_DESCRIPTIONS))
                     {
-                        context.set(ContextKey.OPERATION_DESCRIPTIONS, new HashMap<String, ModelNode>());
+                        context.set(ContextKey.OPERATION_DESCRIPTIONS, new HashMap<QName, ModelNode>());
                     }
 
                     Resource<ResourceType> output = visitor.stepReference.get(step);
                     ModelNode operationMetaData = stepResponse.get(RESULT);
                     context.<Map>get(ContextKey.OPERATION_DESCRIPTIONS).put(output.getId(), operationMetaData);
 
-                    System.out.println(output.getId() + " > " + operationMetaData);
+                    //System.out.println(output.getId() + " > " + operationMetaData);
                 }
                 callback.onSuccess();
             }
