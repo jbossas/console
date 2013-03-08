@@ -111,9 +111,18 @@ public class DialogVisualization
                 name = NAME_TEMPLATE.name(name, classname).asString();
             }
 
+
+            StringBuilder tooltip = new StringBuilder();
+            tooltip.append("[unit]\n");
+            tooltip.append(interactionUnit.getId()).append("\n\n");
+            if(interactionUnit.doesConsume())
+                tooltip.append("[input]\n").append(interactionUnit.getInputs()).append("\n\n");
+            if(interactionUnit.doesProduce())
+                tooltip.append("[output]\n").append(interactionUnit.getOutputs()).append("\n");
+
             dataTable.setCell(row, 0, id, name, null);
             dataTable.setValue(row, 1, parentId);
-            dataTable.setValue(row, 2, "");
+            dataTable.setValue(row, 2, tooltip.toString());
             row++;
         }
     }
