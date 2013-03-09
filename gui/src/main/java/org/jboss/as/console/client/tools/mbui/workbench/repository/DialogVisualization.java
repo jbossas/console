@@ -46,7 +46,7 @@ public class DialogVisualization
     {
         OrgChart.Options options = OrgChart.Options.create();
         options.setAllowHtml(true);
-        options.setAllowCollapse(false);
+        options.setAllowCollapse(true);
         return options;
     }
 
@@ -90,8 +90,6 @@ public class DialogVisualization
 
         void addInteractionUnitRow(InteractionUnit interactionUnit)
         {
-            dataTable.addRow();
-
             String id = interactionUnit.getId().toString();
             String name = interactionUnit.getName() == null ? interactionUnit.getId().getLocalPart() : interactionUnit.getName();
             Container container = this.container.isEmpty() ? null : this.container.peek();
@@ -111,21 +109,21 @@ public class DialogVisualization
                 name = NAME_TEMPLATE.name(name, classname).asString();
             }
 
-
             StringBuilder tooltip = new StringBuilder();
-            tooltip.append("[unit]\n");
-            tooltip.append(interactionUnit.getId()).append("\n\n");
-            if(interactionUnit.doesConsume())
+            tooltip.append("[unit]\n").append(id).append("\n\n");
+            if (interactionUnit.doesConsume())
                 tooltip.append("[input]\n").append(interactionUnit.getInputs()).append("\n\n");
-            if(interactionUnit.doesProduce())
+            if (interactionUnit.doesProduce())
                 tooltip.append("[output]\n").append(interactionUnit.getOutputs()).append("\n");
 
+            dataTable.addRow();
             dataTable.setCell(row, 0, id, name, null);
             dataTable.setValue(row, 1, parentId);
             dataTable.setValue(row, 2, tooltip.toString());
             row++;
         }
     }
+
 
     interface NameTemplate extends SafeHtmlTemplates
     {
