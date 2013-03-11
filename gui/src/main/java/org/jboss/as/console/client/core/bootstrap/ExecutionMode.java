@@ -26,8 +26,8 @@ import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.dmr.client.ModelNode;
-
-import java.util.Iterator;
+import org.jboss.gwt.flow.client.Control;
+import org.jboss.gwt.flow.client.Function;
 
 import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 
@@ -35,19 +35,17 @@ import static org.jboss.dmr.client.ModelDescriptionConstants.*;
  * @author Heiko Braun
  * @date 5/19/11
  */
-public class ExecutionMode extends BoostrapStep {
+public class ExecutionMode implements Function<BootstrapContext> {
 
 
-    private BootstrapContext bootstrap;
     private DispatchAsync dispatcher;
 
-    public ExecutionMode(BootstrapContext bootstrap, DispatchAsync dispatcher) {
-        this.bootstrap = bootstrap;
+    public ExecutionMode(DispatchAsync dispatcher) {
         this.dispatcher = dispatcher;
     }
 
     @Override
-    public void execute(final Iterator<BoostrapStep> iterator, final AsyncCallback<Boolean> outcome) {
+    public void execute(final Control<BootstrapContext> control) {
 
         // :read-attribute(name=process-type)
         final ModelNode operation = new ModelNode();
@@ -55,14 +53,16 @@ public class ExecutionMode extends BoostrapStep {
         operation.get(NAME).set("process-type");
         operation.get(ADDRESS).setEmptyList();
 
+        final BootstrapContext bootstrap = control.getContext();
+
         dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
             @Override
             public void onFailure(Throwable caught) {
                 bootstrap.setProperty(BootstrapContext.STANDALONE, "false");
                 bootstrap.setlastError(caught);
                 Log.error(caught.getMessage());
-                outcome.onSuccess(Boolean.FALSE);
-                next(iterator, outcome);
+
+                control.abort();
             }
 
             @Override
@@ -72,10 +72,7 @@ public class ExecutionMode extends BoostrapStep {
                 boolean isServer = response.get(RESULT).asString().equals("Server");
                 bootstrap.setProperty(BootstrapContext.STANDALONE, Boolean.valueOf(isServer).toString());
 
-
-                outcome.onSuccess(Boolean.TRUE);
-
-                next(iterator, outcome);
+                control.proceed();
             }
 
         });

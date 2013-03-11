@@ -1,14 +1,13 @@
 package org.jboss.as.console.client.core.bootstrap;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
-import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.BootstrapContext;
 import org.jboss.as.console.client.domain.model.ProfileRecord;
 import org.jboss.as.console.client.domain.model.ProfileStore;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.domain.profiles.CurrentProfileSelection;
+import org.jboss.gwt.flow.client.Control;
+import org.jboss.gwt.flow.client.Function;
 
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -19,7 +18,7 @@ import java.util.List;
  * @author Heiko Braun
  * @date 1/13/12
  */
-public class EagerLoadProfiles extends BoostrapStep {
+public class EagerLoadProfiles implements Function<BootstrapContext> {
 
     private ProfileStore profileStore;
     private CurrentProfileSelection profileSelection;
@@ -30,18 +29,18 @@ public class EagerLoadProfiles extends BoostrapStep {
     }
 
     @Override
-    public void execute(final Iterator<BoostrapStep> iterator, final AsyncCallback<Boolean> outcome) {
+    public void execute(final Control<BootstrapContext> control) {
 
-        BootstrapContext bootstrapContext = Console.getBootstrapContext();
+        final BootstrapContext context = control.getContext();
 
-        if(!bootstrapContext.isStandalone())
+        if(!context.isStandalone())
         {
             profileStore.loadProfiles(new SimpleCallback<List<ProfileRecord>>() {
 
                 @Override
                 public void onFailure(Throwable caught) {
-                    outcome.onSuccess(Boolean.FALSE);
-                    next(iterator, outcome);
+                    context.setlastError(caught);
+                    control.abort();
                 }
 
                 @Override
@@ -52,8 +51,7 @@ public class EagerLoadProfiles extends BoostrapStep {
                         selectDefaultProfile(result);
                     }
 
-                    outcome.onSuccess(Boolean.TRUE);
-                    next(iterator, outcome);
+                    control.proceed();
                 }
             });
 
@@ -61,8 +59,7 @@ public class EagerLoadProfiles extends BoostrapStep {
         else
         {
             // standalone
-            outcome.onSuccess(Boolean.TRUE);
-            next(iterator, outcome);
+            control.proceed();
         }
 
     }

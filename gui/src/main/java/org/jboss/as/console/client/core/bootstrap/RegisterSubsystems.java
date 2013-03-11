@@ -1,16 +1,16 @@
 package org.jboss.as.console.client.core.bootstrap;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
+import org.jboss.as.console.client.core.BootstrapContext;
 import org.jboss.as.console.client.plugins.SubsystemRegistry;
 import org.jboss.as.console.client.shared.SubsystemMetaData;
-
-import java.util.Iterator;
+import org.jboss.gwt.flow.client.Control;
+import org.jboss.gwt.flow.client.Function;
 
 /**
  * @author Heiko Braun
  * @date 3/27/12
  */
-public class RegisterSubsystems extends BoostrapStep {
+public class RegisterSubsystems implements Function<BootstrapContext> {
 
     private SubsystemRegistry registry;
 
@@ -19,12 +19,10 @@ public class RegisterSubsystems extends BoostrapStep {
     }
 
     @Override
-    public void execute(Iterator<BoostrapStep> iterator, AsyncCallback<Boolean> outcome) {
+    public void execute(Control<BootstrapContext> control) {
 
         SubsystemMetaData.bootstrap(registry);
 
-        outcome.onSuccess(Boolean.TRUE);
-
-        next(iterator, outcome);
+        control.proceed();
     }
 }

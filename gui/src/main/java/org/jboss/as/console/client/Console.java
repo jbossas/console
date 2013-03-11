@@ -58,6 +58,8 @@ import org.jboss.as.console.client.plugins.RuntimeExtensionRegistry;
 import org.jboss.as.console.client.plugins.SubsystemRegistry;
 import org.jboss.as.console.client.shared.Preferences;
 import org.jboss.as.console.client.shared.help.HelpSystem;
+import org.jboss.gwt.flow.client.Async;
+import org.jboss.gwt.flow.client.Outcome;
 
 /**
  * Main application entry point.
@@ -114,47 +116,49 @@ public class Console implements EntryPoint {
                     System.out.println(key.getTitle()+": "+ prefValue);
                 }
 
-                // ordered bootstrap
-                final BootstrapProcess bootstrap = new BootstrapProcess();
+                // Bootstrap outcome: Load main application or display error message
 
-                bootstrap.addHook(new LoadGoogleViz());
-                bootstrap.addHook(new ExecutionMode(MODULES.getBootstrapContext(), MODULES.getDispatchAsync()));
-                bootstrap.addHook(new TrackExecutionMode(MODULES.getBootstrapContext(), MODULES.getAnalytics()));
-                bootstrap.addHook(new LoadCompatMatrix(MODULES.modelVersions()));
-                bootstrap.addHook(new RegisterSubsystems(MODULES.getSubsystemRegistry()));
-                bootstrap.addHook(new ChoseProcessor(MODULES.getBootstrapContext()));
-                bootstrap.addHook(new EagerLoadProfiles(MODULES.getProfileStore(), MODULES.getCurrentSelectedProfile()));
-                bootstrap.addHook(new EagerLoadHosts(MODULES.getDomainEntityManager()));
-                bootstrap.addHook(new RemoveLoadingPanel(loadingPanel));
-
-                bootstrap.execute( new AsyncCallback<Boolean>() {
+                Outcome<BootstrapContext> bootstrapOutcome = new Outcome<BootstrapContext>() {
                     @Override
-                    public void onFailure(Throwable caught) {
-                        error("Bootstrap failed", caught.getMessage());
+                    public void onFailure() {
+                        // currently we only deal with authentication errors
+                        RootLayoutPanel.get().remove(loadingPanel);
+
+                        String cause = "";
+                        if(MODULES.getBootstrapContext().getLastError()!=null)
+                            cause = MODULES.getBootstrapContext().getLastError().getMessage();
+
+                        HTMLPanel explanation = new HTMLPanel("<div style='padding-top:150px;padding-left:120px;'><h2>The management interface could not be loaded.</h2><pre>"+cause+"</pre></div>");
+                        RootLayoutPanel.get().add(explanation);
                     }
 
                     @Override
-                    public void onSuccess(Boolean wasSuccessfull) {
-                        if(!wasSuccessfull)
-                        {
-                            // currently we only deal with authentication errors
-                            RootLayoutPanel.get().remove(loadingPanel);
-
-                            String cause = "";
-                            if(MODULES.getBootstrapContext().getLastError()!=null)
-                                cause = MODULES.getBootstrapContext().getLastError().getMessage();
-
-                            HTMLPanel explanation = new HTMLPanel("<center><div style='padding-top:150px;'><h2>The web console could not be loaded.</h2>"+cause+"</div></center>");
-                            RootLayoutPanel.get().add(explanation);
-                        }
-                        else {
-                            new LoadMainApp(
-                                    MODULES.getBootstrapContext(),
-                                    MODULES.getPlaceManager(),
-                                    MODULES.getTokenFormatter()).execute();
-                        }
+                    public void onSuccess(BootstrapContext context) {
+                        new LoadMainApp(
+                                MODULES.getBootstrapContext(),
+                                MODULES.getPlaceManager(),
+                                MODULES.getTokenFormatter()).execute();
                     }
-                });
+                };
+
+                // Ordered execution: if any of these fail, the interface wil not be loaded
+
+                new Async<BootstrapContext>().waterfall(
+                        bootstrapOutcome, // oputcome
+                        MODULES.getBootstrapContext(), // shared context
+
+                        // bootstrap functions
+                        new LoadGoogleViz(),
+                        new ExecutionMode(MODULES.getDispatchAsync()),
+                        new TrackExecutionMode(MODULES.getAnalytics()),
+                        new LoadCompatMatrix(MODULES.modelVersions()),
+                        new RegisterSubsystems(MODULES.getSubsystemRegistry()),
+                        new ChoseProcessor(),
+                        new EagerLoadProfiles(MODULES.getProfileStore(), MODULES.getCurrentSelectedProfile()),
+                        new EagerLoadHosts(MODULES.getDomainEntityManager()),
+                        new RemoveLoadingPanel(loadingPanel)
+                );
+
             }
 
         });
@@ -253,8 +257,8 @@ public class Console implements EntryPoint {
     public static SubsystemRegistry getSubsystemRegistry() {
         return MODULES.getSubsystemRegistry();
     }
-    
+
     public static RuntimeExtensionRegistry getRuntimeLHSItemExtensionRegistry() {
         return MODULES.getRuntimeLHSItemExtensionRegistry();
-    }    
+    }
 }
