@@ -212,12 +212,12 @@ public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, Preview
 
             Outcome<Context> outcome = new Outcome<Context>() {
                 @Override
-                public void isFailure() {
+                public void onFailure() {
                     Window.alert("Reification failed");
                 }
 
                 @Override
-                public void isSuccess(final Context context) {
+                public void onSuccess(final Context context) {
                     // show result
                     ReificationWidget widget = context.get(ContextKey.WIDGET);
                     assert widget !=null;
