@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.allen_sauer.gwt.log.client.Log;
+import com.google.gwt.user.client.Window;
 import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.Presenter;
@@ -41,6 +42,11 @@ import org.jboss.as.console.client.tools.mbui.workbench.repository.DataSourceSam
 import org.jboss.as.console.client.tools.mbui.workbench.repository.Sample;
 import org.jboss.as.console.client.tools.mbui.workbench.repository.SecurityDomainsSample;
 import org.jboss.as.console.client.tools.mbui.workbench.repository.TransactionSample;
+import org.jboss.gwt.flow.client.Control;
+import org.jboss.gwt.flow.client.Ctx;
+import org.jboss.gwt.flow.client.FlowControl;
+import org.jboss.gwt.flow.client.Function;
+import org.jboss.gwt.flow.client.Outcome;
 import org.jboss.mbui.gui.behaviour.InteractionCoordinator;
 import org.jboss.mbui.gui.behaviour.as7.CoreGUIContext;
 import org.jboss.mbui.gui.reification.Context;
@@ -135,19 +141,100 @@ public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, Preview
             final Dialog dialog = sample.getDialog();
             final Context context = new Context();
 
-            // prepare reification
+            // build reification pipeline
 
-            PopulateContext populateContext = new PopulateContext(
-                    getActiveCoordinator().getLocalBus(),
-                    getActiveCoordinator(),
-                    getActiveCoordinator().getStatementContext()
+            Function<Context> prepareContext = new Function<Context>() {
+                @Override
+                public void execute(Control<Context> control) {
+                    context.set(ContextKey.EVENTBUS, getActiveCoordinator().getLocalBus());
+                    context.set(ContextKey.COORDINATOR, getActiveCoordinator());
+                    context.set(ContextKey.STATEMENTS, getActiveCoordinator().getStatementContext());
+
+                    control.proceed();
+                }
+            };
+
+            Function<Context> readOperationMetaData = new Function<Context>() {
+                @Override
+                public void execute(final Control<Context> control) {
+                    ReadOperationDescriptions operationMetaData = new ReadOperationDescriptions(dispatcher);
+                    operationMetaData.prepareAsync(dialog, context, new ReificationPreperation.Callback()
+                    {
+                        @Override
+                        public void onError(Throwable caught) {
+                            Log.error("Reification failed: " + caught.getMessage());
+                            control.abort();
+                        }
+
+                        @Override
+                        public void onSuccess() {
+
+                            Log.info("Successfully retrieved operation meta data");
+                            control.proceed();
+                        }
+                    });
+                }
+            };
+
+            Function<Context> readResourceMetaData = new Function<Context>() {
+                @Override
+                public void execute(final Control<Context> control) {
+                    ReificationPreperation readResourceDescription = new ReadResourceDescription(dispatcher);
+                    readResourceDescription.prepareAsync(dialog, context, new ReificationPreperation.Callback()
+                    {
+                        @Override
+                        public void onSuccess()
+                        {
+
+                            Log.info("Successfully retrieved resource meta data");
+
+                            // setup & start the reification pipeline
+                            ReificationPipeline pipeline = new ReificationPipeline(
+                                    new BuildUserInterfaceStep(),
+                                    new ImplicitBehaviourStep(dispatcher),
+                                    new IntegrityStep());
+                            pipeline.execute(dialog, context);
+
+                            control.proceed();
+
+                        }
+
+                        @Override
+                        public void onError(final Throwable caught)
+                        {
+                            Log.error("Reification failed: " + caught.getMessage());
+                            control.abort();
+                        }
+                    });
+                }
+            };
+
+
+            Outcome<Context> outcome = new Outcome<Context>() {
+                @Override
+                public void isFailure() {
+                    Window.alert("Reification failed");
+                }
+
+                @Override
+                public void isSuccess(final Context context) {
+                    // show result
+                    ReificationWidget widget = context.get(ContextKey.WIDGET);
+                    assert widget !=null;
+
+
+                    cachedWidgets.put(selectedSample, widget);
+                    getView().show(widget);
+                }
+            };
+
+
+            // execute pipeline
+
+            FlowControl.waterfall(
+                    outcome, new Ctx<Context>(context),
+                    prepareContext, readOperationMetaData, readResourceMetaData
             );
-
-            // Setup the context
-            populateContext.prepare(dialog, context);
-
-            // Retrieve operation meta data
-            proceedWithOperationDescriptions(dialog, context);
 
         }
         else
@@ -157,25 +244,7 @@ public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, Preview
 
     }
 
-    // 2.)  Retrieve operation meta data
-    private void proceedWithOperationDescriptions(final Dialog dialog, final Context context) {
 
-        ReadOperationDescriptions operationMetaData = new ReadOperationDescriptions(dispatcher);
-        operationMetaData.prepareAsync(dialog, context, new ReificationPreperation.Callback()
-        {
-            @Override
-            public void onError(Throwable caught) {
-                Log.error("Reification failed: " + caught.getMessage());
-            }
-
-            @Override
-            public void onSuccess() {
-
-                Log.info("Successfully retrieved operation meta data");
-                proceedWithResourceDescriptions(dialog, context);
-            }
-        });
-    }
 
     // 3.) Retrieve resource meta data
     private void proceedWithResourceDescriptions(final Dialog dialog, final Context context) {
