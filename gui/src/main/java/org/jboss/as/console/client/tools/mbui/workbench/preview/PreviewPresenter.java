@@ -42,9 +42,8 @@ import org.jboss.as.console.client.tools.mbui.workbench.repository.DataSourceSam
 import org.jboss.as.console.client.tools.mbui.workbench.repository.Sample;
 import org.jboss.as.console.client.tools.mbui.workbench.repository.SecurityDomainsSample;
 import org.jboss.as.console.client.tools.mbui.workbench.repository.TransactionSample;
+import org.jboss.gwt.flow.client.Async;
 import org.jboss.gwt.flow.client.Control;
-import org.jboss.gwt.flow.client.Ctx;
-import org.jboss.gwt.flow.client.FlowControl;
 import org.jboss.gwt.flow.client.Function;
 import org.jboss.gwt.flow.client.Outcome;
 import org.jboss.mbui.gui.behaviour.InteractionCoordinator;
@@ -55,7 +54,6 @@ import org.jboss.mbui.gui.reification.pipeline.BuildUserInterfaceStep;
 import org.jboss.mbui.gui.reification.pipeline.ImplicitBehaviourStep;
 import org.jboss.mbui.gui.reification.pipeline.IntegrityStep;
 import org.jboss.mbui.gui.reification.pipeline.ReificationPipeline;
-import org.jboss.mbui.gui.reification.preparation.PopulateContext;
 import org.jboss.mbui.gui.reification.preparation.ReadOperationDescriptions;
 import org.jboss.mbui.gui.reification.preparation.ReadResourceDescription;
 import org.jboss.mbui.gui.reification.preparation.ReificationPreperation;
@@ -231,8 +229,8 @@ public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, Preview
 
             // execute pipeline
 
-            FlowControl.waterfall(
-                    outcome, new Ctx<Context>(context),
+            new Async<Context>().waterfall(
+                    outcome, context,
                     prepareContext, readOperationMetaData, readResourceMetaData
             );
 
