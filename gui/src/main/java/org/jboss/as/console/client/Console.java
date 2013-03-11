@@ -44,7 +44,6 @@ import org.jboss.as.console.client.core.bootstrap.ExecutionMode;
 import org.jboss.as.console.client.core.bootstrap.LoadCompatMatrix;
 import org.jboss.as.console.client.core.bootstrap.LoadMainApp;
 import org.jboss.as.console.client.core.bootstrap.RegisterSubsystems;
-import org.jboss.as.console.client.core.bootstrap.RemoveLoadingPanel;
 import org.jboss.as.console.client.core.bootstrap.TrackExecutionMode;
 import org.jboss.as.console.client.core.gin.Composite;
 import org.jboss.as.console.client.core.message.Message;
@@ -131,6 +130,9 @@ public class Console implements EntryPoint {
 
                     @Override
                     public void onSuccess(BootstrapContext context) {
+
+                        RootLayoutPanel.get().remove(loadingPanel);
+
                         new LoadMainApp(
                                 MODULES.getBootstrapContext(),
                                 MODULES.getPlaceManager(),
@@ -151,8 +153,7 @@ public class Console implements EntryPoint {
                         new RegisterSubsystems(MODULES.getSubsystemRegistry()),
                         new ChoseProcessor(),
                         new EagerLoadProfiles(MODULES.getProfileStore(), MODULES.getCurrentSelectedProfile()),
-                        new EagerLoadHosts(MODULES.getDomainEntityManager()),
-                        new RemoveLoadingPanel(loadingPanel)
+                        new EagerLoadHosts(MODULES.getDomainEntityManager())
                 );
 
             }
