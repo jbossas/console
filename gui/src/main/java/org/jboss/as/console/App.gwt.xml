@@ -29,6 +29,8 @@
     <inherits name="org.jboss.dmr.DMR"/>
     <inherits name="org.jboss.mbui.MBUI"/>
 
+    <inherits name="org.jboss.gwt.flow.Flow" />
+
     <inherits name="com.allen_sauer.gwt.log.gwt-log-ERROR" />
 
     <!--

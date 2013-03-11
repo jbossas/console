@@ -37,4 +37,44 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+
+        <profile>
+
+            <id>flow</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>gwt-maven-plugin</artifactId>
+                        <version>2.5.0</version>
+                        <configuration>
+                            <inplace>true</inplace>
+                            <logLevel>TRACE</logLevel>
+                            <runTarget>App.html</runTarget>
+                            <warSourceDirectory>war</warSourceDirectory>
+                            <extraJvmArgs>-Xmx1024m -DDEBUG -XX:MaxPermSize=256M</extraJvmArgs>
+                            <style>OBF</style>
+                            <hostedWebapp>war</hostedWebapp>
+                            <localWorkers>2</localWorkers>
+                            <compileReport>false</compileReport>
+                            <module>org.jboss.gwt.flow.FlowDemo</module>
+                            <disableCastChecking>true</disableCastChecking>
+                            <disableClassMetadata>true</disableClassMetadata>
+                            <enableClosureCompiler>true</enableClosureCompiler>
+                            <fragmentCount>30</fragmentCount>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>compile</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
