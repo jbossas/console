@@ -144,7 +144,7 @@ public class Console implements EntryPoint {
                 // Ordered execution: if any of these fail, the interface wil not be loaded
 
                 new Async<BootstrapContext>().waterfall(
-                        bootstrapOutcome, // oputcome
+                        bootstrapOutcome, // outcome
                         MODULES.getBootstrapContext(), // shared context
 
                         // bootstrap functions
