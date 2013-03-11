@@ -28,7 +28,6 @@ import com.google.gwt.core.client.RunAsyncCallback;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -40,7 +39,6 @@ import org.jboss.as.console.client.core.LoadingPanel;
 import org.jboss.as.console.client.core.UIConstants;
 import org.jboss.as.console.client.core.UIDebugConstants;
 import org.jboss.as.console.client.core.UIMessages;
-import org.jboss.as.console.client.core.bootstrap.BootstrapProcess;
 import org.jboss.as.console.client.core.bootstrap.ChoseProcessor;
 import org.jboss.as.console.client.core.bootstrap.EagerLoadHosts;
 import org.jboss.as.console.client.core.bootstrap.EagerLoadProfiles;
@@ -49,7 +47,6 @@ import org.jboss.as.console.client.core.bootstrap.LoadCompatMatrix;
 import org.jboss.as.console.client.core.bootstrap.LoadGoogleViz;
 import org.jboss.as.console.client.core.bootstrap.LoadMainApp;
 import org.jboss.as.console.client.core.bootstrap.RegisterSubsystems;
-import org.jboss.as.console.client.core.bootstrap.RemoveLoadingPanel;
 import org.jboss.as.console.client.core.bootstrap.TrackExecutionMode;
 import org.jboss.as.console.client.core.gin.Composite;
 import org.jboss.as.console.client.core.message.Message;
@@ -134,6 +131,9 @@ public class Console implements EntryPoint {
 
                     @Override
                     public void onSuccess(BootstrapContext context) {
+
+                        RootLayoutPanel.get().remove(loadingPanel);
+
                         new LoadMainApp(
                                 MODULES.getBootstrapContext(),
                                 MODULES.getPlaceManager(),
@@ -155,8 +155,7 @@ public class Console implements EntryPoint {
                         new RegisterSubsystems(MODULES.getSubsystemRegistry()),
                         new ChoseProcessor(),
                         new EagerLoadProfiles(MODULES.getProfileStore(), MODULES.getCurrentSelectedProfile()),
-                        new EagerLoadHosts(MODULES.getDomainEntityManager()),
-                        new RemoveLoadingPanel(loadingPanel)
+                        new EagerLoadHosts(MODULES.getDomainEntityManager())
                 );
 
             }
