@@ -24,10 +24,11 @@
     <inherits name="com.google.gwt.i18n.I18N"/>
     <inherits name="org.jboss.dmr.DMR"/>
 
-
     <inherits name="org.jboss.ballroom.Framework"/>
 
     <inherits name="com.google.gwt.json.JSON"/>
+    <inherits name="org.jboss.gwt.flow.Flow" />
+
     <inherits name="com.allen_sauer.gwt.log.gwt-log-ERROR" />
 
     <inherits name='com.google.gwt.visualization.Visualization'/>
