@@ -103,7 +103,7 @@ public class StandaloneServerPresenter extends Presenter<StandaloneServerPresent
                 ModelNode serverAttributes = response.get(RESULT).asObject();
                 server.setName(serverAttributes.get("name").asString());
                 server.setReleaseCodename(serverAttributes.get("release-codename").asString());
-                server.setReleaseVersion(serverAttributes.get("release-version").asString());
+                server.setReleaseVersion(bootstrap.getProdVersion());
                 server.setServerState(serverAttributes.get("server-state").asString());
                 getView().updateFrom(server);
                 getView().setReloadRequired(reloadState.isStaleModel());

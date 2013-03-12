@@ -23,11 +23,20 @@ public class TrackExecutionMode implements Function<BootstrapContext> {
 
         BootstrapContext bootstrap = control.getContext();
 
-        String value = bootstrap.isStandalone() ? "standalone" : "domain";
-        analytics.trackEvent("bootstrap", "exec-mode", value);
-        analytics.trackEvent("bootstrap", "console-version", Build.VERSION);
 
-        control.proceed();
+        if(bootstrap.hasProperty(BootstrapContext.STANDALONE))
+        {
+            String value = bootstrap.isStandalone() ? "standalone" : "domain";
+            analytics.trackEvent("bootstrap", "exec-mode", value);
+            analytics.trackEvent("bootstrap", "console-version", Build.VERSION);
+
+            control.proceed();
+        }
+        else
+        {
+            bootstrap.setlastError(new RuntimeException("Failed to resolve execution mode"));
+            control.abort();
+        }
     }
 
 }

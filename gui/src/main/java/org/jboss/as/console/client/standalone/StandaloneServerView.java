@@ -69,7 +69,7 @@ public class StandaloneServerView extends DisposableViewImpl implements Standalo
         form.setNumColumns(2);
 
         TextItem codename = new TextItem("releaseCodename", "Code Name");
-        TextItem version = new TextItem("releaseVersion", "Release version");
+        TextItem version = new TextItem("releaseVersion", "Version");
         TextItem state = new TextItem("serverState", "Server State");
 
         form.setFields(codename, version, state);
