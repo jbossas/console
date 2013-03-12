@@ -8,8 +8,8 @@ package org.jboss.gwt.flow.client;
  */
 public interface Outcome<C> {
 
-    void isFailure();
+    void onFailure();
 
-    void isSuccess(C context);
+    void onSuccess(C context);
 
 }

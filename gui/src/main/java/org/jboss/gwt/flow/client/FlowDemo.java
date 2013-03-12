@@ -72,12 +72,12 @@ public class FlowDemo implements EntryPoint {
 
         final Outcome genericOutcome = new Outcome() {
             @Override
-            public void isFailure() {
+            public void onFailure() {
                 Window.alert("Outcome is failure");
             }
 
             @Override
-            public void isSuccess(Object o) {
+            public void onSuccess(Object o) {
                 Window.alert("Outcome is success: ");
 
             }
@@ -93,12 +93,12 @@ public class FlowDemo implements EntryPoint {
 
         final Outcome<StringBuffer> specificOutcome = new Outcome<StringBuffer>() {
             @Override
-            public void isFailure() {
+            public void onFailure() {
                 Window.alert("Outcome is failure");
             }
 
             @Override
-            public void isSuccess(StringBuffer sb ) {
+            public void onSuccess(StringBuffer sb) {
                 Window.alert("Outcome is success: "+sb);
 
             }
@@ -117,12 +117,12 @@ public class FlowDemo implements EntryPoint {
 
         final Outcome outcome = new Outcome() {
             @Override
-            public void isFailure() {
+            public void onFailure() {
                 append("<Whilst failed>");
             }
 
             @Override
-            public void isSuccess(Object context) {
+            public void onSuccess(Object context) {
                 append("<Whilst success>");
             }
         };
@@ -145,12 +145,12 @@ public class FlowDemo implements EntryPoint {
 
         Outcome parallelOutcome = new Outcome() {
             @Override
-            public void isFailure() {
+            public void onFailure() {
                 append("<Parallel failed>");
             }
 
             @Override
-            public void isSuccess(Object context) {
+            public void onSuccess(Object context) {
                 append("<Parallel success>");
             }
         };

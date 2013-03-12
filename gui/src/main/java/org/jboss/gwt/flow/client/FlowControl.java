@@ -88,7 +88,7 @@ public class FlowControl {
                     Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
                         @Override
                         public void execute() {
-                            outcome.isSuccess(context.get());
+                            outcome.onSuccess(context.get());
                         }
                     });
 
@@ -99,7 +99,7 @@ public class FlowControl {
                     Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
                         @Override
                         public void execute() {
-                            outcome.isFailure();
+                            outcome.onFailure();
                         }
                     });
                     return false;
@@ -126,9 +126,9 @@ public class FlowControl {
                         @Override
                         public void execute() {
                             if (ctrl.isAborted())
-                                outcome.isFailure();
+                                outcome.onFailure();
                             else
-                                outcome.isSuccess(context.get());
+                                outcome.onSuccess(context.get());
 
                         }
                     });
@@ -159,9 +159,9 @@ public class FlowControl {
                                 @Override
                                 public void execute() {
                                     if (ctrl.isAborted())
-                                        outcome.isFailure();
+                                        outcome.onFailure();
                                     else
-                                        outcome.isSuccess(context.get());
+                                        outcome.onSuccess(context.get());
 
                                 }
                             });
