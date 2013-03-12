@@ -3,12 +3,12 @@
     <groupId>org.jboss.as</groupId>
     <artifactId>jboss-as-console-bom</artifactId>
     <packaging>pom</packaging>
-    <version>1.5.2-SNAPSHOT</version>
+    <version>1.5.2.Final</version>
 
     <parent>
         <groupId>org.jboss.as</groupId>
         <artifactId>jboss-as-console-parent</artifactId>
-        <version>1.5.2-SNAPSHOT</version>
+        <version>1.5.2.Final</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
