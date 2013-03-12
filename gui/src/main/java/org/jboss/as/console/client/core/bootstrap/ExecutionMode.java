@@ -105,8 +105,6 @@ public class ExecutionMode implements Function<BootstrapContext> {
                 else
                 {
 
-                    System.out.println(response);
-
                     // capture exec mode
                     ModelNode execResult = response.get(RESULT).get("step-1");
                     boolean isServer = execResult.get(RESULT).asString().equals("Server");
