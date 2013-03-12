@@ -1,19 +1,21 @@
 package org.jboss.as.console.client.core.bootstrap;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.visualization.client.VisualizationUtils;
 import com.google.gwt.visualization.client.visualizations.corechart.LineChart;
-
-import java.util.Iterator;
+import org.jboss.as.console.client.core.BootstrapContext;
+import org.jboss.gwt.flow.client.Control;
+import org.jboss.gwt.flow.client.Function;
 
 /**
  * @author Heiko Braun
  * @date 12/7/11
  */
-public class LoadGoogleViz extends BoostrapStep {
+public class LoadGoogleViz implements Function<BootstrapContext>
+{
 
     @Override
-    public void execute(Iterator<BoostrapStep> iterator, AsyncCallback<Boolean> outcome) {
+    public void execute(Control<BootstrapContext> control) {
+
 
         VisualizationUtils.loadVisualizationApi(
                 new Runnable() {
@@ -24,8 +26,8 @@ public class LoadGoogleViz extends BoostrapStep {
                 }, LineChart.PACKAGE
         );
 
-        outcome.onSuccess(Boolean.TRUE);
+        // viz can be loaded in background ...
+        control.proceed();
 
-        next(iterator, outcome);
     }
 }

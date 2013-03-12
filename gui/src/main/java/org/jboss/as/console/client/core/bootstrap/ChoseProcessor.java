@@ -1,27 +1,21 @@
 package org.jboss.as.console.client.core.bootstrap;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import org.jboss.as.console.client.core.BootstrapContext;
 import org.jboss.as.console.client.shared.dispatch.ResponseProcessorFactory;
-
-import java.util.Iterator;
+import org.jboss.gwt.flow.client.Control;
+import org.jboss.gwt.flow.client.Function;
 
 /**
  * @author Heiko Braun
  * @date 1/17/12
  */
-public class ChoseProcessor extends BoostrapStep {
-
-    private BootstrapContext bootstrap;
-
-    public ChoseProcessor(BootstrapContext bootstrapContext) {
-        this.bootstrap = bootstrapContext;
-    }
+public class ChoseProcessor implements Function<BootstrapContext> {
 
     @Override
-    public void execute(Iterator<BoostrapStep> iterator, AsyncCallback<Boolean> outcome) {
+    public void execute(Control<BootstrapContext> control) {
+
+        BootstrapContext bootstrap = control.getContext();
         ResponseProcessorFactory.INSTANCE.bootstrap(bootstrap.isStandalone());
-        outcome.onSuccess(Boolean.TRUE);
-        next(iterator, outcome);
+        control.proceed();
     }
 }

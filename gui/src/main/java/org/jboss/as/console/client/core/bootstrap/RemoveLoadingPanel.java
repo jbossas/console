@@ -1,16 +1,16 @@
 package org.jboss.as.console.client.core.bootstrap;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
-
-import java.util.Iterator;
+import org.jboss.as.console.client.core.BootstrapContext;
+import org.jboss.gwt.flow.client.Control;
+import org.jboss.gwt.flow.client.Function;
 
 /**
  * @author Heiko Braun
  * @date 12/7/11
  */
-public class RemoveLoadingPanel extends BoostrapStep {
+public class RemoveLoadingPanel implements Function<BootstrapContext> {
     private Widget widget;
 
     public RemoveLoadingPanel(Widget loadingPanel) {
@@ -18,11 +18,9 @@ public class RemoveLoadingPanel extends BoostrapStep {
     }
 
     @Override
-    public void execute(Iterator<BoostrapStep> iterator, AsyncCallback<Boolean> outcome) {
+    public void execute(Control<BootstrapContext> control) {
 
         RootLayoutPanel.get().remove(widget);
-        outcome.onSuccess(Boolean.TRUE);
-
-        next(iterator, outcome);
+        control.proceed();
     }
 }

@@ -4,13 +4,14 @@ import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.json.client.JSONValue;
 import com.google.gwt.resources.client.TextResource;
-import com.google.gwt.user.client.rpc.AsyncCallback;
+import org.jboss.as.console.client.core.BootstrapContext;
 import org.jboss.as.console.client.core.settings.ModelVersions;
+import org.jboss.gwt.flow.client.Control;
+import org.jboss.gwt.flow.client.Function;
 
-import java.util.Iterator;
 import java.util.Set;
 
-public class LoadCompatMatrix extends BoostrapStep {
+public class LoadCompatMatrix implements Function<BootstrapContext> {
 
     private ModelVersions modelVersions;
 
@@ -19,7 +20,7 @@ public class LoadCompatMatrix extends BoostrapStep {
     }
 
     @Override
-    public void execute(final Iterator<BoostrapStep> iterator, final AsyncCallback<Boolean> outcome) {
+    public void execute(Control<BootstrapContext> control) {
 
         TextResource compat = TextResources.INSTANCE.compat();
 
@@ -32,9 +33,8 @@ public class LoadCompatMatrix extends BoostrapStep {
         }
 
         System.out.println("Build against Core Model Version: " + modelVersions.get("core-version"));
-        outcome.onSuccess(Boolean.TRUE);
-        next(iterator, outcome);
 
+        control.proceed();
     }
 
 }
