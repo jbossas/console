@@ -83,7 +83,7 @@ public class FlowDemo implements EntryPoint {
             }
         };
 
-        FlowControl.series(genericOutcome, first, second);
+        new Async().series(genericOutcome, first, second);
     }
 
     private void runWaterfall() {
@@ -104,7 +104,7 @@ public class FlowDemo implements EntryPoint {
             }
         };
 
-        FlowControl.waterfall(specificOutcome, new Ctx<StringBuffer>(new StringBuffer()), third, fourth);
+        new Async<StringBuffer>().waterfall(specificOutcome, new StringBuffer(), third, fourth);
 
     }
 
@@ -112,6 +112,7 @@ public class FlowDemo implements EntryPoint {
     {
 
         clearOutput();
+
         final int max = 3;
         final IncrementFunction function = new IncrementFunction();
 
@@ -127,12 +128,14 @@ public class FlowDemo implements EntryPoint {
             }
         };
 
-        FlowControl.whilst(new Precondition() {
+        Precondition condition = new Precondition() {
             @Override
             public boolean isMet() {
-                return function.getCounter()<max;
+                return function.getCounter() < max;
             }
-        }, outcome, function);
+        };
+
+        new Async().whilst( condition, outcome, function);
     }
 
     private void runParallel() {
@@ -155,7 +158,7 @@ public class FlowDemo implements EntryPoint {
             }
         };
 
-        FlowControl.parallel(parallelOutcome, p1, p2, p3);
+        new Async().parallel(parallelOutcome, p1, p2, p3);
 
     }
 

@@ -9,14 +9,9 @@ import com.google.gwt.core.client.Scheduler;
  * @author Heiko Braun
  * @date 3/8/13
  */
-public class FlowControl {
+public class Async<C> {
 
-    private final static Ctx<Object> EMPTY_CONTEXT = new Ctx<Object>(new Object()) {};
-
-    protected FlowControl() {
-    }
-
-    // -----------  API  -----------
+    private final static Object EMPTY_CONTEXT = new Object();
 
     /**
      * Run an array of functions in series, each one running once the previous function has completed.
@@ -26,55 +21,9 @@ public class FlowControl {
      * @param outcome
      * @param functions
      */
-    public static void series(final Outcome outcome, final Function... functions)
-    {
-        new FlowControl()._series(outcome, EMPTY_CONTEXT, functions);
-    }
+    public void series(final Outcome outcome, final C context, final Function... functions) {
 
-    /**
-     * Runs an array of functions in series, working on a shared context.
-     * However, if any of the functions pass an error to the callback,
-     * the next function is not executed and the outcome is immediately called with the error.
-     *
-     * @param outcome
-     * @param context
-     * @param functions
-     */
-    public static void waterfall(final Outcome outcome, Ctx context, final Function... functions)
-    {
-        new FlowControl()._series(outcome, context, functions);
-    }
-
-    /**
-     * Run an array of functions in parallel, without waiting until the previous function has completed.
-     * If any of the functions pass an error to its callback, the outcome is immediately called with the value of the error.
-     *
-     * @param outcome
-     * @param functions
-     */
-    public static void parallel(final Outcome outcome, final Function... functions)
-    {
-        new FlowControl()._parallel(outcome, EMPTY_CONTEXT, functions);
-    }
-
-    /**
-     * Repeatedly call function, while condition is met. Calls the callback when stopped, or an error occurs.
-     *
-     * @param condition
-     * @param outcome
-     * @param function
-     */
-    public static void whilst(Precondition condition, final Outcome outcome, final Function function)
-    {
-        new FlowControl()._whilst(condition, outcome, EMPTY_CONTEXT, function);
-    }
-
-
-    // -----------  Implementation -----------
-
-    private void _series(final Outcome outcome, final Ctx context, final Function... functions) {
-
-        final SequentialControl<Object> ctrl = new SequentialControl<Object>(context.get(), functions);
+        final SequentialControl<Object> ctrl = new SequentialControl<Object>(context, functions);
 
         // select first task
         ctrl.proceed();
@@ -88,7 +37,7 @@ public class FlowControl {
                     Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
                         @Override
                         public void execute() {
-                            outcome.onSuccess(context.get());
+                            outcome.onSuccess(context);
                         }
                     });
 
@@ -113,8 +62,28 @@ public class FlowControl {
         });
     }
 
-    private void _parallel(final Outcome outcome, final Ctx context, final Function... functions) {
-        final CountingControl<Object> ctrl = new CountingControl<Object>(context.get(), functions);
+    /**
+     * Runs an array of functions in series, working on a shared context.
+     * However, if any of the functions pass an error to the callback,
+     * the next function is not executed and the outcome is immediately called with the error.
+     *
+     * @param outcome
+     * @param context
+     * @param functions
+     */
+    public void waterfall(Outcome<C> outcome, C context, Function<C>... functions) {
+        series(outcome, context, functions);
+    }
+
+    /**
+     * Run an array of functions in parallel, without waiting until the previous function has completed.
+     * If any of the functions pass an error to its callback, the outcome is immediately called with the value of the error.
+     *
+     * @param outcome
+     * @param functions
+     */
+    public void parallel(final Outcome outcome, final Function... functions) {
+        final CountingControl<Object> ctrl = new CountingControl<Object>(EMPTY_CONTEXT, functions);
 
         Scheduler.get().scheduleIncremental(new Scheduler.RepeatingCommand() {
             @Override
@@ -128,7 +97,7 @@ public class FlowControl {
                             if (ctrl.isAborted())
                                 outcome.onFailure();
                             else
-                                outcome.onSuccess(context.get());
+                                outcome.onSuccess(EMPTY_CONTEXT);
 
                         }
                     });
@@ -145,36 +114,43 @@ public class FlowControl {
         });
     }
 
-    private void _whilst(Precondition condition, final Outcome outcome, final Ctx context, final Function function) {
+    /**
+     * Repeatedly call function, while condition is met. Calls the callback when stopped, or an error occurs.
+     *
+     * @param condition
+     * @param outcome
+     * @param function
+     */
+    public void whilst(Precondition condition, final Outcome outcome, final Function function) {
 
-        final GuardedControl ctrl = new GuardedControl(condition, context.get());
+        final GuardedControl ctrl = new GuardedControl(condition, EMPTY_CONTEXT);
 
         Scheduler.get().scheduleIncremental(new Scheduler.RepeatingCommand() {
-                    @Override
-                    public boolean execute() {
+            @Override
+            public boolean execute() {
 
-                        if(!ctrl.shouldProceed())
-                        {
-                            Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
-                                @Override
-                                public void execute() {
-                                    if (ctrl.isAborted())
-                                        outcome.onFailure();
-                                    else
-                                        outcome.onSuccess(context.get());
+                if(!ctrl.shouldProceed())
+                {
+                    Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+                        @Override
+                        public void execute() {
+                            if (ctrl.isAborted())
+                                outcome.onFailure();
+                            else
+                                outcome.onSuccess(EMPTY_CONTEXT);
 
-                                }
-                            });
-
-                            return false;
                         }
-                        else
-                        {
-                            function.execute(ctrl);
-                            return true;
-                        }
-                    }
-                });
+                    });
+
+                    return false;
+                }
+                else
+                {
+                    function.execute(ctrl);
+                    return true;
+                }
+            }
+        });
     }
 
 
