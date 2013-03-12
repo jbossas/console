@@ -39,6 +39,8 @@ public class BootstrapContext implements ApplicationProperties {
 
     private String initialPlace = null;
     private Throwable lastError;
+    private String releaseVersion;
+    private String prodVersion;
 
     @Inject
     public BootstrapContext(ProductConfig productConfig) {
@@ -159,5 +161,18 @@ public class BootstrapContext implements ApplicationProperties {
 
     public Throwable getLastError() {
         return lastError;
+    }
+
+    public void setReleaseVersion(String releaseVersion) {
+        this.releaseVersion = releaseVersion;
+    }
+
+    public void setProdVersion(String prodVersion) {
+        this.prodVersion = prodVersion;
+    }
+
+    public String getProdVersion() {
+        return (null==prodVersion || prodVersion.equals("")) ?
+                releaseVersion : prodVersion;
     }
 }

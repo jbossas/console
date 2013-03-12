@@ -153,7 +153,7 @@ public class Header implements ValueChangeHandler<String> {
         logo.setStyleName("logo");
 
         panel.add(logo);
-        HTML prodVersion = new HTML(productConfig.getProductVersion());
+        HTML prodVersion = new HTML(bootstrap.getProdVersion());//new HTML(productConfig.getProductVersion());
         prodVersion.setStyleName("header-prod-version");
         panel.add(prodVersion);
 

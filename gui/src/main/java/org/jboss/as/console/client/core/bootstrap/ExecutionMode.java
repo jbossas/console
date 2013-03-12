@@ -29,6 +29,9 @@ import org.jboss.dmr.client.ModelNode;
 import org.jboss.gwt.flow.client.Control;
 import org.jboss.gwt.flow.client.Function;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 
 /**
@@ -49,16 +52,40 @@ public class ExecutionMode implements Function<BootstrapContext> {
 
         // :read-attribute(name=process-type)
         final ModelNode operation = new ModelNode();
-        operation.get(OP).set(READ_ATTRIBUTE_OPERATION);
-        operation.get(NAME).set("process-type");
+        operation.get(OP).set(COMPOSITE);
         operation.get(ADDRESS).setEmptyList();
+
+        List<ModelNode> steps = new ArrayList<ModelNode>();
+
+        // exec type
+        ModelNode execType = new ModelNode();
+        execType.get(OP).set(READ_ATTRIBUTE_OPERATION);
+        execType.get(NAME).set("process-type");
+        execType.get(ADDRESS).setEmptyList();
+        steps.add(execType);
+
+        // prod version
+        ModelNode prodVersion = new ModelNode();
+        prodVersion.get(OP).set(READ_ATTRIBUTE_OPERATION);
+        prodVersion.get(NAME).set("product-version");
+        prodVersion.get(ADDRESS).setEmptyList();
+        steps.add(prodVersion);
+
+        // release version
+        ModelNode releaseVersion = new ModelNode();
+        releaseVersion.get(OP).set(READ_ATTRIBUTE_OPERATION);
+        releaseVersion.get(NAME).set("release-version");
+        releaseVersion.get(ADDRESS).setEmptyList();
+        steps.add(releaseVersion);
+        
+        operation.get(STEPS).set(steps);
 
         final BootstrapContext bootstrap = control.getContext();
 
         dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
             @Override
             public void onFailure(Throwable caught) {
-                bootstrap.setProperty(BootstrapContext.STANDALONE, "false");
+
                 bootstrap.setlastError(caught);
                 Log.error(caught.getMessage());
 
@@ -69,10 +96,37 @@ public class ExecutionMode implements Function<BootstrapContext> {
             public void onSuccess(DMRResponse result) {
 
                 ModelNode response = result.get();
-                boolean isServer = response.get(RESULT).asString().equals("Server");
-                bootstrap.setProperty(BootstrapContext.STANDALONE, Boolean.valueOf(isServer).toString());
 
-                control.proceed();
+                if(response.isFailure())
+                {
+                    bootstrap.setlastError(new RuntimeException(response.getFailureDescription()));
+                    control.abort();
+                }
+                else
+                {
+
+                    System.out.println(response);
+
+                    // capture exec mode
+                    ModelNode execResult = response.get(RESULT).get("step-1");
+                    boolean isServer = execResult.get(RESULT).asString().equals("Server");
+                    bootstrap.setProperty(BootstrapContext.STANDALONE, Boolean.valueOf(isServer).toString());
+
+                    ModelNode prodVersionResult = response.get(RESULT).get("step-2");
+                    String prodVersion = prodVersionResult.get(RESULT).isDefined() ?
+                            prodVersionResult.get(RESULT).asString() : "";
+
+                    ModelNode releaseResult = response.get(RESULT).get("step-3");
+                    String releaseVersion = releaseResult.get(RESULT).isDefined() ?
+                            releaseResult.get(RESULT).asString() : "";
+
+                    bootstrap.setReleaseVersion(releaseVersion);
+                    bootstrap.setProdVersion(prodVersion);
+
+                    control.proceed();
+                }
+
+
             }
 
         });
