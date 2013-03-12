@@ -21,9 +21,28 @@ public class Async<C> {
      * @param outcome
      * @param functions
      */
-    public void series(final Outcome outcome, final C context, final Function... functions) {
+    public void series(final Outcome outcome, final Function... functions) {
+        _series(outcome, null, functions);  // generic signature problem, hence null
+    }
 
-        final SequentialControl<Object> ctrl = new SequentialControl<Object>(context, functions);
+    /**
+     * Runs an array of functions in series, working on a shared context.
+     * However, if any of the functions pass an error to the callback,
+     * the next function is not executed and the outcome is immediately called with the error.
+     *
+     * @param outcome
+     * @param context
+     * @param functions
+     */
+    public void waterfall(Outcome<C> outcome, C context, Function<C>... functions) {
+        _series(outcome, context, functions);
+    }
+
+    private void _series(final Outcome outcome, C context, final Function... functions) {
+
+        final Object sharedContext = context!=null ? context : EMPTY_CONTEXT;
+
+        final SequentialControl<Object> ctrl = new SequentialControl<Object>(sharedContext, functions);
 
         // select first task
         ctrl.proceed();
@@ -37,7 +56,7 @@ public class Async<C> {
                     Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
                         @Override
                         public void execute() {
-                            outcome.onSuccess(context);
+                            outcome.onSuccess(sharedContext);
                         }
                     });
 
@@ -60,19 +79,6 @@ public class Async<C> {
                 }
             }
         });
-    }
-
-    /**
-     * Runs an array of functions in series, working on a shared context.
-     * However, if any of the functions pass an error to the callback,
-     * the next function is not executed and the outcome is immediately called with the error.
-     *
-     * @param outcome
-     * @param context
-     * @param functions
-     */
-    public void waterfall(Outcome<C> outcome, C context, Function<C>... functions) {
-        series(outcome, context, functions);
     }
 
     /**
