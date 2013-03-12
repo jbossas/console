@@ -1,3 +1,4 @@
+
 /*
  * JBoss, Home of Professional Open Source
  * Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
@@ -246,10 +247,9 @@ public class Console implements EntryPoint {
 
     @Deprecated
     public static native boolean visAPILoaded() /*-{
-        if ($wnd['google'] && $wnd.google['load']) {
-            return true;
-        }
-        return false;
+
+        return false; // prevent usage of charts within metrics
+
     }-*/;
 
 
