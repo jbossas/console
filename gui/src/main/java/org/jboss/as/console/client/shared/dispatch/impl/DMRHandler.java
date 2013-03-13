@@ -28,7 +28,6 @@ import com.google.gwt.http.client.Response;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
 import org.jboss.as.console.client.core.BootstrapContext;
-import org.jboss.as.console.client.core.UIConstants;
 import org.jboss.as.console.client.debug.Diagnostics;
 import org.jboss.as.console.client.shared.dispatch.ActionHandler;
 import org.jboss.as.console.client.shared.dispatch.DispatchRequest;
@@ -52,8 +51,6 @@ public class DMRHandler implements ActionHandler<DMRAction, DMRResponse> {
 
     private boolean trackInvocations = Diagnostics.isEnabled();
 
-    private UIConstants constants;
-
     private static long idCounter = 0;
 
     private static enum Type {
@@ -76,9 +73,7 @@ public class DMRHandler implements ActionHandler<DMRAction, DMRResponse> {
     }
 
     @Inject
-    public DMRHandler(BootstrapContext bootstrap, UIConstants constants) {
-
-        this.constants = constants;
+    public DMRHandler(BootstrapContext bootstrap) {
 
         requestBuilder = new RequestBuilder(
                 RequestBuilder.POST,
@@ -156,7 +151,7 @@ public class DMRHandler implements ActionHandler<DMRAction, DMRResponse> {
                     else
                     {
                         StringBuilder sb = new StringBuilder();
-                        sb.append(constants.common_error_unexpectedHttpResponse()).append(": ").append(statusCode);
+                        sb.append("Unexpected HTTP response").append(": ").append(statusCode);
                         sb.append("\n\n");
                         sb.append("Request\n");
                         sb.append(operation.toString());
@@ -164,7 +159,7 @@ public class DMRHandler implements ActionHandler<DMRAction, DMRResponse> {
                         sb.append("\n\nResponse\n\n");
                         sb.append(response.getStatusText()).append("\n");
 
-                        String payload = response.getText().equals("") ? constants.common_error_detailsMissing() :
+                        String payload = response.getText().equals("") ? "No details" :
                                 ModelNode.fromBase64(response.getText()).toString();
 
                         sb.append(payload);
