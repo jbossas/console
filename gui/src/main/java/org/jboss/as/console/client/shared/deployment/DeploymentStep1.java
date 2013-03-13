@@ -91,7 +91,7 @@ public class DeploymentStep1 {
         panel.add(upload);
 
 
-        final HTML errorMessages = new HTML("Please chose a file!");
+        final HTML errorMessages = new HTML("Please choose a file!");
         errorMessages.setStyleName("error-panel");
         errorMessages.setVisible(false);
         panel.add(errorMessages);

@@ -40,7 +40,7 @@ import org.jboss.as.console.client.core.LoadingPanel;
 import org.jboss.as.console.client.core.UIConstants;
 import org.jboss.as.console.client.core.UIDebugConstants;
 import org.jboss.as.console.client.core.UIMessages;
-import org.jboss.as.console.client.core.bootstrap.ChoseProcessor;
+import org.jboss.as.console.client.core.bootstrap.ChooseProcessor;
 import org.jboss.as.console.client.core.bootstrap.EagerLoadHosts;
 import org.jboss.as.console.client.core.bootstrap.EagerLoadProfiles;
 import org.jboss.as.console.client.core.bootstrap.ExecutionMode;
@@ -154,7 +154,7 @@ public class Console implements EntryPoint {
                         new TrackExecutionMode(MODULES.getAnalytics()),
                         new LoadCompatMatrix(MODULES.modelVersions()),
                         new RegisterSubsystems(MODULES.getSubsystemRegistry()),
-                        new ChoseProcessor(),
+                        new ChooseProcessor(),
                         new EagerLoadProfiles(MODULES.getProfileStore(), MODULES.getCurrentSelectedProfile()),
                         new EagerLoadHosts(MODULES.getDomainEntityManager())
                 );
