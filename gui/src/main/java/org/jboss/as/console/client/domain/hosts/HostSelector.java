@@ -26,7 +26,7 @@ public class HostSelector {
     public Widget asWidget() {
 
         VerticalPanel layout = new VerticalPanel();
-        layout.getElement().setAttribute("title", "Please chose a host");
+        layout.getElement().setAttribute("title", "Please choose a host");
         layout.setStyleName("fill-layout-width");
         layout.addStyleName("lhs-selector");
         layout.getElement().setAttribute("style","padding:4px;");

@@ -159,7 +159,7 @@ public interface UIMessages extends Messages {
 
     String subsys_jca_err_ds_enabled(String name);
 
-    String pleaseChoseanItem();
+    String pleaseChooseanItem();
 
     String path_description();
 

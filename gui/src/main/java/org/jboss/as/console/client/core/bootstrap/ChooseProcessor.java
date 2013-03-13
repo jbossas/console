@@ -9,7 +9,7 @@ import org.jboss.gwt.flow.client.Function;
  * @author Heiko Braun
  * @date 1/17/12
  */
-public class ChoseProcessor implements Function<BootstrapContext> {
+public class ChooseProcessor implements Function<BootstrapContext> {
 
     @Override
     public void execute(Control<BootstrapContext> control) {

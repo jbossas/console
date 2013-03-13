@@ -138,7 +138,7 @@ public class ServerGroupDeploymentPanel implements IsWidget
         SimpleLayout overviewPanel = new SimpleLayout()
                 .setPlain(true)
                 .setHeadline("Server Groups")
-                .setDescription(Console.MESSAGES.pleaseChoseanItem())
+                .setDescription(Console.MESSAGES.pleaseChooseanItem())
                 .addContent(Console.MESSAGES.available("Groups"), wrapper);
 
         groupDeploymentBrowser = new ServerGroupDeploymentBrowser(presenter, deploymentStore, hostInfoStore);

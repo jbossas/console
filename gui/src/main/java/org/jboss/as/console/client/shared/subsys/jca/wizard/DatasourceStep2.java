@@ -132,7 +132,7 @@ public class DatasourceStep2 {
             }
         });
 
-        tabs.add(driverPanel, "Chose Driver");
+        tabs.add(driverPanel, "Choose Driver");
         //tabs.add(form.asWidget(), "Specify Driver");
 
         layout.add(tabs);

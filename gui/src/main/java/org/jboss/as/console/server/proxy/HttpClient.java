@@ -31,6 +31,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import javax.xml.bind.DatatypeConverter;
+
 /**
  * @author Yutaka Yoshida, Greg Murray, Heiko Braun
  *
@@ -161,7 +163,7 @@ public class HttpClient {
             }
             // set basic authentication information
             String auth = userName + ":" +  password;
-            String encoded = new sun.misc.BASE64Encoder().encode (auth.getBytes());
+            String encoded = DatatypeConverter.printBase64Binary(auth.getBytes());
             // set basic authorization
             this.urlConnection.setRequestProperty ("Authorization", "Basic " + encoded);
             this.headers = headers;

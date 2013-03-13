@@ -116,7 +116,7 @@ public class ServerMgmtApplicationPresenter extends Presenter<ServerMgmtApplicat
                     getView().updateFrom(existingSubsystems);
 
 
-                    // chose default view if necessary
+                    // choose default view if necessary
 
                     String preference = NameTokens.serverConfig.equals(currentToken) ? NameTokens.DataSourcePresenter : currentToken;
 

@@ -128,7 +128,7 @@ public class ProfileMgmtPresenter
             return;
         }
 
-        // chose sub place to reveal
+        // choose sub place to reveal
         String currentToken = placeManager.getCurrentPlaceRequest().getNameToken();
 
         // already sub place chosen (token in URL)
