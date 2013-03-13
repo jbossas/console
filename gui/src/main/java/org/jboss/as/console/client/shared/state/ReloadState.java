@@ -1,5 +1,7 @@
 package org.jboss.as.console.client.shared.state;
 
+import com.google.gwt.core.client.GWT;
+import com.google.web.bindery.event.shared.EventBus;
 import org.jboss.as.console.client.Console;
 
 import javax.inject.Singleton;
@@ -15,6 +17,7 @@ public class ReloadState {
 
     private Map<String, ServerState> serverStates = new HashMap<String, ServerState>();
     private int lastFiredSize = 0;
+
 
     public boolean isStaleModel() {
         return serverStates.size()>0;

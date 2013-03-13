@@ -20,8 +20,6 @@
 package org.jboss.as.console.client.shared.dispatch.impl;
 
 
-import org.jboss.as.console.client.shared.dispatch.ResponseProcessor;
-import org.jboss.as.console.client.shared.dispatch.ResponseProcessorFactory;
 import org.jboss.as.console.client.shared.dispatch.Result;
 import org.jboss.dmr.client.ModelNode;
 
@@ -33,13 +31,13 @@ public class DMRResponse implements Result<ModelNode> {
 
     private String responseText;
     private String contentType;
-    private ResponseProcessor processor;
+    //private ResponseProcessor processor;
 
     public DMRResponse(String responseText, String contentType) {
         this.responseText = responseText;
         this.contentType = contentType;
 
-        this.processor = ResponseProcessorFactory.INSTANCE.get();
+        //this.processor = ResponseProcessorFactory.INSTANCE.get();
     }
 
     @Override
@@ -59,7 +57,8 @@ public class DMRResponse implements Result<ModelNode> {
             response = err;
         }
 
-        processor.process(response);
+        // TODO: re-enable after refactoring, might as well leverage notification API
+        //processor.process(response);
 
         return response;
     }

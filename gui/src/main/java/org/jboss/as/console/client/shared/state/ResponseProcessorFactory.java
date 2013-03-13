@@ -1,6 +1,5 @@
-package org.jboss.as.console.client.shared.dispatch;
+package org.jboss.as.console.client.shared.state;
 
-import org.jboss.as.console.client.shared.state.ReloadState;
 import org.jboss.dmr.client.ModelNode;
 
 import javax.inject.Inject;

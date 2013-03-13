@@ -1,4 +1,4 @@
-package org.jboss.as.console.client.shared.dispatch;
+package org.jboss.as.console.client.shared.state;
 
 import org.jboss.dmr.client.ModelNode;
 
