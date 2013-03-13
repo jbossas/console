@@ -20,6 +20,7 @@
 package org.jboss.as.console.client.shared.dispatch.impl;
 
 import com.allen_sauer.gwt.log.client.Log;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestCallback;
@@ -28,7 +29,7 @@ import com.google.gwt.http.client.Response;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
 import org.jboss.as.console.client.core.BootstrapContext;
-import org.jboss.as.console.client.debug.Diagnostics;
+import org.jboss.as.console.client.shared.dispatch.Diagnostics;
 import org.jboss.as.console.client.shared.dispatch.ActionHandler;
 import org.jboss.as.console.client.shared.dispatch.DispatchRequest;
 import org.jboss.dmr.client.ModelNode;
@@ -49,7 +50,9 @@ public class DMRHandler implements ActionHandler<DMRAction, DMRResponse> {
 
     private final RequestBuilder requestBuilder;
 
-    private boolean trackInvocations = Diagnostics.isEnabled();
+    private Diagnostics diagnostics = GWT.create(Diagnostics.class);
+
+    private boolean trackInvocations = diagnostics.isEnabled();
 
     private static long idCounter = 0;
 
@@ -193,11 +196,11 @@ public class DMRHandler implements ActionHandler<DMRAction, DMRResponse> {
         //String token = getToken(operation);
         if(Type.BEGIN.equals(type))
         {
-            Diagnostics.logRpc(type.getClassifier(), id, System.currentTimeMillis(), getToken(operation));
+            diagnostics.logRpc(type.getClassifier(), id, System.currentTimeMillis(), getToken(operation));
         }
         else
         {
-            Diagnostics.logRpc(type.getClassifier(), id, System.currentTimeMillis());
+            diagnostics.logRpc(type.getClassifier(), id, System.currentTimeMillis());
         }
 
     }

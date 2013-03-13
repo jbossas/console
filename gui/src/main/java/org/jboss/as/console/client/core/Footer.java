@@ -19,6 +19,7 @@
 
 package org.jboss.as.console.client.core;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -37,7 +38,7 @@ import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.ProductConfig;
 import org.jboss.as.console.client.auth.CurrentUser;
-import org.jboss.as.console.client.debug.Diagnostics;
+import org.jboss.as.console.client.shared.dispatch.Diagnostics;
 import org.jboss.as.console.client.widgets.popups.DefaultPopup;
 import org.jboss.ballroom.client.widgets.InlineLink;
 import org.jboss.ballroom.client.widgets.window.Feedback;
@@ -54,6 +55,8 @@ public class Footer {
     private Label userName;
     private PlaceManager placeManager;
     private ProductConfig productConfig;
+
+    private Diagnostics diagnostics = GWT.create(Diagnostics.class);
 
     @Inject
     public Footer(EventBus bus, CurrentUser user, PlaceManager placeManager, ProductConfig prodConfig) {
@@ -75,7 +78,7 @@ public class Footer {
         toolReference.add(new String[]{"Management Model", "browser"});
         toolReference.add(new String[]{"Expression Resolver", "expressions"});
 
-        if(Diagnostics.isEnabled())
+        if(diagnostics.isEnabled())
         {
             toolReference.add(new String[]{"Diagnostics", "debug-panel"});
         }
