@@ -24,7 +24,7 @@ import org.jboss.as.console.client.domain.events.StaleModelEvent;
 import org.jboss.as.console.client.domain.model.HostInformationStore;
 import org.jboss.as.console.client.domain.model.Server;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
-import org.jboss.as.console.client.shared.dispatch.AsyncCommand;
+import org.jboss.dmr.client.dispatch.AsyncCommand;
 import org.jboss.as.console.client.shared.schedule.LongRunningTask;
 
 import static org.jboss.as.console.client.domain.model.impl.LifecycleOperation.RELOAD;

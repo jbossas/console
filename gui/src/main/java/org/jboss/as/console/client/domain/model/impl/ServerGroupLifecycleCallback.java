@@ -26,7 +26,7 @@ import org.jboss.as.console.client.domain.model.Server;
 import org.jboss.as.console.client.domain.model.ServerInstance;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.domain.topology.HostInfo;
-import org.jboss.as.console.client.shared.dispatch.AsyncCommand;
+import org.jboss.dmr.client.dispatch.AsyncCommand;
 import org.jboss.as.console.client.shared.schedule.LongRunningTask;
 
 import java.util.ArrayList;

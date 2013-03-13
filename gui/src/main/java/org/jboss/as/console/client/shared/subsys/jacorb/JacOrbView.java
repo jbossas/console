@@ -2,7 +2,7 @@ package org.jboss.as.console.client.shared.subsys.jacorb;
 
 import com.google.inject.Inject;
 import org.jboss.as.console.client.Console;
-import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
+import org.jboss.dmr.client.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.subsys.jacorb.model.JacOrbSubsystem;
 import org.jboss.as.console.client.shared.viewframework.AbstractEntityView;
 import org.jboss.as.console.client.shared.viewframework.EmbeddedPropertyView;

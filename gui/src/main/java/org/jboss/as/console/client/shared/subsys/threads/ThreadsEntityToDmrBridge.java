@@ -18,7 +18,7 @@
  */
 package org.jboss.as.console.client.shared.subsys.threads;
 
-import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
+import org.jboss.dmr.client.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.viewframework.EntityToDmrBridgeImpl;
 import org.jboss.as.console.client.shared.viewframework.FrameworkView;
 import org.jboss.as.console.client.shared.viewframework.NamedEntity;

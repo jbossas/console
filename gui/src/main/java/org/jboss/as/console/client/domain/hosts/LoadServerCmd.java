@@ -1,13 +1,9 @@
 package org.jboss.as.console.client.domain.hosts;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import org.jboss.as.console.client.domain.model.HostInformationStore;
-import org.jboss.as.console.client.domain.model.ServerInstance;
-import org.jboss.as.console.client.shared.dispatch.AsyncCommand;
+import org.jboss.dmr.client.dispatch.AsyncCommand;
 import org.jboss.as.console.client.shared.state.DomainEntityManager;
 import org.jboss.as.console.client.shared.state.ServerInstanceList;
-
-import java.util.List;
 
 /**
  * @author Heiko Braun

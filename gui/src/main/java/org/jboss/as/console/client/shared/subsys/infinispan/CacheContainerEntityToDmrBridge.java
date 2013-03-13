@@ -19,7 +19,7 @@
 package org.jboss.as.console.client.shared.subsys.infinispan;
 
 import org.jboss.as.console.client.Console;
-import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
+import org.jboss.dmr.client.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.infinispan.model.CacheContainer;
 import org.jboss.as.console.client.shared.viewframework.EntityToDmrBridgeImpl;

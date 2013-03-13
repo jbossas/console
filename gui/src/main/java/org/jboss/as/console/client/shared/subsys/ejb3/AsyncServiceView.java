@@ -19,7 +19,7 @@
 package org.jboss.as.console.client.shared.subsys.ejb3;
 
 import org.jboss.as.console.client.Console;
-import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
+import org.jboss.dmr.client.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.subsys.ejb3.model.AsyncService;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 

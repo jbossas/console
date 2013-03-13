@@ -19,7 +19,7 @@
 
 <module rename-to="app">
 
-    <inherits name="com.google.gwt.debugpanel.DebugPanel_Disabled" />
+
     <inherits name="com.google.gwt.i18n.I18N"/>
     <inherits name="com.google.gwt.json.JSON"/>
     <inherits name='com.google.gwt.visualization.Visualization'/>
@@ -69,12 +69,12 @@
     </replace-with>
 
     <!-- Dispatch API Configuration-->
-    <replace-with class="org.jboss.as.console.client.shared.dispatch.impl.LMSDiagnostics">
-        <when-type-is class="org.jboss.as.console.client.shared.dispatch.Diagnostics"/>
+    <replace-with class="org.jboss.dmr.client.dispatch.impl.LMSDiagnostics">
+        <when-type-is class="org.jboss.dmr.client.dispatch.Diagnostics"/>
     </replace-with>
 
     <replace-with class="org.jboss.as.console.client.core.BootstrappedEndpointConfig">
-        <when-type-is class="org.jboss.as.console.client.shared.dispatch.impl.DMREndpointConfig"/>
+        <when-type-is class="org.jboss.dmr.client.dispatch.impl.DMREndpointConfig"/>
     </replace-with>
 
     <property-provider name="locale">

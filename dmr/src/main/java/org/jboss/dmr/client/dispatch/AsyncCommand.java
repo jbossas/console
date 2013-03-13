@@ -17,13 +17,16 @@
  * MA  02110-1301, USA.
  */
 
-package org.jboss.as.console.client.shared.dispatch;
+package org.jboss.dmr.client.dispatch;
+
+import com.google.gwt.user.client.rpc.AsyncCallback;
 
 /**
  * @author Heiko Braun
- * @date 3/17/11
+ * @date 5/18/11
  */
-public interface DispatchRequest {
-    void cancel();
-    boolean isPending();
+public interface AsyncCommand<T> {
+
+    void execute(AsyncCallback<T> callback) ;
+
 }

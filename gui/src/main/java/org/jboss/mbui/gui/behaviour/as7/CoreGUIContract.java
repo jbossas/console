@@ -1,7 +1,7 @@
 package org.jboss.mbui.gui.behaviour.as7;
 
 import org.jboss.as.console.client.Console;
-import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
+import org.jboss.dmr.client.dispatch.DispatchAsync;
 
 /**
  * @author Heiko Braun

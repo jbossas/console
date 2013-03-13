@@ -1,7 +1,7 @@
-package org.jboss.as.console.client.shared.dispatch.impl;
+package org.jboss.dmr.client.dispatch.impl;
 
 import com.google.gwt.debugpanel.common.ExceptionData;
-import org.jboss.as.console.client.shared.dispatch.Diagnostics;
+import org.jboss.dmr.client.dispatch.Diagnostics;
 
 /**
  * Integration with the lightweight metrics systems.

@@ -1,7 +1,7 @@
-package org.jboss.as.console.client.shared.dispatch;
+package org.jboss.dmr.client.dispatch;
 
 import com.google.gwt.core.client.Scheduler;
-import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
+import org.jboss.dmr.client.dispatch.impl.DMRResponse;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -20,14 +20,12 @@
 package org.jboss.as.console.client;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import org.jboss.as.console.client.shared.dispatch.ActionHandler;
-import org.jboss.as.console.client.shared.dispatch.DispatchRequest;
-import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
-import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
+import org.jboss.dmr.client.dispatch.ActionHandler;
+import org.jboss.dmr.client.dispatch.DispatchRequest;
+import org.jboss.dmr.client.dispatch.impl.DMRAction;
+import org.jboss.dmr.client.dispatch.impl.DMRResponse;
 import org.jboss.dmr.client.DispatchResult;
 import org.jboss.dmr.client.SimpleDispatcher;
-
-import java.io.IOException;
 
 /**
  * @author Heiko Braun

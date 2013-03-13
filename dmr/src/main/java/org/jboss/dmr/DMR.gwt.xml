@@ -19,12 +19,12 @@
   -->
 
 <module rename-to='dmr_gwt'>
-  <inherits name='com.google.gwt.user.User'/>
-  <inherits name='com.google.gwt.http.HTTP'/>
+    <inherits name='com.google.gwt.user.User'/>
+    <inherits name='com.google.gwt.http.HTTP'/>
 
-  <entry-point class='org.jboss.dmr.client.Bootstrap'/>
+    <inherits name="com.google.gwt.debugpanel.DebugPanel_Disabled" />
+    <entry-point class='org.jboss.dmr.client.Bootstrap'/>
 
-  <source path='client'/>
-  <source path='shared'/>
+    <source path='client'/>
 
 </module>

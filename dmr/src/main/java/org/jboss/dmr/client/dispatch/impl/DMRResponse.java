@@ -17,10 +17,10 @@
  * MA  02110-1301, USA.
  */
 
-package org.jboss.as.console.client.shared.dispatch.impl;
+package org.jboss.dmr.client.dispatch.impl;
 
 
-import org.jboss.as.console.client.shared.dispatch.Result;
+import org.jboss.dmr.client.dispatch.Result;
 import org.jboss.dmr.client.ModelNode;
 
 /**

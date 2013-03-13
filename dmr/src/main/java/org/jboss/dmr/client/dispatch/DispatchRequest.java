@@ -17,12 +17,13 @@
  * MA  02110-1301, USA.
  */
 
-package org.jboss.as.console.client.shared.dispatch;
+package org.jboss.dmr.client.dispatch;
 
 /**
  * @author Heiko Braun
  * @date 3/17/11
  */
-public interface Result<T> {
-    public T get();
+public interface DispatchRequest {
+    void cancel();
+    boolean isPending();
 }

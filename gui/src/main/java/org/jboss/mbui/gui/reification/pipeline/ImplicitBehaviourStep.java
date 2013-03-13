@@ -1,6 +1,6 @@
 package org.jboss.mbui.gui.reification.pipeline;
 
-import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
+import org.jboss.dmr.client.dispatch.DispatchAsync;
 import org.jboss.dmr.client.ModelNode;
 import org.jboss.mbui.gui.behaviour.BehaviourExecution;
 import org.jboss.mbui.gui.behaviour.as7.DMROperationProcedure;

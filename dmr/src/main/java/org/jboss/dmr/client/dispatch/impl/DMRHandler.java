@@ -17,7 +17,7 @@
  * MA  02110-1301, USA.
  */
 
-package org.jboss.as.console.client.shared.dispatch.impl;
+package org.jboss.dmr.client.dispatch.impl;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.core.client.GWT;
@@ -28,9 +28,9 @@ import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
-import org.jboss.as.console.client.shared.dispatch.ActionHandler;
-import org.jboss.as.console.client.shared.dispatch.Diagnostics;
-import org.jboss.as.console.client.shared.dispatch.DispatchRequest;
+import org.jboss.dmr.client.dispatch.ActionHandler;
+import org.jboss.dmr.client.dispatch.Diagnostics;
+import org.jboss.dmr.client.dispatch.DispatchRequest;
 import org.jboss.dmr.client.ModelNode;
 
 import static org.jboss.dmr.client.ModelDescriptionConstants.*;

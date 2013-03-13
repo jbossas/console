@@ -1,4 +1,4 @@
-package org.jboss.as.console.client.shared.dispatch;
+package org.jboss.dmr.client.dispatch;
 
 /**
  * @author Heiko Braun

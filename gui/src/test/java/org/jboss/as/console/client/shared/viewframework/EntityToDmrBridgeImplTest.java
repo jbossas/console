@@ -38,11 +38,11 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import junit.framework.Assert;
 
-import org.jboss.as.console.client.shared.dispatch.Action;
-import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
-import org.jboss.as.console.client.shared.dispatch.DispatchRequest;
-import org.jboss.as.console.client.shared.dispatch.Result;
-import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
+import org.jboss.dmr.client.dispatch.Action;
+import org.jboss.dmr.client.dispatch.DispatchAsync;
+import org.jboss.dmr.client.dispatch.DispatchRequest;
+import org.jboss.dmr.client.dispatch.Result;
+import org.jboss.dmr.client.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.widgets.forms.AddressBinding;
 import org.jboss.as.console.client.widgets.forms.BeanMetaData;
 import org.jboss.as.console.client.widgets.forms.EntityFactory;

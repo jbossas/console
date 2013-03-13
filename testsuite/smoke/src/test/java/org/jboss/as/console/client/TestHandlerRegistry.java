@@ -19,10 +19,10 @@
 
 package org.jboss.as.console.client;
 
-import org.jboss.as.console.client.shared.dispatch.Action;
-import org.jboss.as.console.client.shared.dispatch.ActionHandler;
-import org.jboss.as.console.client.shared.dispatch.ActionType;
-import org.jboss.as.console.client.shared.dispatch.HandlerMapping;
+import org.jboss.dmr.client.dispatch.Action;
+import org.jboss.dmr.client.dispatch.ActionHandler;
+import org.jboss.dmr.client.dispatch.ActionType;
+import org.jboss.dmr.client.dispatch.HandlerMapping;
 
 import java.util.HashMap;
 import java.util.Map;

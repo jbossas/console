@@ -17,16 +17,38 @@
  * MA  02110-1301, USA.
  */
 
-package org.jboss.as.console.client.shared.dispatch;
+package org.jboss.dmr.client.dispatch.impl;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.inject.Inject;
+import org.jboss.dmr.client.dispatch.Action;
+import org.jboss.dmr.client.dispatch.ActionHandler;
+import org.jboss.dmr.client.dispatch.ActionType;
+import org.jboss.dmr.client.dispatch.HandlerMapping;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author Heiko Braun
- * @date 5/18/11
+ * @date 3/17/11
  */
-public interface AsyncCommand<T> {
+public class HandlerRegistry implements HandlerMapping {
 
-    void execute(AsyncCallback<T> callback) ;
+    private Map<ActionType, ActionHandler> registry = new HashMap<ActionType, ActionHandler>();
 
+    @Inject
+    public HandlerRegistry(DMRHandler dmrhandler) {
+        register(ActionType.DMR, dmrhandler);
+    }
+
+    @Override
+    public ActionHandler resolve(Action action) {
+        return registry.get(action.getType());
+    }
+
+    @Override
+    public void register(ActionType actionType, ActionHandler handler)
+    {
+        registry.put(actionType, handler);
+    }
 }

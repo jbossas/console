@@ -1,7 +1,7 @@
 package org.jboss.as.console.client.core;
 
 import org.jboss.as.console.client.Console;
-import org.jboss.as.console.client.shared.dispatch.impl.DMREndpointConfig;
+import org.jboss.dmr.client.dispatch.impl.DMREndpointConfig;
 
 /**
  * @author Heiko Braun
