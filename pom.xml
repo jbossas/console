@@ -94,6 +94,7 @@
         <module>bom</module>
         <module>spi</module>
         <module>resources</module>
+        <module>dmr</module>
         <module>gui</module>
         <module>build</module>
         <module>build/app</module>
