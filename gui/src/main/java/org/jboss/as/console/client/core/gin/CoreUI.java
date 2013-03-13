@@ -61,7 +61,6 @@ import org.jboss.as.console.client.plugins.SubsystemRegistry;
 import org.jboss.as.console.client.shared.deployment.DeploymentStore;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.HandlerMapping;
-import org.jboss.as.console.client.shared.dispatch.InvocationMetrics;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRHandler;
 import org.jboss.as.console.client.shared.expr.ExpressionResolver;
 import org.jboss.as.console.client.shared.general.InterfacePresenter;
@@ -190,7 +189,6 @@ public interface CoreUI {
     DispatchAsync getDispatchAsync();
     HandlerMapping getDispatcherHandlerRegistry();
     DMRHandler getDMRHandler();
-    InvocationMetrics getInvocationMetrics();
 
     ApplicationMetaData getApplicationMetaData();
 

@@ -17,11 +17,27 @@
  * MA  02110-1301, USA.
  */
 
-package org.jboss.as.console.client.shared.dispatch;
+package org.jboss.as.console.client.shared.util;
+
+import org.jboss.as.console.client.shared.BeanFactory;
+import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
+import org.jboss.dmr.client.ModelNode;
 
 /**
  * @author Heiko Braun
- * @date 3/17/11
+ * @date 5/18/11
  */
-public class ExecutionContext {
+public abstract class AddressableModelCmd {
+
+    protected DispatchAsync dispatcher;
+    protected ModelNode address;
+    protected BeanFactory factory;
+
+    public AddressableModelCmd(DispatchAsync dispatcher, BeanFactory factory, ModelNode address) {
+        this.dispatcher = dispatcher;
+        this.factory = factory;
+        this.address = address;
+    }
+
+
 }

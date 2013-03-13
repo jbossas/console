@@ -92,7 +92,6 @@ import org.jboss.as.console.client.plugins.SubsystemRegistryImpl;
 import org.jboss.as.console.client.shared.deployment.DeploymentStore;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.HandlerMapping;
-import org.jboss.as.console.client.shared.dispatch.InvocationMetrics;
 import org.jboss.as.console.client.shared.dispatch.ResponseProcessorFactory;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRHandler;
 import org.jboss.as.console.client.shared.dispatch.impl.DispatchAsyncImpl;
@@ -331,7 +330,6 @@ public class CoreUIModule extends AbstractPresenterModule {
         bind(DispatchAsync.class).to(DispatchAsyncImpl.class).in(Singleton.class);
         bind(HandlerMapping.class).to(HandlerRegistry.class).in(Singleton.class);
         bind(DMRHandler.class).in(Singleton.class);
-        bind(InvocationMetrics.class).in(Singleton.class);
 
         // ----------------------------------------------------------------------
 

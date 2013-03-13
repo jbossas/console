@@ -31,7 +31,6 @@ import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
 import com.gwtplatform.mvp.client.proxy.RevealRootLayoutContentEvent;
-import org.jboss.as.console.client.shared.dispatch.InvocationMetrics;
 import org.jboss.as.console.client.shared.expr.ExpressionResolver;
 import org.jboss.as.console.client.shared.expr.ExpressionTool;
 import org.jboss.ballroom.client.widgets.forms.ResolveExpressionEvent;
@@ -49,7 +48,7 @@ public class MainLayoutPresenter
     private BootstrapContext bootstrap;
 
     private ExpressionTool expressionTool;
-    private InvocationMetrics metrics;
+
     private PlaceManager placeManager;
 
     public interface MainLayoutView extends View {
@@ -67,11 +66,10 @@ public class MainLayoutPresenter
             EventBus eventBus,
             MainLayoutView view,
             MainLayoutProxy proxy, BootstrapContext bootstrap,
-            ExpressionResolver resolver, InvocationMetrics metrics, PlaceManager placeManager) {
+            ExpressionResolver resolver, PlaceManager placeManager) {
         super(eventBus, view, proxy);
         this.bootstrap = bootstrap;
         this.expressionTool = new ExpressionTool(resolver);
-        this.metrics = metrics;
         this.placeManager = placeManager;
 
     }
