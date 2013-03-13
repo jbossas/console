@@ -68,9 +68,13 @@
         <when-type-is class="org.jboss.ballroom.client.spi.Framework"/>
     </replace-with>
 
-    <!-- belongs to the dispatch API -->
+    <!-- Dispatch API Configuration-->
     <replace-with class="org.jboss.as.console.client.shared.dispatch.impl.LMSDiagnostics">
         <when-type-is class="org.jboss.as.console.client.shared.dispatch.Diagnostics"/>
+    </replace-with>
+
+    <replace-with class="org.jboss.as.console.client.core.BootstrappedEndpointConfig">
+        <when-type-is class="org.jboss.as.console.client.shared.dispatch.impl.DMREndpointConfig"/>
     </replace-with>
 
     <property-provider name="locale">

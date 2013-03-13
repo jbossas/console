@@ -28,9 +28,8 @@ import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
-import org.jboss.as.console.client.core.BootstrapContext;
-import org.jboss.as.console.client.shared.dispatch.Diagnostics;
 import org.jboss.as.console.client.shared.dispatch.ActionHandler;
+import org.jboss.as.console.client.shared.dispatch.Diagnostics;
 import org.jboss.as.console.client.shared.dispatch.DispatchRequest;
 import org.jboss.dmr.client.ModelNode;
 
@@ -56,6 +55,8 @@ public class DMRHandler implements ActionHandler<DMRAction, DMRResponse> {
 
     private static long idCounter = 0;
 
+    private DMREndpointConfig endpointConfig = GWT.create(DMREndpointConfig.class);
+
     private static enum Type {
         BEGIN("begin"),
         END("end"),
@@ -76,12 +77,9 @@ public class DMRHandler implements ActionHandler<DMRAction, DMRResponse> {
     }
 
     @Inject
-    public DMRHandler(BootstrapContext bootstrap) {
+    public DMRHandler() {
 
-        requestBuilder = new RequestBuilder(
-                RequestBuilder.POST,
-                bootstrap.getProperty(BootstrapContext.DOMAIN_API)
-        );
+        requestBuilder = new RequestBuilder(RequestBuilder.POST,endpointConfig.getUrl());
 
         requestBuilder.setHeader(HEADER_ACCEPT, DMR_ENCODED);
         requestBuilder.setHeader(HEADER_CONTENT_TYPE, DMR_ENCODED);
