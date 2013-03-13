@@ -9,6 +9,10 @@ build/app/war
 build/war
 build/app/gwt-unitCache/
 
+.settings
+.classpath
+.project
+
 gui/war/WEB-INF
 gui/war/app
 gui/war/dmr_gwt
