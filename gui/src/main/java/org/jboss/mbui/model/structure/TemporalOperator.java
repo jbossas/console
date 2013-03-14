@@ -23,6 +23,14 @@ package org.jboss.mbui.model.structure;
  *
  * Operators allow for putting tasks (InteractionUnits) on one hierarchical level into certain explicitly temporal orders.
  *
+ * Since the unambiguous priority of these four temporal operators is crucial
+ * for the connection of the use model with a dialog model, their priorities
+ * (i.e., their order of temporal execution) have been defined as follows:
+ *
+ * <pre>
+ *  Choice > Order Independence > Concurrency > Deactivation > Sequence
+   </pre>
+
  * @author Harald Pehl
  * @author Heiko Braun
  *

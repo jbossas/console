@@ -20,14 +20,28 @@ package org.jboss.mbui.gui.reification.strategy;
 
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.logical.shared.AttachEvent;
+import com.google.gwt.event.logical.shared.BeforeSelectionEvent;
+import com.google.gwt.event.logical.shared.BeforeSelectionHandler;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.web.bindery.event.shared.EventBus;
+import org.eclipse.jdt.internal.compiler.ast.QualifiedNameReference;
+import org.jboss.mbui.gui.behaviour.NavigationEvent;
+import org.jboss.mbui.gui.behaviour.SystemEvent;
+import org.jboss.mbui.gui.reification.ContextKey;
+import org.jboss.mbui.model.behaviour.Resource;
+import org.jboss.mbui.model.behaviour.ResourceType;
 import org.jboss.mbui.model.structure.Container;
 import org.jboss.mbui.model.structure.InteractionUnit;
 import org.jboss.mbui.gui.reification.Context;
 import org.jboss.as.console.client.widgets.tabs.DefaultTabLayoutPanel;
+import org.jboss.mbui.model.structure.QName;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 import static org.jboss.mbui.model.structure.TemporalOperator.Choice;
 
@@ -40,13 +54,20 @@ import static org.jboss.mbui.model.structure.TemporalOperator.Choice;
  */
 public class ChoiceStrategy implements ReificationStrategy<ReificationWidget>
 {
+
+
+
     @Override
     public ReificationWidget reify(final InteractionUnit interactionUnit, final Context context)
     {
+
+        EventBus eventBus = context.get(ContextKey.EVENTBUS);
+        assert eventBus!=null : "Coordinator bus is required to execute FormStrategy";
+
         TabPanelAdapter adapter = null;
         if (interactionUnit != null)
         {
-            adapter = new TabPanelAdapter(interactionUnit);
+            adapter = new TabPanelAdapter(eventBus, interactionUnit);
         }
         return adapter;
     }
@@ -63,8 +84,9 @@ public class ChoiceStrategy implements ReificationStrategy<ReificationWidget>
     {
         final WidgetStrategy delegate;
         final InteractionUnit interactionUnit;
+        private Map<Integer, QName> index2tab = new HashMap<Integer, QName>();
 
-        TabPanelAdapter(final InteractionUnit interactionUnit)
+        TabPanelAdapter(final EventBus eventBus, final InteractionUnit interactionUnit)
         {
 
             this.interactionUnit = interactionUnit;
@@ -99,6 +121,26 @@ public class ChoiceStrategy implements ReificationStrategy<ReificationWidget>
                 final DefaultTabLayoutPanel tabLayoutpanel = new DefaultTabLayoutPanel(40, Style.Unit.PX);
                 tabLayoutpanel.addStyleName("default-tabpanel");
 
+                tabLayoutpanel.addBeforeSelectionHandler(new BeforeSelectionHandler<Integer>() {
+                    @Override
+                    public void onBeforeSelection(BeforeSelectionEvent<Integer> event) {
+
+                        QName targetTab = index2tab.get(event.getItem());
+
+                        if(targetTab!=null)
+                        {
+                            eventBus.fireEventFromSource(
+                                    new NavigationEvent(
+                                            QName.valueOf("org.jboss.as.navigation"),
+                                            targetTab
+                                    ), interactionUnit.getId() //source
+                            );
+
+                        }
+                        event.cancel();
+                    }
+                });
+
                 this.delegate = new WidgetStrategy() {
                     @Override
                     public void add(InteractionUnit unit, Widget widget) {
@@ -108,6 +150,9 @@ public class ChoiceStrategy implements ReificationStrategy<ReificationWidget>
 
                         ScrollPanel scroll = new ScrollPanel(vpanel);
                         tabLayoutpanel.add(scroll, unit.getName());
+
+                        // register tab2index mapping
+                        index2tab.put(tabLayoutpanel.getWidgetCount()-1, unit.getId());
                     }
 
                     @Override
@@ -115,6 +160,40 @@ public class ChoiceStrategy implements ReificationStrategy<ReificationWidget>
                         return tabLayoutpanel;
                     }
                 };
+
+
+                // activation listener
+                eventBus.addHandler(SystemEvent.TYPE,
+                        new SystemEvent.Handler() {
+                            @Override
+                            public boolean accepts(SystemEvent event) {
+
+                                return event.getId().equals(SystemEvent.ACTIVATE_ID)
+                                        && index2tab.containsValue(event.getPayload()
+                                );
+                            }
+
+                            @Override
+                            public void onSystemEvent(SystemEvent event) {
+                                QName id = (QName)event.getPayload();
+
+                                Set<Integer> keys = index2tab.keySet();
+                                for(Integer key : keys)
+                                {
+                                    if(index2tab.get(key).equals(id))
+                                    {
+                                        tabLayoutpanel.selectTab(key, false);
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                );
+
+
+                // complement model
+                Resource<ResourceType> activation = new Resource<ResourceType>(SystemEvent.ACTIVATE_ID, ResourceType.System);
+                getInteractionUnit().setInputs(activation);
             }
 
         }

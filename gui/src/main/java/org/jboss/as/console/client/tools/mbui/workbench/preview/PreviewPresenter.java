@@ -111,8 +111,8 @@ public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, Preview
     }
 
     @Override
-    public void onNavigation(QName source, QName dialog) {
-
+    public void onNavigation(QName source, QName target) {
+        System.out.println("absolute navigation " + source+">"+target);
     }
 
     private InteractionCoordinator getActiveCoordinator()

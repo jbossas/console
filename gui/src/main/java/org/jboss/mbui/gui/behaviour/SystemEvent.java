@@ -15,6 +15,9 @@ import org.jboss.mbui.model.structure.QName;
  */
 public class SystemEvent extends GwtEvent<SystemEvent.Handler> {
 
+
+    public static final QName ACTIVATE_ID = QName.valueOf("org.jboss.activate");
+
     public static final Type TYPE = new Type<Handler>();
 
     private QName id;
@@ -23,6 +26,14 @@ public class SystemEvent extends GwtEvent<SystemEvent.Handler> {
     public SystemEvent(QName id) {
         super();
         this.id = id;
+    }
+
+    public Object getPayload() {
+        return payload;
+    }
+
+    public void setPayload(Object payload) {
+        this.payload = payload;
     }
 
     public QName getId() {

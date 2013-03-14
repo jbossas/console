@@ -20,6 +20,8 @@ public class NavigationEvent extends GwtEvent<NavigationEvent.NavigationHandler>
 
     private QName target;
 
+    public static enum RELATION { prev, next }
+
     public NavigationEvent(QName id, QName target) {
         super();
         this.id = id;

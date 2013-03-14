@@ -7,6 +7,7 @@ import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.Event;
 import com.google.web.bindery.event.shared.EventBus;
 import com.google.web.bindery.event.shared.SimpleEventBus;
+import org.jboss.mbui.gui.behaviour.as7.ActivationProcedure;
 import org.jboss.mbui.gui.behaviour.as7.BehaviourMap;
 import org.jboss.mbui.gui.behaviour.as7.SelectStatementProcedure;
 import org.jboss.mbui.gui.behaviour.as7.Tuple;
@@ -88,6 +89,7 @@ public class InteractionCoordinator implements FrameworkContract,
 
         // global procedures
         procedures.add(new SelectStatementProcedure(this));
+        procedures.add(new ActivationProcedure(this));
     }
 
     public StatementContext getStatementContext() {
@@ -220,14 +222,29 @@ public class InteractionCoordinator implements FrameworkContract,
         QName source = (QName)event.getSource();
         QName target = event.getTarget();
 
-        InteractionUnit unit = dialog.findUnit(target);
-        if(unit!=null)
+        InteractionUnit targetUnit = dialog.findUnit(target);
+        if(targetUnit!=null)  // local to dialog
         {
-            // locally
+            String suffix = target.getSuffix();
+            if(suffix !=null) // relative, local (#prev, #next)
+            {
+                if(NavigationEvent.RELATION.next.equals(suffix))
+                {
+
+                }
+                else if(NavigationEvent.RELATION.prev.equals(suffix))
+                {
+
+                }
+            }
+            else // absolute, local
+            {
+                Procedure activateProcedure = procedures.get(ActivationProcedure.ID).iterator().next();
+                activateProcedure.getCommand().execute(dialog, targetUnit.getId());
+            }
         }
-        else
+        else // absolute, external
         {
-            // externally
             navigationDelegate.onNavigation(dialog.getId(), target); // TODO: dialog || unit as source?
         }
 
