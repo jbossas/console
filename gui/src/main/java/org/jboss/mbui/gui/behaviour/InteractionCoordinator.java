@@ -9,6 +9,7 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.google.web.bindery.event.shared.SimpleEventBus;
 import org.jboss.mbui.gui.behaviour.as7.ActivationProcedure;
 import org.jboss.mbui.gui.behaviour.as7.BehaviourMap;
+import org.jboss.mbui.gui.behaviour.as7.NavigationProcedure;
 import org.jboss.mbui.gui.behaviour.as7.SelectStatementProcedure;
 import org.jboss.mbui.gui.behaviour.as7.Tuple;
 import org.jboss.mbui.model.Dialog;
@@ -90,6 +91,7 @@ public class InteractionCoordinator implements FrameworkContract,
         // global procedures
         procedures.add(new SelectStatementProcedure(this));
         procedures.add(new ActivationProcedure(this));
+        procedures.add(new NavigationProcedure(this));
     }
 
     public StatementContext getStatementContext() {

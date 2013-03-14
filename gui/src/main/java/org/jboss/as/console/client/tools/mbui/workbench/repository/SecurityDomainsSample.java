@@ -61,7 +61,7 @@ public class SecurityDomainsSample implements Sample
 
         // Interaction units
         InteractionUnit root = new Builder()
-                .start(new Container(namespace, "securityDomains", null, Deactivation))
+                .start(new Container(namespace, "securityDomains", "Security Domains", Deactivation))
                     .mappedBy(securityDomainsCollection)
 
                     // The front "page"
@@ -77,6 +77,10 @@ public class SecurityDomainsSample implements Sample
                                     QName.valueOf(namespace + ":remove"),
                                     QName.valueOf("org.jboss.as:resource-operation#remove"),
                                     "Remove"))
+                            .add(new Trigger(
+                                    QName.valueOf(namespace + ":viewDetails"),
+                                    QName.valueOf("org.jboss.as:navigate#next"),  // trigger type
+                                    "Details"))
                         .end()
 
                         .add(new Select(namespace, "list", "List"))

@@ -57,6 +57,7 @@ import static org.jboss.mbui.model.mapping.MappingType.DMR;
 public class ReadOperationDescriptions extends ReificationPreperation
 {
     final DispatchAsync dispatcher;
+    private static final QName RESOURCE_OP = QName.valueOf("org.jboss.as:resource-operation");
 
     public ReadOperationDescriptions(final DispatchAsync dispatcher)
     {
@@ -159,8 +160,11 @@ public class ReadOperationDescriptions extends ReificationPreperation
 
             Resource<ResourceType> output = interactionUnit.getOutputs().iterator().next();
 
-            String operationName = output.getId().getSuffix();
+            // skip unqualified trigger that don't point to a resource operation
+            if(!output.getId().equalsIgnoreSuffix(RESOURCE_OP))
+                return;
 
+            String operationName = output.getId().getSuffix();
             if(operationName==null)
                 throw new IllegalArgumentException("Illegal operation name mapping: "+ output.getId()+ " (suffix required)");
 

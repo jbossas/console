@@ -18,9 +18,15 @@
  */
 package org.jboss.mbui.gui.reification.strategy;
 
-import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.dom.client.Style;
+import com.google.gwt.user.client.ui.DeckPanel;
+import com.google.gwt.user.client.ui.LayoutPanel;
+import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.web.bindery.event.shared.EventBus;
+import org.jboss.as.console.client.layout.SimpleLayout;
+import org.jboss.ballroom.client.widgets.tabs.FakeTabPanel;
 import org.jboss.mbui.gui.reification.Context;
 import org.jboss.mbui.gui.reification.ContextKey;
 import org.jboss.mbui.model.structure.Container;
@@ -38,22 +44,25 @@ import static org.jboss.mbui.model.structure.TemporalOperator.Deactivation;
 public class DeactivationStrategy implements ReificationStrategy<ReificationWidget>
 {
 
+    private EventBus eventBus;
+
+
     @Override
     public boolean prepare(InteractionUnit interactionUnit, Context context) {
-        return false;
+
+        eventBus = context.get(ContextKey.EVENTBUS);
+        //assert eventBus!=null : "Coordinator bus is required to execute FormStrategy";
+        return eventBus!=null;
     }
 
     @Override
     public ReificationWidget reify(final InteractionUnit interactionUnit, final Context context)
     {
 
-        EventBus eventBus = context.get(ContextKey.EVENTBUS);
-        assert eventBus!=null : "Coordinator bus is required to execute FormStrategy";
-
         MyAdapter adapter = null;
         if (interactionUnit != null)
         {
-            adapter = new MyAdapter(eventBus, interactionUnit);
+            adapter = new MyAdapter(interactionUnit);
         }
         return adapter;
     }
@@ -69,11 +78,21 @@ public class DeactivationStrategy implements ReificationStrategy<ReificationWidg
     class MyAdapter  implements ReificationWidget
     {
         final InteractionUnit interactionUnit;
+        private DeckPanel deckPanel;
+        private SimpleLayout layout;
 
-        MyAdapter(final EventBus eventBus, final InteractionUnit interactionUnit)
+        MyAdapter(final InteractionUnit interactionUnit)
         {
 
             this.interactionUnit = interactionUnit;
+
+            this.deckPanel = new DeckPanel();
+
+            layout = new SimpleLayout();
+
+            layout.setTitle(interactionUnit.getName())
+                    .setDescription("TBD")
+                    .addContent("", deckPanel);
 
         }
 
@@ -85,13 +104,16 @@ public class DeactivationStrategy implements ReificationStrategy<ReificationWidg
         @Override
         public void add(final ReificationWidget widget)
         {
-
+            assert deckPanel.getWidgetCount()<2 : "Operator.Deactivation only supports two child units";
+            deckPanel.add(widget.asWidget());
         }
 
         @Override
         public Widget asWidget()
         {
-            return new HTML("TBD");
+            deckPanel.showWidget(0);
+
+            return this.layout.build();
         }
     }
 }
