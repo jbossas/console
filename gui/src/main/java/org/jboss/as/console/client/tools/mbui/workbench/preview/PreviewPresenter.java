@@ -140,7 +140,6 @@ public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, Preview
             final Context context = new Context();
 
             // build reification pipeline
-
             Function<Context> prepareContext = new Function<Context>() {
                 @Override
                 public void execute(Control<Context> control) {
@@ -166,7 +165,6 @@ public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, Preview
 
                         @Override
                         public void onSuccess() {
-
                             Log.info("Successfully retrieved operation meta data");
                             control.proceed();
                         }
@@ -183,7 +181,6 @@ public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, Preview
                         @Override
                         public void onSuccess()
                         {
-
                             Log.info("Successfully retrieved resource meta data");
 
                             // setup & start the reification pipeline
@@ -207,10 +204,9 @@ public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, Preview
                 }
             };
 
-
             Outcome<Context> outcome = new Outcome<Context>() {
                 @Override
-                public void onFailure() {
+                public void onFailure(final Context context) {
                     Window.alert("Reification failed");
                 }
 
@@ -226,20 +222,16 @@ public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, Preview
                 }
             };
 
-
             // execute pipeline
-
             new Async<Context>().waterfall(
-                    outcome, context,
+                    context, outcome,
                     prepareContext, readOperationMetaData, readResourceMetaData
             );
-
         }
         else
         {
             getView().show(cachedWidgets.get(selectedSample));
         }
-
     }
 
 

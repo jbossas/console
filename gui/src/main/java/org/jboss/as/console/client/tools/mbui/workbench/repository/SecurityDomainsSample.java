@@ -143,16 +143,16 @@ public class SecurityDomainsSample implements Sample
                                         "Remove"))
                             .end()
                             .add(new Select(namespace + ".mapping", "modules", "Modules"))
-                            .start(new Container(namespace, "details", "Details", Choice))
-                                .add(new Form(namespace, "details#basicAttributers", "Attributes"))
-                                .add(new Form(namespace, "details#moduleAttributers", "Module Options"))
+                            .start(new Container(namespace + ".mapping", "details", "Details", Choice))
+                                .add(new Form(namespace + ".mapping", "details#basicAttributers", "Attributes"))
+                                .add(new Form(namespace + ".mapping", "details#moduleAttributers", "Module Options"))
                             .end()
                         .end()
                     .end()
                 .end()
                 .build();
 
-        Dialog dialog = new Dialog(QName.valueOf("org.jboss.as7:security"), root);
+        Dialog dialog = new Dialog(QName.valueOf("org.jboss.as7:security.domains"), root);
         return dialog;
     }
 }
