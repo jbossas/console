@@ -18,36 +18,42 @@
  */
 package org.jboss.mbui.gui.reification.strategy;
 
-import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Widget;
-import org.jboss.as.console.client.layout.SimpleLayout;
+import com.google.web.bindery.event.shared.EventBus;
 import org.jboss.mbui.gui.reification.Context;
+import org.jboss.mbui.gui.reification.ContextKey;
 import org.jboss.mbui.model.structure.Container;
 import org.jboss.mbui.model.structure.InteractionUnit;
 
-import static org.jboss.mbui.model.structure.TemporalOperator.Concurrency;
+import static org.jboss.mbui.model.structure.TemporalOperator.Deactivation;
 
 /**
- * Strategy for a container with temporal operator Concurrency.
+ * Strategy for a container with temporal operator == Deactivation.
  *
  * @author Harald Pehl
  * @author Heiko Braun
  * @date 11/01/2012
  */
-public class ConcurrencyStrategy implements ReificationStrategy<ReificationWidget>
+public class DeactivationStrategy implements ReificationStrategy<ReificationWidget>
 {
+
     @Override
     public boolean prepare(InteractionUnit interactionUnit, Context context) {
-        return true;
+        return false;
     }
 
     @Override
     public ReificationWidget reify(final InteractionUnit interactionUnit, final Context context)
     {
-        SimpleLayoutAdapter adapter = null;
+
+        EventBus eventBus = context.get(ContextKey.EVENTBUS);
+        assert eventBus!=null : "Coordinator bus is required to execute FormStrategy";
+
+        MyAdapter adapter = null;
         if (interactionUnit != null)
         {
-            adapter = new SimpleLayoutAdapter(interactionUnit, context);
+            adapter = new MyAdapter(eventBus, interactionUnit);
         }
         return adapter;
     }
@@ -56,53 +62,18 @@ public class ConcurrencyStrategy implements ReificationStrategy<ReificationWidge
     public boolean appliesTo(final InteractionUnit interactionUnit)
     {
         return (interactionUnit instanceof Container) && (((Container) interactionUnit)
-                .getTemporalOperator() == Concurrency);
+                .getTemporalOperator() == Deactivation);
     }
 
 
-    class SimpleLayoutAdapter implements ReificationWidget
+    class MyAdapter  implements ReificationWidget
     {
-        final WidgetStrategy delegate;
         final InteractionUnit interactionUnit;
 
-        SimpleLayoutAdapter(final InteractionUnit interactionUnit, Context context)
+        MyAdapter(final EventBus eventBus, final InteractionUnit interactionUnit)
         {
+
             this.interactionUnit = interactionUnit;
-
-            if(interactionUnit.hasParent())
-            {
-                final VerticalPanel panel = new VerticalPanel();
-                panel.setStyleName("fill-layout-width");
-                this.delegate = new WidgetStrategy() {
-                    @Override
-                    public void add(InteractionUnit unit, Widget widget) {
-                        panel.add(widget);
-                    }
-
-                    @Override
-                    public Widget as() {
-                        return panel;
-                    }
-                };
-            }
-            else
-            {
-                final SimpleLayout builder = new SimpleLayout()
-                        .setTitle(interactionUnit.getName()
-                        );
-
-                this.delegate = new WidgetStrategy() {
-                    @Override
-                    public void add(InteractionUnit unit, Widget widget) {
-                        builder.addContent("TODO: NAME", widget);
-                    }
-
-                    @Override
-                    public Widget as() {
-                        return builder.build();
-                    }
-                };
-            }
 
         }
 
@@ -115,16 +86,12 @@ public class ConcurrencyStrategy implements ReificationStrategy<ReificationWidge
         public void add(final ReificationWidget widget)
         {
 
-            if (widget!= null)
-            {
-                delegate.add(widget.getInteractionUnit(), widget.asWidget());
-            }
         }
 
         @Override
         public Widget asWidget()
         {
-            return delegate.as();
+            return new HTML("TBD");
         }
     }
 }

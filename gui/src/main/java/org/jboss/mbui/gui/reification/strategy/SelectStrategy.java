@@ -55,6 +55,11 @@ import org.jboss.mbui.model.structure.Select;
 public class SelectStrategy implements ReificationStrategy<ReificationWidget>
 {
 
+    @Override
+    public boolean prepare(InteractionUnit interactionUnit, Context context) {
+        return true;
+    }
+
     public final static QName SELECT_ID = QName.valueOf("org.jboss.as:select");
     public final static QName RESET_ID = QName.valueOf("org.jboss.as:reset");
     public final static QName LOAD_ID = QName.valueOf("org.jboss.as:load");

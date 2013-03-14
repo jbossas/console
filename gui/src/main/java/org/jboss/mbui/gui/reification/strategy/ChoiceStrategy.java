@@ -55,7 +55,10 @@ import static org.jboss.mbui.model.structure.TemporalOperator.Choice;
 public class ChoiceStrategy implements ReificationStrategy<ReificationWidget>
 {
 
-
+    @Override
+    public boolean prepare(InteractionUnit interactionUnit, Context context) {
+        return true;
+    }
 
     @Override
     public ReificationWidget reify(final InteractionUnit interactionUnit, final Context context)
@@ -208,7 +211,7 @@ public class ChoiceStrategy implements ReificationStrategy<ReificationWidget>
         {
             if (widget != null)
             {
-                //System.out.println("Add "+widget.getInteractionUnit() +" to " + getInteractionUnit());
+                System.out.println("Add "+widget.getInteractionUnit() +" to " + getInteractionUnit());
                 delegate.add(widget.getInteractionUnit(), widget.asWidget());
             }
         }

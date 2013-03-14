@@ -4,12 +4,14 @@ import static com.google.gwt.visualization.client.AbstractDataTable.ColumnType.S
 
 import java.util.Stack;
 
+import com.google.gwt.ajaxloader.client.Properties;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.visualization.client.DataTable;
 import com.google.gwt.visualization.client.visualizations.OrgChart;
 import org.jboss.mbui.model.Dialog;
+import org.jboss.mbui.model.mapping.MappingType;
 import org.jboss.mbui.model.structure.Container;
 import org.jboss.mbui.model.structure.InteractionUnit;
 import org.jboss.mbui.model.structure.TemporalOperator;
@@ -22,6 +24,8 @@ import org.jboss.mbui.model.structure.impl.InteractionUnitVisitor;
 public class DialogVisualization
 {
     static final NameTemplate NAME_TEMPLATE = GWT.create(NameTemplate.class);
+    private static final String MAPPED_STYLE = "font-weight:BOLD";
+    private static final String UNMAPPED_STYLE = "border:none";
     private final OrgChart chart;
 
     public DialogVisualization(final Dialog dialog)
@@ -94,19 +98,22 @@ public class DialogVisualization
             String name = interactionUnit.getName() == null ? interactionUnit.getId().getLocalPart() : interactionUnit.getName();
             Container container = this.container.isEmpty() ? null : this.container.peek();
             String parentId = container != null ? container.getId().toString() : null;
+            String style = interactionUnit.hasMapping(MappingType.DMR) ? MAPPED_STYLE : UNMAPPED_STYLE;
+
             if (interactionUnit instanceof Container)
             {
                 TemporalOperator operator = ((Container) interactionUnit).getTemporalOperator();
                 if (operator != null)
                 {
-                    name = NAME_TEMPLATE.name(name, operator.name()).asString();
+                    name = NAME_TEMPLATE.name(style, name, operator.name()).asString();
                 }
             }
             else
             {
                 String classname = interactionUnit.getClass().getName();
+
                 classname = classname.substring(classname.lastIndexOf('.') + 1);
-                name = NAME_TEMPLATE.name(name, classname).asString();
+                name = NAME_TEMPLATE.name(style, name, classname).asString();
             }
 
             StringBuilder tooltip = new StringBuilder();
@@ -116,7 +123,9 @@ public class DialogVisualization
             if (interactionUnit.doesProduce())
                 tooltip.append("[output]\n").append(interactionUnit.getOutputs()).append("\n");
 
+
             dataTable.addRow();
+
             dataTable.setCell(row, 0, id, name, null);
             dataTable.setValue(row, 1, parentId);
             dataTable.setValue(row, 2, tooltip.toString());
@@ -127,7 +136,7 @@ public class DialogVisualization
 
     interface NameTemplate extends SafeHtmlTemplates
     {
-        @Template("{0}<br/><span style=\"color:#666;\">&laquo;{1}&raquo;</span>")
-        SafeHtml name(String name, String stereotype);
+        @Template("<div style='{0}'>{1}<br/><span style=\"color:#666;\">&laquo;{2}&raquo;</span></div>")
+        SafeHtml name(String css, String name, String stereotype);
     }
 }

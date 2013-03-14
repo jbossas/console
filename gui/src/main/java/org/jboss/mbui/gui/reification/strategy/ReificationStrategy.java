@@ -27,6 +27,8 @@ import org.jboss.mbui.model.structure.InteractionUnit;
  */
 public interface ReificationStrategy<T>
 {
+    boolean prepare(InteractionUnit interactionUnit, Context context);
+
     T reify(InteractionUnit interactionUnit, Context context);
 
     boolean appliesTo(InteractionUnit interactionUnit);

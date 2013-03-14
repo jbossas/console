@@ -18,11 +18,14 @@
  */
 package org.jboss.mbui.gui.reification.pipeline;
 
+import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.Widget;
 import org.jboss.mbui.gui.reification.Context;
 import org.jboss.mbui.gui.reification.ReificationException;
 import org.jboss.mbui.gui.reification.StructureLogger;
 import org.jboss.mbui.gui.reification.strategy.ChoiceStrategy;
 import org.jboss.mbui.gui.reification.strategy.ConcurrencyStrategy;
+import org.jboss.mbui.gui.reification.strategy.DeactivationStrategy;
 import org.jboss.mbui.gui.reification.strategy.FormStrategy;
 import org.jboss.mbui.gui.reification.strategy.ReificationStrategy;
 import org.jboss.mbui.gui.reification.strategy.ReificationWidget;
@@ -50,17 +53,44 @@ public class BuildUserInterfaceStep extends ReificationStep
     final List<ReificationStrategy<ReificationWidget>> strategies;
     private StructureLogger logger = new StructureLogger();
 
+    class BlankWidget implements ReificationWidget{
+        private final InteractionUnit unit;
+
+        BlankWidget(InteractionUnit unit) {
+            this.unit = unit;
+        }
+
+        @Override
+        public InteractionUnit getInteractionUnit() {
+            return unit;
+        }
+
+        @Override
+        public void add(ReificationWidget widget) {
+
+        }
+
+        @Override
+        public Widget asWidget() {
+            return new HTML("<div style='width:100%; padding:20px; background-color:yellow'>Placeholder</div>");
+        }
+    };
+
     public BuildUserInterfaceStep()
     {
         super("build ui");
         this.strategies = new LinkedList<ReificationStrategy<ReificationWidget>>();
         // order is important! add specific strategies first!
+
         this.strategies.add(new ToolStripStrategy());
         this.strategies.add(new TriggerStrategy());
         this.strategies.add(new FormStrategy());
         this.strategies.add(new SelectStrategy());
+
+        // container
         this.strategies.add(new ConcurrencyStrategy());
         this.strategies.add(new ChoiceStrategy());
+        this.strategies.add(new DeactivationStrategy());
 
     }
 
@@ -92,9 +122,14 @@ public class BuildUserInterfaceStep extends ReificationStep
         {
             logger.start(container);
             ReificationStrategy<ReificationWidget> strategy = resolve(container);
+
             if (strategy != null)
             {
-                ReificationWidget widget = strategy.reify(container, context);
+
+                boolean isPrepared = strategy.prepare(container, context);
+
+                ReificationWidget widget = isPrepared ?
+                        strategy.reify(container, context) : new BlankWidget(container);
                 if (widget != null)
                 {
                     if (root == null)
@@ -114,10 +149,16 @@ public class BuildUserInterfaceStep extends ReificationStep
         public void visit(final InteractionUnit interactionUnit)
         {
             logger.start(interactionUnit);
+
             ReificationStrategy<ReificationWidget> strategy = resolve(interactionUnit);
+
             if (strategy != null)
             {
-                ReificationWidget widget = strategy.reify(interactionUnit, context);
+                boolean isPrepared = strategy.prepare(interactionUnit, context);
+
+                ReificationWidget widget = isPrepared ?
+                        strategy.reify(interactionUnit, context) : new BlankWidget(interactionUnit);
+
                 if (widget != null && this.container.peek() != null)
                 {
                     this.container.peek().add(widget);

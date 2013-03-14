@@ -18,6 +18,7 @@
  */
 package org.jboss.mbui.model.structure;
 
+import com.google.gwt.user.client.ui.HTMLPanel;
 import org.jboss.mbui.model.behaviour.Consumer;
 import org.jboss.mbui.model.behaviour.Producer;
 import org.jboss.mbui.model.behaviour.Resource;
@@ -50,7 +51,7 @@ public abstract class InteractionUnit implements Consumer, Producer
 
     protected InteractionUnit(String namespace, final String id)
     {
-        this(new QName(namespace, id), null);
+        this(new QName(namespace, id), HTMLPanel.createUniqueId());
     }
 
 

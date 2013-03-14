@@ -69,6 +69,21 @@ public class FormStrategy implements ReificationStrategy<ReificationWidget>
     private static final QName LOAD_ID = QName.valueOf("org.jboss.as:load");
     private static final QName RESET_ID = QName.valueOf("org.jboss.as:reset");
 
+    private ModelNode modelDescription;
+    private EventBus eventBus;
+
+    @Override
+    public boolean prepare(InteractionUnit interactionUnit, Context context) {
+        Map<String, ModelNode> descriptions = context.get (ContextKey.MODEL_DESCRIPTIONS);
+        modelDescription = descriptions.get(interactionUnit.getId().getNamespaceURI());
+        //assert modelDescription!=null : "Model description is required to execute FormStrategy";
+
+        eventBus = context.get(ContextKey.EVENTBUS);
+        //assert eventBus!=null : "Coordinator bus is required to execute FormStrategy";
+
+        return eventBus!=null && modelDescription!=null;
+    }
+
     @Override
     public ReificationWidget reify(final InteractionUnit interactionUnit, final Context context)
     {
@@ -77,7 +92,7 @@ public class FormStrategy implements ReificationStrategy<ReificationWidget>
         {
             Map<String, ModelNode> descriptions = context.get (ContextKey.MODEL_DESCRIPTIONS);
             ModelNode modelDescription = descriptions.get(interactionUnit.getId().getNamespaceURI());
-            assert modelDescription!=null : "Model description is required to execute FormStrategy";
+            //assert modelDescription!=null : "Model description is required to execute FormStrategy";
 
             EventBus eventBus = context.get(ContextKey.EVENTBUS);
             assert eventBus!=null : "Coordinator bus is required to execute FormStrategy";

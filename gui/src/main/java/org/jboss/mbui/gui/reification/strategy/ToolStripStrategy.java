@@ -14,6 +14,12 @@ import org.jboss.mbui.model.structure.as7.ToolStrip;
 public class ToolStripStrategy implements ReificationStrategy<ReificationWidget> {
 
     @Override
+    public boolean prepare(InteractionUnit interactionUnit, Context context) {
+        return true;
+    }
+
+
+    @Override
     public ReificationWidget reify(InteractionUnit interactionUnit, Context context) {
         ToolStripAdapter adapter = null;
         if (interactionUnit != null)

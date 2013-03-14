@@ -19,6 +19,11 @@ import org.jboss.mbui.model.structure.Trigger;
 public class TriggerStrategy implements ReificationStrategy<ReificationWidget> {
 
     @Override
+    public boolean prepare(InteractionUnit interactionUnit, Context context) {
+        return true;
+    }
+
+    @Override
     public ReificationWidget reify(InteractionUnit interactionUnit, Context context) {
         TriggerAdapter adapter = null;
 
