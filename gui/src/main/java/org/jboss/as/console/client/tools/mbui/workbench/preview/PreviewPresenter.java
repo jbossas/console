@@ -47,6 +47,7 @@ import org.jboss.gwt.flow.client.Control;
 import org.jboss.gwt.flow.client.Function;
 import org.jboss.gwt.flow.client.Outcome;
 import org.jboss.mbui.gui.behaviour.InteractionCoordinator;
+import org.jboss.mbui.gui.behaviour.NavigationDelegate;
 import org.jboss.mbui.gui.behaviour.as7.CoreGUIContext;
 import org.jboss.mbui.gui.reification.Context;
 import org.jboss.mbui.gui.reification.ContextKey;
@@ -60,6 +61,7 @@ import org.jboss.mbui.gui.reification.preparation.ReadResourceDescription;
 import org.jboss.mbui.gui.reification.preparation.ReificationPreperation;
 import org.jboss.mbui.gui.reification.strategy.ReificationWidget;
 import org.jboss.mbui.model.Dialog;
+import org.jboss.mbui.model.structure.QName;
 
 /**
  * @author Harald Pehl
@@ -67,7 +69,7 @@ import org.jboss.mbui.model.Dialog;
  * @date 10/30/2012
  */
 public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, PreviewPresenter.MyProxy>
-        implements ReifyEvent.ReifyHandler, ResetEvent.Handler
+        implements ReifyEvent.ReifyHandler, ResetEvent.Handler, NavigationDelegate
 {
     private Map<String, InteractionCoordinator> coordinators = new HashMap<String, InteractionCoordinator>();
     private String selectedSample = null;
@@ -91,16 +93,26 @@ public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, Preview
                 Console.MODULES.getCurrentUser()
         );
 
-        final InteractionCoordinator txCoordinator = new InteractionCoordinator(transactionSample.getDialog(),
-                statementContext);
-        final InteractionCoordinator dsCoordinator = new InteractionCoordinator(dataSourceSample.getDialog(),
-                statementContext);
-        final InteractionCoordinator secCoordinator = new InteractionCoordinator(securityDomainsSample.getDialog(),
-                statementContext);
+        final InteractionCoordinator txCoordinator = new InteractionCoordinator(
+                transactionSample.getDialog(), statementContext, this
+        );
+
+        final InteractionCoordinator dsCoordinator = new InteractionCoordinator(
+                dataSourceSample.getDialog(),statementContext, this
+        );
+
+        final InteractionCoordinator secCoordinator = new InteractionCoordinator(
+                securityDomainsSample.getDialog(),statementContext, this
+        );
 
         coordinators.put(transactionSample.getName(), txCoordinator);
         coordinators.put(dataSourceSample.getName(), dsCoordinator);
         coordinators.put(securityDomainsSample.getName(), secCoordinator);
+    }
+
+    @Override
+    public void onNavigation(QName source, QName dialog) {
+
     }
 
     private InteractionCoordinator getActiveCoordinator()

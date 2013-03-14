@@ -13,6 +13,7 @@ import org.jboss.mbui.gui.behaviour.as7.Tuple;
 import org.jboss.mbui.model.Dialog;
 import org.jboss.mbui.model.behaviour.Resource;
 import org.jboss.mbui.model.behaviour.ResourceType;
+import org.jboss.mbui.model.structure.InteractionUnit;
 import org.jboss.mbui.model.structure.QName;
 
 import java.util.Map;
@@ -45,11 +46,13 @@ public class InteractionCoordinator implements FrameworkContract,
     private StatementRegistry statements = new StatementRegistry();
     private StatementContext parentContext;
     private final StatementContext statementContext;
+    private final NavigationDelegate navigationDelegate;
 
     @Inject
-    public InteractionCoordinator(Dialog dialog, StatementContext parentContext) {
+    public InteractionCoordinator(Dialog dialog, StatementContext parentContext, NavigationDelegate navigationDelegate) {
         this.dialog = dialog;
         this.bus = new SimpleEventBus();
+        this.navigationDelegate = navigationDelegate;
 
         // coordinator handles all events except presentation & system events
         bus.addHandler(InteractionEvent.TYPE, this);
@@ -207,13 +210,27 @@ public class InteractionCoordinator implements FrameworkContract,
 
     /**
      * Find and activate another IU.
-     * Can delegate to another context (gwtp placemanager) or handle it internally (same dialog, i.e. window)
+     * Can delegate to another context (i.e. gwtp placemanager) or handle it internally (same dialog)
      *
      * @param event
      */
     @Override
     public void onNavigationEvent(NavigationEvent event) {
-        // TODO
+
+        QName source = (QName)event.getSource();
+        QName target = event.getTarget();
+
+        InteractionUnit unit = dialog.findUnit(target);
+        if(unit!=null)
+        {
+            // locally
+        }
+        else
+        {
+            // externally
+            navigationDelegate.onNavigation(dialog.getId(), target); // TODO: dialog || unit as source?
+        }
+
     }
 
 
