@@ -1,0 +1,108 @@
+<!--
+  ~ JBoss, Home of Professional Open Source
+  ~ Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
+  ~ as indicated by the @author tags. All rights reserved.
+  ~ See the copyright.txt in the distribution for a
+  ~ full listing of individual contributors.
+  ~
+  ~ This copyrighted material is made available to anyone wishing to use,
+  ~ modify, copy, or redistribute it subject to the terms and conditions
+  ~ of the GNU Lesser General Public License, v. 2.1.
+  ~ This program is distributed in the hope that it will be useful, but WITHOUT A
+  ~ WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+  ~ PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
+  ~ You should have received a copy of the GNU Lesser General Public License,
+  ~ v.2.1 along with this distribution; if not, write to the Free Software
+  ~ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+  ~ MA  02110-1301, USA.
+  -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <name>JBoss 7 - Management Console :: Flow :: Demo</name>
+    <artifactId>jboss-as-console-flow-demo</artifactId>
+
+
+    <parent>
+        <groupId>org.jboss.as</groupId>
+        <artifactId>jboss-as-console-flow-parent</artifactId>
+        <version>1.6.0-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.jboss.as</groupId>
+                <artifactId>jboss-as-console-bom</artifactId>
+                <type>pom</type>
+                <version>${project.version}</version>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+    <dependencies>
+        <dependency>
+            <groupId>com.google.gwt</groupId>
+            <artifactId>gwt-user</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.as</groupId>
+            <artifactId>jboss-as-console-flow</artifactId>
+        </dependency>
+    </dependencies>
+
+
+    <build>
+        <outputDirectory>src/main/webapp/WEB-INF/classes</outputDirectory>
+        <plugins>
+            <plugin>
+                <artifactId>maven-clean-plugin</artifactId>
+                <configuration>
+                    <filesets>
+                        <fileset>
+                            <directory>${basedir}</directory>
+                            <includes>
+                                <include>www-test/**</include>
+                                <include>.gwt/**</include>
+                                <include>src/main/webapp/WEB-INF/deploy/**</include>
+                                <include>src/main/webapp/WEB-INF/lib/**</include>
+                                <include>src/main/webapp/fd/**</include>
+                                <include>**/gwt-unitCache/**</include>
+                                <include>**/*.JUnit/**</include>
+                            </includes>
+                        </fileset>
+                    </filesets>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>gwt-maven-plugin</artifactId>
+                <configuration>
+                    <runTarget>index.html</runTarget>
+                    <hostedWebapp>src/main/webapp/</hostedWebapp>
+                    <logLevel>INFO</logLevel>
+                    <style>OBF</style>
+                    <strict>true</strict>
+                    <localWorkers>4</localWorkers>
+                    <compileReport>false</compileReport>
+                    <disableCastChecking>true</disableCastChecking>
+                    <disableClassMetadata>false</disableClassMetadata>
+                    <enableClosureCompiler>true</enableClosureCompiler>
+                    <extraJvmArgs>
+                        -Xmx1g -Xms1g -XX:MaxPermSize=256m -XX:ReservedCodeCacheSize=128m \
+                        -XX:+AggressiveOpts -XX:CompileThreshold=100 -XX:+UseNUMA
+                    </extraJvmArgs>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

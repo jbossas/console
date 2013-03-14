@@ -118,13 +118,13 @@ public class Console implements EntryPoint {
 
                 Outcome<BootstrapContext> bootstrapOutcome = new Outcome<BootstrapContext>() {
                     @Override
-                    public void onFailure() {
+                    public void onFailure(BootstrapContext context) {
                         // currently we only deal with authentication errors
                         RootLayoutPanel.get().remove(loadingPanel);
 
                         String cause = "";
-                        if(MODULES.getBootstrapContext().getLastError()!=null)
-                            cause = MODULES.getBootstrapContext().getLastError().getMessage();
+                        if(context.getLastError()!=null)
+                            cause = context.getLastError().getMessage();
 
                         HTMLPanel explanation = new HTMLPanel("<div style='padding-top:150px;padding-left:120px;'><h2>The management interface could not be loaded.</h2><pre>"+cause+"</pre></div>");
                         RootLayoutPanel.get().add(explanation);
@@ -145,8 +145,8 @@ public class Console implements EntryPoint {
                 // Ordered execution: if any of these fail, the interface wil not be loaded
 
                 new Async<BootstrapContext>().waterfall(
-                        bootstrapOutcome, // outcome
                         MODULES.getBootstrapContext(), // shared context
+                        bootstrapOutcome, // outcome
 
                         // bootstrap functions
                         new LoadGoogleViz(),
