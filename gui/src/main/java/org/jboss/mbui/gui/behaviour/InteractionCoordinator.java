@@ -239,7 +239,7 @@ public class InteractionCoordinator implements FrameworkContract,
             }
             else // absolute, local
             {
-                Procedure activateProcedure = procedures.get(ActivationProcedure.ID).iterator().next();
+                Procedure activateProcedure = procedures.getSingle(ActivationProcedure.ID);
                 activateProcedure.getCommand().execute(dialog, targetUnit.getId());
             }
         }
@@ -261,7 +261,7 @@ public class InteractionCoordinator implements FrameworkContract,
 
         Log.debug("StatementEvent " + event.getKey() + "=" + event.getValue());
 
-        Procedure stmtProcedure = procedures.get(SelectStatementProcedure.ID).iterator().next();
+        Procedure stmtProcedure = procedures.getSingle(SelectStatementProcedure.ID);
         stmtProcedure.getCommand().execute(dialog, new Tuple(event.getKey(), event.getValue()));
     }
 

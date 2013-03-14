@@ -40,6 +40,14 @@ public class BehaviourMap<T extends Behaviour> extends HashMap<QName, Set<T>> {
         collection.add(behaviour);
     }
 
+    public T getSingle(QName id) {
+
+        Set<T> items = get(id);
+        if(null==items)
+            throw new RuntimeException("No behaviour for id "+id);
+
+        return items.iterator().next();
+    }
     public Map<QName, Set<T>> list()
     {
         return Collections.unmodifiableMap(this);
