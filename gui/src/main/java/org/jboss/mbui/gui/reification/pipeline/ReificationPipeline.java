@@ -18,12 +18,12 @@
  */
 package org.jboss.mbui.gui.reification.pipeline;
 
-import org.jboss.mbui.gui.reification.Context;
-import org.jboss.mbui.model.Dialog;
-
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+
+import org.jboss.mbui.gui.reification.Context;
+import org.jboss.mbui.model.Dialog;
 
 /**
  * Entry point for reification of an abstract model to a concrete interface. The reification is split up into several
@@ -35,7 +35,6 @@ import java.util.List;
 public class ReificationPipeline
 {
     private final List<ReificationStep> steps;
-
 
     public ReificationPipeline(ReificationStep... steps)
     {

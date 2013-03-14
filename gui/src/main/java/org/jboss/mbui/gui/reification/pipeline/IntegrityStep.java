@@ -34,7 +34,6 @@ public class IntegrityStep extends ReificationStep
         }
         catch (IntegrityErrors integrityErrors)
         {
-
             if (integrityErrors.needsToBeRaised())
             {
                 Log.error(integrityErrors.getMessage());

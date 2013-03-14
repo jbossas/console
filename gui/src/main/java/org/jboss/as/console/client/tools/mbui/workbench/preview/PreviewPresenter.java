@@ -54,6 +54,7 @@ import org.jboss.mbui.gui.reification.pipeline.BuildUserInterfaceStep;
 import org.jboss.mbui.gui.reification.pipeline.ImplicitBehaviourStep;
 import org.jboss.mbui.gui.reification.pipeline.IntegrityStep;
 import org.jboss.mbui.gui.reification.pipeline.ReificationPipeline;
+import org.jboss.mbui.gui.reification.pipeline.UniqueIdCheckStep;
 import org.jboss.mbui.gui.reification.preparation.ReadOperationDescriptions;
 import org.jboss.mbui.gui.reification.preparation.ReadResourceDescription;
 import org.jboss.mbui.gui.reification.preparation.ReificationPreperation;
@@ -185,6 +186,7 @@ public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, Preview
 
                             // setup & start the reification pipeline
                             ReificationPipeline pipeline = new ReificationPipeline(
+                                    new UniqueIdCheckStep(),
                                     new BuildUserInterfaceStep(),
                                     new ImplicitBehaviourStep(dispatcher),
                                     new IntegrityStep());
@@ -216,7 +218,6 @@ public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, Preview
                     ReificationWidget widget = context.get(ContextKey.WIDGET);
                     assert widget !=null;
 
-
                     cachedWidgets.put(selectedSample, widget);
                     getView().show(widget);
                 }
@@ -234,8 +235,6 @@ public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, Preview
         }
     }
 
-
-
     // 3.) Retrieve resource meta data
     private void proceedWithResourceDescriptions(final Dialog dialog, final Context context) {
 
@@ -245,11 +244,11 @@ public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, Preview
             @Override
             public void onSuccess()
             {
-
                 Log.info("Successfully retrieved resource meta data");
 
                 // setup & start the reification pipeline
                 ReificationPipeline pipeline = new ReificationPipeline(
+                        new UniqueIdCheckStep(),
                         new BuildUserInterfaceStep(),
                         new ImplicitBehaviourStep(dispatcher),
                         new IntegrityStep());
