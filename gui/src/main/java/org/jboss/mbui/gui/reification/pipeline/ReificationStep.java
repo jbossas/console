@@ -35,7 +35,7 @@ public abstract class ReificationStep
         this.name = name;
     }
 
-    public abstract void execute(Dialog dialog,  Context context) throws ReificationException;
+    public abstract void execute(Dialog dialog, Context context) throws ReificationException;
 
     @Override
     public String toString()
