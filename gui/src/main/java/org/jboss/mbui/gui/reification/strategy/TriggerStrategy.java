@@ -65,6 +65,7 @@ public class TriggerStrategy implements ReificationStrategy<ReificationWidget> {
                     QName justification = interactionUnit.getId();
 
                     InteractionEvent triggerEvent = new InteractionEvent(trigger);
+                    triggerEvent.setPayload(trigger);
 
                     eventBus.fireEventFromSource(
                             triggerEvent,

@@ -27,6 +27,7 @@ import org.jboss.mbui.gui.reification.strategy.ChoiceStrategy;
 import org.jboss.mbui.gui.reification.strategy.ConcurrencyStrategy;
 import org.jboss.mbui.gui.reification.strategy.DeactivationStrategy;
 import org.jboss.mbui.gui.reification.strategy.FormStrategy;
+import org.jboss.mbui.gui.reification.strategy.LinkStrategy;
 import org.jboss.mbui.gui.reification.strategy.ReificationStrategy;
 import org.jboss.mbui.gui.reification.strategy.ReificationWidget;
 import org.jboss.mbui.gui.reification.strategy.SelectStrategy;
@@ -84,6 +85,7 @@ public class BuildUserInterfaceStep extends ReificationStep
 
         this.strategies.add(new ToolStripStrategy());
         this.strategies.add(new TriggerStrategy());
+        this.strategies.add(new LinkStrategy());
         this.strategies.add(new FormStrategy());
         this.strategies.add(new SelectStrategy());
 

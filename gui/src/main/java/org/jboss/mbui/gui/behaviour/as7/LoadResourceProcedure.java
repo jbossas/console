@@ -64,7 +64,7 @@ public class LoadResourceProcedure extends Procedure {
         });
 
         // behaviour model meta data
-        setInputs(new Resource<ResourceType>(ID, ResourceType.Event));
+        setInputs(new Resource<ResourceType>(ID, ResourceType.Interaction));
         setOutputs(new Resource<ResourceType>(justification, ResourceType.Presentation));
     }
 

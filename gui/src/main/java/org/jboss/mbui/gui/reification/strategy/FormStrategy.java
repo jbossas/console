@@ -53,7 +53,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static org.jboss.dmr.client.ModelDescriptionConstants.DEFAULT;
 import static org.jboss.mbui.model.behaviour.ResourceType.*;
 import static org.jboss.mbui.model.behaviour.ResourceType.System;
 
@@ -319,8 +318,8 @@ public class FormStrategy implements ReificationStrategy<ReificationWidget>
 
             // Register inputs and outputs
 
-            Resource<ResourceType> saveEvent = new Resource<ResourceType>(SAVE_ID, Event);
-            Resource<ResourceType> loadEvent = new Resource<ResourceType>(LOAD_ID, Event);
+            Resource<ResourceType> saveEvent = new Resource<ResourceType>(SAVE_ID, Interaction);
+            Resource<ResourceType> loadEvent = new Resource<ResourceType>(LOAD_ID, Interaction);
             Resource<ResourceType> reset = new Resource<ResourceType>(RESET_ID, System);
             Resource<ResourceType> update = new Resource<ResourceType>(getInteractionUnit().getId(), Presentation);
 

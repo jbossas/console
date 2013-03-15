@@ -27,8 +27,11 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.web.bindery.event.shared.EventBus;
 import org.jboss.as.console.client.layout.SimpleLayout;
 import org.jboss.ballroom.client.widgets.tabs.FakeTabPanel;
+import org.jboss.mbui.gui.behaviour.SystemEvent;
 import org.jboss.mbui.gui.reification.Context;
 import org.jboss.mbui.gui.reification.ContextKey;
+import org.jboss.mbui.model.behaviour.Resource;
+import org.jboss.mbui.model.behaviour.ResourceType;
 import org.jboss.mbui.model.structure.Container;
 import org.jboss.mbui.model.structure.InteractionUnit;
 
@@ -93,6 +96,14 @@ public class DeactivationStrategy implements ReificationStrategy<ReificationWidg
             layout.setTitle(interactionUnit.getName())
                     .setDescription("TBD")
                     .addContent("", deckPanel);
+
+
+            // complement model
+            //Resource<ResourceType> navigation = new Resource<ResourceType>(NAVIGATION_ID, ResourceType.Navigation);
+            Resource<ResourceType> activation = new Resource<ResourceType>(SystemEvent.ACTIVATE_ID, ResourceType.System);
+
+            //getInteractionUnit().setOutputs(navigation);
+            getInteractionUnit().setInputs(activation);
 
         }
 

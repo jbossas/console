@@ -62,7 +62,7 @@ public class SaveChangesetProcedure extends Procedure {
         });
 
         // behaviour model meta data
-        setInputs(new Resource<ResourceType>(ID, ResourceType.Event));
+        setInputs(new Resource<ResourceType>(ID, ResourceType.Interaction));
 
         // TODO: Strictly speaking this should emit system events instead of calling the coordinator API directly
     }

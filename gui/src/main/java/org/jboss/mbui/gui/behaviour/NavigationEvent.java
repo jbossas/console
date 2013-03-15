@@ -14,6 +14,8 @@ import org.jboss.mbui.model.structure.QName;
  */
 public class NavigationEvent extends GwtEvent<NavigationEvent.NavigationHandler> {
 
+    public static final QName ID = QName.valueOf("org.jboss.as:navigation");
+
     public static final Type TYPE = new Type<NavigationHandler>();
 
     private QName id;

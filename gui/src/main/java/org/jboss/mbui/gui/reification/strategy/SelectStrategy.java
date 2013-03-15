@@ -214,7 +214,7 @@ public class SelectStrategy implements ReificationStrategy<ReificationWidget>
                     );
 
             getInteractionUnit().setOutputs(
-                    new Resource<ResourceType>(LOAD_ID, ResourceType.Event),
+                    new Resource<ResourceType>(LOAD_ID, ResourceType.Interaction),
                     new Resource<ResourceType>(SELECT_ID, ResourceType.Statement)
             );
 

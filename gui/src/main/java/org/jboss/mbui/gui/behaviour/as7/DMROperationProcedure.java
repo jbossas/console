@@ -65,7 +65,7 @@ public class DMROperationProcedure extends Procedure implements OperationContext
         setCommand(factory.createCommand(operationName, this));
 
         // behaviour model meta data
-        setInputs(new Resource<ResourceType>(id, ResourceType.Event));
+        setInputs(new Resource<ResourceType>(id, ResourceType.Interaction));
 
     }
 

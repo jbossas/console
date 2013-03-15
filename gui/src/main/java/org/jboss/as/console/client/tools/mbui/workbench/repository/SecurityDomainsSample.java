@@ -9,6 +9,7 @@ import org.jboss.mbui.model.mapping.Mapping;
 import org.jboss.mbui.model.mapping.as7.DMRMapping;
 import org.jboss.mbui.model.structure.Container;
 import org.jboss.mbui.model.structure.InteractionUnit;
+import org.jboss.mbui.model.structure.Link;
 import org.jboss.mbui.model.structure.QName;
 import org.jboss.mbui.model.structure.Select;
 import org.jboss.mbui.model.structure.Trigger;
@@ -77,9 +78,9 @@ public class SecurityDomainsSample implements Sample
                                     QName.valueOf(namespace + ":remove"),
                                     QName.valueOf("org.jboss.as:resource-operation#remove"),
                                     "Remove"))
-                            .add(new Trigger(
+                            .add(new Link(
                                     QName.valueOf(namespace + ":viewDetails"),
-                                    QName.valueOf("org.jboss.as:navigate#next"),  // trigger type
+                                    QName.valueOf(namespace +":pages"),
                                     "Details"))
                         .end()
 

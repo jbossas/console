@@ -179,7 +179,7 @@ public class InteractionCoordinator implements FrameworkContract,
         if(collection!=null)
         {
             for(Procedure consumer : collection) {
-                Resource<ResourceType> resource = new Resource<ResourceType>(id, ResourceType.Event);
+                Resource<ResourceType> resource = new Resource<ResourceType>(id, ResourceType.Interaction);
                 resource.setSource(source);
 
                 if(consumer.doesConsume(resource))

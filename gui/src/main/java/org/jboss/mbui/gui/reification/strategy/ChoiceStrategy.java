@@ -55,6 +55,8 @@ import static org.jboss.mbui.model.structure.TemporalOperator.Choice;
 public class ChoiceStrategy implements ReificationStrategy<ReificationWidget>
 {
 
+
+
     @Override
     public boolean prepare(InteractionUnit interactionUnit, Context context) {
         return true;
@@ -134,7 +136,7 @@ public class ChoiceStrategy implements ReificationStrategy<ReificationWidget>
                         {
                             eventBus.fireEventFromSource(
                                     new NavigationEvent(
-                                            QName.valueOf("org.jboss.as.navigation"),
+                                            NavigationEvent.ID,
                                             targetTab
                                     ), interactionUnit.getId() //source
                             );
@@ -195,7 +197,10 @@ public class ChoiceStrategy implements ReificationStrategy<ReificationWidget>
 
 
                 // complement model
+                Resource<ResourceType> navigation = new Resource<ResourceType>(NavigationEvent.ID, ResourceType.Navigation);
                 Resource<ResourceType> activation = new Resource<ResourceType>(SystemEvent.ACTIVATE_ID, ResourceType.System);
+
+                getInteractionUnit().setOutputs(navigation);
                 getInteractionUnit().setInputs(activation);
             }
 

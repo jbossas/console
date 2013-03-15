@@ -22,7 +22,7 @@ public class Trigger extends InteractionUnit {
         assert triggerType.getSuffix()!=null : "Invalid trigger type declaration: "+triggerType;
 
         // explicit output
-        setOutputs(new Resource<ResourceType>(triggerType, ResourceType.Event));
+        setOutputs(new Resource<ResourceType>(triggerType, ResourceType.Interaction));
     }
 
     @Override

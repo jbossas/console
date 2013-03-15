@@ -3,7 +3,6 @@ package org.jboss.mbui.gui.behaviour.as7;
 import org.jboss.mbui.gui.behaviour.InteractionCoordinator;
 import org.jboss.mbui.gui.behaviour.ModelDrivenCommand;
 import org.jboss.mbui.gui.behaviour.Procedure;
-import org.jboss.mbui.gui.behaviour.SystemEvent;
 import org.jboss.mbui.model.Dialog;
 import org.jboss.mbui.model.behaviour.Resource;
 import org.jboss.mbui.model.behaviour.ResourceType;
@@ -15,8 +14,8 @@ import org.jboss.mbui.model.structure.QName;
  */
 public class NavigationProcedure extends Procedure {
 
-    public final static QName ID = QName.valueOf("org.jboss.as:navigate");
-    Resource<ResourceType> navigation = new Resource<ResourceType>(ID, ResourceType.Event);
+    public final static QName ID = QName.valueOf("org.jboss.as:navigate#next");
+    Resource<ResourceType> navigation = new Resource<ResourceType>(ID, ResourceType.Interaction);
 
     public NavigationProcedure(final InteractionCoordinator coordinator) {
         super(ID);
