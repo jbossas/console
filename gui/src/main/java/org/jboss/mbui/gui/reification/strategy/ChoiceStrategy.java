@@ -185,7 +185,7 @@ public class ChoiceStrategy implements ReificationStrategy<ReificationWidget>
         }
 
         private TabPanelContract createPages(InteractionUnit interactionUnit, EventBus eventBus) {
-            final PagedView pagedView = new PagedView();
+            final PagedView pagedView = new PagedView(true);
 
             return new TabPanelContract() {
                 @Override
@@ -200,13 +200,15 @@ public class ChoiceStrategy implements ReificationStrategy<ReificationWidget>
                 public Widget as() {
                     Widget widget = pagedView.asWidget();
 
-                    widget.addAttachHandler(new AttachEvent.Handler() {
+                    /*widget.addAttachHandler(new AttachEvent.Handler() {
                         @Override
                         public void onAttachOrDetach(AttachEvent attachEvent) {
                             if(pagedView.getPageCount()>0)
                                 pagedView.showPage(0);
                         }
-                    });
+                    });*/
+
+                    pagedView.showPage(0);
 
                     return widget;
                 }

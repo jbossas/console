@@ -19,13 +19,11 @@
 package org.jboss.mbui.gui.reification.strategy;
 
 import com.google.gwt.dom.client.Style;
+import com.google.gwt.event.logical.shared.AttachEvent;
 import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.LayoutPanel;
-import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.web.bindery.event.shared.EventBus;
-import org.jboss.as.console.client.layout.SimpleLayout;
 import org.jboss.ballroom.client.widgets.tabs.FakeTabPanel;
 import org.jboss.mbui.gui.behaviour.SystemEvent;
 import org.jboss.mbui.gui.reification.Context;
@@ -81,7 +79,6 @@ public class DeactivationStrategy implements ReificationStrategy<ReificationWidg
     {
         final InteractionUnit interactionUnit;
         private DeckPanel deckPanel;
-        private SimpleLayout layout;
         private Map<Integer, QName> index2child = new HashMap<Integer, QName>();
 
         MyAdapter(final InteractionUnit interactionUnit)
@@ -90,13 +87,6 @@ public class DeactivationStrategy implements ReificationStrategy<ReificationWidg
             this.interactionUnit = interactionUnit;
 
             this.deckPanel = new DeckPanel();
-
-            layout = new SimpleLayout();
-
-            layout.setTitle(interactionUnit.getName())
-                    .setDescription("TBD")
-                    .addContent("", deckPanel);
-
 
             // activation listener
             eventBus.addHandler(SystemEvent.TYPE,
@@ -148,9 +138,30 @@ public class DeactivationStrategy implements ReificationStrategy<ReificationWidg
         @Override
         public Widget asWidget()
         {
+            LayoutPanel layout = new LayoutPanel();
+            layout.setStyleName("fill-layout");
+
+            FakeTabPanel titleBar = new FakeTabPanel(interactionUnit.getName());
+            layout.add(titleBar);
+
+            Widget deckPanelWidget = deckPanel.asWidget();
+            layout.add(deckPanelWidget);
+
+            layout.setWidgetTopHeight(titleBar, 0, Style.Unit.PX, 40, Style.Unit.PX);
+            layout.setWidgetTopHeight(deckPanelWidget, 40, Style.Unit.PX, 100, Style.Unit.PCT);
+
+
+            /*deckPanelWidget.addAttachHandler(new AttachEvent.Handler() {
+                @Override
+                public void onAttachOrDetach(AttachEvent attachEvent) {
+                    deckPanel.showWidget(0);
+                }
+            });
+            */
+
             deckPanel.showWidget(0);
 
-            return this.layout.build();
+            return layout;
         }
     }
 }

@@ -80,7 +80,7 @@ public class SecurityDomainsSample implements Sample
                                     "Remove"))
                             .add(new Link(
                                     QName.valueOf(namespace + ":viewDetails"),
-                                    QName.valueOf(namespace +":pages"),
+                                    QName.valueOf(namespace +":pages-wrapper"),
                                     "Details"))
                         .end()
 
@@ -95,62 +95,71 @@ public class SecurityDomainsSample implements Sample
                     .end()
 
                     // The actual pages
-                    .start(new Container(namespace, "pages", "Pages", Choice))
 
-                        // Authentication
-                        .start(new Container(namespace + ".authentication", "authentication", "Authentication", Concurrency))
-                            .start(new ToolStrip(namespace + ".authentication", "tools", "Tools"))
-                                .add(new Trigger(
-                                        QName.valueOf(namespace + ".authentication:add"),
-                                        QName.valueOf("org.jboss.as:resource-operation#add"),
-                                        "Add"))
-                                .add(new Trigger(
-                                        QName.valueOf(namespace + ".authentication:remove"),
-                                        QName.valueOf("org.jboss.as:resource-operation#remove"),
-                                        "Remove"))
-                            .end()
-                            .add(new Select(namespace + ".authentication", "loginModules", "Login Modules"))
-                            .start(new Container(namespace + ".authentication", "details", "Details", Choice))
-                                .add(new Form(namespace + ".authentication", "details#basicAttributers", "Attributes"))
-                                .add(new Select(namespace + ".authentication", "moduleOptions", "Module Options"))
-                            .end()
-                        .end()
-                                
-                        // Authorization
-                        .start(new Container(namespace + ".authorization", "authorization", "Authorization", Concurrency))
-                            .start(new ToolStrip(namespace + ".authorization", "tools", "Tools"))
-                                .add(new Trigger(
-                                        QName.valueOf(namespace + ".authorization:add"),
-                                        QName.valueOf("org.jboss.as:resource-operation#add"),
-                                        "Add"))
-                                .add(new Trigger(
-                                        QName.valueOf(namespace + ".authorization:remove"),
-                                        QName.valueOf("org.jboss.as:resource-operation#remove"),
-                                        "Remove"))
-                            .end()
-                            .add(new Select(namespace + ".authorization", "policies", "Policies"))
-                            .start(new Container(namespace + ".authorization", "details", "Details", Choice))
-                                .add(new Form(namespace + ".authorization", "details#basicAttributers", "Attributes"))
-                                .add(new Select(namespace + ".authorization", "moduleOptions", "Module Options"))
-                            .end()
-                        .end()
+                    .start(new Container(namespace, "pages-wrapper", "Details", Concurrency))
 
-                        // Mapping
-                        .start(new Container(namespace + ".mapping", "mapping", "Mapping", Concurrency))
-                            .start(new ToolStrip(namespace + ".mapping", "tools", "Tools"))
-                                .add(new Trigger(
-                                        QName.valueOf(namespace + ".mapping:add"),
-                                        QName.valueOf("org.jboss.as:resource-operation#add"),
-                                        "Add"))
-                                .add(new Trigger(
-                                        QName.valueOf(namespace + ".mapping:remove"),
-                                        QName.valueOf("org.jboss.as:resource-operation#remove"),
-                                        "Remove"))
+                        .add(new Link(
+                                QName.valueOf(namespace + ":viewOverview"),
+                                QName.valueOf(namespace +":frontpage"),
+                                "Back"))
+
+                        .start(new Container(namespace, "pages", "Pages", Choice))
+
+                            // Authentication
+                            .start(new Container(namespace + ".authentication", "authentication", "Authentication", Concurrency))
+                                .start(new ToolStrip(namespace + ".authentication", "tools", "Tools"))
+                                    .add(new Trigger(
+                                            QName.valueOf(namespace + ".authentication:add"),
+                                            QName.valueOf("org.jboss.as:resource-operation#add"),
+                                            "Add"))
+                                    .add(new Trigger(
+                                            QName.valueOf(namespace + ".authentication:remove"),
+                                            QName.valueOf("org.jboss.as:resource-operation#remove"),
+                                            "Remove"))
+                                .end()
+                                .add(new Select(namespace + ".authentication", "loginModules", "Login Modules"))
+                                .start(new Container(namespace + ".authentication", "details", "Details", Choice))
+                                    .add(new Form(namespace + ".authentication", "details#basicAttributers", "Attributes"))
+                                    .add(new Select(namespace + ".authentication", "moduleOptions", "Module Options"))
+                                .end()
                             .end()
-                            .add(new Select(namespace + ".mapping", "modules", "Modules"))
-                            .start(new Container(namespace + ".mapping", "details", "Details", Choice))
-                                .add(new Form(namespace + ".mapping", "details#basicAttributers", "Attributes"))
-                                .add(new Form(namespace + ".mapping", "details#moduleAttributers", "Module Options"))
+
+                            // Authorization
+                            .start(new Container(namespace + ".authorization", "authorization", "Authorization", Concurrency))
+                                .start(new ToolStrip(namespace + ".authorization", "tools", "Tools"))
+                                    .add(new Trigger(
+                                            QName.valueOf(namespace + ".authorization:add"),
+                                            QName.valueOf("org.jboss.as:resource-operation#add"),
+                                            "Add"))
+                                    .add(new Trigger(
+                                            QName.valueOf(namespace + ".authorization:remove"),
+                                            QName.valueOf("org.jboss.as:resource-operation#remove"),
+                                            "Remove"))
+                                .end()
+                                .add(new Select(namespace + ".authorization", "policies", "Policies"))
+                                .start(new Container(namespace + ".authorization", "details", "Details", Choice))
+                                    .add(new Form(namespace + ".authorization", "details#basicAttributers", "Attributes"))
+                                    .add(new Select(namespace + ".authorization", "moduleOptions", "Module Options"))
+                                .end()
+                            .end()
+
+                            // Mapping
+                            .start(new Container(namespace + ".mapping", "mapping", "Mapping", Concurrency))
+                                .start(new ToolStrip(namespace + ".mapping", "tools", "Tools"))
+                                    .add(new Trigger(
+                                            QName.valueOf(namespace + ".mapping:add"),
+                                            QName.valueOf("org.jboss.as:resource-operation#add"),
+                                            "Add"))
+                                    .add(new Trigger(
+                                            QName.valueOf(namespace + ".mapping:remove"),
+                                            QName.valueOf("org.jboss.as:resource-operation#remove"),
+                                            "Remove"))
+                                .end()
+                                .add(new Select(namespace + ".mapping", "modules", "Modules"))
+                                .start(new Container(namespace + ".mapping", "details", "Details", Choice))
+                                    .add(new Form(namespace + ".mapping", "details#basicAttributers", "Attributes"))
+                                    .add(new Form(namespace + ".mapping", "details#moduleAttributers", "Module Options"))
+                                .end()
                             .end()
                         .end()
                     .end()
