@@ -1,0 +1,27 @@
+
+.icon {
+    width:16px;
+    height:16px;
+    background-repeat: no-repeat;
+    background-position: top left;
+}
+
+.yellow {
+    background-image: url('icons/yellow.png');
+}
+
+.green {
+    background-image: url('icons/green.png');
+}
+
+.blue {
+    background-image: url('icons/blue.png');
+}
+
+.red {
+    background-image: url('icons/red.png');
+}
+
+.attachment {
+    background-image: url('icons/attachment.png');
+}

@@ -24,4 +24,6 @@
 <module>
     <source path="model" />
     <source path="gui" />
+
+    <stylesheet src="workbench.css" />
 </module>

@@ -24,8 +24,8 @@ import org.jboss.mbui.model.structure.impl.InteractionUnitVisitor;
 public class DialogVisualization
 {
     static final NameTemplate NAME_TEMPLATE = GWT.create(NameTemplate.class);
-    private static final String MAPPED_STYLE = "font-weight:BOLD";
-    private static final String UNMAPPED_STYLE = "border:none";
+    private static final String MAPPED_STYLE = "";//"icon attachment";
+    private static final String UNMAPPED_STYLE = "";
     private final OrgChart chart;
 
     public DialogVisualization(final Dialog dialog)
@@ -136,7 +136,7 @@ public class DialogVisualization
 
     interface NameTemplate extends SafeHtmlTemplates
     {
-        @Template("<div style='{0}'>{1}<br/><span style=\"color:#666;\">&laquo;{2}&raquo;</span></div>")
+        @Template("<div>{1}<br/><span style=\"color:#666;\">&laquo;{2}&raquo;</span><div class='{0}'></div></div>")
         SafeHtml name(String css, String name, String stereotype);
     }
 }
