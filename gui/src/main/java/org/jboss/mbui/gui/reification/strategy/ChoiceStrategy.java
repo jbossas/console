@@ -27,7 +27,7 @@ import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.web.bindery.event.shared.EventBus;
-import org.eclipse.jdt.internal.compiler.ast.QualifiedNameReference;
+import org.jboss.as.console.client.widgets.pages.PagedView;
 import org.jboss.mbui.gui.behaviour.NavigationEvent;
 import org.jboss.mbui.gui.behaviour.SystemEvent;
 import org.jboss.mbui.gui.reification.ContextKey;
@@ -54,27 +54,18 @@ import static org.jboss.mbui.model.structure.TemporalOperator.Choice;
  */
 public class ChoiceStrategy implements ReificationStrategy<ReificationWidget>
 {
-
-
+    private EventBus eventBus;
 
     @Override
     public boolean prepare(InteractionUnit interactionUnit, Context context) {
-        return true;
+        eventBus = context.get(ContextKey.EVENTBUS);
+        return eventBus !=null;
     }
 
     @Override
     public ReificationWidget reify(final InteractionUnit interactionUnit, final Context context)
     {
-
-        EventBus eventBus = context.get(ContextKey.EVENTBUS);
-        assert eventBus!=null : "Coordinator bus is required to execute FormStrategy";
-
-        TabPanelAdapter adapter = null;
-        if (interactionUnit != null)
-        {
-            adapter = new TabPanelAdapter(eventBus, interactionUnit);
-        }
-        return adapter;
+        return new TabPanelAdapter(interactionUnit);
     }
 
     @Override
@@ -87,123 +78,175 @@ public class ChoiceStrategy implements ReificationStrategy<ReificationWidget>
 
     class TabPanelAdapter  implements ReificationWidget
     {
-        final WidgetStrategy delegate;
-        final InteractionUnit interactionUnit;
+        private TabPanelContract delegate;
+        private InteractionUnit interactionUnit;
         private Map<Integer, QName> index2tab = new HashMap<Integer, QName>();
 
-        TabPanelAdapter(final EventBus eventBus, final InteractionUnit interactionUnit)
+        TabPanelAdapter(final InteractionUnit interactionUnit)
         {
-
             this.interactionUnit = interactionUnit;
+            int depth = getNestingDepth(this.interactionUnit);
 
-            if(interactionUnit.hasParent()) // nested tab panel
+            switch (depth)
             {
-                final TabPanel tabPanel = new TabPanel();
-                tabPanel.setStyleName("default-tabpanel");
-
-                tabPanel.addAttachHandler(new AttachEvent.Handler() {
-                    @Override
-                    public void onAttachOrDetach(AttachEvent attachEvent) {
-                        if(tabPanel.getWidgetCount()>0)
-                            tabPanel.selectTab(0);
-                    }
-                });
-
-                this.delegate = new WidgetStrategy() {
-                    @Override
-                    public void add(InteractionUnit unit, Widget widget) {
-                        tabPanel.add(widget, unit.getName());
-                    }
-
-                    @Override
-                    public Widget as() {
-                        return tabPanel;
-                    }
-                };
+                case 0:
+                    this.delegate = createTopLevelTabPanel(interactionUnit, eventBus);
+                    break;
+                case 1:
+                    this.delegate = createPages(interactionUnit, eventBus);
+                    break;
+                default:
+                    this.delegate = createDefaultTabPanel(interactionUnit, eventBus);
+                    break;
             }
-            else    // top level tab panel
-            {
-                final DefaultTabLayoutPanel tabLayoutpanel = new DefaultTabLayoutPanel(40, Style.Unit.PX);
-                tabLayoutpanel.addStyleName("default-tabpanel");
 
-                tabLayoutpanel.addBeforeSelectionHandler(new BeforeSelectionHandler<Integer>() {
-                    @Override
-                    public void onBeforeSelection(BeforeSelectionEvent<Integer> event) {
+        }
 
-                        QName targetTab = index2tab.get(event.getItem());
+        private TabPanelContract createTopLevelTabPanel(final InteractionUnit interactionUnit, final EventBus eventBus) {
+            final DefaultTabLayoutPanel tabLayoutpanel = new DefaultTabLayoutPanel(40, Style.Unit.PX);
+            tabLayoutpanel.addStyleName("default-tabpanel");
 
-                        if(targetTab!=null)
-                        {
-                            eventBus.fireEventFromSource(
-                                    new NavigationEvent(
-                                            NavigationEvent.ID,
-                                            targetTab
-                                    ), interactionUnit.getId() //source
+            tabLayoutpanel.addBeforeSelectionHandler(new BeforeSelectionHandler<Integer>() {
+                @Override
+                public void onBeforeSelection(BeforeSelectionEvent<Integer> event) {
+
+                    QName targetTab = index2tab.get(event.getItem());
+
+                    if(targetTab!=null)
+                    {
+                        eventBus.fireEventFromSource(
+                                new NavigationEvent(
+                                        NavigationEvent.ID,
+                                        targetTab
+                                ), interactionUnit.getId() //source
+                        );
+
+                    }
+                    event.cancel();
+                }
+            });
+
+            TabPanelContract tabPanelContract = new TabPanelContract() {
+                @Override
+                public void add(InteractionUnit unit, Widget widget) {
+                    final VerticalPanel vpanel = new VerticalPanel();
+                    vpanel.setStyleName("rhs-content-panel");
+                    vpanel.add(widget);
+
+                    ScrollPanel scroll = new ScrollPanel(vpanel);
+                    tabLayoutpanel.add(scroll, unit.getName());
+
+                    // register tab2index mapping
+                    index2tab.put(tabLayoutpanel.getWidgetCount() - 1, unit.getId());
+                }
+
+                @Override
+                public Widget as() {
+                    return tabLayoutpanel;
+                }
+            };
+
+
+            // activation listener
+            eventBus.addHandler(SystemEvent.TYPE,
+                    new SystemEvent.Handler() {
+                        @Override
+                        public boolean accepts(SystemEvent event) {
+
+                            return event.getId().equals(SystemEvent.ACTIVATE_ID)
+                                    && index2tab.containsValue(event.getPayload()
                             );
-
                         }
-                        event.cancel();
-                    }
-                });
 
-                this.delegate = new WidgetStrategy() {
-                    @Override
-                    public void add(InteractionUnit unit, Widget widget) {
-                        final VerticalPanel vpanel = new VerticalPanel();
-                        vpanel.setStyleName("rhs-content-panel");
-                        vpanel.add(widget);
+                        @Override
+                        public void onSystemEvent(SystemEvent event) {
+                            QName id = (QName) event.getPayload();
 
-                        ScrollPanel scroll = new ScrollPanel(vpanel);
-                        tabLayoutpanel.add(scroll, unit.getName());
-
-                        // register tab2index mapping
-                        index2tab.put(tabLayoutpanel.getWidgetCount()-1, unit.getId());
-                    }
-
-                    @Override
-                    public Widget as() {
-                        return tabLayoutpanel;
-                    }
-                };
-
-
-                // activation listener
-                eventBus.addHandler(SystemEvent.TYPE,
-                        new SystemEvent.Handler() {
-                            @Override
-                            public boolean accepts(SystemEvent event) {
-
-                                return event.getId().equals(SystemEvent.ACTIVATE_ID)
-                                        && index2tab.containsValue(event.getPayload()
-                                );
-                            }
-
-                            @Override
-                            public void onSystemEvent(SystemEvent event) {
-                                QName id = (QName)event.getPayload();
-
-                                Set<Integer> keys = index2tab.keySet();
-                                for(Integer key : keys)
-                                {
-                                    if(index2tab.get(key).equals(id))
-                                    {
-                                        tabLayoutpanel.selectTab(key, false);
-                                        break;
-                                    }
+                            Set<Integer> keys = index2tab.keySet();
+                            for (Integer key : keys) {
+                                if (index2tab.get(key).equals(id)) {
+                                    tabLayoutpanel.selectTab(key, false);
+                                    break;
                                 }
                             }
                         }
-                );
+                    }
+            );
 
 
-                // complement model
-                Resource<ResourceType> navigation = new Resource<ResourceType>(NavigationEvent.ID, ResourceType.Navigation);
-                Resource<ResourceType> activation = new Resource<ResourceType>(SystemEvent.ACTIVATE_ID, ResourceType.System);
+            // complement model
+            Resource<ResourceType> navigation = new Resource<ResourceType>(NavigationEvent.ID, ResourceType.Navigation);
+            Resource<ResourceType> activation = new Resource<ResourceType>(SystemEvent.ACTIVATE_ID, ResourceType.System);
 
-                getInteractionUnit().setOutputs(navigation);
-                getInteractionUnit().setInputs(activation);
+            getInteractionUnit().setOutputs(navigation);
+            getInteractionUnit().setInputs(activation);
+
+            return tabPanelContract;
+        }
+
+        private TabPanelContract createPages(InteractionUnit interactionUnit, EventBus eventBus) {
+            final PagedView pagedView = new PagedView();
+
+            return new TabPanelContract() {
+                @Override
+                public void add(InteractionUnit unit, Widget widget) {
+                    pagedView.addPage(unit.getName(), widget);
+
+                    // register tab2index mapping
+                    index2tab.put(pagedView.getPageCount()-1, unit.getId());
+                }
+
+                @Override
+                public Widget as() {
+                    Widget widget = pagedView.asWidget();
+
+                    widget.addAttachHandler(new AttachEvent.Handler() {
+                        @Override
+                        public void onAttachOrDetach(AttachEvent attachEvent) {
+                            if(pagedView.getPageCount()>0)
+                                pagedView.showPage(0);
+                        }
+                    });
+
+                    return widget;
+                }
+            };
+        }
+
+        private TabPanelContract createDefaultTabPanel(InteractionUnit interactionUnit, EventBus eventBus) {
+            final TabPanel tabPanel = new TabPanel();
+            tabPanel.setStyleName("default-tabpanel");
+
+            tabPanel.addAttachHandler(new AttachEvent.Handler() {
+                @Override
+                public void onAttachOrDetach(AttachEvent attachEvent) {
+                    if(tabPanel.getWidgetCount()>0)
+                        tabPanel.selectTab(0);
+                }
+            });
+
+            return new TabPanelContract() {
+                @Override
+                public void add(InteractionUnit unit, Widget widget) {
+                    tabPanel.add(widget, unit.getName());
+                }
+
+                @Override
+                public Widget as() {
+                    return tabPanel;
+                }
+            };
+        }
+
+        private int getNestingDepth(InteractionUnit unit) {
+            int depth = 0;
+            InteractionUnit parent = unit.getParent();
+            while (parent != null)
+            {
+                depth++;
+                parent = parent.getParent();
             }
-
+            return depth;
         }
 
         @Override

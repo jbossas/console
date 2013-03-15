@@ -62,7 +62,7 @@ public class ConcurrencyStrategy implements ReificationStrategy<ReificationWidge
 
     class SimpleLayoutAdapter implements ReificationWidget
     {
-        final WidgetStrategy delegate;
+        final TabPanelContract delegate;
         final InteractionUnit interactionUnit;
 
         SimpleLayoutAdapter(final InteractionUnit interactionUnit, Context context)
@@ -73,7 +73,7 @@ public class ConcurrencyStrategy implements ReificationStrategy<ReificationWidge
             {
                 final VerticalPanel panel = new VerticalPanel();
                 panel.setStyleName("fill-layout-width");
-                this.delegate = new WidgetStrategy() {
+                this.delegate = new TabPanelContract() {
                     @Override
                     public void add(InteractionUnit unit, Widget widget) {
                         panel.add(widget);
@@ -91,7 +91,7 @@ public class ConcurrencyStrategy implements ReificationStrategy<ReificationWidge
                         .setTitle(interactionUnit.getName()
                         );
 
-                this.delegate = new WidgetStrategy() {
+                this.delegate = new TabPanelContract() {
                     @Override
                     public void add(InteractionUnit unit, Widget widget) {
                         builder.addContent("TODO: NAME", widget);

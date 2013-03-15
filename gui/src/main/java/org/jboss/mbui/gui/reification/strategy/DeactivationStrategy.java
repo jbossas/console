@@ -34,6 +34,11 @@ import org.jboss.mbui.model.behaviour.Resource;
 import org.jboss.mbui.model.behaviour.ResourceType;
 import org.jboss.mbui.model.structure.Container;
 import org.jboss.mbui.model.structure.InteractionUnit;
+import org.jboss.mbui.model.structure.QName;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 import static org.jboss.mbui.model.structure.TemporalOperator.Deactivation;
 
@@ -61,13 +66,7 @@ public class DeactivationStrategy implements ReificationStrategy<ReificationWidg
     @Override
     public ReificationWidget reify(final InteractionUnit interactionUnit, final Context context)
     {
-
-        MyAdapter adapter = null;
-        if (interactionUnit != null)
-        {
-            adapter = new MyAdapter(interactionUnit);
-        }
-        return adapter;
+        return new MyAdapter(interactionUnit);
     }
 
     @Override
@@ -83,6 +82,7 @@ public class DeactivationStrategy implements ReificationStrategy<ReificationWidg
         final InteractionUnit interactionUnit;
         private DeckPanel deckPanel;
         private SimpleLayout layout;
+        private Map<Integer, QName> index2child = new HashMap<Integer, QName>();
 
         MyAdapter(final InteractionUnit interactionUnit)
         {
@@ -98,11 +98,36 @@ public class DeactivationStrategy implements ReificationStrategy<ReificationWidg
                     .addContent("", deckPanel);
 
 
-            // complement model
-            //Resource<ResourceType> navigation = new Resource<ResourceType>(NAVIGATION_ID, ResourceType.Navigation);
-            Resource<ResourceType> activation = new Resource<ResourceType>(SystemEvent.ACTIVATE_ID, ResourceType.System);
+            // activation listener
+            eventBus.addHandler(SystemEvent.TYPE,
+                    new SystemEvent.Handler() {
+                        @Override
+                        public boolean accepts(SystemEvent event) {
 
-            //getInteractionUnit().setOutputs(navigation);
+                            return event.getId().equals(SystemEvent.ACTIVATE_ID)
+                                    && index2child.containsValue(event.getPayload()
+                            );
+                        }
+
+                        @Override
+                        public void onSystemEvent(SystemEvent event) {
+                            QName id = (QName)event.getPayload();
+
+                            Set<Integer> keys = index2child.keySet();
+                            for(Integer key : keys)
+                            {
+                                if(index2child.get(key).equals(id))
+                                {
+                                    deckPanel.showWidget(key);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+            );
+
+            // complement model
+            Resource<ResourceType> activation = new Resource<ResourceType>(SystemEvent.ACTIVATE_ID, ResourceType.System);
             getInteractionUnit().setInputs(activation);
 
         }
@@ -117,6 +142,7 @@ public class DeactivationStrategy implements ReificationStrategy<ReificationWidg
         {
             assert deckPanel.getWidgetCount()<2 : "Operator.Deactivation only supports two child units";
             deckPanel.add(widget.asWidget());
+            index2child.put(deckPanel.getWidgetCount()-1, widget.getInteractionUnit().getId());
         }
 
         @Override

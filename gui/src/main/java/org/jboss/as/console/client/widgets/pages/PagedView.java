@@ -109,6 +109,10 @@ public class PagedView {
         return deck.getVisibleWidget();
     }
 
+    public int getPageCount() {
+        return deck.getWidgetCount();
+    }
+
     public interface PageCallback {
         void onRevealPage(int index);
     }

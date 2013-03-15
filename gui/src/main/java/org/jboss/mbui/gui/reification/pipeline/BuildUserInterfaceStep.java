@@ -89,7 +89,7 @@ public class BuildUserInterfaceStep extends ReificationStep
         this.strategies.add(new FormStrategy());
         this.strategies.add(new SelectStrategy());
 
-        // container
+        // containerStack
         this.strategies.add(new ConcurrencyStrategy());
         this.strategies.add(new ChoiceStrategy());
         this.strategies.add(new DeactivationStrategy());
@@ -117,7 +117,7 @@ public class BuildUserInterfaceStep extends ReificationStep
         }
 
         ReificationWidget root;
-        Stack<ReificationWidget> container = new Stack<ReificationWidget>();
+        Stack<ReificationWidget> containerStack = new Stack<ReificationWidget>();
 
         @Override
         public void startVisit(final Container container)
@@ -127,23 +127,14 @@ public class BuildUserInterfaceStep extends ReificationStep
 
             if (strategy != null)
             {
-
                 boolean isPrepared = strategy.prepare(container, context);
 
                 ReificationWidget widget = isPrepared ?
                         strategy.reify(container, context) : new BlankWidget(container);
-                if (widget != null)
-                {
-                    if (root == null)
-                    {
-                        root = widget;
-                    }
-                    if (!this.container.isEmpty())
-                    {
-                        this.container.peek().add(widget);
-                    }
-                    this.container.push(widget);
-                }
+
+                // stack up myself
+                this.containerStack.push(widget);
+
             }
         }
 
@@ -161,19 +152,31 @@ public class BuildUserInterfaceStep extends ReificationStep
                 ReificationWidget widget = isPrepared ?
                         strategy.reify(interactionUnit, context) : new BlankWidget(interactionUnit);
 
-                if (widget != null && this.container.peek() != null)
-                {
-                    this.container.peek().add(widget);
-                }
+                assert !this.containerStack.isEmpty() : "Atomic units needs to reside within container";
+                this.containerStack.peek().add(widget);
+
             }
+
             logger.end(interactionUnit);
         }
 
         @Override
         public void endVisit(final Container container)
         {
+            assert !this.containerStack.isEmpty() : "wrong order of startVisit() / endVisit()";
             logger.end(container);
-            this.container.pop();
+
+            ReificationWidget currentContainer = this.containerStack.pop();
+            if (containerStack.isEmpty())
+            {
+                //memorize the final root widget
+                root = currentContainer;
+            }
+            else
+            {
+                // add to parent
+                this.containerStack.peek().add(currentContainer);
+            }
         }
 
         private ReificationStrategy<ReificationWidget> resolve(InteractionUnit interactionUnit)

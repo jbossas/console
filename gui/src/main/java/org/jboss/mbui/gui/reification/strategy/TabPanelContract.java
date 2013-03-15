@@ -7,7 +7,7 @@ import org.jboss.mbui.model.structure.InteractionUnit;
  * @author Heiko Braun
  * @date 11/13/12
  */
-interface WidgetStrategy
+interface TabPanelContract
 {
     void add(InteractionUnit unit, Widget widget);
 

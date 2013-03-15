@@ -18,15 +18,16 @@
  */
 package org.jboss.mbui.gui.reification.strategy;
 
-import com.google.gwt.user.client.ui.IsWidget;
+import com.google.gwt.user.client.ui.Widget;
 import org.jboss.mbui.model.structure.InteractionUnit;
 
 /**
  * @author Harald Pehl
  * @date 10/26/2012
  */
-public interface ReificationWidget extends IsWidget
+public interface ReificationWidget
 {
     public InteractionUnit getInteractionUnit();
     public void add(ReificationWidget widget);
+    Widget asWidget();
 }

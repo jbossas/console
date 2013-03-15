@@ -66,7 +66,7 @@ public class SecurityDomainsSample implements Sample
                     .mappedBy(securityDomainsCollection)
 
                     // The front "page"
-                    .start(new Container(namespace, "frontpage", "Security Domains", Concurrency))
+                    .start(new Container(namespace, "frontpage", "Available Domains", Concurrency))
                         .start(new ToolStrip(namespace, "tools", "Tools"))
                             .mappedBy(singleSecurityDomain)
                             .add(new Trigger(
