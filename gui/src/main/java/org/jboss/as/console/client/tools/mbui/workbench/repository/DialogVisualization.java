@@ -4,7 +4,6 @@ import static com.google.gwt.visualization.client.AbstractDataTable.ColumnType.S
 
 import java.util.Stack;
 
-import com.google.gwt.ajaxloader.client.Properties;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
 import com.google.gwt.safehtml.shared.SafeHtml;
@@ -15,6 +14,7 @@ import org.jboss.mbui.model.mapping.MappingType;
 import org.jboss.mbui.model.structure.Container;
 import org.jboss.mbui.model.structure.InteractionUnit;
 import org.jboss.mbui.model.structure.TemporalOperator;
+import org.jboss.mbui.model.structure.as7.StereoTypes;
 import org.jboss.mbui.model.structure.impl.InteractionUnitVisitor;
 
 /**
@@ -95,7 +95,7 @@ public class DialogVisualization
         void addInteractionUnitRow(InteractionUnit interactionUnit)
         {
             String id = interactionUnit.getId().toString();
-            String name = interactionUnit.getName() == null ? interactionUnit.getId().getLocalPart() : interactionUnit.getName();
+            String name = interactionUnit.getLabel() == null ? interactionUnit.getId().getLocalPart() : interactionUnit.getLabel();
             Container container = this.container.isEmpty() ? null : this.container.peek();
             String parentId = container != null ? container.getId().toString() : null;
             String style = interactionUnit.hasMapping(MappingType.DMR) ? MAPPED_STYLE : UNMAPPED_STYLE;

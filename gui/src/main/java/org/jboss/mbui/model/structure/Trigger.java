@@ -13,7 +13,7 @@ import org.jboss.mbui.model.behaviour.ResourceType;
  * @author Heiko Braun
  * @date 1/16/13
  */
-public class Trigger extends InteractionUnit {
+public class Trigger<S extends Enum<S>> extends InteractionUnit<S> {
 
     public Trigger(QName unitId, QName triggerType, String label) {
         super(unitId, label);
@@ -28,6 +28,6 @@ public class Trigger extends InteractionUnit {
     @Override
     public String toString()
     {
-        return "Trigger {" + getId() + ", label="+getName()+"}";
+        return "Trigger {" + getId() + ", label="+ getLabel()+"}";
     }
 }

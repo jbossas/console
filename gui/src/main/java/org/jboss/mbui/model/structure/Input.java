@@ -25,11 +25,11 @@ package org.jboss.mbui.model.structure;
  * @author Heiko Braun
  * @date 10/25/2012
  */
-public class Input extends InteractionUnit
+public class Input<S extends Enum<S>> extends InteractionUnit<S>
 {
-    public Input(String ns, final String id, final String name)
+    public Input(String ns, final String id, final String label)
     {
-        super(ns, id, name);
+        super(new QName(ns, id), label);
     }
 
     @Override

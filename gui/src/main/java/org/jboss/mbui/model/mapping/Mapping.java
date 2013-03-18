@@ -29,7 +29,6 @@ public abstract class Mapping
     protected MappingType type;
     protected String namespace;
 
-
     protected Mapping(MappingType type, String namespace)
     {
         this.type = type;

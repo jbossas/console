@@ -59,7 +59,7 @@ public class LoadResourceProcedure extends Procedure {
             @Override
             public void execute(Dialog dialog, Object data) {
 
-                loadResource(unit.getName(), address);
+                loadResource(unit.getLabel(), address);
             }
         });
 
@@ -71,7 +71,7 @@ public class LoadResourceProcedure extends Procedure {
     private void init() {
         unit = dialog.findUnit(getJustification());
 
-        DMRMapping DMRMapping = unit.findMapping(MappingType.DMR);
+        DMRMapping DMRMapping = (DMRMapping) unit.findMapping(MappingType.DMR);
         address = AddressMapping.fromString(DMRMapping.getAddress());
 
         // check preconditions of the address token

@@ -24,14 +24,14 @@ public class StructureLogger {
         tabCount++;
         for(int i=0; i<tabCount;i++)
             log.append("\t");
-        log.append("<").append(parentUnit.getName()).append(">");
+        log.append("<").append(parentUnit.getLabel()).append(">");
         log.append("\n");
     }
 
     public void end(InteractionUnit parentUnit) {
         for(int i=0; i<tabCount;i++)
             log.append("\t");
-        log.append("</").append(parentUnit.getName()).append(">");
+        log.append("</").append(parentUnit.getLabel()).append(">");
         log.append("\n");
         tabCount--;
     }

@@ -5,7 +5,7 @@ import com.google.web.bindery.event.shared.EventBus;
 import org.jboss.mbui.gui.reification.Context;
 import org.jboss.mbui.gui.reification.ContextKey;
 import org.jboss.mbui.model.structure.InteractionUnit;
-import org.jboss.mbui.model.structure.as7.ToolStrip;
+import org.jboss.mbui.model.structure.as7.StereoTypes;
 
 /**
  * @author Heiko Braun
@@ -34,7 +34,7 @@ public class ToolStripStrategy implements ReificationStrategy<ReificationWidget>
 
     @Override
     public boolean appliesTo(InteractionUnit interactionUnit) {
-        return interactionUnit instanceof ToolStrip;
+        return StereoTypes.Toolstrip == interactionUnit.getStereotype();
     }
 
     class ToolStripAdapter implements ReificationWidget

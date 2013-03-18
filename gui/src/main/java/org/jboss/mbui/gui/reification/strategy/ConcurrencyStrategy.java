@@ -88,7 +88,7 @@ public class ConcurrencyStrategy implements ReificationStrategy<ReificationWidge
             else
             {
                 final SimpleLayout builder = new SimpleLayout()
-                        .setTitle(interactionUnit.getName()
+                        .setTitle(interactionUnit.getLabel()
                         );
 
                 this.delegate = new TabPanelContract() {

@@ -47,7 +47,7 @@ public class LinkStrategy implements ReificationStrategy<ReificationWidget> {
         public LinkAdapter(final InteractionUnit interactionUnit) {
             this.unit = interactionUnit;
 
-            this.widget = new InlineLink(interactionUnit.getName());
+            this.widget = new InlineLink(interactionUnit.getLabel());
 
             this.widget.addClickHandler(new ClickHandler() {
                 @Override

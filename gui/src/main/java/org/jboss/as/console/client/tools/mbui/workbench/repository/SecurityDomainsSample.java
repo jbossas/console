@@ -13,9 +13,10 @@ import org.jboss.mbui.model.structure.Link;
 import org.jboss.mbui.model.structure.QName;
 import org.jboss.mbui.model.structure.Select;
 import org.jboss.mbui.model.structure.Trigger;
-import org.jboss.mbui.model.structure.as7.Form;
-import org.jboss.mbui.model.structure.as7.ToolStrip;
+import org.jboss.mbui.model.structure.as7.StereoTypes;
 import org.jboss.mbui.model.structure.impl.Builder;
+
+import static org.jboss.mbui.model.structure.as7.StereoTypes.*;
 
 /**
  * @author Harald Pehl
@@ -67,7 +68,7 @@ public class SecurityDomainsSample implements Sample
 
                     // The front "page"
                     .start(new Container(namespace, "frontpage", "Available Domains", Concurrency))
-                        .start(new ToolStrip(namespace, "tools", "Tools"))
+                        .start(new Container(namespace, "tools", "Tools", Toolstrip))
                             .mappedBy(singleSecurityDomain)
                             .add(new Trigger(
                                     QName.valueOf(namespace + ":add"),
@@ -89,7 +90,7 @@ public class SecurityDomainsSample implements Sample
 
                         .start(new Container(namespace, "details", "Details", Choice))
                             .mappedBy(singleSecurityDomain)
-                            .add(new Form(namespace, "details#attributes", "Attributes"))
+                            .add(new Container(namespace, "details#attributes", "Attributes", Form))
                                 .mappedBy(attributesMapping)
                         .end()
                     .end()
@@ -103,11 +104,11 @@ public class SecurityDomainsSample implements Sample
                                 QName.valueOf(namespace +":frontpage"),
                                 "Back"))
 
-                        .start(new Container(namespace, "pages", "Pages", Choice))
+                        .start(new Container(namespace, "pages", "Pages", Choice, Pages))
 
                             // Authentication
-                            .start(new Container(namespace + ".authentication", "authentication", "Authentication", Concurrency))
-                                .start(new ToolStrip(namespace + ".authentication", "tools", "Tools"))
+                            .start(new Container(namespace + ".authentication", "authentication", "Authentication"))
+                                .start(new Container(namespace + ".authentication", "tools", "Tools", Toolstrip))
                                     .add(new Trigger(
                                             QName.valueOf(namespace + ".authentication:add"),
                                             QName.valueOf("org.jboss.as:resource-operation#add"),
@@ -119,14 +120,14 @@ public class SecurityDomainsSample implements Sample
                                 .end()
                                 .add(new Select(namespace + ".authentication", "loginModules", "Login Modules"))
                                 .start(new Container(namespace + ".authentication", "details", "Details", Choice))
-                                    .add(new Form(namespace + ".authentication", "details#basicAttributers", "Attributes"))
+                                    .add(new Container(namespace + ".authentication", "details#basicAttributers", "Attributes", Form))
                                     .add(new Select(namespace + ".authentication", "moduleOptions", "Module Options"))
                                 .end()
                             .end()
 
                             // Authorization
-                            .start(new Container(namespace + ".authorization", "authorization", "Authorization", Concurrency))
-                                .start(new ToolStrip(namespace + ".authorization", "tools", "Tools"))
+                            .start(new Container(namespace + ".authorization", "authorization", "Authorization"))
+                                .start(new Container<StereoTypes>(namespace + ".authorization", "tools", "Tools", Toolstrip))
                                     .add(new Trigger(
                                             QName.valueOf(namespace + ".authorization:add"),
                                             QName.valueOf("org.jboss.as:resource-operation#add"),
@@ -138,14 +139,14 @@ public class SecurityDomainsSample implements Sample
                                 .end()
                                 .add(new Select(namespace + ".authorization", "policies", "Policies"))
                                 .start(new Container(namespace + ".authorization", "details", "Details", Choice))
-                                    .add(new Form(namespace + ".authorization", "details#basicAttributers", "Attributes"))
+                                    .add(new Container(namespace + ".authorization", "details#basicAttributers", "Attributes", Form))
                                     .add(new Select(namespace + ".authorization", "moduleOptions", "Module Options"))
                                 .end()
                             .end()
 
                             // Mapping
-                            .start(new Container(namespace + ".mapping", "mapping", "Mapping", Concurrency))
-                                .start(new ToolStrip(namespace + ".mapping", "tools", "Tools"))
+                            .start(new Container(namespace + ".mapping", "mapping", "Mapping"))
+                                .start(new Container(namespace + ".mapping", "tools", "Tools", Toolstrip))
                                     .add(new Trigger(
                                             QName.valueOf(namespace + ".mapping:add"),
                                             QName.valueOf("org.jboss.as:resource-operation#add"),
@@ -157,11 +158,14 @@ public class SecurityDomainsSample implements Sample
                                 .end()
                                 .add(new Select(namespace + ".mapping", "modules", "Modules"))
                                 .start(new Container(namespace + ".mapping", "details", "Details", Choice))
-                                    .add(new Form(namespace + ".mapping", "details#basicAttributers", "Attributes"))
-                                    .add(new Form(namespace + ".mapping", "details#moduleAttributers", "Module Options"))
+                                    .add(new Container(namespace + ".mapping", "details#basicAttributers", "Attributes", Form))
+                                    .add(new Container(namespace + ".mapping", "details#moduleAttributers", "Module Options", Form))
                                 .end()
                             .end()
+
+
                         .end()
+
                     .end()
                 .end()
                 .build();

@@ -35,6 +35,8 @@ import org.jboss.mbui.gui.reification.widgets.ModelNodeForm;
 import org.jboss.mbui.model.Dialog;
 import org.jboss.mbui.model.behaviour.Resource;
 import org.jboss.mbui.model.behaviour.ResourceType;
+import org.jboss.mbui.model.structure.InteractionUnit;
+import org.jboss.mbui.model.structure.as7.StereoTypes;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -144,7 +146,8 @@ public class CommandFactory {
 
         assert context.getUnit().doesProduce() : "The unit associated with a command need to be a producer";
 
-        Resource<ResourceType> output = context.getUnit().getOutputs().iterator().next();
+        InteractionUnit<StereoTypes> unit = context.getUnit();
+        Resource<ResourceType> output = unit.getOutputs().iterator().next();
         final ModelNode operationDescription = context.getOperationDescriptions().get(output.getId());
 
         assert operationDescription!=null : "Operation meta data required for "+output.getId() + " on "+context.getUnit().getId();

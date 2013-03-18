@@ -46,6 +46,7 @@ import org.jboss.mbui.model.mapping.as7.DMRMapping;
 import org.jboss.mbui.model.mapping.as7.ResourceAttribute;
 import org.jboss.mbui.model.structure.InteractionUnit;
 import org.jboss.mbui.model.structure.QName;
+import org.jboss.mbui.model.structure.as7.StereoTypes;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -104,7 +105,7 @@ public class FormStrategy implements ReificationStrategy<ReificationWidget>
     @Override
     public boolean appliesTo(final InteractionUnit interactionUnit)
     {
-        return interactionUnit instanceof org.jboss.mbui.model.structure.as7.Form;
+        return StereoTypes.Form == interactionUnit.getStereotype();
     }
 
     class FormAdapter implements ReificationWidget

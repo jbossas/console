@@ -15,6 +15,7 @@ import org.jboss.mbui.model.behaviour.ResourceType;
 import org.jboss.mbui.model.structure.Container;
 import org.jboss.mbui.model.structure.InteractionUnit;
 import org.jboss.mbui.model.structure.QName;
+import org.jboss.mbui.model.structure.as7.StereoTypes;
 import org.jboss.mbui.model.structure.impl.InteractionUnitVisitor;
 
 import java.util.Collections;
@@ -40,7 +41,7 @@ public class ImplicitBehaviourStep extends ReificationStep
     public void execute(final Dialog dialog, final Context context) throws ReificationException
     {
         final BehaviourExecution behaviourExecution = context.get(ContextKey.COORDINATOR);
-        InteractionUnit root = dialog.getInterfaceModel();
+        InteractionUnit<StereoTypes> root = dialog.getInterfaceModel();
 
         root.accept(new InteractionUnitVisitor()
         {
@@ -67,7 +68,7 @@ public class ImplicitBehaviourStep extends ReificationStep
 
     private void registerDefaultBehaviour(
             Dialog dialog,
-            InteractionUnit unit,
+            InteractionUnit<StereoTypes> unit,
             BehaviourExecution behaviourExecution,
             Context context) {
 

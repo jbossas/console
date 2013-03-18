@@ -23,21 +23,23 @@ import com.google.gwt.event.logical.shared.AttachEvent;
 import com.google.gwt.event.logical.shared.BeforeSelectionEvent;
 import com.google.gwt.event.logical.shared.BeforeSelectionHandler;
 import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.StackLayoutPanel;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.web.bindery.event.shared.EventBus;
-import org.jboss.as.console.client.widgets.pages.PagedView;
+import org.jboss.as.console.client.widgets.pages.Pages;
+import org.jboss.as.console.client.widgets.tabs.DefaultTabLayoutPanel;
 import org.jboss.mbui.gui.behaviour.NavigationEvent;
 import org.jboss.mbui.gui.behaviour.SystemEvent;
+import org.jboss.mbui.gui.reification.Context;
 import org.jboss.mbui.gui.reification.ContextKey;
 import org.jboss.mbui.model.behaviour.Resource;
 import org.jboss.mbui.model.behaviour.ResourceType;
 import org.jboss.mbui.model.structure.Container;
 import org.jboss.mbui.model.structure.InteractionUnit;
-import org.jboss.mbui.gui.reification.Context;
-import org.jboss.as.console.client.widgets.tabs.DefaultTabLayoutPanel;
 import org.jboss.mbui.model.structure.QName;
+import org.jboss.mbui.model.structure.as7.StereoTypes;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -82,24 +84,28 @@ public class ChoiceStrategy implements ReificationStrategy<ReificationWidget>
         private InteractionUnit interactionUnit;
         private Map<Integer, QName> index2tab = new HashMap<Integer, QName>();
 
-        TabPanelAdapter(final InteractionUnit interactionUnit)
+        TabPanelAdapter(final InteractionUnit<StereoTypes> interactionUnit)
         {
             this.interactionUnit = interactionUnit;
-            int depth = getNestingDepth(this.interactionUnit);
 
-            switch (depth)
+            if(interactionUnit.getStereotype()!=null)
             {
-                case 0:
-                    this.delegate = createTopLevelTabPanel(interactionUnit, eventBus);
-                    break;
-                case 1:
-                    this.delegate = createPages(interactionUnit, eventBus);
-                    break;
-                default:
-                    this.delegate = createDefaultTabPanel(interactionUnit, eventBus);
-                    break;
+                switch (interactionUnit.getStereotype())
+                {
+                    case EditorPanel:
+                        this.delegate = createTopLevelTabPanel(interactionUnit, eventBus);
+                        break;
+                    case Pages:
+                        this.delegate = createPages(interactionUnit, eventBus);
+                        break;
+                    default:
+                        throw new RuntimeException("Unsupported stereotype "+interactionUnit.getStereotype());
+                }
             }
-
+            else
+            {
+                this.delegate = createDefaultTabPanel(interactionUnit, eventBus);
+            }
         }
 
         private TabPanelContract createTopLevelTabPanel(final InteractionUnit interactionUnit, final EventBus eventBus) {
@@ -134,7 +140,7 @@ public class ChoiceStrategy implements ReificationStrategy<ReificationWidget>
                     vpanel.add(widget);
 
                     ScrollPanel scroll = new ScrollPanel(vpanel);
-                    tabLayoutpanel.add(scroll, unit.getName());
+                    tabLayoutpanel.add(scroll, unit.getLabel());
 
                     // register tab2index mapping
                     index2tab.put(tabLayoutpanel.getWidgetCount() - 1, unit.getId());
@@ -184,33 +190,37 @@ public class ChoiceStrategy implements ReificationStrategy<ReificationWidget>
             return tabPanelContract;
         }
 
-        private TabPanelContract createPages(InteractionUnit interactionUnit, EventBus eventBus) {
-            final PagedView pagedView = new PagedView(true);
+        private TabPanelContract createPages(InteractionUnit<StereoTypes> interactionUnit, EventBus eventBus) {
+            final Pages pagedView = new Pages();
 
+            System.out.println("Page: " +interactionUnit.getId() );
             return new TabPanelContract() {
+
                 @Override
                 public void add(InteractionUnit unit, Widget widget) {
-                    pagedView.addPage(unit.getName(), widget);
+
+                    widget.addStyleName("rhs-content-panel");
+
+                    pagedView.add(widget, unit.getLabel());
 
                     // register tab2index mapping
-                    index2tab.put(pagedView.getPageCount()-1, unit.getId());
+                    index2tab.put(pagedView.getWidgetCount()-1, unit.getId());
                 }
 
                 @Override
                 public Widget as() {
                     Widget widget = pagedView.asWidget();
+                    widget.addStyleName("fill-layout");
 
-                    /*widget.addAttachHandler(new AttachEvent.Handler() {
+                    widget.addAttachHandler(new AttachEvent.Handler() {
                         @Override
                         public void onAttachOrDetach(AttachEvent attachEvent) {
-                            if(pagedView.getPageCount()>0)
-                                pagedView.showPage(0);
+                                pagedView.selectTab(0);
                         }
-                    });*/
+                    });
 
-                    pagedView.showPage(0);
-
-                    return widget;
+                    //pagedView.showPage(0);
+                    return pagedView;
                 }
             };
         }
@@ -230,7 +240,7 @@ public class ChoiceStrategy implements ReificationStrategy<ReificationWidget>
             return new TabPanelContract() {
                 @Override
                 public void add(InteractionUnit unit, Widget widget) {
-                    tabPanel.add(widget, unit.getName());
+                    tabPanel.add(widget, unit.getLabel());
                 }
 
                 @Override
@@ -238,17 +248,6 @@ public class ChoiceStrategy implements ReificationStrategy<ReificationWidget>
                     return tabPanel;
                 }
             };
-        }
-
-        private int getNestingDepth(InteractionUnit unit) {
-            int depth = 0;
-            InteractionUnit parent = unit.getParent();
-            while (parent != null)
-            {
-                depth++;
-                parent = parent.getParent();
-            }
-            return depth;
         }
 
         @Override
@@ -261,7 +260,7 @@ public class ChoiceStrategy implements ReificationStrategy<ReificationWidget>
         {
             if (widget != null)
             {
-                System.out.println("Add "+widget.getInteractionUnit() +" to " + getInteractionUnit());
+                //System.out.println("Add "+widget.getInteractionUnit() +" to " + getInteractionUnit());
                 delegate.add(widget.getInteractionUnit(), widget.asWidget());
             }
         }

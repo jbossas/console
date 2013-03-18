@@ -29,9 +29,9 @@ import org.jboss.mbui.model.structure.InteractionUnit;
 import org.jboss.mbui.model.structure.QName;
 import org.jboss.mbui.model.structure.Select;
 import org.jboss.mbui.model.structure.Trigger;
-import org.jboss.mbui.model.structure.as7.Form;
-import org.jboss.mbui.model.structure.as7.ToolStrip;
 import org.jboss.mbui.model.structure.impl.Builder;
+
+import static org.jboss.mbui.model.structure.as7.StereoTypes.*;
 
 /**
  * @author Harald Pehl
@@ -80,7 +80,7 @@ public class DataSourceSample implements Sample
 
         // UI
         InteractionUnit root = new Builder()
-                .start(new Container(namespace, "datasources", "Datasources", Choice))
+                .start(new Container(namespace, "datasources", "Datasources", Choice, EditorPanel))
                 .mappedBy(datasourceCollection)
 
                     .start(new Container(namespace, "regularDS", "Regular", Concurrency))
@@ -89,7 +89,7 @@ public class DataSourceSample implements Sample
                         // TODO: support anonymous trigger id's? This would reduce the verbosity of these declarations.
                         // Might be derived from the surrounding scope of the interaction unit. I.e. dialog ID + UUID
 
-                        .start(new ToolStrip(namespace, "tools", "Tools"))
+                        .start(new Container(namespace, "tools", "Tools", Toolstrip))
                             .mappedBy(singleDataSource)
                             .add(new Trigger(
                                     QName.valueOf("org.jboss.datasource:add"),
@@ -118,9 +118,9 @@ public class DataSourceSample implements Sample
 
                         .start(new Container(namespace, "details", "Details", Choice))
                             .mappedBy(singleDataSource)
-                                .add(new Form(namespace, "datasource#basicAttributes", "Attributes"))
+                                .add(new Container(namespace, "datasource#basicAttributes", "Attributes", Form))
                                     .mappedBy(basicAttributesMapping)
-                                .add(new Form(namespace, "datasource#connectionAttributes", "Connection"))
+                                .add(new Container(namespace, "datasource#connectionAttributes", "Connection", Form))
                                     .mappedBy(connectionAttributesMapping)
                         .end()
                     .end()

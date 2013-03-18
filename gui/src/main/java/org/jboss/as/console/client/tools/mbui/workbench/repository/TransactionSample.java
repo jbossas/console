@@ -24,11 +24,11 @@ import org.jboss.mbui.model.mapping.as7.DMRMapping;
 import org.jboss.mbui.model.structure.Container;
 import org.jboss.mbui.model.structure.InteractionUnit;
 import org.jboss.mbui.model.structure.QName;
-import org.jboss.mbui.model.structure.as7.Form;
 import org.jboss.mbui.model.structure.impl.Builder;
 
 import static org.jboss.mbui.model.structure.TemporalOperator.Choice;
-import static org.jboss.mbui.model.structure.TemporalOperator.Concurrency;
+
+import static org.jboss.mbui.model.structure.as7.StereoTypes.*;
 
 /**
  * @author Harald Pehl
@@ -73,11 +73,15 @@ public class TransactionSample implements Sample
         Mapping recoveryMapping = new DMRMapping(ns)
                 .addAttributes("recovery-listener", "socket-binding");
 
-        Container overview = new Container(ns, "transactionManager", "TransactionManager", Concurrency);
-        Form basicAttributes = new Form(ns, "transactionManager#basicAttributes", "Attributes");
+        Container overview = new Container(ns, "transactionManager", "TransactionManager");
+
+        Container basicAttributes = new Container(ns, "transactionManager#basicAttributes", "Attributes",Form);
+
         Container details = new Container(ns, "configGroups", "Details", Choice);
-        Form processAttributes = new Form(ns, "transactionManager#processAttributes", "Process ID");
-        Form recoveryAttributes = new Form(ns, "transactionManager#recoveryAttributes", "Recovery");
+
+        Container processAttributes = new Container(ns, "transactionManager#processAttributes", "Process ID",Form);
+
+        Container recoveryAttributes = new Container(ns, "transactionManager#recoveryAttributes", "Recovery",Form);
 
         // structure & mapping
         InteractionUnit root = new Builder()

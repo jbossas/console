@@ -16,6 +16,7 @@ import org.jboss.mbui.model.mapping.as7.AddressMapping;
 import org.jboss.mbui.model.mapping.as7.DMRMapping;
 import org.jboss.mbui.model.structure.InteractionUnit;
 import org.jboss.mbui.model.structure.QName;
+import org.jboss.mbui.model.structure.as7.StereoTypes;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -44,7 +45,7 @@ public class DMROperationProcedure extends Procedure implements OperationContext
     private final DispatchAsync dispatcher;
     private final Dialog dialog;
 
-    private InteractionUnit unit;
+    private InteractionUnit<StereoTypes> unit;
     private AddressMapping address;
     private String operationName;
 

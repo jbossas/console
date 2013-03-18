@@ -8,9 +8,12 @@ import org.jboss.ballroom.client.widgets.tools.ToolButton;
 import org.jboss.mbui.gui.behaviour.InteractionEvent;
 import org.jboss.mbui.gui.reification.Context;
 import org.jboss.mbui.gui.reification.ContextKey;
+import org.jboss.mbui.model.behaviour.Resource;
+import org.jboss.mbui.model.behaviour.ResourceType;
 import org.jboss.mbui.model.structure.InteractionUnit;
 import org.jboss.mbui.model.structure.QName;
 import org.jboss.mbui.model.structure.Trigger;
+import org.jboss.mbui.model.structure.as7.StereoTypes;
 
 /**
  * @author Heiko Braun
@@ -51,11 +54,11 @@ public class TriggerStrategy implements ReificationStrategy<ReificationWidget> {
         private final EventBus eventBus;
         private final ToolButton button;
 
-        public TriggerAdapter(final InteractionUnit interactionUnit, final EventBus eventBus) {
+        public TriggerAdapter(final InteractionUnit<StereoTypes> interactionUnit, final EventBus eventBus) {
             this.unit = interactionUnit;
             this.eventBus = eventBus;
 
-            this.button = new org.jboss.ballroom.client.widgets.tools.ToolButton(interactionUnit.getName());
+            this.button = new org.jboss.ballroom.client.widgets.tools.ToolButton(interactionUnit.getLabel());
 
             this.button.addClickHandler(new ClickHandler() {
                 @Override

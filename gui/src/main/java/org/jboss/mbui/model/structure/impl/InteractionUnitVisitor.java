@@ -25,11 +25,11 @@ import org.jboss.mbui.model.structure.InteractionUnit;
  * @author Harald Pehl
  * @date 11/14/2012
  */
-public interface InteractionUnitVisitor
+public interface InteractionUnitVisitor<S extends Enum<S>>
 {
     void startVisit(Container container);
 
-    void visit(InteractionUnit interactionUnit);
+    void visit(InteractionUnit<S> interactionUnit);
 
     void endVisit(Container container);
 }

@@ -35,6 +35,7 @@ import org.jboss.mbui.model.structure.Container;
 import org.jboss.mbui.model.structure.InteractionUnit;
 import org.jboss.mbui.model.structure.QName;
 import org.jboss.mbui.model.structure.Trigger;
+import org.jboss.mbui.model.structure.as7.StereoTypes;
 import org.jboss.mbui.model.structure.impl.InteractionUnitVisitor;
 
 import java.util.ArrayList;
@@ -120,7 +121,7 @@ public class ReadOperationDescriptions extends ReificationPreperation
     }
 
 
-    class CollectOperationsVisitor implements InteractionUnitVisitor
+    class CollectOperationsVisitor implements InteractionUnitVisitor<StereoTypes>
     {
         final Context context;
         List<ModelNode> steps = new ArrayList<ModelNode>();
@@ -139,7 +140,7 @@ public class ReadOperationDescriptions extends ReificationPreperation
         }
 
         @Override
-        public void visit(final InteractionUnit interactionUnit)
+        public void visit(final InteractionUnit<StereoTypes> interactionUnit)
         {
             if(interactionUnit instanceof Trigger
                     && interactionUnit.doesProduce())
@@ -152,7 +153,7 @@ public class ReadOperationDescriptions extends ReificationPreperation
             // noop
         }
 
-        private void addStep(Trigger interactionUnit)
+        private void addStep(Trigger<StereoTypes> interactionUnit)
         {
             final StatementContext delegate = context.get(ContextKey.STATEMENTS);
             assert delegate != null : "StatementContext not provided";

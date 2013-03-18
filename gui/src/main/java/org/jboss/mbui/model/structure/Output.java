@@ -24,16 +24,12 @@ package org.jboss.mbui.model.structure;
  * @author Harald Pehl
  * @date 10/25/2012
  */
-public class Output extends InteractionUnit
+public class Output<S extends Enum<S>> extends InteractionUnit<S>
 {
-    public Output(String ns, String id)
-    {
-        super(ns, id);
-    }
 
-    public Output(String ns, final String id, final String name)
+    public Output(String ns, final String id, final String label)
     {
-        super(ns, id, name);
+        super(new QName(ns, id), label);
     }
 
     @Override

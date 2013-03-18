@@ -4,6 +4,7 @@ import org.jboss.mbui.model.behaviour.BehaviourResolution;
 import org.jboss.mbui.model.structure.Container;
 import org.jboss.mbui.model.structure.InteractionUnit;
 import org.jboss.mbui.model.structure.QName;
+import org.jboss.mbui.model.structure.as7.StereoTypes;
 import org.jboss.mbui.model.structure.impl.InteractionUnitVisitor;
 
 /**

@@ -515,3 +515,112 @@ input[type="checkbox"] {
     border: 1px solid #CCCCCC!important;
     border-radius: 3px 3px 3px 3px;
 }
+
+
+/* mbui customizations */
+
+
+.link-bar a {
+    text-decoration: underline;
+}
+
+.link-bar-first {
+    border: none !important;
+}
+
+
+.link-bar-active a {
+    text-decoration: none !important;
+    color: #000000 !important;
+}
+
+.pages-panel {
+
+}
+
+.pages-panel-bottom {
+
+}
+
+
+.pages-bar {
+
+     /* fallback */
+    background-color: #F3F3F3;
+
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#F3F3F3'); /* for IE */
+
+    /* Safari 4-5, Chrome 1-9 */
+    background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#ffffff), to(#F3F3F3));
+
+    /* Safari 5.1, Chrome 10+ */
+    background: -webkit-linear-gradient(top, #ffffff, #F3F3F3);
+
+    /* Firefox 3.6+ */
+    background: -moz-linear-gradient(top, #ffffff, #F3F3F3);
+
+    /* IE 10 */
+    background: -ms-linear-gradient(top, #ffffff, #F3F3F3);
+
+    /* Opera 11.10+ */
+    background: -o-linear-gradient(top, #ffffff, #F3F3F3);
+
+    background-image: url('images/d6d6d6-pixel.png');
+    background-position: bottom;
+    background-repeat: repeat-x;
+    font-size: 13px!important;
+    margin-bottom:10px;
+}
+
+.pages-bar .gwt-TabBarFirst-wrapper{
+    border:none;
+    width:15px;
+
+    min-width: 35px;
+    white-space: nowrap;
+}
+
+
+.pages-bar .gwt-TabBarRest-wrapper {
+    border: none!important;
+}
+
+
+.pages-bar .gwt-TabBarItem-wrapper {
+    background:none;
+    border: none!important;
+    color: #606060 !important;
+    cursor: pointer;
+    margin-left: 0px;
+    min-width: 50px;
+    padding: 10px 10px;
+    text-align: center;
+}
+
+.pages-bar .gwt-TabBarItem-wrapper-selected {
+
+    border: none!important;
+    color: #000000 !important;
+    cursor: default;
+    font-family: Arial,Verdana,sans-serif;
+
+    background-image: url('images/pages-arrow.png');
+    background-position: 50% 100%;
+    background-repeat: no-repeat;
+
+}
+
+.pages-bar .gwt-TabBarItem-wrapper:hover {
+
+}
+
+.pages-bar .gwt-TabBarItem {
+    font-size: 13px!important;
+    color:#005E8F!important;
+    text-decoration: underline;
+}
+
+.pages-bar .gwt-TabBarItem-selected {
+    text-decoration: none;
+    color:#000000!important;
+}

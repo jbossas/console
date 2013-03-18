@@ -22,6 +22,8 @@ import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.logical.shared.AttachEvent;
 import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.LayoutPanel;
+import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.web.bindery.event.shared.EventBus;
 import org.jboss.ballroom.client.widgets.tabs.FakeTabPanel;
@@ -141,25 +143,30 @@ public class DeactivationStrategy implements ReificationStrategy<ReificationWidg
             LayoutPanel layout = new LayoutPanel();
             layout.setStyleName("fill-layout");
 
-            FakeTabPanel titleBar = new FakeTabPanel(interactionUnit.getName());
+            FakeTabPanel titleBar = new FakeTabPanel(interactionUnit.getLabel());
             layout.add(titleBar);
 
             Widget deckPanelWidget = deckPanel.asWidget();
-            layout.add(deckPanelWidget);
+
+            VerticalPanel panel = new VerticalPanel();
+            panel.setStyleName("rhs-content-panel");
+            panel.add(deckPanelWidget);
+
+            ScrollPanel scroll = new ScrollPanel(panel);
+            layout.add(scroll);
 
             layout.setWidgetTopHeight(titleBar, 0, Style.Unit.PX, 40, Style.Unit.PX);
-            layout.setWidgetTopHeight(deckPanelWidget, 40, Style.Unit.PX, 100, Style.Unit.PCT);
+            layout.setWidgetTopHeight(scroll, 40, Style.Unit.PX, 100, Style.Unit.PCT);
 
-
-            /*deckPanelWidget.addAttachHandler(new AttachEvent.Handler() {
+            deckPanelWidget.addAttachHandler(new AttachEvent.Handler() {
                 @Override
                 public void onAttachOrDetach(AttachEvent attachEvent) {
                     deckPanel.showWidget(0);
                 }
             });
-            */
 
-            deckPanel.showWidget(0);
+
+            //deckPanel.showWidget(0);
 
             return layout;
         }

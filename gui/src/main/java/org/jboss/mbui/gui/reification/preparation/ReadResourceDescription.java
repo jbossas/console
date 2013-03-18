@@ -109,7 +109,7 @@ public class ReadResourceDescription extends ReificationPreperation
                     {
                         context.set(MODEL_DESCRIPTIONS, new HashMap<String, ModelNode>());
                     }
-                    DMRMapping mapping = visitor.stepReference.get(step).findMapping(DMR);
+                    DMRMapping mapping = (DMRMapping) visitor.stepReference.get(step).findMapping(DMR);
                     context.<Map>get(MODEL_DESCRIPTIONS).put(mapping.getNamespace(), description);
                 }
                 callback.onSuccess();
@@ -153,7 +153,7 @@ public class ReadResourceDescription extends ReificationPreperation
             final StatementContext delegate = context.get(ContextKey.STATEMENTS);
             assert delegate != null : "StatementContext not provided";
 
-            DMRMapping mapping = interactionUnit.findMapping(DMR, new Predicate<DMRMapping>()
+            DMRMapping mapping = (DMRMapping) interactionUnit.findMapping(DMR, new Predicate<DMRMapping>()
             {
                 @Override
                 public boolean appliesTo(final DMRMapping candidate)

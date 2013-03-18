@@ -29,15 +29,35 @@ import java.util.List;
  * @author Harald Pehl
  * @date 10/31/2012
  */
-public class Container extends InteractionUnit
+public class Container<S extends Enum<S>> extends InteractionUnit<S>
 {
     private final List<InteractionUnit> children;
     private final TemporalOperator temporalOperator;
 
-    public Container(final String namespace, final String id, final String name,
+    public Container(final String ns, final String id, final String label, S stereotype)
+    {
+        this(ns, id, label, TemporalOperator.Concurrency, stereotype);
+    }
+
+    public Container(final String ns, final String id, final String label)
+    {
+        this(ns, id, label, TemporalOperator.Concurrency);
+    }
+
+    public Container(final String ns, final String id, final String label,
             final TemporalOperator temporalOperator)
     {
-        super(namespace, id, name);
+        super(new QName(ns, id), label);
+
+        this.temporalOperator = temporalOperator;
+        this.children = new LinkedList<InteractionUnit>();
+    }
+
+    public Container(final String ns, final String id, final String label,
+            final TemporalOperator temporalOperator, S stereotype)
+    {
+        super(new QName(ns, id), label, stereotype);
+
         this.temporalOperator = temporalOperator;
         this.children = new LinkedList<InteractionUnit>();
     }

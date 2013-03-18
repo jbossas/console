@@ -8,7 +8,7 @@ import org.jboss.mbui.model.behaviour.ResourceType;
  * @author Heiko Braun
  * @date 1/16/13
  */
-public class Link extends InteractionUnit {
+public class Link<S extends Enum<S>> extends InteractionUnit<S> {
 
     private QName target;
 
@@ -28,6 +28,6 @@ public class Link extends InteractionUnit {
     @Override
     public String toString()
     {
-        return "Link {" + getId() + ", label="+getName()+"}";
+        return "Link {" + getId() + ", label="+ getLabel()+"}";
     }
 }

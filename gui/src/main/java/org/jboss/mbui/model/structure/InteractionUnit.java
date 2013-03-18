@@ -18,17 +18,16 @@
  */
 package org.jboss.mbui.model.structure;
 
-import com.google.gwt.user.client.ui.HTMLPanel;
 import org.jboss.mbui.model.behaviour.Consumer;
 import org.jboss.mbui.model.behaviour.Producer;
 import org.jboss.mbui.model.behaviour.Resource;
 import org.jboss.mbui.model.behaviour.ResourceType;
-import org.jboss.mbui.model.structure.impl.ResourceConsumption;
-import org.jboss.mbui.model.structure.impl.ResourceProduction;
 import org.jboss.mbui.model.mapping.Mapping;
 import org.jboss.mbui.model.mapping.MappingType;
 import org.jboss.mbui.model.mapping.Predicate;
 import org.jboss.mbui.model.structure.impl.InteractionUnitVisitor;
+import org.jboss.mbui.model.structure.impl.ResourceConsumption;
+import org.jboss.mbui.model.structure.impl.ResourceProduction;
 
 import java.util.EnumMap;
 import java.util.Map;
@@ -38,38 +37,38 @@ import java.util.Set;
  * @author Harald Pehl
  * @date 10/24/2012
  */
-public abstract class InteractionUnit implements Consumer, Producer
+public abstract class InteractionUnit<S extends Enum<S>> implements Consumer, Producer
 {
     private final QName id;
     private InteractionUnit parent;
-    private String name;
+    private String label;
 
     private final Map<MappingType, Mapping> mappings;
 
     private ResourceConsumption resourceConsumption;
     private ResourceProduction resourceProduction;
 
-    protected InteractionUnit(String namespace, final String id)
+    protected S stereotype;
+
+    protected InteractionUnit(QName id, final String label)
     {
-        this(new QName(namespace, id), HTMLPanel.createUniqueId());
+        this(id, label, null);
     }
 
-
-    protected InteractionUnit(String namespace, final String id, final String name)
-    {
-        this(new QName(namespace, id), name);
-    }
-
-
-    protected InteractionUnit(final QName id, final String name)
+    protected InteractionUnit(final QName id, final String label, S stereotype)
     {
         assert id != null : "Id must not be null";
         assert !id.getNamespaceURI().isEmpty() : "Units require qualified namespace";
         this.id = id;
-        this.name = name;
+        this.label = label;
+        this.stereotype = stereotype;
         this.mappings = new EnumMap<MappingType, Mapping>(MappingType.class);
         this.resourceConsumption = new ResourceConsumption();
         this.resourceProduction = new ResourceProduction();
+    }
+
+    public S getStereotype() {
+        return stereotype;
     }
 
     @Override
@@ -112,7 +111,7 @@ public abstract class InteractionUnit implements Consumer, Producer
         return mappings.get(type) != null;
     }
 
-    private <T extends Mapping> T getMapping(final MappingType type)
+    private <T extends Mapping> T getMapping(MappingType type)
     {
         return (T) mappings.get(type);
     }
@@ -121,14 +120,13 @@ public abstract class InteractionUnit implements Consumer, Producer
      * Finds the first mapping of a type within the hierarchy.
      * Uses parent delegation if the mapping cannot be found locally.
      *
-     * @param type
-     * @param <T>
      *
+     * @param type
      * @return
      */
     public <T extends Mapping> T findMapping(MappingType type)
     {
-        return findMapping(type, null);
+        return this.findMapping(type, null);
     }
 
     /**
@@ -137,10 +135,11 @@ public abstract class InteractionUnit implements Consumer, Producer
      * <p/>
      * The predicate needs to apply.
      *
+     *
+     *
+     *
      * @param type
      * @param predicate Use {@code null} to ignore
-     * @param <T>
-     *
      * @return
      */
     public <T extends Mapping> T findMapping(MappingType type, Predicate<T> predicate)
@@ -165,7 +164,7 @@ public abstract class InteractionUnit implements Consumer, Producer
         }
         if (mapping == null && parent != null)
         {
-            mapping = parent.findMapping(type);
+            mapping = (T) parent.findMapping(type);
         }
 
         return mapping;
@@ -218,14 +217,14 @@ public abstract class InteractionUnit implements Consumer, Producer
         return id;
     }
 
-    public String getName()
+    public String getLabel()
     {
-        return name;
+        return label;
     }
 
-    public void setName(final String name)
+    public void setLabel(final String label)
     {
-        this.name = name;
+        this.label = label;
     }
 
 

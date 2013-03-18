@@ -24,11 +24,11 @@ package org.jboss.mbui.model.structure;
  * @author Harald Pehl
  * @date 10/25/2012
  */
-public class Select extends InteractionUnit
+public class Select<S extends Enum<S>> extends InteractionUnit<S>
 {
-    public Select(final String namespace, final String id, final String name)
+    public Select(final String ns, final String id, final String label)
     {
-        super(namespace, id, name);
+        super(new QName(ns, id), label);
     }
 
     @Override

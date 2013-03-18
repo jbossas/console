@@ -99,7 +99,7 @@ public class SelectStrategy implements ReificationStrategy<ReificationWidget>
             this.table = new ModelNodeCellTable(5);
             this.interactionUnit = interactionUnit;
 
-            DMRMapping DMRMapping = this.interactionUnit.findMapping(MappingType.DMR);
+            DMRMapping DMRMapping = (DMRMapping) this.interactionUnit.findMapping(MappingType.DMR);
 
             List<ResourceAttribute> attributes = DMRMapping.getAttributes();
             for (ResourceAttribute attribute : attributes)

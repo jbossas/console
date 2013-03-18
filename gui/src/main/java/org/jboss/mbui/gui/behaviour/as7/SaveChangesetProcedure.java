@@ -57,7 +57,7 @@ public class SaveChangesetProcedure extends Procedure {
             @Override
             public void execute(Dialog dialog, HashMap data) {
 
-                saveResource(unit.getName(), address, data);
+                saveResource(unit.getLabel(), address, data);
             }
         });
 
@@ -70,7 +70,7 @@ public class SaveChangesetProcedure extends Procedure {
     private void init() {
         unit = dialog.findUnit(getJustification());
 
-        DMRMapping DMRMapping = unit.findMapping(MappingType.DMR);
+        DMRMapping DMRMapping = (DMRMapping) unit.findMapping(MappingType.DMR);
         address = AddressMapping.fromString(DMRMapping.getAddress());
     }
 
