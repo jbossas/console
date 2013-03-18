@@ -45,6 +45,7 @@ import org.jboss.mbui.model.mapping.as7.ResourceAttribute;
 import org.jboss.mbui.model.structure.InteractionUnit;
 import org.jboss.mbui.model.structure.QName;
 import org.jboss.mbui.model.structure.Select;
+import org.jboss.mbui.model.structure.as7.StereoTypes;
 
 /**
  * @author Harald Pehl
@@ -91,15 +92,15 @@ public class SelectStrategy implements ReificationStrategy<ReificationWidget>
     {
         final VerticalPanel panel;
         final ModelNodeCellTable table;
-        final InteractionUnit interactionUnit;
+        final InteractionUnit<StereoTypes> interactionUnit;
 
-        ModelNodeCellTableAdapter(final InteractionUnit interactionUnit, final EventBus coordinator)
+        ModelNodeCellTableAdapter(final InteractionUnit<StereoTypes> interactionUnit, final EventBus coordinator)
         {
             this.panel = new VerticalPanel();
             this.table = new ModelNodeCellTable(5);
             this.interactionUnit = interactionUnit;
 
-            DMRMapping DMRMapping = (DMRMapping) this.interactionUnit.findMapping(MappingType.DMR);
+            DMRMapping DMRMapping = this.interactionUnit.findMapping(MappingType.DMR);
 
             List<ResourceAttribute> attributes = DMRMapping.getAttributes();
             for (ResourceAttribute attribute : attributes)
