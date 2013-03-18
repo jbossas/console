@@ -193,7 +193,6 @@ public class ChoiceStrategy implements ReificationStrategy<ReificationWidget>
         private TabPanelContract createPages(InteractionUnit<StereoTypes> interactionUnit, EventBus eventBus) {
             final Pages pagedView = new Pages();
 
-            System.out.println("Page: " +interactionUnit.getId() );
             return new TabPanelContract() {
 
                 @Override
