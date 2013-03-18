@@ -215,6 +215,7 @@ public class ChoiceStrategy implements ReificationStrategy<ReificationWidget>
                     widget.addAttachHandler(new AttachEvent.Handler() {
                         @Override
                         public void onAttachOrDetach(AttachEvent attachEvent) {
+                            if(pagedView.getWidgetCount()>0)
                                 pagedView.selectTab(0);
                         }
                     });
