@@ -22,7 +22,6 @@ import org.jboss.mbui.model.mapping.as7.DMRMapping;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.jboss.mbui.TestNamespace.NAMESPACE;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -50,7 +49,7 @@ public class EntityContextTest
     @Test
     public void addMapping()
     {
-        DMRMapping mapping = new DMRMapping(NAMESPACE).setAddress("/foo=bar");
+        DMRMapping mapping = new DMRMapping().setAddress("/foo=bar");
         cut.addMapping(mapping);
         assertEquals(1, cut.getMappings().size());
         assertEquals(mapping, cut.getMappings().iterator().next());

@@ -72,6 +72,10 @@ public final class Builder
         {
             throw new IllegalStateException("No interaction unit");
         }
+
+        // important ti distinguish the mapping and reference the model parts they belong to
+        mapping.setCorrelationId(current.getId());
+
         current.addMapping(mapping);
         return this;
     }

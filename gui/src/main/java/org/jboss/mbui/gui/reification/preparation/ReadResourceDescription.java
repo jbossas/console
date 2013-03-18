@@ -33,6 +33,7 @@ import org.jboss.mbui.model.mapping.as7.AddressMapping;
 import org.jboss.mbui.model.mapping.as7.DMRMapping;
 import org.jboss.mbui.model.structure.Container;
 import org.jboss.mbui.model.structure.InteractionUnit;
+import org.jboss.mbui.model.structure.QName;
 import org.jboss.mbui.model.structure.impl.InteractionUnitVisitor;
 
 import java.util.ArrayList;
@@ -107,10 +108,11 @@ public class ReadResourceDescription extends ReificationPreperation
 
                     if (!context.has(MODEL_DESCRIPTIONS))
                     {
-                        context.set(MODEL_DESCRIPTIONS, new HashMap<String, ModelNode>());
+                        context.set(MODEL_DESCRIPTIONS, new HashMap<QName, ModelNode>());
                     }
+
                     DMRMapping mapping = (DMRMapping) visitor.stepReference.get(step).findMapping(DMR);
-                    context.<Map>get(MODEL_DESCRIPTIONS).put(mapping.getNamespace(), description);
+                    context.<Map>get(MODEL_DESCRIPTIONS).put(mapping.getCorrelationId(), description);
                 }
                 callback.onSuccess();
             }

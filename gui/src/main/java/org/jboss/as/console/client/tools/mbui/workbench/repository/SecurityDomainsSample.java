@@ -13,7 +13,6 @@ import org.jboss.mbui.model.structure.Link;
 import org.jboss.mbui.model.structure.QName;
 import org.jboss.mbui.model.structure.Select;
 import org.jboss.mbui.model.structure.Trigger;
-import org.jboss.mbui.model.structure.as7.StereoTypes;
 import org.jboss.mbui.model.structure.impl.Builder;
 
 import static org.jboss.mbui.model.structure.as7.StereoTypes.*;
@@ -48,17 +47,17 @@ public class SecurityDomainsSample implements Sample
         String namespace = "org.jboss.security.domain";
 
         // Mappings
-        DMRMapping securityDomainsCollection = new DMRMapping(namespace)
+        DMRMapping securityDomainsCollection = new DMRMapping()
                 .setAddress("/{selected.profile}/subsystem=security/security-domain=*");
 
         // maps to a specific security domain
-        DMRMapping singleSecurityDomain = new DMRMapping(namespace)
+        DMRMapping singleSecurityDomain = new DMRMapping()
                 .setAddress("/{selected.profile}/subsystem=security/security-domain={selected.entity}");
 
-        Mapping tableMapping = new DMRMapping(namespace)
+        Mapping tableMapping = new DMRMapping()
                 .addAttributes("entity.key");
 
-        Mapping attributesMapping = new DMRMapping(namespace)
+        Mapping attributesMapping = new DMRMapping()
                 .addAttributes("entity.key", "cache-type");
 
         // Interaction units
@@ -85,7 +84,7 @@ public class SecurityDomainsSample implements Sample
                                     "Details"))
                         .end()
 
-                        .add(new Select(namespace, "list", "List"))
+                        .add(new Select(namespace, "list", "Master"))
                             .mappedBy(tableMapping)
 
                         .start(new Container(namespace, "details", "Details", Choice))
@@ -97,17 +96,17 @@ public class SecurityDomainsSample implements Sample
 
                     // The actual pages
 
-                    .start(new Container(namespace, "pages-wrapper", "Details", Concurrency))
+                    .start(new Container(namespace, "pages-wrapper", "Domain Configuration", Concurrency))
 
                         .add(new Link(
                                 QName.valueOf(namespace + ":viewOverview"),
-                                QName.valueOf(namespace +":frontpage"),
+                                QName.valueOf(namespace + ":frontpage"),
                                 "Back"))
 
-                        .start(new Container(namespace, "pages", "Pages", Choice, Pages))
+                        .start(new Container(namespace, "pages", "Security Modules", Choice, Pages))
 
                             // Authentication
-                            .start(new Container(namespace + ".authentication", "authentication", "Authentication"))
+                           .start(new Container(namespace + ".authentication", "authentication", "Authentication"))
                                 .start(new Container(namespace + ".authentication", "tools", "Tools", Toolstrip))
                                     .add(new Trigger(
                                             QName.valueOf(namespace + ".authentication:add"),
@@ -119,14 +118,23 @@ public class SecurityDomainsSample implements Sample
                                             "Remove"))
                                 .end()
                                 .add(new Select(namespace + ".authentication", "loginModules", "Login Modules"))
+                                    .mappedBy(new DMRMapping()
+                                            .setAddress("/{selected.profile}/subsystem=security/security-domain={selected.entity}/authentication=classic/login-module=*")
+                                            .addAttributes("code", "flag"))
+
                                 .start(new Container(namespace + ".authentication", "details", "Details", Choice))
                                     .add(new Container(namespace + ".authentication", "details#basicAttributers", "Attributes", Form))
+                                        //.mappedBy(new DMRMapping(namespace)
+                                        //  .setAddress("/{selected.profile}/subsystem=security/security-domain={selected.entity}/authentication=classic/login-module={selected.entity.2}")
+                                        // .addAttributes("code", "flag", "module"))
+
                                     .add(new Select(namespace + ".authentication", "moduleOptions", "Module Options"))
                                 .end()
                             .end()
 
                             // Authorization
-                            .start(new Container(namespace + ".authorization", "authorization", "Authorization"))
+                           /* .start(new Container(namespace + ".authorization", "authorization", "Authorization"))
+
                                 .start(new Container<StereoTypes>(namespace + ".authorization", "tools", "Tools", Toolstrip))
                                     .add(new Trigger(
                                             QName.valueOf(namespace + ".authorization:add"),
@@ -138,7 +146,9 @@ public class SecurityDomainsSample implements Sample
                                             "Remove"))
                                 .end()
                                 .add(new Select(namespace + ".authorization", "policies", "Policies"))
+
                                 .start(new Container(namespace + ".authorization", "details", "Details", Choice))
+
                                     .add(new Container(namespace + ".authorization", "details#basicAttributers", "Attributes", Form))
                                     .add(new Select(namespace + ".authorization", "moduleOptions", "Module Options"))
                                 .end()
@@ -161,7 +171,7 @@ public class SecurityDomainsSample implements Sample
                                     .add(new Container(namespace + ".mapping", "details#basicAttributers", "Attributes", Form))
                                     .add(new Container(namespace + ".mapping", "details#moduleAttributers", "Module Options", Form))
                                 .end()
-                            .end()
+                            .end()     */
 
 
                         .end()

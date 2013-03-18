@@ -18,6 +18,8 @@
  */
 package org.jboss.mbui.model.mapping;
 
+import org.jboss.mbui.model.structure.QName;
+
 /**
  * @author Harald Pehl
  * @author Heiko Braun
@@ -27,12 +29,11 @@ package org.jboss.mbui.model.mapping;
 public abstract class Mapping
 {
     protected MappingType type;
-    protected String namespace;
+    protected QName correlationId;
 
-    protected Mapping(MappingType type, String namespace)
+    protected Mapping(MappingType type)
     {
         this.type = type;
-        this.namespace = namespace;
     }
 
     @Override
@@ -53,9 +54,12 @@ public abstract class Mapping
         return "Mapping{type=" + type + '}';
     }
 
-    public String getNamespace()
-    {
-        return namespace;
+    public void setCorrelationId(QName id) {
+        this.correlationId = id;
+    }
+
+    public QName getCorrelationId() {
+        return correlationId;
     }
 
     public MappingType getType()

@@ -157,11 +157,11 @@ public class InteractionUnitTest
         Form basicAttributes = new Form(NAMESPACE, "basicAttributes", "Basic Attributes");
         InteractionUnit root = new Builder()
                 .start(new Container(NAMESPACE, "root", "Root", OrderIndependance))
-                .mappedBy(new DMRMapping(NAMESPACE).setAddress("root"))
+                .mappedBy(new DMRMapping().setAddress("root"))
                 .add(new Select(NAMESPACE, "table", "Table"))
                 .start(new Container(NAMESPACE, "forms", "Forms", Choice))
                 .add(basicAttributes)
-                .mappedBy(new DMRMapping(NAMESPACE).setAddress("basicAttributes"))
+                .mappedBy(new DMRMapping().setAddress("basicAttributes"))
                 .add(new Form(NAMESPACE, "extendedAttributes", "Basic Attributes"))
                 .end()
                 .end().build();

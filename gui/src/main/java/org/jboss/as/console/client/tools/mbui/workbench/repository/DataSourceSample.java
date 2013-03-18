@@ -61,21 +61,21 @@ public class DataSourceSample implements Sample
         String namespace = "org.jboss.datasource";
 
         // maps to a collection of datasources
-        DMRMapping datasourceCollection = new DMRMapping(namespace)
+        DMRMapping datasourceCollection = new DMRMapping()
                 .setAddress("/{selected.profile}/subsystem=datasources/data-source=*");
 
         // maps to a specific datasource
-        DMRMapping singleDataSource = new DMRMapping(namespace)
+        DMRMapping singleDataSource = new DMRMapping()
                 .setAddress("/{selected.profile}/subsystem=datasources/data-source={selected.entity}");
 
-        Mapping tableMapping = new DMRMapping(namespace)
+        Mapping tableMapping = new DMRMapping()
                 .addAttributes("entity.key","jndi-name", "enabled");
 
-        Mapping basicAttributesMapping = new DMRMapping(namespace)
+        Mapping basicAttributesMapping = new DMRMapping()
                 .addAttributes("entity.key", "jndi-name", "enabled", "datasource-class", "driver-name", "share-prepared-statements",
                         "prepared-statements-cache-size");
 
-        Mapping connectionAttributesMapping = new DMRMapping(namespace)
+        Mapping connectionAttributesMapping = new DMRMapping()
                 .addAttributes("connection-url", "new-connection-sql", "transaction-isolation", "jta", "use-ccm");
 
         // UI

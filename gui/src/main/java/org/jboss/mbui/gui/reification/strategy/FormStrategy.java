@@ -41,7 +41,9 @@ import org.jboss.mbui.gui.reification.ContextKey;
 import org.jboss.mbui.gui.reification.widgets.ModelNodeForm;
 import org.jboss.mbui.model.behaviour.Resource;
 import org.jboss.mbui.model.behaviour.ResourceType;
+import org.jboss.mbui.model.mapping.Mapping;
 import org.jboss.mbui.model.mapping.MappingType;
+import org.jboss.mbui.model.mapping.Predicate;
 import org.jboss.mbui.model.mapping.as7.DMRMapping;
 import org.jboss.mbui.model.mapping.as7.ResourceAttribute;
 import org.jboss.mbui.model.structure.InteractionUnit;
@@ -74,12 +76,16 @@ public class FormStrategy implements ReificationStrategy<ReificationWidget>
 
     @Override
     public boolean prepare(InteractionUnit interactionUnit, Context context) {
-        Map<String, ModelNode> descriptions = context.get (ContextKey.MODEL_DESCRIPTIONS);
-        modelDescription = descriptions.get(interactionUnit.getId().getNamespaceURI());
-        //assert modelDescription!=null : "Model description is required to execute FormStrategy";
+        Map<QName, ModelNode> descriptions = context.get (ContextKey.MODEL_DESCRIPTIONS);
+        QName correlationId = interactionUnit.findMapping(MappingType.DMR, new Predicate<DMRMapping>() {
+            @Override
+            public boolean appliesTo(DMRMapping candidate) {
+                return candidate.getAddress()!=null;
+            }
+        }).getCorrelationId();
+        modelDescription = descriptions.get(correlationId);
 
         eventBus = context.get(ContextKey.EVENTBUS);
-        //assert eventBus!=null : "Coordinator bus is required to execute FormStrategy";
 
         return eventBus!=null && modelDescription!=null;
     }
@@ -87,19 +93,7 @@ public class FormStrategy implements ReificationStrategy<ReificationWidget>
     @Override
     public ReificationWidget reify(final InteractionUnit interactionUnit, final Context context)
     {
-        FormAdapter adapter = null;
-        if (interactionUnit != null)
-        {
-            Map<String, ModelNode> descriptions = context.get (ContextKey.MODEL_DESCRIPTIONS);
-            ModelNode modelDescription = descriptions.get(interactionUnit.getId().getNamespaceURI());
-            //assert modelDescription!=null : "Model description is required to execute FormStrategy";
-
-            EventBus eventBus = context.get(ContextKey.EVENTBUS);
-            assert eventBus!=null : "Coordinator bus is required to execute FormStrategy";
-
-            adapter = new FormAdapter(interactionUnit, eventBus, modelDescription);
-        }
-        return adapter;
+        return new FormAdapter(interactionUnit, eventBus, modelDescription);
     }
 
     @Override

@@ -35,9 +35,9 @@ public class DMRMapping extends Mapping
     private String address;
     private final List<ResourceAttribute> attributes;
 
-    public DMRMapping(final String namespace)
+    public DMRMapping()
     {
-        super(MappingType.DMR, namespace);
+        super(MappingType.DMR);
         this.attributes = new ArrayList<ResourceAttribute>();
     }
 

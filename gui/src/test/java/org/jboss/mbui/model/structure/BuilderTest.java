@@ -45,7 +45,7 @@ public class BuilderTest
     {
         cut = new Builder();
         iuFixture = new TestableInteractionUnit(NAMESPACE, "test", "Test");
-        mappingFixture = new DMRMapping(NAMESPACE);
+        mappingFixture = new DMRMapping();
     }
 
     @Test(expected = IllegalStateException.class)

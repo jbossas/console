@@ -59,18 +59,18 @@ public class TransactionSample implements Sample
         String ns = "org.jboss.transactions";
 
         // entities
-        Mapping global = new DMRMapping(ns)
+        Mapping global = new DMRMapping()
                 .setAddress("/{selected.profile}/subsystem=transactions");
 
-        Mapping basicAttributesMapping = new DMRMapping(ns)
+        Mapping basicAttributesMapping = new DMRMapping()
                 .addAttributes(
                         "enable-statistics", "enable-tsm-status", "jts", "default-timeout",
                         "node-identifier", "use-hornetq-store");
 
-        Mapping processMapping = new DMRMapping(ns)
+        Mapping processMapping = new DMRMapping()
                 .addAttributes("process-id-uuid", "process-id-socket-binding");
 
-        Mapping recoveryMapping = new DMRMapping(ns)
+        Mapping recoveryMapping = new DMRMapping()
                 .addAttributes("recovery-listener", "socket-binding");
 
         Container overview = new Container(ns, "transactionManager", "TransactionManager");
