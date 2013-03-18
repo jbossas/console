@@ -29,8 +29,13 @@ package org.jboss.mbui.model.structure;
  *
  * <pre>
  *  Choice > Order Independence > Concurrency > Deactivation > Sequence
-   </pre>
-
+ *  </pre>
+ *
+ *  See also <a href="http://www.w3.org/2012/02/ctt/">CTT Models at W3C</a>
+ *
+ *
+ * TODO: Revisit remaining CTT operators
+ *
  * @author Harald Pehl
  * @author Heiko Braun
  *
