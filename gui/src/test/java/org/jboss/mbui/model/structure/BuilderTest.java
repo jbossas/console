@@ -18,17 +18,18 @@
  */
 package org.jboss.mbui.model.structure;
 
-import org.jboss.mbui.model.mapping.as7.DMRMapping;
-import org.jboss.mbui.model.structure.as7.Form;
+import static org.jboss.mbui.TestNamespace.NAMESPACE;
+import static org.jboss.mbui.model.structure.TemporalOperator.*;
+import static org.jboss.mbui.model.structure.as7.StereoTypes.EditorPanel;
+import static org.jboss.mbui.model.structure.as7.StereoTypes.Form;
+import static org.junit.Assert.assertEquals;
+
 import org.jboss.mbui.model.mapping.Mapping;
+import org.jboss.mbui.model.mapping.as7.DMRMapping;
+import org.jboss.mbui.model.structure.as7.StereoTypes;
 import org.jboss.mbui.model.structure.impl.Builder;
 import org.junit.Before;
 import org.junit.Test;
-
-import static org.jboss.mbui.TestNamespace.NAMESPACE;
-import static org.jboss.mbui.model.structure.TemporalOperator.Choice;
-import static org.jboss.mbui.model.structure.TemporalOperator.OrderIndependance;
-import static org.junit.Assert.assertEquals;
 
 /**
  * @author Harald Pehl
@@ -76,11 +77,13 @@ public class BuilderTest
     public void build()
     {
         InteractionUnit interactionUnit = cut
-            .start(new Container(NAMESPACE, "root", "Root", OrderIndependance))
+            .start(new Container<StereoTypes>(NAMESPACE, "root", "Root", OrderIndependance, EditorPanel))
                 .add(new Select(NAMESPACE, "table", "Table"))
                 .start(new Container(NAMESPACE, "forms", "Forms", Choice))
-                    .add(new Form(NAMESPACE, "basicAttributes", "Basic Attributes"))
-                    .add(new Form(NAMESPACE, "extendedAttributes", "Extended Attributes"))
+                    .add(new Container<StereoTypes>(NAMESPACE, "basicAttributes", "Basic Attributes", Concurrency,
+                            Form))
+                    .add(new Container<StereoTypes>(NAMESPACE, "extendedAttributes", "Extended Attributes", Concurrency,
+                            Form))
                 .end()
             .end().build();
 
@@ -90,7 +93,7 @@ public class BuilderTest
         assertEquals(2, root.getChildren().size());
 
         // table
-        InteractionUnit table = root.getChildren().get(0);
+        InteractionUnit table = (InteractionUnit) root.getChildren().get(0);
         assertEquals(new QName(NAMESPACE, "table"), table.getId());
 
         // forms
@@ -99,11 +102,11 @@ public class BuilderTest
         assertEquals(2, forms.getChildren().size());
 
         // basicAttributes
-        InteractionUnit ba = forms.getChildren().get(0);
+        InteractionUnit ba = (InteractionUnit) forms.getChildren().get(0);
         assertEquals(new QName(NAMESPACE, "basicAttributes"), ba.getId());
 
         // extendedAttributes
-        InteractionUnit ea = forms.getChildren().get(1);
+        InteractionUnit ea = (InteractionUnit) forms.getChildren().get(1);
         assertEquals(new QName(NAMESPACE, "extendedAttributes"), ea.getId());
     }
 }

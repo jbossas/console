@@ -18,14 +18,16 @@
  */
 package org.jboss.mbui.model.structure;
 
+import org.jboss.mbui.model.structure.as7.StereoTypes;
+
 /**
  * @author Harald Pehl
  * @date 10/31/2012
  */
-public class TestableInteractionUnit extends InteractionUnit
+public class TestableInteractionUnit extends InteractionUnit<StereoTypes>
 {
-    public TestableInteractionUnit(final String namespace, final String id, final String name)
+    public TestableInteractionUnit(final String namespace, final String id, final String label)
     {
-        super(namespace, id, name);
+        super(new QName(namespace, id), label, null);
     }
 }
