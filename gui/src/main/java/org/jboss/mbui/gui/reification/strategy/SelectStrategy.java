@@ -195,7 +195,9 @@ public class SelectStrategy implements ReificationStrategy<ReificationWidget>
             {
                 @Override
                 public boolean accepts(PresentationEvent event) {
-                    return (event.getPayload() instanceof List);
+                    boolean matchingType = event.getPayload() instanceof List;
+                    boolean matchingTarget = event.getTarget().equals(getInteractionUnit().getId());
+                    return matchingTarget && matchingType;
                 }
 
                 @Override
