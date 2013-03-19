@@ -132,7 +132,7 @@ public class DataSourceSample implements Sample
 
                 .build();
 
-        Dialog dialog = new Dialog(QName.valueOf("org.jboss.as7:datasource-subsystem"), root);
+        Dialog dialog = new Dialog(QName.valueOf("org.jboss.as:datasource-subsystem"), root);
         return dialog;
     }
 }

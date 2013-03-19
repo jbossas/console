@@ -63,7 +63,7 @@ public class RepositoryPresenter extends PresenterWidget<RepositoryPresenter.MyV
     public void visualize(final Sample sample)
     {
         DialogVisualization visualization = new DialogVisualization(sample.getDialog());
-        DefaultWindow window = new DefaultWindow("Visualization");
+        DefaultWindow window = new DefaultWindow("Dialog: "+sample.getDialog().getId());
         window.setWidth(800);
         window.setHeight(600);
         window.trapWidget(new ScrollPanel(visualization.getChart()));

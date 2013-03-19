@@ -180,7 +180,7 @@ public class SecurityDomainsSample implements Sample
                 .end()
                 .build();
 
-        Dialog dialog = new Dialog(QName.valueOf("org.jboss.as7:security.domains"), root);
+        Dialog dialog = new Dialog(QName.valueOf("org.jboss.as:security-domains"), root);
         return dialog;
     }
 }

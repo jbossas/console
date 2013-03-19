@@ -95,7 +95,7 @@ public class TransactionSample implements Sample
                 .end()
                 .build();
 
-        Dialog dialog = new Dialog(QName.valueOf("org.jboss.as7:transaction-subsystem"), root);
+        Dialog dialog = new Dialog(QName.valueOf("org.jboss.as:transaction-subsystem"), root);
         return dialog;
     }
 
