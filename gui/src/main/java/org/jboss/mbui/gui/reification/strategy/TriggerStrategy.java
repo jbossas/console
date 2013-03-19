@@ -19,15 +19,16 @@ import org.jboss.mbui.model.structure.as7.StereoTypes;
  * @author Heiko Braun
  * @date 2/26/13
  */
-public class TriggerStrategy implements ReificationStrategy<ReificationWidget> {
+public class TriggerStrategy implements ReificationStrategy<ReificationWidget, StereoTypes> {
+
 
     @Override
-    public boolean prepare(InteractionUnit interactionUnit, Context context) {
+    public boolean prepare(InteractionUnit<StereoTypes> interactionUnit, Context context) {
         return true;
     }
 
     @Override
-    public ReificationWidget reify(InteractionUnit interactionUnit, Context context) {
+    public ReificationWidget reify(InteractionUnit<StereoTypes> interactionUnit, Context context) {
         TriggerAdapter adapter = null;
 
         // requirement, see Trigger implementation
@@ -44,7 +45,7 @@ public class TriggerStrategy implements ReificationStrategy<ReificationWidget> {
     }
 
     @Override
-    public boolean appliesTo(InteractionUnit interactionUnit) {
+    public boolean appliesTo(InteractionUnit<StereoTypes> interactionUnit) {
         return interactionUnit instanceof Trigger;
     }
 

@@ -269,6 +269,8 @@ public class InteractionCoordinator implements FrameworkContract,
 
     @Override
     public void addStatement(String key, String value) {
+
+        System.out.println(">> "+ key+":"+value);
         statements.put(key, value);
     }
 

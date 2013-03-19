@@ -36,6 +36,7 @@ import org.jboss.mbui.model.behaviour.ResourceType;
 import org.jboss.mbui.model.structure.Container;
 import org.jboss.mbui.model.structure.InteractionUnit;
 import org.jboss.mbui.model.structure.QName;
+import org.jboss.mbui.model.structure.as7.StereoTypes;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -50,14 +51,14 @@ import static org.jboss.mbui.model.structure.TemporalOperator.Deactivation;
  * @author Heiko Braun
  * @date 11/01/2012
  */
-public class DeactivationStrategy implements ReificationStrategy<ReificationWidget>
+public class DeactivationStrategy implements ReificationStrategy<ReificationWidget, StereoTypes>
 {
 
     private EventBus eventBus;
 
 
     @Override
-    public boolean prepare(InteractionUnit interactionUnit, Context context) {
+    public boolean prepare(InteractionUnit<StereoTypes> interactionUnit, Context context) {
 
         eventBus = context.get(ContextKey.EVENTBUS);
         //assert eventBus!=null : "Coordinator bus is required to execute FormStrategy";
@@ -65,13 +66,13 @@ public class DeactivationStrategy implements ReificationStrategy<ReificationWidg
     }
 
     @Override
-    public ReificationWidget reify(final InteractionUnit interactionUnit, final Context context)
+    public ReificationWidget reify(final InteractionUnit<StereoTypes> interactionUnit, final Context context)
     {
         return new MyAdapter(interactionUnit);
     }
 
     @Override
-    public boolean appliesTo(final InteractionUnit interactionUnit)
+    public boolean appliesTo(final InteractionUnit<StereoTypes> interactionUnit)
     {
         return (interactionUnit instanceof Container) && (((Container) interactionUnit)
                 .getTemporalOperator() == Deactivation);
@@ -84,7 +85,7 @@ public class DeactivationStrategy implements ReificationStrategy<ReificationWidg
         private DeckPanel deckPanel;
         private Map<Integer, QName> index2child = new HashMap<Integer, QName>();
 
-        MyAdapter(final InteractionUnit interactionUnit)
+        MyAdapter(final InteractionUnit<StereoTypes> interactionUnit)
         {
 
             this.interactionUnit = interactionUnit;

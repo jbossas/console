@@ -54,24 +54,24 @@ import static org.jboss.mbui.model.structure.TemporalOperator.Choice;
  * @author Heiko Braun
  * @date 11/01/2012
  */
-public class ChoiceStrategy implements ReificationStrategy<ReificationWidget>
+public class ChoiceStrategy implements ReificationStrategy<ReificationWidget, StereoTypes>
 {
     private EventBus eventBus;
 
     @Override
-    public boolean prepare(InteractionUnit interactionUnit, Context context) {
+    public boolean prepare(InteractionUnit<StereoTypes> interactionUnit, Context context) {
         eventBus = context.get(ContextKey.EVENTBUS);
         return eventBus !=null;
     }
 
     @Override
-    public ReificationWidget reify(final InteractionUnit interactionUnit, final Context context)
+    public ReificationWidget reify(final InteractionUnit<StereoTypes> interactionUnit, final Context context)
     {
         return new TabPanelAdapter(interactionUnit);
     }
 
     @Override
-    public boolean appliesTo(final InteractionUnit interactionUnit)
+    public boolean appliesTo(final InteractionUnit<StereoTypes> interactionUnit)
     {
         return (interactionUnit instanceof Container) && (((Container) interactionUnit)
                 .getTemporalOperator() == Choice);

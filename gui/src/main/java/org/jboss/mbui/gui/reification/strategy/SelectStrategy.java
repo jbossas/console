@@ -18,8 +18,6 @@
  */
 package org.jboss.mbui.gui.reification.strategy;
 
-import java.util.List;
-
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -34,6 +32,7 @@ import org.jboss.mbui.gui.behaviour.InteractionEvent;
 import org.jboss.mbui.gui.behaviour.PresentationEvent;
 import org.jboss.mbui.gui.behaviour.StatementEvent;
 import org.jboss.mbui.gui.behaviour.SystemEvent;
+import org.jboss.mbui.gui.behaviour.as7.GlobalQNames;
 import org.jboss.mbui.gui.reification.Context;
 import org.jboss.mbui.gui.reification.ContextKey;
 import org.jboss.mbui.gui.reification.widgets.ModelNodeCellTable;
@@ -43,9 +42,10 @@ import org.jboss.mbui.model.mapping.MappingType;
 import org.jboss.mbui.model.mapping.as7.DMRMapping;
 import org.jboss.mbui.model.mapping.as7.ResourceAttribute;
 import org.jboss.mbui.model.structure.InteractionUnit;
-import org.jboss.mbui.model.structure.QName;
 import org.jboss.mbui.model.structure.Select;
 import org.jboss.mbui.model.structure.as7.StereoTypes;
+
+import java.util.List;
 
 /**
  * @author Harald Pehl
@@ -53,7 +53,7 @@ import org.jboss.mbui.model.structure.as7.StereoTypes;
  *
  * @date 11/01/2012
  */
-public class SelectStrategy implements ReificationStrategy<ReificationWidget>
+public class SelectStrategy implements ReificationStrategy<ReificationWidget, StereoTypes>
 {
 
     @Override
@@ -61,12 +61,8 @@ public class SelectStrategy implements ReificationStrategy<ReificationWidget>
         return true;
     }
 
-    public final static QName SELECT_ID = QName.valueOf("org.jboss.as:select");
-    public final static QName RESET_ID = QName.valueOf("org.jboss.as:reset");
-    public final static QName LOAD_ID = QName.valueOf("org.jboss.as:load");
-
     @Override
-    public ReificationWidget reify(final InteractionUnit interactionUnit, final Context context)
+    public ReificationWidget reify(final InteractionUnit<StereoTypes> interactionUnit, final Context context)
     {
 
         EventBus eventBus = context.get(ContextKey.EVENTBUS);
@@ -82,11 +78,15 @@ public class SelectStrategy implements ReificationStrategy<ReificationWidget>
     }
 
     @Override
-    public boolean appliesTo(final InteractionUnit interactionUnit)
+    public boolean appliesTo(final InteractionUnit<StereoTypes> interactionUnit)
     {
-        return interactionUnit instanceof Select;
+        return interactionUnit.getStereotype()==null && (interactionUnit instanceof Select);
     }
 
+
+    interface SelectContract {
+        Widget asWidget();
+    }
 
     class ModelNodeCellTableAdapter implements ReificationWidget
     {
@@ -146,7 +146,7 @@ public class SelectStrategy implements ReificationStrategy<ReificationWidget>
                         // create a select statement
                         coordinator.fireEventFromSource(
                                 new StatementEvent(
-                                        SELECT_ID,
+                                        GlobalQNames.SELECT_ID,
                                         "selected.entity",
                                         selection.get("entity.key").asString()),   // synthetic key (convention), see LoadResourceProcedure
                                 this);
@@ -158,7 +158,7 @@ public class SelectStrategy implements ReificationStrategy<ReificationWidget>
                         // clear the select statement
                         coordinator.fireEventFromSource(
                                 new StatementEvent(
-                                        SELECT_ID,
+                                        GlobalQNames.SELECT_ID,
                                         "selected.entity",
                                         null),
                                 this);
@@ -172,7 +172,7 @@ public class SelectStrategy implements ReificationStrategy<ReificationWidget>
                 @Override
                 public boolean accepts(SystemEvent event) {
 
-                    return event.getId().equals(RESET_ID);
+                    return event.getId().equals(GlobalQNames.RESET_ID);
                 }
 
                 @Override
@@ -181,7 +181,7 @@ public class SelectStrategy implements ReificationStrategy<ReificationWidget>
                     dataProvider.refresh();
 
                     // request loading of data
-                    InteractionEvent reset = new InteractionEvent(LOAD_ID);
+                    InteractionEvent reset = new InteractionEvent(GlobalQNames.LOAD_ID);
 
                     // update interaction units
                     coordinator.fireEventFromSource(
@@ -212,13 +212,13 @@ public class SelectStrategy implements ReificationStrategy<ReificationWidget>
             // Register inputs & outputs
 
             getInteractionUnit().setInputs(
-                    new Resource<ResourceType>(RESET_ID, ResourceType.System),
+                    new Resource<ResourceType>(GlobalQNames.RESET_ID, ResourceType.System),
                     new Resource<ResourceType>(getInteractionUnit().getId(), ResourceType.Presentation)
                     );
 
             getInteractionUnit().setOutputs(
-                    new Resource<ResourceType>(LOAD_ID, ResourceType.Interaction),
-                    new Resource<ResourceType>(SELECT_ID, ResourceType.Statement)
+                    new Resource<ResourceType>(GlobalQNames.LOAD_ID, ResourceType.Interaction),
+                    new Resource<ResourceType>(GlobalQNames.SELECT_ID, ResourceType.Statement)
             );
 
         }

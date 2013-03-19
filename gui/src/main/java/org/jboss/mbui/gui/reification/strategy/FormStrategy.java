@@ -64,7 +64,7 @@ import static org.jboss.mbui.model.behaviour.ResourceType.System;
  * @author Heiko Braun
  * @date 11/01/2012
  */
-public class FormStrategy implements ReificationStrategy<ReificationWidget>
+public class FormStrategy implements ReificationStrategy<ReificationWidget, StereoTypes>
 {
 
     private static final QName SAVE_ID = QName.valueOf("org.jboss.as:save");
@@ -75,7 +75,7 @@ public class FormStrategy implements ReificationStrategy<ReificationWidget>
     private EventBus eventBus;
 
     @Override
-    public boolean prepare(InteractionUnit interactionUnit, Context context) {
+    public boolean prepare(InteractionUnit<StereoTypes> interactionUnit, Context context) {
         Map<QName, ModelNode> descriptions = context.get (ContextKey.MODEL_DESCRIPTIONS);
         QName correlationId = interactionUnit.findMapping(MappingType.DMR, new Predicate<DMRMapping>() {
             @Override
@@ -91,13 +91,13 @@ public class FormStrategy implements ReificationStrategy<ReificationWidget>
     }
 
     @Override
-    public ReificationWidget reify(final InteractionUnit interactionUnit, final Context context)
+    public ReificationWidget reify(final InteractionUnit<StereoTypes> interactionUnit, final Context context)
     {
         return new FormAdapter(interactionUnit, eventBus, modelDescription);
     }
 
     @Override
-    public boolean appliesTo(final InteractionUnit interactionUnit)
+    public boolean appliesTo(final InteractionUnit<StereoTypes> interactionUnit)
     {
         return StereoTypes.Form == interactionUnit.getStereotype();
     }
@@ -109,7 +109,7 @@ public class FormStrategy implements ReificationStrategy<ReificationWidget>
         private SafeHtmlBuilder helpTexts;
         private EventBus coordinator;
 
-        FormAdapter(final InteractionUnit interactionUnit, EventBus coordinator, final ModelNode modelDescription)
+        FormAdapter(final InteractionUnit<StereoTypes> interactionUnit, EventBus coordinator, final ModelNode modelDescription)
         {
             this.interactionUnit = interactionUnit;
             this.coordinator = coordinator;

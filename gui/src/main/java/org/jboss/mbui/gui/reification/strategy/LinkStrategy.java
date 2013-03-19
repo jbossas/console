@@ -11,17 +11,18 @@ import org.jboss.mbui.gui.reification.ContextKey;
 import org.jboss.mbui.model.structure.InteractionUnit;
 import org.jboss.mbui.model.structure.Link;
 import org.jboss.mbui.model.structure.QName;
+import org.jboss.mbui.model.structure.as7.StereoTypes;
 
 /**
  * @author Heiko Braun
  * @date 2/26/13
  */
-public class LinkStrategy implements ReificationStrategy<ReificationWidget> {
+public class LinkStrategy implements ReificationStrategy<ReificationWidget, StereoTypes> {
 
     private EventBus eventBus;
 
     @Override
-    public boolean prepare(InteractionUnit interactionUnit, Context context) {
+    public boolean prepare(InteractionUnit<StereoTypes> interactionUnit, Context context) {
         eventBus = context.get(ContextKey.EVENTBUS);
         //assert eventBus!=null : "Event bus is required to execute TriggerStrategy";
 
@@ -29,13 +30,13 @@ public class LinkStrategy implements ReificationStrategy<ReificationWidget> {
     }
 
     @Override
-    public ReificationWidget reify(InteractionUnit interactionUnit, Context context) {
+    public ReificationWidget reify(InteractionUnit<StereoTypes> interactionUnit, Context context) {
         LinkAdapter adapter = new LinkAdapter(interactionUnit);
         return adapter;
     }
 
     @Override
-    public boolean appliesTo(InteractionUnit interactionUnit) {
+    public boolean appliesTo(InteractionUnit<StereoTypes> interactionUnit) {
         return interactionUnit instanceof Link;
     }
 
@@ -71,7 +72,7 @@ public class LinkStrategy implements ReificationStrategy<ReificationWidget> {
         }
 
         @Override
-        public InteractionUnit getInteractionUnit() {
+        public InteractionUnit<StereoTypes> getInteractionUnit() {
             return unit;
         }
 

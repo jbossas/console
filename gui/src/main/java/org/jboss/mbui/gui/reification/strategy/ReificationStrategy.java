@@ -25,11 +25,11 @@ import org.jboss.mbui.model.structure.InteractionUnit;
  * @author Harald Pehl
  * @date 10/25/2012
  */
-public interface ReificationStrategy<T>
+public interface ReificationStrategy<T, S extends Enum<S>>
 {
-    boolean prepare(InteractionUnit interactionUnit, Context context);
+    boolean prepare(InteractionUnit<S> interactionUnit, Context context);
 
-    T reify(InteractionUnit interactionUnit, Context context);
+    T reify(InteractionUnit<S> interactionUnit, Context context);
 
-    boolean appliesTo(InteractionUnit interactionUnit);
+    boolean appliesTo(InteractionUnit<S> interactionUnit);
 }

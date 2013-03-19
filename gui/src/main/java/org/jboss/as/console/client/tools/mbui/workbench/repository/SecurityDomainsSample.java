@@ -13,6 +13,7 @@ import org.jboss.mbui.model.structure.Link;
 import org.jboss.mbui.model.structure.QName;
 import org.jboss.mbui.model.structure.Select;
 import org.jboss.mbui.model.structure.Trigger;
+import org.jboss.mbui.model.structure.as7.StereoTypes;
 import org.jboss.mbui.model.structure.impl.Builder;
 
 import static org.jboss.mbui.model.structure.as7.StereoTypes.*;
@@ -61,12 +62,12 @@ public class SecurityDomainsSample implements Sample
                 .addAttributes("entity.key", "cache-type");
 
         // Interaction units
-        InteractionUnit root = new Builder()
-                .start(new Container(namespace, "securityDomains", "Security Domains", Deactivation))
+        InteractionUnit<StereoTypes> root = new Builder()
+                .start(new Container(namespace, "securityDomains", "Security Domains", Choice, EditorPanel))
                     .mappedBy(securityDomainsCollection)
 
                     // The front "page"
-                    .start(new Container(namespace, "frontpage", "Available Domains", Concurrency))
+                    .start(new Container(namespace, "availableDomains", "Available Domains", Concurrency))
                         .start(new Container(namespace, "tools", "Tools", Toolstrip))
                             .mappedBy(singleSecurityDomain)
                             .add(new Trigger(
@@ -78,10 +79,10 @@ public class SecurityDomainsSample implements Sample
                                     QName.valueOf(namespace + ":remove"),
                                     QName.valueOf("org.jboss.as:resource-operation#remove"),
                                     "Remove"))
-                            .add(new Link(
+                           /* .add(new Link(
                                     QName.valueOf(namespace + ":viewDetails"),
                                     QName.valueOf(namespace +":pages-wrapper"),
-                                    "Details"))
+                                    "Details"))*/
                         .end()
 
                         .add(new Select(namespace, "list", "Master"))
@@ -96,14 +97,12 @@ public class SecurityDomainsSample implements Sample
 
                     // The actual pages
 
-                    .start(new Container(namespace, "pages-wrapper", "Domain Configuration", Concurrency))
+                    .start(new Container(namespace, "domainConfiguration", "Domain Configuration", Concurrency))
 
-                        .add(new Link(
-                                QName.valueOf(namespace + ":viewOverview"),
-                                QName.valueOf(namespace + ":frontpage"),
-                                "Back"))
+                        .add(new Select(namespace, "domainSelection", "Select Domain", PullDown))
+                            .mappedBy(tableMapping)
 
-                        .start(new Container(namespace, "pages", "Security Modules", Choice, Pages))
+                        .start(new Container(namespace, "securityModules", "Security Modules", Choice, Pages))
 
                             // Authentication
                            .start(new Container(namespace + ".authentication", "authentication", "Authentication"))
@@ -124,16 +123,16 @@ public class SecurityDomainsSample implements Sample
 
                                 .start(new Container(namespace + ".authentication", "details", "Details", Choice))
                                     .add(new Container(namespace + ".authentication", "details#basicAttributers", "Attributes", Form))
-                                        //.mappedBy(new DMRMapping(namespace)
-                                        //  .setAddress("/{selected.profile}/subsystem=security/security-domain={selected.entity}/authentication=classic/login-module={selected.entity.2}")
-                                        // .addAttributes("code", "flag", "module"))
+                                       // .mappedBy(new DMRMapping()
+                                         // .setAddress("/{selected.profile}/subsystem=security/security-domain={selected.entity}/authentication=classic/login-module={selected.entity}")
+                                         // .addAttributes("code", "flag", "module"))
 
                                     .add(new Select(namespace + ".authentication", "moduleOptions", "Module Options"))
                                 .end()
                             .end()
 
                             // Authorization
-                           /* .start(new Container(namespace + ".authorization", "authorization", "Authorization"))
+                            .start(new Container(namespace + ".authorization", "authorization", "Authorization"))
 
                                 .start(new Container<StereoTypes>(namespace + ".authorization", "tools", "Tools", Toolstrip))
                                     .add(new Trigger(
@@ -155,7 +154,7 @@ public class SecurityDomainsSample implements Sample
                             .end()
 
                             // Mapping
-                            .start(new Container(namespace + ".mapping", "mapping", "Mapping"))
+                           /* .start(new Container(namespace + ".mapping", "mapping", "Mapping"))
                                 .start(new Container(namespace + ".mapping", "tools", "Tools", Toolstrip))
                                     .add(new Trigger(
                                             QName.valueOf(namespace + ".mapping:add"),

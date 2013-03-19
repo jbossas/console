@@ -9,5 +9,6 @@ public enum StereoTypes {
     Form,
     Toolstrip,
     EditorPanel,
-    Pages
+    Pages,
+    PullDown
 }

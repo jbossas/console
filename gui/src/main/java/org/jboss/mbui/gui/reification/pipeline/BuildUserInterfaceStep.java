@@ -28,6 +28,7 @@ import org.jboss.mbui.gui.reification.strategy.ConcurrencyStrategy;
 import org.jboss.mbui.gui.reification.strategy.DeactivationStrategy;
 import org.jboss.mbui.gui.reification.strategy.FormStrategy;
 import org.jboss.mbui.gui.reification.strategy.LinkStrategy;
+import org.jboss.mbui.gui.reification.strategy.PullDownStrategy;
 import org.jboss.mbui.gui.reification.strategy.ReificationStrategy;
 import org.jboss.mbui.gui.reification.strategy.ReificationWidget;
 import org.jboss.mbui.gui.reification.strategy.SelectStrategy;
@@ -36,6 +37,7 @@ import org.jboss.mbui.gui.reification.strategy.TriggerStrategy;
 import org.jboss.mbui.model.Dialog;
 import org.jboss.mbui.model.structure.Container;
 import org.jboss.mbui.model.structure.InteractionUnit;
+import org.jboss.mbui.model.structure.as7.StereoTypes;
 import org.jboss.mbui.model.structure.impl.InteractionUnitVisitor;
 
 import java.util.LinkedList;
@@ -45,13 +47,15 @@ import java.util.Stack;
 import static org.jboss.mbui.gui.reification.ContextKey.WIDGET;
 
 /**
+ * TODO: Belongs to AS7 package
+ *
  * @author Harald Pehl
  * @author Heiko Braun
  * @date 11/12/2012
  */
 public class BuildUserInterfaceStep extends ReificationStep
 {
-    final List<ReificationStrategy<ReificationWidget>> strategies;
+    final List<ReificationStrategy<ReificationWidget, StereoTypes>> strategies;
     private StructureLogger logger = new StructureLogger();
 
     class BlankWidget implements ReificationWidget{
@@ -80,7 +84,7 @@ public class BuildUserInterfaceStep extends ReificationStep
     public BuildUserInterfaceStep()
     {
         super("build ui");
-        this.strategies = new LinkedList<ReificationStrategy<ReificationWidget>>();
+        this.strategies = new LinkedList<ReificationStrategy<ReificationWidget, StereoTypes>>();
         // order is important! add specific strategies first!
 
         this.strategies.add(new ToolStripStrategy());
@@ -88,6 +92,7 @@ public class BuildUserInterfaceStep extends ReificationStep
         this.strategies.add(new LinkStrategy());
         this.strategies.add(new FormStrategy());
         this.strategies.add(new SelectStrategy());
+        this.strategies.add(new PullDownStrategy());
 
         // containerStack
         this.strategies.add(new ConcurrencyStrategy());
@@ -123,7 +128,7 @@ public class BuildUserInterfaceStep extends ReificationStep
         public void startVisit(final Container container)
         {
             logger.start(container);
-            ReificationStrategy<ReificationWidget> strategy = resolve(container);
+            ReificationStrategy<ReificationWidget, StereoTypes> strategy = resolve(container);
 
             if (strategy != null)
             {
@@ -143,7 +148,7 @@ public class BuildUserInterfaceStep extends ReificationStep
         {
             logger.start(interactionUnit);
 
-            ReificationStrategy<ReificationWidget> strategy = resolve(interactionUnit);
+            ReificationStrategy<ReificationWidget, StereoTypes> strategy = resolve(interactionUnit);
 
             if (strategy != null)
             {
@@ -179,10 +184,10 @@ public class BuildUserInterfaceStep extends ReificationStep
             }
         }
 
-        private ReificationStrategy<ReificationWidget> resolve(InteractionUnit interactionUnit)
+        private ReificationStrategy<ReificationWidget, StereoTypes> resolve(InteractionUnit interactionUnit)
         {
-            ReificationStrategy<ReificationWidget> match = null;
-            for (ReificationStrategy<ReificationWidget> strategy : strategies)
+            ReificationStrategy<ReificationWidget, StereoTypes> match = null;
+            for (ReificationStrategy<ReificationWidget, StereoTypes> strategy : strategies)
             {
                 if (strategy.appliesTo(interactionUnit))
                 {

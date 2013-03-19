@@ -157,6 +157,7 @@ public class Pages extends Composite implements TabListener,
         initWidget(panel);
         setStyleName("pages-panel");
         deck.setStyleName("pages-panel-bottom");
+        //deck.getElement().setAttribute("style", "border-left:1px solid #cccccc; border-right:1px solid #cccccc; border-bottom:1px solid #cccccc");
     }
 
     public void add(Widget w) {
