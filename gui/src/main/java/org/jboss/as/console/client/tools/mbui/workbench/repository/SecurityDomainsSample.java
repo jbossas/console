@@ -145,6 +145,9 @@ public class SecurityDomainsSample implements Sample
                                             "Remove"))
                                 .end()
                                 .add(new Select(namespace + ".authorization", "policies", "Policies"))
+                                    .mappedBy(new DMRMapping()
+                                            .setAddress("/{selected.profile}/subsystem=security/security-domain={selected.entity}/authorization=classic/policy-module=*")
+                                            .addAttributes("code", "flag"))
 
                                 .start(new Container(namespace + ".authorization", "details", "Details", Choice))
 
