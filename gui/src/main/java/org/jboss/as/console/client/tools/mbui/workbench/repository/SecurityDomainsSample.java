@@ -154,7 +154,7 @@ public class SecurityDomainsSample implements Sample
                             .end()
 
                             // Mapping
-                           /* .start(new Container(namespace + ".mapping", "mapping", "Mapping"))
+                            /* .start(new Container(namespace + ".mapping", "mapping", "Mapping"))
                                 .start(new Container(namespace + ".mapping", "tools", "Tools", Toolstrip))
                                     .add(new Trigger(
                                             QName.valueOf(namespace + ".mapping:add"),
@@ -170,7 +170,7 @@ public class SecurityDomainsSample implements Sample
                                     .add(new Container(namespace + ".mapping", "details#basicAttributers", "Attributes", Form))
                                     .add(new Container(namespace + ".mapping", "details#moduleAttributers", "Module Options", Form))
                                 .end()
-                            .end()     */
+                            .end()*/
 
 
                         .end()

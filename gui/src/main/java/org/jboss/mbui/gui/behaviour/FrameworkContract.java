@@ -11,7 +11,7 @@ public interface FrameworkContract {
     void onBind();
     void onReset();
 
-    void addStatement(String key, String value);
-    void removeStatement(String key);
+    void setStatement(String key, String value);
+    void clearStatement(String key);
 
 }

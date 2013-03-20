@@ -268,14 +268,14 @@ public class InteractionCoordinator implements FrameworkContract,
     }
 
     @Override
-    public void addStatement(String key, String value) {
+    public void setStatement(String key, String value) {
 
         System.out.println(">> "+ key+":"+value);
         statements.put(key, value);
     }
 
     @Override
-    public void removeStatement(String key) {
+    public void clearStatement(String key) {
         statements.remove(key);
     }
 }

@@ -1,9 +1,5 @@
 package org.jboss.as.console.client.tools.mbui.workbench.repository;
 
-import static com.google.gwt.visualization.client.AbstractDataTable.ColumnType.STRING;
-
-import java.util.Stack;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
 import com.google.gwt.safehtml.shared.SafeHtml;
@@ -11,11 +7,15 @@ import com.google.gwt.visualization.client.DataTable;
 import com.google.gwt.visualization.client.visualizations.OrgChart;
 import org.jboss.mbui.model.Dialog;
 import org.jboss.mbui.model.mapping.MappingType;
+import org.jboss.mbui.model.mapping.Node;
 import org.jboss.mbui.model.structure.Container;
 import org.jboss.mbui.model.structure.InteractionUnit;
 import org.jboss.mbui.model.structure.TemporalOperator;
-import org.jboss.mbui.model.structure.as7.StereoTypes;
 import org.jboss.mbui.model.structure.impl.InteractionUnitVisitor;
+
+import java.util.Stack;
+
+import static com.google.gwt.visualization.client.AbstractDataTable.ColumnType.STRING;
 
 /**
  * @author Harald Pehl
@@ -27,9 +27,11 @@ public class DialogVisualization
     private static final String MAPPED_STYLE = "";//"icon attachment";
     private static final String UNMAPPED_STYLE = "";
     private final OrgChart chart;
+    private final Dialog dialog;
 
     public DialogVisualization(final Dialog dialog)
     {
+        this.dialog = dialog;
         this.chart = new OrgChart(createData(dialog), createOptions(dialog));
     }
 
@@ -60,7 +62,7 @@ public class DialogVisualization
     }
 
 
-    static class OrgChartVisitor implements InteractionUnitVisitor
+    class OrgChartVisitor implements InteractionUnitVisitor
     {
         final DataTable dataTable;
         int row;
@@ -100,6 +102,9 @@ public class DialogVisualization
             String parentId = container != null ? container.getId().toString() : null;
             String style = interactionUnit.hasMapping(MappingType.DMR) ? MAPPED_STYLE : UNMAPPED_STYLE;
 
+            // statement context shim visualisation
+            Node<Integer> self = dialog.getStatementContextShim().findNode(interactionUnit.getId());
+
             if (interactionUnit instanceof Container)
             {
                 TemporalOperator operator = ((Container) interactionUnit).getTemporalOperator();
@@ -121,7 +126,9 @@ public class DialogVisualization
             if (interactionUnit.doesConsume())
                 tooltip.append("[input]\n").append(interactionUnit.getInputs()).append("\n\n");
             if (interactionUnit.doesProduce())
-                tooltip.append("[output]\n").append(interactionUnit.getOutputs()).append("\n");
+                tooltip.append("[output]\n").append(interactionUnit.getOutputs()).append("\n\n");
+
+            tooltip.append("[statement context]\n").append(self.getData()).append("\n");
 
 
             dataTable.addRow();

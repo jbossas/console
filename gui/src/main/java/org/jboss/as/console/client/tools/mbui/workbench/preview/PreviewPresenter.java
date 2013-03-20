@@ -55,6 +55,7 @@ import org.jboss.mbui.gui.reification.pipeline.BuildUserInterfaceStep;
 import org.jboss.mbui.gui.reification.pipeline.ImplicitBehaviourStep;
 import org.jboss.mbui.gui.reification.pipeline.IntegrityStep;
 import org.jboss.mbui.gui.reification.pipeline.ReificationPipeline;
+import org.jboss.mbui.gui.reification.pipeline.StatementContextStep;
 import org.jboss.mbui.gui.reification.pipeline.UniqueIdCheckStep;
 import org.jboss.mbui.gui.reification.preparation.ReadOperationDescriptions;
 import org.jboss.mbui.gui.reification.preparation.ReadResourceDescription;
@@ -200,12 +201,13 @@ public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, Preview
                             ReificationPipeline pipeline = new ReificationPipeline(
                                     new UniqueIdCheckStep(),
                                     new BuildUserInterfaceStep(),
+                                    new StatementContextStep(),
                                     new ImplicitBehaviourStep(dispatcher),
                                     new IntegrityStep());
+
                             pipeline.execute(dialog, context);
 
                             control.proceed();
-
                         }
 
                         @Override

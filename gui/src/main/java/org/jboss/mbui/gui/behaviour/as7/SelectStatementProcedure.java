@@ -29,9 +29,9 @@ public class SelectStatementProcedure extends Procedure {
                 Tuple tuple = (Tuple)data;
 
                 if(tuple.getValue()!=null)
-                    coordinator.addStatement(tuple.getKey(), tuple.getValue());
+                    coordinator.setStatement(tuple.getKey(), tuple.getValue());
                 else
-                    coordinator.removeStatement(tuple.getKey());
+                    coordinator.clearStatement(tuple.getKey());
 
                 // when statement change, the system will be reset
                 coordinator.onReset();

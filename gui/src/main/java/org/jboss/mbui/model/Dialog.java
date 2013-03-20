@@ -1,6 +1,8 @@
 package org.jboss.mbui.model;
 
+import org.jboss.mbui.gui.behaviour.StatementContext;
 import org.jboss.mbui.model.behaviour.BehaviourResolution;
+import org.jboss.mbui.model.mapping.Tree;
 import org.jboss.mbui.model.structure.Container;
 import org.jboss.mbui.model.structure.InteractionUnit;
 import org.jboss.mbui.model.structure.QName;
@@ -17,6 +19,7 @@ import org.jboss.mbui.model.structure.impl.InteractionUnitVisitor;
 public class Dialog {
     private QName id;
     private InteractionUnit root;
+    private Tree<Integer> statementContextShim;
     //private BehaviourResolution behaviour;
 
     public Dialog(QName id, InteractionUnit root) {
@@ -70,6 +73,14 @@ public class Dialog {
             System.out.println("No interaction unit with id "+ id);
 
         return result.getUnit();
+    }
+
+    public void setStatementContextShim(Tree<Integer> statementContextShim) {
+        this.statementContextShim = statementContextShim;
+    }
+
+    public Tree<Integer> getStatementContextShim() {
+        return statementContextShim;
     }
 
     class Result {
