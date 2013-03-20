@@ -2,9 +2,12 @@ package org.jboss.mbui.gui.reification.strategy;
 
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.web.bindery.event.shared.EventBus;
+import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
 import org.jboss.dmr.client.ModelNode;
 import org.jboss.mbui.gui.behaviour.InteractionEvent;
 import org.jboss.mbui.gui.behaviour.PresentationEvent;
@@ -48,10 +51,11 @@ public class PullDownStrategy implements ReificationStrategy<ReificationWidget, 
 
         private InteractionUnit<StereoTypes> unit;
         private ListBox comboBox;
+        private String previousSelection = null;
 
         PullDownAdapter(InteractionUnit<StereoTypes> unit) {
             this.unit = unit;
-            this.comboBox = new ListBox() ;
+            this.comboBox = new ListBox(false) ;
 
             comboBox.addChangeHandler(new ChangeHandler(){
 
@@ -70,6 +74,7 @@ public class PullDownStrategy implements ReificationStrategy<ReificationWidget, 
                                         selection),   // synthetic key (convention), see LoadResourceProcedure
                                 getInteractionUnit().getId());
 
+                        previousSelection = selection;
 
                     } else {
                         // clear the select statement
@@ -79,6 +84,8 @@ public class PullDownStrategy implements ReificationStrategy<ReificationWidget, 
                                         "selected.entity",
                                         null),
                                 getInteractionUnit().getId());
+
+                         previousSelection =null;
                     }
                 }
             });
@@ -126,8 +133,13 @@ public class PullDownStrategy implements ReificationStrategy<ReificationWidget, 
                     {
                         String key = item.get("entity.key").asString();  // synthetic key
                         comboBox.addItem(key);
+
+                        if(key.equals(previousSelection))
+                            comboBox.setItemSelected(comboBox.getItemCount() - 1, true);
                     }
 
+                    if(comboBox.getSelectedIndex()==-1 && comboBox.getItemCount()>0)
+                        comboBox.setItemSelected(0, true);
 
                 }
             });
@@ -158,7 +170,14 @@ public class PullDownStrategy implements ReificationStrategy<ReificationWidget, 
 
         @Override
         public Widget asWidget() {
-            return comboBox.asWidget();
+
+            HorizontalPanel panel = new HorizontalPanel();
+            panel.add(new ContentHeaderLabel(getInteractionUnit().getLabel()));
+            Widget listBoxWidget = comboBox.asWidget();
+            panel.add(listBoxWidget);
+
+            listBoxWidget.getElement().setAttribute("style", "margin-left:10px");
+            return panel;
         }
     }
 }
