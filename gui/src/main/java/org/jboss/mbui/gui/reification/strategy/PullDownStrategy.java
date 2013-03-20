@@ -3,7 +3,6 @@ package org.jboss.mbui.gui.reification.strategy;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.web.bindery.event.shared.EventBus;
@@ -65,7 +64,7 @@ public class PullDownStrategy implements ReificationStrategy<ReificationWidget, 
                     // create statement
                     String selection = comboBox.getValue(comboBox.getSelectedIndex());
 
-                    if (selection != null) {
+                    if (selection != null && !selection.equals("")) {
                         // create a select statement
                         eventBus.fireEventFromSource(
                                 new StatementEvent(
@@ -129,6 +128,10 @@ public class PullDownStrategy implements ReificationStrategy<ReificationWidget, 
                     List<ModelNode> entities = (List<ModelNode>)event.getPayload();
                     comboBox.clear();
 
+                    // initial state
+                    comboBox.addItem("");
+                    comboBox.setItemText(0, "<<Please select>>");
+
                     for(ModelNode item : entities)
                     {
                         String key = item.get("entity.key").asString();  // synthetic key
@@ -136,9 +139,11 @@ public class PullDownStrategy implements ReificationStrategy<ReificationWidget, 
 
                         if(key.equals(previousSelection))
                             comboBox.setItemSelected(comboBox.getItemCount() - 1, true);
+
                     }
 
-                    if(comboBox.getSelectedIndex()==-1 && comboBox.getItemCount()>0)
+                    // fallback to default selection
+                    if(comboBox.getSelectedIndex()<=0 && comboBox.getItemCount()>0)
                         comboBox.setItemSelected(0, true);
 
                 }
