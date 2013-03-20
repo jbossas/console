@@ -29,6 +29,23 @@ public class DialogVisualization
     private final OrgChart chart;
     private final Dialog dialog;
 
+    String[] colors = new String[] {
+            "#D8D8D8",
+            "#C4BD97",
+            "#8DB3E2",
+            "#B8CCE4",
+            "#E5B9B7",
+            "#D7E3BC",
+            "#CCC1D9",
+            "#B7DDE8",
+            "#FBD5B5",
+            "#9BBB59",
+            "#4F81BD",
+            "#4BACC6",
+            "#F79646",
+            "#C0504D",
+    };
+
     public DialogVisualization(final Dialog dialog)
     {
         this.dialog = dialog;
@@ -104,13 +121,15 @@ public class DialogVisualization
 
             // statement context shim visualisation
             Node<Integer> self = dialog.getStatementContextShim().findNode(interactionUnit.getId());
+            Integer scope = self.getData();
+            String color = scope>colors.length ? "#ffffff" : colors[scope];
 
             if (interactionUnit instanceof Container)
             {
                 TemporalOperator operator = ((Container) interactionUnit).getTemporalOperator();
                 if (operator != null)
                 {
-                    name = NAME_TEMPLATE.name(style, name, operator.name()).asString();
+                    name = NAME_TEMPLATE.name(style, name, operator.name(), color).asString();
                 }
             }
             else
@@ -118,7 +137,7 @@ public class DialogVisualization
                 String classname = interactionUnit.getClass().getName();
 
                 classname = classname.substring(classname.lastIndexOf('.') + 1);
-                name = NAME_TEMPLATE.name(style, name, classname).asString();
+                name = NAME_TEMPLATE.name(style, name, classname, color).asString();
             }
 
             StringBuilder tooltip = new StringBuilder();
@@ -128,7 +147,7 @@ public class DialogVisualization
             if (interactionUnit.doesProduce())
                 tooltip.append("[output]\n").append(interactionUnit.getOutputs()).append("\n\n");
 
-            tooltip.append("[statement context]\n").append(self.getData()).append("\n");
+            tooltip.append("[statement context]\n").append(scope).append("\n");
 
 
             dataTable.addRow();
@@ -143,7 +162,7 @@ public class DialogVisualization
 
     interface NameTemplate extends SafeHtmlTemplates
     {
-        @Template("<div>{1}<br/><span style=\"color:#666;\">&laquo;{2}&raquo;</span><div class='{0}'></div></div>")
-        SafeHtml name(String css, String name, String stereotype);
+        @Template("<div style='background-color:{3}'>{1}<br/><span style=\"color:#666;\">&laquo;{2}&raquo;</span><div class='{0}'></div></div>")
+        SafeHtml name(String css, String name, String stereotype, String color);
     }
 }
