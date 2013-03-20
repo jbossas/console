@@ -159,7 +159,7 @@ public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, Preview
                 public void execute(Control<Context> control) {
                     context.set(ContextKey.EVENTBUS, getActiveCoordinator().getLocalBus());
                     context.set(ContextKey.COORDINATOR, getActiveCoordinator());
-                    context.set(ContextKey.STATEMENTS, getActiveCoordinator().getStatementContext());
+                    //context.set(ContextKey.STATEMENTS, getActiveCoordinator().getContext());
 
                     control.proceed();
                 }

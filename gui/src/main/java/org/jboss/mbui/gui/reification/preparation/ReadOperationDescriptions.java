@@ -23,6 +23,7 @@ import org.jboss.dmr.client.dispatch.DispatchAsync;
 import org.jboss.dmr.client.dispatch.impl.DMRAction;
 import org.jboss.dmr.client.dispatch.impl.DMRResponse;
 import org.jboss.dmr.client.ModelNode;
+import org.jboss.mbui.gui.behaviour.InteractionCoordinator;
 import org.jboss.mbui.gui.behaviour.StatementContext;
 import org.jboss.mbui.gui.reification.Context;
 import org.jboss.mbui.gui.reification.ContextKey;
@@ -155,7 +156,9 @@ public class ReadOperationDescriptions extends ReificationPreperation
 
         private void addStep(Trigger<StereoTypes> interactionUnit)
         {
-            final StatementContext delegate = context.get(ContextKey.STATEMENTS);
+            InteractionCoordinator coordinator = context.get(ContextKey.COORDINATOR);
+
+            final StatementContext delegate = coordinator.getStatementScope().getContext(interactionUnit.getId());
             assert delegate != null : "StatementContext not provided";
             assert interactionUnit.doesProduce();
 

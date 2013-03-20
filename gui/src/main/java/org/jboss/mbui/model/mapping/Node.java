@@ -3,6 +3,7 @@ package org.jboss.mbui.model.mapping;
 import org.jboss.mbui.model.structure.QName;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -58,6 +59,22 @@ public class Node<T> {
         }
         return null;
     }
+
+    public List<Node<T>> collectParents(NodePredicate<T> predicate) {
+        List<Node<T>> results = new LinkedList<Node<T>>();
+        collectInternal(results, this.parent, predicate);
+        return results;
+    }
+
+    private void collectInternal(List<Node<T>> results, Node<T> parent, NodePredicate<T> predicate) {
+        if (parent != null) {
+            if (predicate.appliesTo(parent)) {
+                results.add(parent);
+            }
+            collectInternal(results, parent.parent, predicate);
+        }
+    }
+
 
 
     /**

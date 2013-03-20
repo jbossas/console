@@ -145,8 +145,6 @@ public class StatementContextStep<S extends Enum<S>> extends ReificationStep {
 
         @Override
         public void visit(InteractionUnit<S> interactionUnit) {
-
-
             Scope scope = stack.peek();
             Node<Integer> node = scope.getNode().addChild(interactionUnit.getId());
             node.setData(stack.peek().getContextId());

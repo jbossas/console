@@ -11,7 +11,6 @@ import org.jboss.mbui.gui.behaviour.as7.ActivationProcedure;
 import org.jboss.mbui.gui.behaviour.as7.BehaviourMap;
 import org.jboss.mbui.gui.behaviour.as7.NavigationProcedure;
 import org.jboss.mbui.gui.behaviour.as7.SelectStatementProcedure;
-import org.jboss.mbui.gui.behaviour.as7.Tuple;
 import org.jboss.mbui.model.Dialog;
 import org.jboss.mbui.model.behaviour.Resource;
 import org.jboss.mbui.model.behaviour.ResourceType;
@@ -45,9 +44,7 @@ public class InteractionCoordinator implements FrameworkContract,
     private EventBus bus;
     private BehaviourMap<Procedure> procedures = new BehaviourMap<Procedure>();
     private Dialog dialog;
-    private StatementRegistry statements = new StatementRegistry();
-    private StatementContext parentContext;
-    private final StatementContext statementContext;
+    private StatementScope statementScope;
     private final NavigationDelegate navigationDelegate;
 
     @Inject
@@ -55,38 +52,12 @@ public class InteractionCoordinator implements FrameworkContract,
         this.dialog = dialog;
         this.bus = new SimpleEventBus();
         this.navigationDelegate = navigationDelegate;
+        this.statementScope = new StatementScope(dialog, parentContext);
 
         // coordinator handles all events except presentation & system events
         bus.addHandler(InteractionEvent.TYPE, this);
         bus.addHandler(NavigationEvent.TYPE, this);
         bus.addHandler(StatementEvent.TYPE, this);
-
-        this.parentContext = parentContext;
-
-        // simple parent delegation mechanism to resolve statement values
-        this.statementContext = new StatementContext() {
-            @Override
-            public String resolve(String key) {
-                String resolvedValue = null;
-
-                // child
-                resolvedValue = statements.get(key);
-
-                // parent
-                if (null == resolvedValue && InteractionCoordinator.this.parentContext != null)
-                    resolvedValue = InteractionCoordinator.this.parentContext.resolve(key);
-
-                return resolvedValue;
-            }
-
-            @Override
-            public String[] resolveTuple(String key) {
-                if (InteractionCoordinator.this.parentContext != null)
-                    return InteractionCoordinator.this.parentContext.resolveTuple(key);
-                return null;
-            }
-        };
-
 
         // global procedures
         procedures.add(new SelectStatementProcedure(this));
@@ -94,8 +65,8 @@ public class InteractionCoordinator implements FrameworkContract,
         procedures.add(new NavigationProcedure(this));
     }
 
-    public StatementContext getStatementContext() {
-        return statementContext;
+    public StatementScope getStatementScope() {
+        return statementScope;
     }
 
     public EventBus getLocalBus()
@@ -119,7 +90,7 @@ public class InteractionCoordinator implements FrameworkContract,
 
         // provide context
         procedure.setCoordinator(this);
-        procedure.setStatementContext(statementContext);
+        procedure.setStatementScope(statementScope);
 
         procedures.add(procedure);
     }
@@ -195,7 +166,7 @@ public class InteractionCoordinator implements FrameworkContract,
             Window.alert("No procedure for " + event);
             Log.warn("No procedure for " + event);
         }
-        else if(execution.getPrecondition().isMet(statementContext))   // guarded
+        else if(execution.getPrecondition().isMet(getStatementContext(source)))   // guarded
         {
             try {
                 execution.getCommand().execute(InteractionCoordinator.this.dialog, event.getPayload());
@@ -204,6 +175,15 @@ public class InteractionCoordinator implements FrameworkContract,
             }
         }
 
+    }
+
+    /**
+     * Resolve the statement context for an interaction unit
+     * @param interactionUnitId
+     * @return
+     */
+    private StatementContext getStatementContext(QName interactionUnitId) {
+        return statementScope.getContext(interactionUnitId);
     }
 
     @Override
@@ -264,18 +244,18 @@ public class InteractionCoordinator implements FrameworkContract,
         Log.debug("StatementEvent " + event.getKey() + "=" + event.getValue());
 
         Procedure stmtProcedure = procedures.getSingle(SelectStatementProcedure.ID);
-        stmtProcedure.getCommand().execute(dialog, new Tuple(event.getKey(), event.getValue()));
+        stmtProcedure.getCommand().execute(dialog, event);
+
     }
 
     @Override
-    public void setStatement(String key, String value) {
+    public void setStatement(QName sourceId, String key, String value) {
 
-        System.out.println(">> "+ key+":"+value);
-        statements.put(key, value);
+        statementScope.setStatement(sourceId, key, value);
     }
 
     @Override
-    public void clearStatement(String key) {
-        statements.remove(key);
+    public void clearStatement(QName sourceId, String key, String value) {
+        statementScope.clearStatement(sourceId, key);
     }
 }

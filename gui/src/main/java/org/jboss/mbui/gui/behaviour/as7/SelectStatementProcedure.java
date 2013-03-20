@@ -3,6 +3,7 @@ package org.jboss.mbui.gui.behaviour.as7;
 import org.jboss.mbui.gui.behaviour.InteractionCoordinator;
 import org.jboss.mbui.gui.behaviour.ModelDrivenCommand;
 import org.jboss.mbui.gui.behaviour.Procedure;
+import org.jboss.mbui.gui.behaviour.StatementEvent;
 import org.jboss.mbui.model.Dialog;
 import org.jboss.mbui.model.behaviour.Resource;
 import org.jboss.mbui.model.behaviour.ResourceType;
@@ -26,12 +27,17 @@ public class SelectStatementProcedure extends Procedure {
             @Override
             public void execute(Dialog dialog, Object data) {
 
-                Tuple tuple = (Tuple)data;
+                StatementEvent event = (StatementEvent)data;
 
-                if(tuple.getValue()!=null)
-                    coordinator.setStatement(tuple.getKey(), tuple.getValue());
+                QName sourceId = (QName)event.getSource();
+                String key = event.getKey();
+                String value = event.getValue();
+
+
+                if(value!=null)
+                    coordinator.setStatement(sourceId, key, value);
                 else
-                    coordinator.clearStatement(tuple.getKey());
+                    coordinator.clearStatement(sourceId, key, value);
 
                 // when statement change, the system will be reset
                 coordinator.onReset();

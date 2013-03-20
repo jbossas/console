@@ -24,6 +24,7 @@ import org.jboss.dmr.client.dispatch.impl.DMRAction;
 import org.jboss.dmr.client.dispatch.impl.DMRResponse;
 import org.jboss.dmr.client.ModelNode;
 import org.jboss.dmr.client.ModelType;
+import org.jboss.mbui.gui.behaviour.InteractionCoordinator;
 import org.jboss.mbui.gui.behaviour.StatementContext;
 import org.jboss.mbui.gui.reification.Context;
 import org.jboss.mbui.gui.reification.ContextKey;
@@ -152,7 +153,9 @@ public class ReadResourceDescription extends ReificationPreperation
 
         private void addStep(InteractionUnit interactionUnit)
         {
-            final StatementContext delegate = context.get(ContextKey.STATEMENTS);
+            InteractionCoordinator coordinator = context.get(ContextKey.COORDINATOR);
+
+            final StatementContext delegate = coordinator.getStatementScope().getContext(interactionUnit.getId());
             assert delegate != null : "StatementContext not provided";
 
             DMRMapping mapping = (DMRMapping) interactionUnit.findMapping(DMR, new Predicate<DMRMapping>()

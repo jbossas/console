@@ -145,7 +145,7 @@ public class DMROperationProcedure extends Procedure implements OperationContext
 
     @Override
     public StatementContext getStatementContext() {
-        return statementContext;
+        return statementScope.getContext(getUnit().getId());
     }
 
     @Override

@@ -43,6 +43,7 @@ public class LoadResourceProcedure extends Procedure {
 
     private InteractionUnit unit;
     private AddressMapping address;
+    private StatementContext statementContext;
 
     public LoadResourceProcedure (
             final Dialog dialog,
@@ -73,6 +74,8 @@ public class LoadResourceProcedure extends Procedure {
 
         DMRMapping DMRMapping = (DMRMapping) unit.findMapping(MappingType.DMR);
         address = AddressMapping.fromString(DMRMapping.getAddress());
+
+        this.statementContext = statementScope.getContext(unit.getId());
 
         // check preconditions of the address token
         final Set<String> requiredStatements = new HashSet<String>();

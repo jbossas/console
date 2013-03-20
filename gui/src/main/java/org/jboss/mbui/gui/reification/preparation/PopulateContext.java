@@ -31,7 +31,6 @@ public class PopulateContext extends ReificationPreperation
     {
         context.set(ContextKey.EVENTBUS, eventBus);
         context.set(ContextKey.COORDINATOR, coordinator);
-        context.set(ContextKey.STATEMENTS, statementContext);
     }
 
     @Override

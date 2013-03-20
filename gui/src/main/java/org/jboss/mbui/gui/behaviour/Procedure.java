@@ -28,7 +28,7 @@ public abstract class Procedure implements Behaviour, Consumer, Producer {
     private ResourceConsumption consumption = new ResourceConsumption();
 
     protected InteractionCoordinator coordinator;
-    protected StatementContext statementContext;
+    protected StatementScope statementScope;
     protected Precondition precondition;
 
     public final static Precondition NOT_GUARDED = new Precondition() {
@@ -78,8 +78,8 @@ public abstract class Procedure implements Behaviour, Consumer, Producer {
         this.coordinator = coordinator;
     }
 
-    void setStatementContext(StatementContext statementContext) {
-        this.statementContext = statementContext;
+    void setStatementScope(StatementScope scope) {
+        this.statementScope = scope;
     }
 
     // --- Consumer ----

@@ -9,6 +9,7 @@ import org.jboss.dmr.client.dispatch.impl.DMRResponse;
 import org.jboss.dmr.client.ModelNode;
 import org.jboss.mbui.gui.behaviour.ModelDrivenCommand;
 import org.jboss.mbui.gui.behaviour.Procedure;
+import org.jboss.mbui.gui.behaviour.StatementContext;
 import org.jboss.mbui.model.behaviour.Resource;
 import org.jboss.mbui.model.behaviour.ResourceType;
 import org.jboss.mbui.model.mapping.MappingType;
@@ -41,6 +42,7 @@ public class SaveChangesetProcedure extends Procedure {
 
     private InteractionUnit unit;
     private AddressMapping address;
+    private StatementContext statementContext;
 
     public SaveChangesetProcedure(
             Dialog dialog,
@@ -72,6 +74,8 @@ public class SaveChangesetProcedure extends Procedure {
 
         DMRMapping DMRMapping = (DMRMapping) unit.findMapping(MappingType.DMR);
         address = AddressMapping.fromString(DMRMapping.getAddress());
+
+        this.statementContext = statementScope.getContext(unit.getId());
     }
 
     private void saveResource(final String name, AddressMapping address, HashMap<String, Object> changeset) {
