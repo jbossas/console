@@ -27,14 +27,20 @@ import java.util.List;
  */
 public class SampleRepository
 {
-    public List<Sample> getSamples()
-    {
-        List<Sample> samples = new ArrayList<Sample>();
+
+    private final ArrayList<Sample> samples;
+
+    public SampleRepository() {
+        samples = new ArrayList<Sample>();
 
         samples.add(new DataSourceSample());
         samples.add(new TransactionSample());
         samples.add(new SecurityDomainsSample());
 
+    }
+
+    public List<Sample> getSamples()
+    {
         return samples;
     }
 }

@@ -149,7 +149,7 @@ public class SelectStrategy implements ReificationStrategy<ReificationWidget, St
                                         GlobalQNames.SELECT_ID,
                                         "selected.entity",
                                         selection.get("entity.key").asString()),   // synthetic key (convention), see LoadResourceProcedure
-                                this);
+                                getInteractionUnit().getId());
 
 
                     }
@@ -161,7 +161,7 @@ public class SelectStrategy implements ReificationStrategy<ReificationWidget, St
                                         GlobalQNames.SELECT_ID,
                                         "selected.entity",
                                         null),
-                                this);
+                                getInteractionUnit().getId());
                     }
                 }
             });

@@ -80,7 +80,7 @@ public class Dialog {
     }
 
     public Tree<Integer> getStatementContextShim() {
-        return statementContextShim;
+        return this.statementContextShim;
     }
 
     class Result {

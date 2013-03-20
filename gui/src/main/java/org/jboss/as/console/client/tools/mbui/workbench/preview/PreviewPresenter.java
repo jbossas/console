@@ -18,11 +18,6 @@
  */
 package org.jboss.as.console.client.tools.mbui.workbench.preview;
 
-import static org.jboss.as.console.client.tools.mbui.workbench.NameTokens.preview;
-
-import java.util.HashMap;
-import java.util.Map;
-
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.user.client.Window;
 import com.google.inject.Inject;
@@ -34,14 +29,12 @@ import com.gwtplatform.mvp.client.annotations.ProxyStandard;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import org.jboss.as.console.client.Console;
-import org.jboss.dmr.client.dispatch.DispatchAsync;
 import org.jboss.as.console.client.tools.mbui.workbench.ApplicationPresenter;
 import org.jboss.as.console.client.tools.mbui.workbench.ReifyEvent;
 import org.jboss.as.console.client.tools.mbui.workbench.ResetEvent;
-import org.jboss.as.console.client.tools.mbui.workbench.repository.DataSourceSample;
 import org.jboss.as.console.client.tools.mbui.workbench.repository.Sample;
-import org.jboss.as.console.client.tools.mbui.workbench.repository.SecurityDomainsSample;
-import org.jboss.as.console.client.tools.mbui.workbench.repository.TransactionSample;
+import org.jboss.as.console.client.tools.mbui.workbench.repository.SampleRepository;
+import org.jboss.dmr.client.dispatch.DispatchAsync;
 import org.jboss.gwt.flow.client.Async;
 import org.jboss.gwt.flow.client.Control;
 import org.jboss.gwt.flow.client.Function;
@@ -64,6 +57,11 @@ import org.jboss.mbui.gui.reification.strategy.ReificationWidget;
 import org.jboss.mbui.model.Dialog;
 import org.jboss.mbui.model.structure.QName;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.jboss.as.console.client.tools.mbui.workbench.NameTokens.preview;
+
 /**
  * @author Harald Pehl
  * @author Heiko Braun
@@ -77,16 +75,17 @@ public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, Preview
     private DispatchAsync dispatcher;
     private HashMap<String, ReificationWidget> cachedWidgets = new HashMap<String, ReificationWidget>();
     @Inject
-    public PreviewPresenter(final EventBus eventBus, final MyView view, final MyProxy proxy,
-                            final DispatchAsync dispatcher)
+    public PreviewPresenter(
+            final EventBus eventBus,
+            final MyView view,
+            final MyProxy proxy,
+            final DispatchAsync dispatcher,
+            final SampleRepository sampleRepository)
     {
         super(eventBus, view, proxy);
         this.dispatcher = dispatcher;
 
         // these would be created/stored differently. This is just an example
-        final TransactionSample transactionSample = new TransactionSample();
-        final DataSourceSample dataSourceSample = new DataSourceSample();
-        final SecurityDomainsSample securityDomainsSample = new SecurityDomainsSample();
 
         // context
         CoreGUIContext statementContext = new CoreGUIContext(
@@ -94,21 +93,13 @@ public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, Preview
                 Console.MODULES.getCurrentUser()
         );
 
-        final InteractionCoordinator txCoordinator = new InteractionCoordinator(
-                transactionSample.getDialog(), statementContext, this
-        );
-
-        final InteractionCoordinator dsCoordinator = new InteractionCoordinator(
-                dataSourceSample.getDialog(),statementContext, this
-        );
-
-        final InteractionCoordinator secCoordinator = new InteractionCoordinator(
-                securityDomainsSample.getDialog(),statementContext, this
-        );
-
-        coordinators.put(transactionSample.getName(), txCoordinator);
-        coordinators.put(dataSourceSample.getName(), dsCoordinator);
-        coordinators.put(securityDomainsSample.getName(), secCoordinator);
+        for(Sample sample : sampleRepository.getSamples())
+        {
+            InteractionCoordinator coordinator = new InteractionCoordinator(
+                    sample.getDialog(), statementContext, this
+            );
+            coordinators.put(sample.getName(), coordinator);
+        }
     }
 
     @Override
@@ -165,6 +156,14 @@ public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, Preview
                 }
             };
 
+            Function<Context> statementShim = new Function<Context>() {
+                @Override
+                public void execute(Control<Context> control) {
+                    new StatementContextStep().execute(dialog,context);
+                    control.proceed();
+                }
+            };
+
             Function<Context> readOperationMetaData = new Function<Context>() {
                 @Override
                 public void execute(final Control<Context> control) {
@@ -201,7 +200,7 @@ public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, Preview
                             ReificationPipeline pipeline = new ReificationPipeline(
                                     new UniqueIdCheckStep(),
                                     new BuildUserInterfaceStep(),
-                                    new StatementContextStep(),
+                                    //new StatementContextStep(),
                                     new ImplicitBehaviourStep(dispatcher),
                                     new IntegrityStep());
 
@@ -240,48 +239,13 @@ public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, Preview
             // execute pipeline
             new Async<Context>().waterfall(
                     context, outcome,
-                    prepareContext, readOperationMetaData, readResourceMetaData
+                    prepareContext, statementShim, readOperationMetaData, readResourceMetaData
             );
         }
         else
         {
             getView().show(cachedWidgets.get(selectedSample));
         }
-    }
-
-    // 3.) Retrieve resource meta data
-    private void proceedWithResourceDescriptions(final Dialog dialog, final Context context) {
-
-        ReificationPreperation readResourceDescription = new ReadResourceDescription(dispatcher);
-        readResourceDescription.prepareAsync(dialog, context, new ReificationPreperation.Callback()
-        {
-            @Override
-            public void onSuccess()
-            {
-                Log.info("Successfully retrieved resource meta data");
-
-                // setup & start the reification pipeline
-                ReificationPipeline pipeline = new ReificationPipeline(
-                        new UniqueIdCheckStep(),
-                        new BuildUserInterfaceStep(),
-                        new ImplicitBehaviourStep(dispatcher),
-                        new IntegrityStep());
-                pipeline.execute(dialog, context);
-
-                // show result
-                ReificationWidget widget = context.get(ContextKey.WIDGET);
-                assert widget !=null;
-
-                cachedWidgets.put(selectedSample, widget);
-                getView().show(widget);
-            }
-
-            @Override
-            public void onError(final Throwable caught)
-            {
-                Log.error("Reification failed: " + caught.getMessage());
-            }
-        });
     }
 
     // in a real this would be wired Presenter.onReset()

@@ -68,7 +68,7 @@ public class PullDownStrategy implements ReificationStrategy<ReificationWidget, 
                                         GlobalQNames.SELECT_ID,
                                         "selected.entity",
                                         selection),   // synthetic key (convention), see LoadResourceProcedure
-                                this);
+                                getInteractionUnit().getId());
 
 
                     } else {
@@ -78,7 +78,7 @@ public class PullDownStrategy implements ReificationStrategy<ReificationWidget, 
                                         GlobalQNames.SELECT_ID,
                                         "selected.entity",
                                         null),
-                                this);
+                                getInteractionUnit().getId());
                     }
                 }
             });

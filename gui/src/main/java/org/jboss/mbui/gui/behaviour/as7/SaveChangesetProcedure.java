@@ -42,7 +42,6 @@ public class SaveChangesetProcedure extends Procedure {
 
     private InteractionUnit unit;
     private AddressMapping address;
-    private StatementContext statementContext;
 
     public SaveChangesetProcedure(
             Dialog dialog,
@@ -75,10 +74,12 @@ public class SaveChangesetProcedure extends Procedure {
         DMRMapping DMRMapping = (DMRMapping) unit.findMapping(MappingType.DMR);
         address = AddressMapping.fromString(DMRMapping.getAddress());
 
-        this.statementContext = statementScope.getContext(unit.getId());
     }
 
     private void saveResource(final String name, AddressMapping address, HashMap<String, Object> changeset) {
+
+        StatementContext statementContext = statementScope.getContext(unit.getId());
+
         ModelNodeAdapter adapter = new ModelNodeAdapter();
 
         ModelNode operation = adapter.fromChangeset(
