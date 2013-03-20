@@ -79,10 +79,6 @@ public class SecurityDomainsSample implements Sample
                                     QName.valueOf(namespace + ":remove"),
                                     QName.valueOf("org.jboss.as:resource-operation#remove"),
                                     "Remove"))
-                           /* .add(new Link(
-                                    QName.valueOf(namespace + ":viewDetails"),
-                                    QName.valueOf(namespace +":pages-wrapper"),
-                                    "Details"))*/
                         .end()
 
                         .add(new Select(namespace, "list", "Master"))
@@ -123,9 +119,9 @@ public class SecurityDomainsSample implements Sample
 
                                 .start(new Container(namespace + ".authentication", "details", "Details", Choice))
                                     .add(new Container(namespace + ".authentication", "details#basicAttributers", "Attributes", Form))
-                                       // .mappedBy(new DMRMapping()
-                                         // .setAddress("/{selected.profile}/subsystem=security/security-domain={selected.entity}/authentication=classic/login-module={selected.entity}")
-                                         // .addAttributes("code", "flag", "module"))
+                                       .mappedBy(new DMRMapping()
+                                        .setAddress("/{selected.profile}/subsystem=security/security-domain={selected.entity}/authentication=classic/login-module={selected.entity}")
+                                        .addAttributes("code", "flag", "module"))
 
                                     .add(new Select(namespace + ".authentication", "moduleOptions", "Module Options"))
                                 .end()
