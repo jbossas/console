@@ -148,6 +148,9 @@ public class SecurityDomainsSample implements Sample
                                 .start(new Container(namespace + ".authorization", "details", "Details", Choice))
 
                                     .add(new Container(namespace + ".authorization", "details#basicAttributers", "Attributes", Form))
+                                        .mappedBy(new DMRMapping()
+                                                .setAddress("/{selected.profile}/subsystem=security/security-domain={selected.entity}/authorization=classic/policy-module={selected.entity}")
+                                                .addAttributes("code", "flag", "module"))
                                     .add(new Select(namespace + ".authorization", "moduleOptions", "Module Options"))
                                 .end()
                             .end()
