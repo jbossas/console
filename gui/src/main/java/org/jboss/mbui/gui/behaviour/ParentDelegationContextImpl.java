@@ -18,11 +18,13 @@ class ParentDelegationContextImpl implements StatementScope.MutableContext{
     private final StatementContext externalContext;
     private final StatementContext localContext;
     private final StatementScope.Scopes availableScopes;
+    private final Integer scopeId;
 
-    public ParentDelegationContextImpl(StatementContext externalContext, List<Integer> parentScopeIds, StatementScope.Scopes scopes) {
+    public ParentDelegationContextImpl(Integer scopeId, StatementContext externalContext, List<Integer> parentScopeIds, StatementScope.Scopes scopes) {
         this.externalContext = externalContext;
         this.parentScopeIds = parentScopeIds;
         this.availableScopes = scopes;
+        this.scopeId = scopeId;
 
         this.localContext = new DelegatingStatementContext() {
             @Override
@@ -35,6 +37,11 @@ class ParentDelegationContextImpl implements StatementScope.MutableContext{
                 return null; // doesn't support tuples
             }
         } ;
+    }
+
+    @Override
+    public Integer getScopeId() {
+        return scopeId;
     }
 
     @Override
