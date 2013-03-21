@@ -2,9 +2,12 @@ package org.jboss.mbui.gui.behaviour.as7;
 
 import org.jboss.as.console.client.auth.CurrentUser;
 import org.jboss.as.console.client.domain.profiles.CurrentProfileSelection;
+import org.jboss.mbui.gui.behaviour.Constants;
 import org.jboss.mbui.gui.behaviour.StatementContext;
 
 import javax.inject.Inject;
+import java.util.Collections;
+import java.util.LinkedList;
 
 /**
  * A default context for statements that reside with the core framework.<br/>
@@ -20,7 +23,6 @@ public class CoreGUIContext implements StatementContext {
     public final static String SELECTED_PROFILE = "selected.profile";
     public final static String SELECTED_HOST = "selected.host";
     public final static String SELECTED_SERVER = "selected.server";
-
 
     private CurrentProfileSelection profileSelection;
     private CurrentUser userSelection;
@@ -53,5 +55,34 @@ public class CoreGUIContext implements StatementContext {
         if(SELECTED_PROFILE.equals(key) && profileSelection.isSet())
             return new String[] {"profile", profileSelection.getName()};
         return null;
+    }
+
+    @Override
+    public LinkedList<String> collect(String key) {
+        LinkedList<String> items = new LinkedList<String>();
+        String value = resolve(key);
+        if(value!=null)
+            items.add(value);
+        return items;
+    }
+
+    @Override
+    public LinkedList<String[]> collectTuples(String key) {
+
+        LinkedList<String[]> items = new LinkedList<String[]>();
+        String[] tuple = resolveTuple(key);
+        if(tuple!=null)
+            items.add(tuple);
+        return items;
+    }
+
+    @Override
+    public String get(String key) {
+        return resolve(key);
+    }
+
+    @Override
+    public String[] getTuple(String key) {
+        return resolveTuple(key);
     }
 }

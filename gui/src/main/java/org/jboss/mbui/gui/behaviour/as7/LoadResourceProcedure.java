@@ -9,6 +9,8 @@ import org.jboss.dmr.client.dispatch.impl.DMRResponse;
 import org.jboss.dmr.client.ModelNode;
 import org.jboss.dmr.client.ModelType;
 import org.jboss.dmr.client.Property;
+import org.jboss.mbui.gui.behaviour.Constants;
+import org.jboss.mbui.gui.behaviour.DelegatingStatementContext;
 import org.jboss.mbui.gui.behaviour.ModelDrivenCommand;
 import org.jboss.mbui.gui.behaviour.Precondition;
 import org.jboss.mbui.gui.behaviour.PresentationEvent;
@@ -25,6 +27,7 @@ import org.jboss.mbui.model.structure.QName;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -77,7 +80,7 @@ public class LoadResourceProcedure extends Procedure {
 
         // check preconditions of the address token
         final Set<String> requiredStatements = new HashSet<String>();
-        address.asResource(new StatementContext() {
+        address.asResource(new DelegatingStatementContext() {
             @Override
             public String resolve(final String key) {
                 // value expressions
@@ -88,6 +91,13 @@ public class LoadResourceProcedure extends Procedure {
             @Override
             public String[] resolveTuple(String key) {
                 return new String[]{"", ""};
+            }
+
+            @Override
+            public LinkedList<String> collect(String key) {
+                LinkedList<String> items = new LinkedList<String>();
+                items.add("");
+                return items;
             }
         });
 

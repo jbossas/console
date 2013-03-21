@@ -2,6 +2,7 @@ package org.jboss.mbui.gui.behaviour;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -23,7 +24,7 @@ class ParentDelegationContextImpl implements StatementScope.MutableContext{
         this.parentScopeIds = parentScopeIds;
         this.availableScopes = scopes;
 
-        this.localContext = new StatementContext() {
+        this.localContext = new DelegatingStatementContext() {
             @Override
             public String resolve(String key) {
                 return delegate.get(key);
@@ -34,6 +35,16 @@ class ParentDelegationContextImpl implements StatementScope.MutableContext{
                 return null; // doesn't support tuples
             }
         } ;
+    }
+
+    @Override
+    public String get(String key) {
+        return delegate.get(key);
+    }
+
+    @Override
+    public String[] getTuple(String key) {
+        return null;
     }
 
     @Override
@@ -88,5 +99,55 @@ class ParentDelegationContextImpl implements StatementScope.MutableContext{
 
         // last but not least: external context
         return resolvedTuple == null ? externalContext.resolveTuple(key) : resolvedTuple;
+    }
+
+    @Override
+    public LinkedList<String> collect(String key) {
+        LinkedList<String> resolvedValues = new LinkedList<String>();
+
+        // local
+        if(localContext.get(key) !=null)
+            resolvedValues.add(localContext.get(key));
+
+        // iterate delegates
+        Iterator<Integer> delegateIds = parentScopeIds.iterator();
+        while(delegateIds.hasNext())
+        {
+            StatementContext delegationContext = availableScopes.get(delegateIds.next());
+            if(delegationContext!=null && delegationContext.get(key)!=null) // may not be created yet, aka unused
+            {
+                resolvedValues.add(delegationContext.get(key));
+            }
+        }
+
+        // last but not least: external context
+        resolvedValues.addAll(externalContext.collect(key));
+
+        return resolvedValues;
+    }
+
+    @Override
+    public LinkedList<String[]> collectTuples(String key) {
+        LinkedList<String[]> resolvedTuple = new LinkedList<String[]>();
+
+        // local
+        if(localContext.getTuple(key) !=null)
+            resolvedTuple.add(localContext.getTuple(key));
+
+        // iterate delegates
+        Iterator<Integer> delegateIds = parentScopeIds.iterator();
+        while(delegateIds.hasNext())
+        {
+            StatementContext delegationContext = availableScopes.get(delegateIds.next());
+            if(delegationContext!=null && delegationContext.getTuple(key)!=null) // may not be created yet, aka unused
+            {
+                resolvedTuple.add(delegationContext.getTuple(key));
+            }
+        }
+
+        // last but not least: external context
+        resolvedTuple.addAll(externalContext.collectTuples(key));
+
+        return resolvedTuple;
     }
 }

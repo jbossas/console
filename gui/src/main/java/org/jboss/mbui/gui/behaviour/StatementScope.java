@@ -24,6 +24,7 @@ public class StatementScope {
     private final StatementContext externalContext;
     private Map<Integer, MutableContext> scope2context;
 
+
     public StatementScope(Dialog dialog, StatementContext parentContext) {
         this.dialog = dialog;
         this.externalContext = parentContext;
@@ -90,6 +91,8 @@ public class StatementScope {
     }
 
     interface MutableContext extends StatementContext {
+        String get(String key);
+        String[] getTuple(String key);
         void setStatement(String key, String value);
         void clearStatement(String key);
     }

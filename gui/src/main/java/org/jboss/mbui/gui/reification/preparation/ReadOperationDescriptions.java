@@ -23,6 +23,8 @@ import org.jboss.dmr.client.dispatch.DispatchAsync;
 import org.jboss.dmr.client.dispatch.impl.DMRAction;
 import org.jboss.dmr.client.dispatch.impl.DMRResponse;
 import org.jboss.dmr.client.ModelNode;
+import org.jboss.mbui.gui.behaviour.Constants;
+import org.jboss.mbui.gui.behaviour.DelegatingStatementContext;
 import org.jboss.mbui.gui.behaviour.InteractionCoordinator;
 import org.jboss.mbui.gui.behaviour.StatementContext;
 import org.jboss.mbui.gui.reification.Context;
@@ -42,6 +44,7 @@ import org.jboss.mbui.model.structure.impl.InteractionUnitVisitor;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -178,7 +181,7 @@ public class ReadOperationDescriptions extends ReificationPreperation
             if (!resolvedOperations.contains(output.getId()))
             {
                 AddressMapping addressMapping = AddressMapping.fromString(address);
-                ModelNode op = addressMapping.asResource(new StatementContext()
+                ModelNode op = addressMapping.asResource(new DelegatingStatementContext()
                 {
                     @Override
                     public String resolve(String key)
@@ -193,6 +196,13 @@ public class ReadOperationDescriptions extends ReificationPreperation
                     public String[] resolveTuple(String key)
                     {
                         return delegate.resolveTuple(key);
+                    }
+
+                    @Override
+                    public LinkedList<String> collect(String key) {
+                        LinkedList<String> items = new LinkedList<String>();
+                        items.add("*");
+                        return items;
                     }
                 });
                 op.get(OP).set(READ_OPERATION_DESCRIPTION_OPERATION);

@@ -4,8 +4,10 @@ import com.allen_sauer.gwt.log.client.Log;
 import org.jboss.dmr.client.ModelNode;
 import org.jboss.mbui.gui.behaviour.StatementContext;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 import static org.jboss.dmr.client.ModelDescriptionConstants.ADDRESS;
@@ -49,12 +51,47 @@ public class AddressMapping {
         return asResource(new ModelNode(), context, wildcards);
     }
 
+
+    class Memory<T> {
+        Map<String, LinkedList<T>> values = new HashMap<String, LinkedList<T>>();
+        Map<String, Integer> indexes = new HashMap<String, Integer>();
+
+        boolean contains(String key) {
+            return values.containsKey(key);
+        }
+
+        void memorize(String key, LinkedList<T> resolved)
+        {
+            values.put(key, resolved);
+            indexes.put(key, 0);
+        }
+
+        T next(String key) {
+
+            T result = null;
+
+            LinkedList<T> items = values.get(key);
+            Integer idx = indexes.get(key);
+
+            if(!items.isEmpty() &&
+                    idx<values.size())
+            {
+                result = items.get(idx);
+                indexes.put(key, ++idx);
+            }
+
+            return result;
+        }
+    }
     public ModelNode asResource(ModelNode baseAddress, StatementContext context, String... wildcards) {
 
         ModelNode model = new ModelNode();
         model.get(ADDRESS).set(baseAddress);
 
         int wildcardCount = 0;
+
+        Memory<String[]> tupleMemory = new Memory<String[]>();
+        Memory<String> valueMemory = new Memory<String>();
 
         for(Token token: address)   // TODO: resolve ambiguous keys across context hierarchy
         {
@@ -69,7 +106,13 @@ public class AddressMapping {
                 if(token_ref.startsWith("{"))
                 {
                     token_ref = token_ref.substring(1, token_ref.length()-1);
-                    resolved_value = context.resolveTuple(token_ref);
+
+                    if(!tupleMemory.contains(token_ref))
+                    {
+                        tupleMemory.memorize(token_ref, context.collectTuples(token_ref));
+                    }
+
+                    resolved_value = tupleMemory.next(token_ref);
                 }
                 else
                 {
@@ -103,7 +146,11 @@ public class AddressMapping {
                 if(key_ref.startsWith("{"))
                 {
                     key_ref = key_ref.substring(1, key_ref.length()-1);
-                    resolved_key = context.resolve(key_ref);
+
+                    if(!valueMemory.contains(key_ref))
+                        valueMemory.memorize(key_ref, context.collect(key_ref));
+
+                    resolved_key = valueMemory.next(key_ref);
                 }
                 else
                 {
@@ -113,7 +160,11 @@ public class AddressMapping {
                 if(value_ref.startsWith("{"))
                 {
                     value_ref = value_ref.substring(1, value_ref.length()-1);
-                    resolved_value = context.resolve(value_ref);
+
+                    if(!valueMemory.contains(value_ref))
+                        valueMemory.memorize(value_ref, context.collect(value_ref));
+
+                    resolved_value= valueMemory.next(value_ref);
                 }
                 else
                 {
