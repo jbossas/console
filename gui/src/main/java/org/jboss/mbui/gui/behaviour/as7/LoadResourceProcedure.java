@@ -112,6 +112,7 @@ public class LoadResourceProcedure extends Procedure {
 
     private void loadResource(final String name, AddressMapping address) {
 
+        // TODO: resolve once and re-use
         StatementContext statementContext = statementScope.getContext(unit.getId());
 
         final ModelNode operation = address.asResource(statementContext);

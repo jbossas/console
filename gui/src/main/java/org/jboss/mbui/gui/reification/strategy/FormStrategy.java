@@ -36,6 +36,7 @@ import org.jboss.dmr.client.Property;
 import org.jboss.mbui.gui.behaviour.InteractionEvent;
 import org.jboss.mbui.gui.behaviour.PresentationEvent;
 import org.jboss.mbui.gui.behaviour.SystemEvent;
+import org.jboss.mbui.gui.behaviour.as7.GlobalQNames;
 import org.jboss.mbui.gui.reification.Context;
 import org.jboss.mbui.gui.reification.ContextKey;
 import org.jboss.mbui.gui.reification.widgets.ModelNodeForm;
@@ -59,6 +60,8 @@ import java.util.Set;
 import static org.jboss.mbui.model.behaviour.ResourceType.*;
 import static org.jboss.mbui.model.behaviour.ResourceType.System;
 
+import static org.jboss.mbui.gui.behaviour.as7.GlobalQNames.*;
+
 /**
  * @author Harald Pehl
  * @author Heiko Braun
@@ -66,10 +69,6 @@ import static org.jboss.mbui.model.behaviour.ResourceType.System;
  */
 public class FormStrategy implements ReificationStrategy<ReificationWidget, StereoTypes>
 {
-
-    private static final QName SAVE_ID = QName.valueOf("org.jboss.as:save");
-    private static final QName LOAD_ID = QName.valueOf("org.jboss.as:load");
-    private static final QName RESET_ID = QName.valueOf("org.jboss.as:reset");
 
     private ModelNode modelDescription;
     private EventBus eventBus;
@@ -270,7 +269,6 @@ public class FormStrategy implements ReificationStrategy<ReificationWidget, Ster
                 @Override
                 public void onSystemEvent(SystemEvent event) {
                     form.clearValues();
-
 
                     Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
                         @Override

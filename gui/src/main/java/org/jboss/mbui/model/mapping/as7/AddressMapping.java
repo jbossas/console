@@ -56,11 +56,8 @@ public class AddressMapping {
 
         int wildcardCount = 0;
 
-        for(Token token: address)
+        for(Token token: address)   // TODO: resolve ambiguous keys across context hierarchy
         {
-
-            // TODO: the parsing of the token structure should not be done repeatedly
-            // Make it part of the initialisation
 
             if(!token.hasKey())
             {
@@ -85,8 +82,7 @@ public class AddressMapping {
 
                 if(null==resolved_value)
                 {
-                    Log.warn("The token expression '"+token_ref+"' cannot be resolved");
-                    //assert resolved_value!=null : "The token expression '"+token_ref+"' cannot be resolved";
+                    Log.warn("Suppress token expression '"+token_ref+"'. It cannot be resolved");
                 }
                 else
                 {
