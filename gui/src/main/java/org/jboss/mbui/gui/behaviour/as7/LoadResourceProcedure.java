@@ -95,9 +95,8 @@ public class LoadResourceProcedure extends Procedure {
 
             @Override
             public LinkedList<String> collect(String key) {
-                LinkedList<String> items = new LinkedList<String>();
-                items.add("");
-                return items;
+                requiredStatements.add(key);
+                return Constants.EMPTY_LIST;
             }
         });
 

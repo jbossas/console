@@ -171,9 +171,11 @@ public class AddressMapping {
                     resolved_value = value_ref;
                 }
 
-                assert resolved_key!=null : "The key '"+key_ref+"' cannot be resolved";
-                assert resolved_value!=null : "The value '"+value_ref+"' cannot be resolved";
+                //assert resolved_key!=null : "The key '"+key_ref+"' cannot be resolved";
+                //assert resolved_value!=null : "The value '"+value_ref+"' cannot be resolved";
 
+                if(resolved_key==null) resolved_key = "_blank";
+                if(resolved_value==null) resolved_value = "_blank";
 
                 // wildcards
                 String addressValue = resolved_value;
