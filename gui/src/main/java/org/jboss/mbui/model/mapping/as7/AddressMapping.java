@@ -2,13 +2,17 @@ package org.jboss.mbui.model.mapping.as7;
 
 import com.allen_sauer.gwt.log.client.Log;
 import org.jboss.dmr.client.ModelNode;
+import org.jboss.mbui.gui.behaviour.Constants;
+import org.jboss.mbui.gui.behaviour.DelegatingStatementContext;
 import org.jboss.mbui.gui.behaviour.StatementContext;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Set;
 
 import static org.jboss.dmr.client.ModelDescriptionConstants.ADDRESS;
 
@@ -37,6 +41,7 @@ public class AddressMapping {
 
     private List<Token> address = new LinkedList<Token>();
     private int countedWildcards = -1;
+    private HashSet<String> requiredStatements;
 
     public AddressMapping(List<Token> tuple) {
         this.address = tuple;
@@ -51,6 +56,40 @@ public class AddressMapping {
         return asResource(new ModelNode(), context, wildcards);
     }
 
+    /**
+     * Parses the address declaration for tokens
+     * that need to be resolved against the statement context.
+     *
+     * @return
+     */
+    public Set<String> getRequiredStatements() {
+
+        if(null==requiredStatements)  // lazy initialisation
+        {
+            requiredStatements = new HashSet<String>();
+            asResource(new DelegatingStatementContext() {
+                @Override
+                public String resolve(final String key) {
+                    requiredStatements.add(key);
+                    return "";
+                }
+
+                @Override
+                public String[] resolveTuple(String key) {
+                    return new String[]{"", ""};
+                }
+
+                @Override
+                public LinkedList<String> collect(String key) {
+                    requiredStatements.add(key);
+                    return Constants.EMPTY_LIST;
+                }
+            });
+        }
+
+        return requiredStatements;
+    }
+
 
     class Memory<T> {
         Map<String, LinkedList<T>> values = new HashMap<String, LinkedList<T>>();
@@ -62,10 +101,19 @@ public class AddressMapping {
 
         void memorize(String key, LinkedList<T> resolved)
         {
+            int startIdx = resolved.isEmpty() ? 0 : resolved.size() - 1;
+
             values.put(key, resolved);
-            indexes.put(key, 0);
+            indexes.put(key, startIdx);
         }
 
+        /**
+         * The result from the statement scope hierarchy are resolved from child towards parents.
+         * hence we need to map it backwards into the address tokens.
+         *
+         * @param key
+         * @return
+         */
         T next(String key) {
 
             T result = null;
@@ -73,16 +121,16 @@ public class AddressMapping {
             LinkedList<T> items = values.get(key);
             Integer idx = indexes.get(key);
 
-            if(!items.isEmpty() &&
-                    idx<values.size())
+            if(!items.isEmpty() && idx>=0)
             {
                 result = items.get(idx);
-                indexes.put(key, ++idx);
+                indexes.put(key, --idx);
             }
 
             return result;
         }
     }
+
     public ModelNode asResource(ModelNode baseAddress, StatementContext context, String... wildcards) {
 
         ModelNode model = new ModelNode();
@@ -308,6 +356,16 @@ public class AddressMapping {
             return true;
         }
 
+    }
+
+    @Override
+    public String toString() {
+        StringBuffer sb = new StringBuffer();
+        for(Token token: address)
+        {
+            sb.append("/").append(token);
+        }
+        return sb.toString();
     }
 }
 

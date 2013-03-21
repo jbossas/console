@@ -79,26 +79,7 @@ public class LoadResourceProcedure extends Procedure {
         address = AddressMapping.fromString(DMRMapping.getAddress());
 
         // check preconditions of the address token
-        final Set<String> requiredStatements = new HashSet<String>();
-        address.asResource(new DelegatingStatementContext() {
-            @Override
-            public String resolve(final String key) {
-                // value expressions
-                requiredStatements.add(key);
-                return "";
-            }
-
-            @Override
-            public String[] resolveTuple(String key) {
-                return new String[]{"", ""};
-            }
-
-            @Override
-            public LinkedList<String> collect(String key) {
-                requiredStatements.add(key);
-                return Constants.EMPTY_LIST;
-            }
-        });
+        final Set<String> requiredStatements = address.getRequiredStatements();
 
         // any value expression key becomes a precondition matched against the statement context
         if(requiredStatements.size()>0)
