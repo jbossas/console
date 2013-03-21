@@ -31,7 +31,9 @@ import com.google.gwt.user.client.ui.RootLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.DelayedBindRegistry;
+import com.gwtplatform.mvp.client.proxy.AsyncCallFailEvent;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
+import org.jboss.as.console.client.core.AsyncCallHandler;
 import org.jboss.as.console.client.core.BootstrapContext;
 import org.jboss.as.console.client.core.LoadingPanel;
 import org.jboss.as.console.client.core.UIConstants;
@@ -88,6 +90,9 @@ public class Console implements EntryPoint {
     }
 
     public void onModuleLoad2() {
+
+        // register global code split call handler
+        MODULES.getEventBus().addHandler(AsyncCallFailEvent.getType(), new AsyncCallHandler(MODULES.getPlaceManager()));
 
         // load console css bundle
         ConsoleResources.INSTANCE.css().ensureInjected();
