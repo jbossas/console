@@ -36,7 +36,10 @@ public class StatementScope {
     }
 
     public void setStatement(QName sourceId, String key, String value) {
-        ((MutableContext)getContext(sourceId)).setStatement(key, value);
+        MutableContext context = (MutableContext) getContext(sourceId);
+
+        System.out.println(">> Set '"+key+"' on scope ["+context.getScopeId()+"]: "+value);
+        context.setStatement(key, value);
     }
 
     public StatementContext getContext(QName interactionUnitId) {
@@ -78,7 +81,7 @@ public class StatementScope {
                 parentScopeIds.add(parentNode.getData());
             }
 
-            scope2context.put(scope, new ParentDelegationContextImpl(externalContext, parentScopeIds,
+            scope2context.put(scope, new ParentDelegationContextImpl(scope, externalContext, parentScopeIds,
                     new Scopes() {
                         @Override
                         public StatementContext get(Integer scopeId) {
@@ -91,6 +94,7 @@ public class StatementScope {
     }
 
     interface MutableContext extends StatementContext {
+        Integer getScopeId();
         String get(String key);
         String[] getTuple(String key);
         void setStatement(String key, String value);
