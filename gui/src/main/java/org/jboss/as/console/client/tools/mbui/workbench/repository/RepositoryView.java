@@ -69,7 +69,9 @@ public class RepositoryView extends ViewImpl implements RepositoryPresenter.MyVi
 
     @UiField Button visualize;
     @UiField Button reify;
+    @UiField Button activate;
     @UiField Button reset;
+    @UiField Button passivate;
     @UiField(provided = true) CellList<Sample> list;
 
     @Inject
@@ -114,10 +116,22 @@ public class RepositoryView extends ViewImpl implements RepositoryPresenter.MyVi
         presenter.reify(selectionModel.getSelectedObject());
     }
 
+    @UiHandler("activate")
+    public void onActivate(ClickEvent event)
+    {
+        presenter.activate(selectionModel.getSelectedObject());
+    }
+
     @UiHandler("reset")
     public void onReset(ClickEvent event)
     {
-        presenter.reset();
+        presenter.reset(selectionModel.getSelectedObject());
+    }
+
+    @UiHandler("passivate")
+    public void onPassivate(ClickEvent event)
+    {
+        presenter.passivate(selectionModel.getSelectedObject());
     }
 
     @Override

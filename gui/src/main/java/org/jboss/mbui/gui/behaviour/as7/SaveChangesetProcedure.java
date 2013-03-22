@@ -101,7 +101,7 @@ public class SaveChangesetProcedure extends Procedure {
                 Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
                     @Override
                     public void execute() {
-                        coordinator.onReset();
+                        coordinator.reset();
                     }
                 });
 

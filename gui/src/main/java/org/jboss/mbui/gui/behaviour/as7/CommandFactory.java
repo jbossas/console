@@ -136,7 +136,7 @@ public class CommandFactory {
         Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
             @Override
             public void execute() {
-                context.getCoordinator().onReset();
+                context.getCoordinator().reset();
             }
         });
     }

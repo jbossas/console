@@ -36,7 +36,7 @@ public class StatementContextStep<S extends Enum<S>> extends ReificationStep {
         StatementContextVisitor visitor = new StatementContextVisitor(statementContextTree);
         dialog.getInterfaceModel().accept(visitor);
 
-        dialog.setStatementContextShim(statementContextTree);
+        dialog.setScopeModel(statementContextTree);
 
         System.out.println("Discovered "+visitor.getContextIds().size() +" statement context scopes in dialog "+dialog.getId());
     }

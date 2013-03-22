@@ -31,13 +31,13 @@ import java.util.Set;
  * @author Heiko Braun
  * @date 11/15/12
  */
-public class InteractionCoordinator implements FrameworkContract,
+public class InteractionCoordinator implements KernelContract,
         InteractionEvent.InteractionHandler, NavigationEvent.NavigationHandler,
         StatementEvent.StatementHandler, BehaviourExecution {
 
     private static final String PROJECT_NAMESPACE = "org.jboss.as";
     final static SystemEvent RESET = new SystemEvent(new QName(PROJECT_NAMESPACE, "reset"));
-    final static SystemEvent BIND = new SystemEvent(new QName(PROJECT_NAMESPACE, "bind"));
+
     final static SystemEvent REVEAL = new SystemEvent(new QName(PROJECT_NAMESPACE, "reveal"));
 
     // a bus scoped to this coordinator and the associated models
@@ -116,15 +116,20 @@ public class InteractionCoordinator implements FrameworkContract,
 
     }
 
-    //  ----- System events ------
+
     @Override
-    public void onBind() {
-        bus.fireEvent(BIND);
+    public void activate() {
+
     }
 
     @Override
-    public void onReset() {
+    public void reset() {
         bus.fireEvent(RESET);
+    }
+
+    @Override
+    public void passivate() {
+
     }
 
     //  ----- Event handling ------

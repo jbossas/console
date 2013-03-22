@@ -52,8 +52,8 @@ public class PreviewView extends ViewImpl implements PreviewPresenter.MyView
     }
 
     @Override
-    public void show(final ReificationWidget interactionUnit)
+    public void show(final Widget widget)
     {
-        container.setWidget(interactionUnit.asWidget());
+        container.setWidget(widget);
     }
 }

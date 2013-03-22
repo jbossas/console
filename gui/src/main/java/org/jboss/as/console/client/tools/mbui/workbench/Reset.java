@@ -16,49 +16,19 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.as.console.client.tools.mbui.workbench.repository;
+package org.jboss.as.console.client.tools.mbui.workbench;
 
-import org.jboss.mbui.gui.kernel.DialogRepository;
-import org.jboss.mbui.model.Dialog;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.gwtplatform.dispatch.annotation.GenEvent;
+import com.gwtplatform.dispatch.annotation.Order;
+import org.jboss.as.console.client.tools.mbui.workbench.repository.Sample;
 
 /**
  * @author Harald Pehl
- * @date 10/25/2012
+ * @date 10/31/2012
  */
-public class SampleRepository implements DialogRepository
+@GenEvent
+public class Reset
 {
-
-    private final ArrayList<Sample> samples;
-
-    public SampleRepository() {
-        samples = new ArrayList<Sample>();
-
-        samples.add(new DataSourceSample());
-        samples.add(new TransactionSample());
-        samples.add(new SecurityDomainsSample());
-
-    }
-
-    public List<Sample> getSamples()
-    {
-        return samples;
-    }
-
-    @Override
-    public Dialog getDialog(String name) {
-        Dialog dialog = null;
-
-        for(Sample sample : samples)
-        {
-            if(sample.getName().equals(name))
-            {
-                dialog = sample.getDialog();
-                break;
-            }
-        }
-        return dialog;
-    }
+    @Order(1)
+    Sample sample;
 }

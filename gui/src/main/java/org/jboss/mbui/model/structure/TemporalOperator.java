@@ -70,5 +70,12 @@ public enum TemporalOperator
     /**
      * The second task interrupts and deactivates the first task.
      */
-    Deactivation
+    Deactivation,
+
+    /**
+     * First task can be interrupted by the second one.
+     * When the second terminates then the first one can be reactivated from the state reached before.
+     */
+    SuspendResume
+
 }

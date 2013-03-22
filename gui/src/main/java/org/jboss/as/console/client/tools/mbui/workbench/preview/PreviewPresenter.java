@@ -18,8 +18,8 @@
  */
 package org.jboss.as.console.client.tools.mbui.workbench.preview;
 
-import com.allen_sauer.gwt.log.client.Log;
-import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.Presenter;
@@ -29,36 +29,18 @@ import com.gwtplatform.mvp.client.annotations.ProxyStandard;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import org.jboss.as.console.client.Console;
+import org.jboss.as.console.client.tools.mbui.workbench.ActivateEvent;
 import org.jboss.as.console.client.tools.mbui.workbench.ApplicationPresenter;
+import org.jboss.as.console.client.tools.mbui.workbench.PassivateEvent;
 import org.jboss.as.console.client.tools.mbui.workbench.ReifyEvent;
 import org.jboss.as.console.client.tools.mbui.workbench.ResetEvent;
-import org.jboss.as.console.client.tools.mbui.workbench.repository.Sample;
 import org.jboss.as.console.client.tools.mbui.workbench.repository.SampleRepository;
 import org.jboss.dmr.client.dispatch.DispatchAsync;
-import org.jboss.gwt.flow.client.Async;
-import org.jboss.gwt.flow.client.Control;
-import org.jboss.gwt.flow.client.Function;
-import org.jboss.gwt.flow.client.Outcome;
-import org.jboss.mbui.gui.behaviour.InteractionCoordinator;
 import org.jboss.mbui.gui.behaviour.NavigationDelegate;
 import org.jboss.mbui.gui.behaviour.as7.CoreGUIContext;
-import org.jboss.mbui.gui.reification.Context;
-import org.jboss.mbui.gui.reification.ContextKey;
-import org.jboss.mbui.gui.reification.pipeline.BuildUserInterfaceStep;
-import org.jboss.mbui.gui.reification.pipeline.ImplicitBehaviourStep;
-import org.jboss.mbui.gui.reification.pipeline.IntegrityStep;
-import org.jboss.mbui.gui.reification.pipeline.ReificationPipeline;
-import org.jboss.mbui.gui.reification.pipeline.StatementContextStep;
-import org.jboss.mbui.gui.reification.pipeline.UniqueIdCheckStep;
-import org.jboss.mbui.gui.reification.preparation.ReadOperationDescriptions;
-import org.jboss.mbui.gui.reification.preparation.ReadResourceDescription;
-import org.jboss.mbui.gui.reification.preparation.ReificationPreperation;
-import org.jboss.mbui.gui.reification.strategy.ReificationWidget;
-import org.jboss.mbui.model.Dialog;
+import org.jboss.mbui.gui.kernel.Framework;
+import org.jboss.mbui.gui.kernel.Kernel;
 import org.jboss.mbui.model.structure.QName;
-
-import java.util.HashMap;
-import java.util.Map;
 
 import static org.jboss.as.console.client.tools.mbui.workbench.NameTokens.preview;
 
@@ -68,12 +50,11 @@ import static org.jboss.as.console.client.tools.mbui.workbench.NameTokens.previe
  * @date 10/30/2012
  */
 public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, PreviewPresenter.MyProxy>
-        implements ReifyEvent.ReifyHandler, ResetEvent.Handler, NavigationDelegate
+        implements ReifyEvent.ReifyHandler, ActivateEvent.ActivateHandler, ResetEvent.ResetHandler,
+        PassivateEvent.PassivateHandler, NavigationDelegate
 {
-    private Map<String, InteractionCoordinator> coordinators = new HashMap<String, InteractionCoordinator>();
-    private String selectedSample = null;
-    private DispatchAsync dispatcher;
-    private HashMap<String, ReificationWidget> cachedWidgets = new HashMap<String, ReificationWidget>();
+    private final Kernel kernel;
+
     @Inject
     public PreviewPresenter(
             final EventBus eventBus,
@@ -83,37 +64,24 @@ public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, Preview
             final SampleRepository sampleRepository)
     {
         super(eventBus, view, proxy);
-        this.dispatcher = dispatcher;
 
-        // these would be created/stored differently. This is just an example
-
-        // context
-        CoreGUIContext statementContext = new CoreGUIContext(
+        CoreGUIContext globalContext = new CoreGUIContext(
                 Console.MODULES.getCurrentSelectedProfile(),
                 Console.MODULES.getCurrentUser()
         );
 
-        for(Sample sample : sampleRepository.getSamples())
-        {
-            InteractionCoordinator coordinator = new InteractionCoordinator(
-                    sample.getDialog(), statementContext, this
-            );
-            coordinators.put(sample.getName(), coordinator);
-        }
+        // mbui kernel instance
+        this.kernel = new Kernel(sampleRepository, new Framework() {
+            @Override
+            public DispatchAsync getDispatcher() {
+                return dispatcher;
+            }
+        }, globalContext);
     }
 
     @Override
     public void onNavigation(QName source, QName target) {
-        System.out.println("absolute navigation " + source+">"+target);
-    }
-
-    private InteractionCoordinator getActiveCoordinator()
-    {
-        if (null == selectedSample)
-        {
-            throw new RuntimeException("No sample selected (requires reification/onBind)");
-        }
-        return coordinators.get(selectedSample);
+        System.out.println("absolute navigation " + source + ">" + target);
     }
 
     @Override
@@ -121,7 +89,7 @@ public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, Preview
     {
         super.onBind();
         getEventBus().addHandler(ReifyEvent.getType(), this);
-        getEventBus().addHandler(ResetEvent.TYPE, this);
+        getEventBus().addHandler(ResetEvent.getType(), this);
     }
 
     @Override
@@ -134,130 +102,39 @@ public class PreviewPresenter extends Presenter<PreviewPresenter.MyView, Preview
     @Override
     public void onReify(final ReifyEvent event)
     {
-        // TODO: dialog models would need to be stored for later retrieval in a real world app
-        final Sample sample = event.getSample();
-        selectedSample = sample.getName();
+        kernel.reify(event.getSample().getName(), new AsyncCallback<Widget>() {
+            @Override
+            public void onFailure(Throwable throwable) {
+                Console.error("Reification failed", throwable.getMessage());
+            }
 
-        if (cachedWidgets.get(selectedSample) == null)
-        {
-            // top level interaction unit & context
-            final Dialog dialog = sample.getDialog();
-            final Context context = new Context();
-
-            // build reification pipeline
-            Function<Context> prepareContext = new Function<Context>() {
-                @Override
-                public void execute(Control<Context> control) {
-                    context.set(ContextKey.EVENTBUS, getActiveCoordinator().getLocalBus());
-                    context.set(ContextKey.COORDINATOR, getActiveCoordinator());
-                    //context.set(ContextKey.STATEMENTS, getActiveCoordinator().getContext());
-
-                    control.proceed();
-                }
-            };
-
-            Function<Context> statementShim = new Function<Context>() {
-                @Override
-                public void execute(Control<Context> control) {
-                    new StatementContextStep().execute(dialog,context);
-                    control.proceed();
-                }
-            };
-
-            Function<Context> readOperationMetaData = new Function<Context>() {
-                @Override
-                public void execute(final Control<Context> control) {
-                    ReadOperationDescriptions operationMetaData = new ReadOperationDescriptions(dispatcher);
-                    operationMetaData.prepareAsync(dialog, context, new ReificationPreperation.Callback()
-                    {
-                        @Override
-                        public void onError(Throwable caught) {
-                            Log.error("Reification failed: " + caught.getMessage());
-                            control.abort();
-                        }
-
-                        @Override
-                        public void onSuccess() {
-                            Log.info("Successfully retrieved operation meta data");
-                            control.proceed();
-                        }
-                    });
-                }
-            };
-
-            Function<Context> readResourceMetaData = new Function<Context>() {
-                @Override
-                public void execute(final Control<Context> control) {
-                    ReificationPreperation readResourceDescription = new ReadResourceDescription(dispatcher);
-                    readResourceDescription.prepareAsync(dialog, context, new ReificationPreperation.Callback()
-                    {
-                        @Override
-                        public void onSuccess()
-                        {
-                            Log.info("Successfully retrieved resource meta data");
-
-                            // setup & start the reification pipeline
-                            ReificationPipeline pipeline = new ReificationPipeline(
-                                    new UniqueIdCheckStep(),
-                                    new BuildUserInterfaceStep(),
-                                    //new StatementContextStep(),
-                                    new ImplicitBehaviourStep(dispatcher),
-                                    new IntegrityStep());
-
-                            pipeline.execute(dialog, context);
-
-                            control.proceed();
-                        }
-
-                        @Override
-                        public void onError(final Throwable caught)
-                        {
-                            Log.error("Reification failed: " + caught.getMessage());
-                            control.abort();
-                        }
-                    });
-                }
-            };
-
-            Outcome<Context> outcome = new Outcome<Context>() {
-                @Override
-                public void onFailure(final Context context) {
-                    Window.alert("Reification failed");
-                }
-
-                @Override
-                public void onSuccess(final Context context) {
-                    // show result
-                    ReificationWidget widget = context.get(ContextKey.WIDGET);
-                    assert widget !=null;
-
-                    cachedWidgets.put(selectedSample, widget);
-                    getView().show(widget);
-                }
-            };
-
-            // execute pipeline
-            new Async<Context>().waterfall(
-                    context, outcome,
-                    prepareContext, statementShim, readOperationMetaData, readResourceMetaData
-            );
-        }
-        else
-        {
-            getView().show(cachedWidgets.get(selectedSample));
-        }
+            @Override
+            public void onSuccess(Widget widget) {
+                // TODO Call activate instead?
+//                kernel.activate();
+                getView().show(widget);
+            }
+        });
     }
 
-    // in a real this would be wired Presenter.onReset()
     @Override
-    public void doReset()
-    {
-        getActiveCoordinator().onReset();
+    public void onActivate(ActivateEvent event) {
+        kernel.activate();
+    }
+
+    @Override
+    public void onReset(ResetEvent event) {
+        kernel.reset();
+    }
+
+    @Override
+    public void onPassivate(PassivateEvent event) {
+        kernel.passivate();
     }
 
     public interface MyView extends View
     {
-        void show(ReificationWidget interactionUnit);
+        void show(Widget widget);
     }
 
     @ProxyStandard

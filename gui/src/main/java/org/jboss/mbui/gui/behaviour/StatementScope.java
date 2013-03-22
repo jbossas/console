@@ -35,8 +35,8 @@ public class StatementScope {
         ((MutableContext)getContext(sourceId)).clearStatement(key);
     }
 
-    public void setStatement(QName sourceId, String key, String value) {
-        MutableContext context = (MutableContext) getContext(sourceId);
+    public void setStatement(QName interactionUnitId, String key, String value) {
+        MutableContext context = (MutableContext) getContext(interactionUnitId);
 
         System.out.println(">> Set '"+key+"' on scope ["+context.getScopeId()+"]: "+value);
         context.setStatement(key, value);
@@ -45,7 +45,7 @@ public class StatementScope {
     public StatementContext getContext(QName interactionUnitId) {
 
 
-        final Node<Integer> self = dialog.getStatementContextShim().findNode(interactionUnitId);
+        final Node<Integer> self = dialog.getScopeModel().findNode(interactionUnitId);
         assert self!=null : "Unit not present in shim: "+ interactionUnitId;
 
         Integer scope = self.getData();

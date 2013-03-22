@@ -23,6 +23,8 @@ import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.PresenterWidget;
 import com.gwtplatform.mvp.client.View;
+import org.jboss.as.console.client.tools.mbui.workbench.ActivateEvent;
+import org.jboss.as.console.client.tools.mbui.workbench.PassivateEvent;
 import org.jboss.as.console.client.tools.mbui.workbench.ReifyEvent;
 import org.jboss.as.console.client.tools.mbui.workbench.ResetEvent;
 import org.jboss.ballroom.client.widgets.window.DefaultWindow;
@@ -66,7 +68,8 @@ public class RepositoryPresenter extends PresenterWidget<RepositoryPresenter.MyV
         DefaultWindow window = new DefaultWindow("Dialog: "+sample.getDialog().getId());
         window.setWidth(800);
         window.setHeight(600);
-        window.trapWidget(new ScrollPanel(visualization.getChart()));
+        window.setModal(true);
+        window.setWidget(new ScrollPanel(visualization.getChart()));
         window.center();
     }
 
@@ -75,7 +78,16 @@ public class RepositoryPresenter extends PresenterWidget<RepositoryPresenter.MyV
         ReifyEvent.fire(this, new ReifyEvent(sample));
     }
 
-    public void reset() {
-        ResetEvent.fire(this, new ResetEvent());
+    public void activate(final Sample sample)
+    {
+        ActivateEvent.fire(this, new ActivateEvent(sample));
+    }
+
+    public void reset(Sample sample) {
+        ResetEvent.fire(this, new ResetEvent(sample));
+    }
+
+    public void passivate(Sample sample) {
+        PassivateEvent.fire(this, new PassivateEvent(sample));
     }
 }

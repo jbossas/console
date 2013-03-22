@@ -23,7 +23,6 @@ import com.google.gwt.event.logical.shared.AttachEvent;
 import com.google.gwt.event.logical.shared.BeforeSelectionEvent;
 import com.google.gwt.event.logical.shared.BeforeSelectionHandler;
 import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.user.client.ui.StackLayoutPanel;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -93,7 +92,7 @@ public class ChoiceStrategy implements ReificationStrategy<ReificationWidget, St
                 switch (interactionUnit.getStereotype())
                 {
                     case EditorPanel:
-                        this.delegate = createTopLevelTabPanel(interactionUnit, eventBus);
+                        this.delegate = createEditorPanel(interactionUnit, eventBus);
                         break;
                     case Pages:
                         this.delegate = createPages(interactionUnit, eventBus);
@@ -108,11 +107,11 @@ public class ChoiceStrategy implements ReificationStrategy<ReificationWidget, St
             }
         }
 
-        private TabPanelContract createTopLevelTabPanel(final InteractionUnit interactionUnit, final EventBus eventBus) {
+        private TabPanelContract createEditorPanel(final InteractionUnit interactionUnit, final EventBus eventBus) {
             final DefaultTabLayoutPanel tabLayoutpanel = new DefaultTabLayoutPanel(40, Style.Unit.PX);
             tabLayoutpanel.addStyleName("default-tabpanel");
 
-            tabLayoutpanel.addBeforeSelectionHandler(new BeforeSelectionHandler<Integer>() {
+           /* tabLayoutpanel.addBeforeSelectionHandler(new BeforeSelectionHandler<Integer>() {
                 @Override
                 public void onBeforeSelection(BeforeSelectionEvent<Integer> event) {
 
@@ -130,7 +129,7 @@ public class ChoiceStrategy implements ReificationStrategy<ReificationWidget, St
                     }
                     event.cancel();
                 }
-            });
+            });  */
 
             TabPanelContract tabPanelContract = new TabPanelContract() {
                 @Override
@@ -154,7 +153,7 @@ public class ChoiceStrategy implements ReificationStrategy<ReificationWidget, St
 
 
             // activation listener
-            eventBus.addHandler(SystemEvent.TYPE,
+          /*  eventBus.addHandler(SystemEvent.TYPE,
                     new SystemEvent.Handler() {
                         @Override
                         public boolean accepts(SystemEvent event) {
@@ -177,15 +176,15 @@ public class ChoiceStrategy implements ReificationStrategy<ReificationWidget, St
                             }
                         }
                     }
-            );
+            );*/
 
 
             // complement model
             Resource<ResourceType> navigation = new Resource<ResourceType>(NavigationEvent.ID, ResourceType.Navigation);
-            Resource<ResourceType> activation = new Resource<ResourceType>(SystemEvent.ACTIVATE_ID, ResourceType.System);
+            //Resource<ResourceType> activation = new Resource<ResourceType>(SystemEvent.ACTIVATE_ID, ResourceType.System);
 
             getInteractionUnit().setOutputs(navigation);
-            getInteractionUnit().setInputs(activation);
+            //getInteractionUnit().setInputs(activation);
 
             return tabPanelContract;
         }

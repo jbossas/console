@@ -120,7 +120,7 @@ public class DialogVisualization
             String style = interactionUnit.hasMapping(MappingType.DMR) ? MAPPED_STYLE : UNMAPPED_STYLE;
 
             // statement context shim visualisation
-            Node<Integer> self = dialog.getStatementContextShim().findNode(interactionUnit.getId());
+            Node<Integer> self = dialog.getScopeModel().findNode(interactionUnit.getId());
             Integer scope = self.getData();
             String color = scope>colors.length ? "#ffffff" : colors[scope];
 

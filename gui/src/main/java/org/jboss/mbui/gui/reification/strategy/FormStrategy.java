@@ -263,7 +263,7 @@ public class FormStrategy implements ReificationStrategy<ReificationWidget, Ster
             coordinator.addHandler(SystemEvent.TYPE, new SystemEvent.Handler() {
                 @Override
                 public boolean accepts(SystemEvent event) {
-                    return event.getId().equals(RESET_ID);
+                    return event.getId().equals(RESET_ID) ;
                 }
 
                 @Override

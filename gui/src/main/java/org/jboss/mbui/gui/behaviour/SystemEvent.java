@@ -8,7 +8,7 @@ import org.jboss.mbui.model.structure.QName;
 /**
  * A system event is created by the framework.
  *
- * @see FrameworkContract
+ * @see KernelContract
  *
  * @author Heiko Braun
  * @date 11/15/12
