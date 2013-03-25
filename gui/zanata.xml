@@ -11,6 +11,7 @@
     <locale>fr</locale>
     <locale>es</locale>
     <locale>ja</locale>
+    <locale>ko</locale>
   </locales>
 
 </config>

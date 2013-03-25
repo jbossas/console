@@ -311,6 +311,7 @@
                                                 <include name="UIConstants_es.properties"/>
                                                 <include name="UIConstants_fr.properties"/>
                                                 <include name="UIConstants_ja.properties"/>
+                                                <include name="UIConstants_ko.properties"/>
                                                 <include name="UIConstants_pt_BR.properties"/>
                                                 <include name="UIConstants_zh_Hans.properties"/>
                                             </fileset>
@@ -322,6 +323,7 @@
                                                 <include name="UIMessages_es.properties"/>
                                                 <include name="UIMessages_fr.properties"/>
                                                 <include name="UIMessages_ja.properties"/>
+                                                <include name="UIMessages_ko.properties"/>                                                
                                                 <include name="UIMessages_pt_BR.properties"/>
                                                 <include name="UIMessages_zh_Hans.properties"/>
                                             </fileset>

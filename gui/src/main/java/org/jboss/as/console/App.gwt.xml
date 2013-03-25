@@ -97,9 +97,9 @@
         return locale_value;
     </property-provider>
 
-    <extend-property name="locale" values="en,de,es,fr,pt_BR,zh_Hans,ja"/>
+    <extend-property name="locale" values="en,de,es,fr,pt_BR,zh_Hans,ja,ko"/>
     <set-property-fallback name="locale" value="en"/>
-    <set-property name="locale" value="en,de,es,fr,pt_BR,zh_Hans,ja"/>
+    <set-property name="locale" value="en,de,es,fr,pt_BR,zh_Hans,ja,ko"/>
 
     <!--removes client-side stack trace info (can reduce size up to 15%)-->
     <set-property name="compiler.stackMode" value="strip"/>
