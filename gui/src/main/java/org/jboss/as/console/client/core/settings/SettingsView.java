@@ -63,7 +63,7 @@ public class SettingsView extends PopupViewImpl implements SettingsPresenterWidg
         ComboBoxItem localeItem = new ComboBoxItem(Preferences.Key.LOCALE.getToken(), Preferences.Key.LOCALE.getTitle());
 
         localeItem.setDefaultToFirstOption(true);
-        localeItem.setValueMap(new String[] {"en", "de", "zh_Hans", "pt_BR", "fr", "es", "ja"});
+        localeItem.setValueMap(new String[] {"en", "de", "zh_Hans", "pt_BR", "fr", "es", "ja", "ko"});
 
         //CheckBoxItem useCache = new CheckBoxItem(Preferences.Key.USE_CACHE.getToken(), Preferences.Key.USE_CACHE.getTitle());
 
