@@ -59,7 +59,6 @@ public class ProductConfigGenerator extends Generator {
     public String generate(TreeLogger logger, GeneratorContext context, String typeName)
             throws UnableToCompleteException
     {
-        System.out.println("\n\n\n################# Generating " + typeName + "\n\n");
         this.typeName = typeName;
         TypeOracle typeOracle = context.getTypeOracle();
 
