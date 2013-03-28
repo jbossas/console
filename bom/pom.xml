@@ -21,6 +21,7 @@
 
     <dependencyManagement>
         <dependencies>
+            <!-- Console -->
             <dependency>
                 <groupId>org.jboss.as</groupId>
                 <artifactId>jboss-as-console-dmr</artifactId>
@@ -119,6 +120,11 @@
                 <groupId>com.google.code.gwt-log</groupId>
                 <artifactId>gwt-log</artifactId>
                 <version>${gwt-log.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>log4j</groupId>
+                <artifactId>log4j</artifactId>
+                <version>1.2.17</version>
             </dependency>
             <dependency>
                 <groupId>com.gwtplatform</groupId>

@@ -19,8 +19,6 @@
 
     <properties>
         <console.profile>jboss</console.profile>
-        <product.version>7.2</product.version>
-        <gwt.bindAddress>127.0.0.1</gwt.bindAddress>
     </properties>
 
 
@@ -104,6 +102,10 @@
             <artifactId>gwt-log</artifactId>
         </dependency>
         <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.gwtplatform</groupId>
             <artifactId>gwtp-mvp-client</artifactId>
         </dependency>
@@ -140,6 +142,12 @@
             <resource>
                 <directory>src/main/java</directory>
             </resource>
+            <resource>
+                <directory>${project.build.directory}/generated-sources/ant</directory>
+            </resource>
+            <resource>
+                <directory>${project.build.directory}/generated-sources/apt</directory>
+            </resource>
         </resources>
 
 
@@ -155,7 +163,7 @@
                             <goal>run</goal>
                         </goals>
                         <configuration>
-                            <tasks>
+                            <target>
                                 <!-- bump number first-->
                                 <buildnumber/>
                                 <ant antfile="../scripts/antrun-version.xml" inheritAll="false" inheritRefs="false">
@@ -164,11 +172,11 @@
                                     <property name="build.user" value="${user.name}"/>
                                     <property name="src.dir" value="${project.build.directory}/generated-sources/ant" />
                                     <property name="console.profile" value="${console.profile}" />
-                                    <property name="product.version" value="${product.version}" />
+                                    <property name="product.version" value="${gwt.console.product.version}" />
                                     <!-- only used in hosted mode, see BootstrapContext -->
                                     <property name="dev.host" value="${gwt.bindAddress}" />
                                 </ant>
-                            </tasks>
+                            </target>
                             <sourceRoot>
                                 ${project.build.directory}/generated-sources/ant
                             </sourceRoot>
@@ -188,11 +196,14 @@
                         <phase>generate-sources</phase>
                         <configuration>
                             <outputDiagnostics>false</outputDiagnostics>
+                            <options>
+                                <bindAddress>${gwt.bindAddress}</bindAddress>
+                                <console.dev.host>${gwt.console.dev.host}</console.dev.host>
+                                <console.product.version>${gwt.console.product.version}</console.product.version>
+                            </options>
                             <processors>
                                 <processor>org.jboss.as.console.spi.SPIProcessor</processor>
                             </processors>
-                            <appendSourceArtifacts>true</appendSourceArtifacts>
-                            <sourceClassifier>export</sourceClassifier>
                         </configuration>
                     </execution>
                     <execution>
@@ -201,23 +212,34 @@
                             <goal>process</goal>
                         </goals>
                         <phase>generate-sources</phase>
-                        <configuration>
-                            <processors>
-                                <processor>com.gwtplatform.dispatch.annotation.processor.GenEventProcessor</processor>
-                            </processors>
-                            <outputClassDirectory></outputClassDirectory>
-                            <appendSourceArtifacts>true</appendSourceArtifacts>
-                            <sourceClassifier>export</sourceClassifier>
-                        </configuration>
                     </execution>
                 </executions>
                 <dependencies>
                     <dependency>
                         <groupId>com.gwtplatform</groupId>
                         <artifactId>gwtp-processors</artifactId>
-                        <version>0.7</version>
+                        <version>${gwtp.version}</version>
                     </dependency>
                 </dependencies>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>add-source</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>add-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>${project.build.directory}/generated-sources/ant</source>
+                                <source>${project.build.directory}/generated-sources/apt</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -264,7 +286,7 @@
                                 <id>prepare.zanata</id>
                                 <phase>initialize</phase>
                                 <configuration>
-                                    <tasks>
+                                    <target>
                                         <mkdir dir="${project.build.directory}/i18n"/>
                                         <copy file="./src/main/java/org/jboss/as/console/client/core/UIConstants_en.properties"
                                               tofile="${project.build.directory}/i18n/UIConstants.properties" overwrite="true"/>
@@ -290,7 +312,7 @@
                                                 <include name="UIMessages_zh_Hans.properties"/>
                                             </fileset>
                                         </copy>
-                                    </tasks>
+                                    </target>
                                 </configuration>
                                 <goals>
                                     <goal>run</goal>

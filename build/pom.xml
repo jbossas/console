@@ -131,7 +131,7 @@
                     <extraJvmArgs>-Xmx1024m -DDEBUG -XX:MaxPermSize=256M</extraJvmArgs>
                     <style>OBF</style>
                     <hostedWebapp>war</hostedWebapp>
-                    <localWorkers>2</localWorkers>
+                    <localWorkers>4</localWorkers>
                     <compileReport>false</compileReport>
                     <module>org.jboss.as.console.composite.App</module>
                     <disableCastChecking>true</disableCastChecking>
@@ -148,6 +148,44 @@
                 </executions>
             </plugin>
             <plugin>
+                <groupId>org.bsc.maven</groupId>
+                <artifactId>maven-processor-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>process-spi</id>
+                        <goals>
+                            <goal>process</goal>
+                        </goals>
+                        <phase>generate-sources</phase>
+                        <configuration>
+                            <outputDiagnostics>false</outputDiagnostics>
+                            <options>
+                                <bindAddress>${gwt.bindAddress}</bindAddress>
+                                <console.dev.host>${gwt.console.dev.host}</console.dev.host>
+                                <console.product.version>${gwt.console.product.version}</console.product.version>
+                            </options>
+                            <processors>
+                                <processor>org.jboss.as.console.spi.SPIProcessor</processor>
+                            </processors>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>process-gwtp</id>
+                        <goals>
+                            <goal>process</goal>
+                        </goals>
+                        <phase>generate-sources</phase>
+                    </execution>
+                </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.gwtplatform</groupId>
+                        <artifactId>gwtp-processors</artifactId>
+                        <version>${gwtp.version}</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+            <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
                 <executions>
@@ -159,51 +197,9 @@
                         </goals>
                         <configuration>
                             <sources>
+                                <source>${project.build.directory}/generated-sources/ant</source>
                                 <source>${project.build.directory}/generated-sources/apt</source>
                             </sources>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.bsc.maven</groupId>
-                <artifactId>maven-processor-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>process</id>
-                        <goals>
-                            <goal>process</goal>
-                        </goals>
-                        <phase>generate-sources</phase>
-                        <configuration>
-                            <outputDiagnostics>false</outputDiagnostics>
-                            <processors>
-                                <processor>org.jboss.as.console.spi.SPIProcessor</processor>
-                            </processors>
-                            <appendSourceArtifacts>true</appendSourceArtifacts>
-                            <sourceClassifier>sources</sourceClassifier>
-                            <!--
-                                These are passed into the SPI processor
-                                and will end up in App.gwt.xml if prefixed with 'gwt.'
-                             -->
-                            <options>
-                                <gwt.console.product.version>${gwt.console.product.version}</gwt.console.product.version>
-                                <gwt.console.dev.host>${gwt.bindAddress}</gwt.console.dev.host>
-                            </options>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>process-gwtp</id>
-                        <goals>
-                            <goal>process</goal>
-                        </goals>
-                        <phase>generate-sources</phase>
-                        <configuration>
-                            <processors>
-                                <processor>com.gwtplatform.dispatch.annotation.processor.GenEventProcessor</processor>
-                            </processors>
-                            <appendSourceArtifacts>true</appendSourceArtifacts>
-                            <sourceClassifier>export</sourceClassifier>
                         </configuration>
                     </execution>
                 </executions>
@@ -235,8 +231,6 @@
             <id>default-properties</id>
             <properties>
                 <env>default</env>
-                <gwt.bindAddress>127.0.0.1</gwt.bindAddress>
-                <gwt.console.product.version>7.2</gwt.console.product.version>
             </properties>
             <activation>
                 <activeByDefault>true</activeByDefault>
@@ -251,8 +245,6 @@
                 <skipTests>true</skipTests>
                 <o>true</o> <!-- offline -->
                 <env>default</env>
-                <gwt.bindAddress>127.0.0.1</gwt.bindAddress>
-                <gwt.console.product.version>7.2</gwt.console.product.version>
             </properties>
             <build>
                 <plugins>
@@ -282,7 +274,6 @@
             <id>eap</id>
             <properties>
                 <env>default</env>
-                <gwt.bindAddress>127.0.0.1</gwt.bindAddress>
                 <gwt.console.product.version>6.1</gwt.console.product.version>
             </properties>
             <build>
@@ -337,8 +328,6 @@
             <properties>
                 <skipTests>true</skipTests>
                 <env>default</env>
-                <gwt.bindAddress>127.0.0.1</gwt.bindAddress>
-                <gwt.console.product.version>7.2</gwt.console.product.version>
             </properties>
             <build>
                 <plugins>
