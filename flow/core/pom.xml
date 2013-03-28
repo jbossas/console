@@ -42,6 +42,8 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+
+    
     <dependencies>
         <dependency>
             <groupId>com.google.gwt</groupId>

@@ -7,6 +7,7 @@
     <packaging>pom</packaging>
     <description>Final extension applications should inherit from this pom</description>
 
+
     <!-- Parent -->
     <parent>
         <groupId>org.jboss.as</groupId>
@@ -15,13 +16,13 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
+
     <!--
     ~  USAGE:
     ~  Inherit from this pom.
     ~  Add maven-dependency-plugin to build.
     ~  Add dependencies for extensions.  Use "provided" scope.
     -->
-
     <!--  Dependencies -->
     <dependencyManagement>
         <dependencies>
@@ -35,49 +36,75 @@
         </dependencies>
     </dependencyManagement>
 
-    <dependencies>
 
+    <dependencies>
         <dependency>
             <groupId>org.jboss.as</groupId>
             <artifactId>jboss-as-console-resources</artifactId>
             <type>war</type>
             <scope>runtime</scope>
         </dependency>
-
         <dependency>
             <groupId>org.jboss.as</groupId>
             <artifactId>jboss-as-console-core</artifactId>
             <scope>provided</scope>
         </dependency>
-
         <dependency>
             <groupId>org.jboss.as</groupId>
             <artifactId>jboss-as-console-core</artifactId>
             <classifier>sources</classifier>
             <scope>provided</scope>
         </dependency>
-
         <dependency>
             <groupId>com.google.gwt</groupId>
             <artifactId>gwt-dev</artifactId>
             <scope>provided</scope>
         </dependency>
-
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <scope>test</scope>
         </dependency>
-
     </dependencies>
+
 
     <!-- Plugins -->
     <build>
-
         <outputDirectory>war/WEB-INF/classes</outputDirectory>
+
+
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <artifactId>maven-war-plugin</artifactId>
+                    <executions>
+                        <execution>
+                            <phase>generate-resources</phase>
+                            <goals>
+                                <goal>exploded</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <webappDirectory>war</webappDirectory>
+                        <warSourceDirectory>war</warSourceDirectory>
+                        <overlays>
+                            <overlay>
+                                <groupId>org.jboss.as</groupId>
+                                <artifactId>jboss-as-console-resources</artifactId>
+                                <type>war</type>
+                            </overlay>
+                        </overlays>
+                        <packagingExcludes>**/*.*</packagingExcludes>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
 
         <plugins>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-clean-plugin</artifactId>
                 <configuration>
                     <filesets>
@@ -93,11 +120,9 @@
                     </filesets>
                 </configuration>
             </plugin>
-
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>gwt-maven-plugin</artifactId>
-                <version>2.5.0</version>
                 <configuration>
                     <inplace>true</inplace>
                     <logLevel>TRACE</logLevel>
@@ -122,7 +147,6 @@
                     </execution>
                 </executions>
             </plugin>
-
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
@@ -141,11 +165,9 @@
                     </execution>
                 </executions>
             </plugin>
-
             <plugin>
                 <groupId>org.bsc.maven</groupId>
                 <artifactId>maven-processor-plugin</artifactId>
-                <version>2.0.7.2-redhat</version>
                 <executions>
                     <execution>
                         <id>process</id>
@@ -160,20 +182,16 @@
                             </processors>
                             <appendSourceArtifacts>true</appendSourceArtifacts>
                             <sourceClassifier>sources</sourceClassifier>
-
                             <!--
                                 These are passed into the SPI processor
                                 and will end up in App.gwt.xml if prefixed with 'gwt.'
                              -->
-
                             <options>
                                 <gwt.console.product.version>${gwt.console.product.version}</gwt.console.product.version>
                                 <gwt.console.dev.host>${gwt.bindAddress}</gwt.console.dev.host>
                             </options>
                         </configuration>
-
                     </execution>
-
                     <execution>
                         <id>process-gwtp</id>
                         <goals>
@@ -188,11 +206,10 @@
                             <sourceClassifier>export</sourceClassifier>
                         </configuration>
                     </execution>
-
                 </executions>
             </plugin>
-
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
                 <executions>
                     <execution>
@@ -209,42 +226,11 @@
                     <classifier>resources</classifier>
                 </configuration>
             </plugin>
-
         </plugins>
-
-        <pluginManagement>
-            <plugins>
-
-                <plugin>
-                    <artifactId>maven-war-plugin</artifactId>
-                    <executions>
-                        <execution>
-                            <phase>generate-resources</phase>
-                            <goals>
-                                <goal>exploded</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                    <configuration>
-                        <webappDirectory>war</webappDirectory>
-                        <warSourceDirectory>war</warSourceDirectory>
-                        <overlays>
-                            <overlay>
-                                <groupId>org.jboss.as</groupId>
-                                <artifactId>jboss-as-console-resources</artifactId>
-                                <type>war</type>
-                            </overlay>
-                        </overlays>
-                        <packagingExcludes>**/*.*</packagingExcludes>
-                    </configuration>
-                </plugin>
-
-            </plugins>
-        </pluginManagement>
     </build>
 
-    <profiles>
 
+    <profiles>
         <profile>
             <id>default-properties</id>
             <properties>
@@ -257,22 +243,19 @@
             </activation>
         </profile>
 
+
         <profile>
-
             <!-- Develop profile for quick turnaround times -->
-
             <id>dev</id>
             <properties>
                 <skipTests>true</skipTests>
                 <o>true</o> <!-- offline -->
-
                 <env>default</env>
                 <gwt.bindAddress>127.0.0.1</gwt.bindAddress>
                 <gwt.console.product.version>7.2</gwt.console.product.version>
             </properties>
             <build>
                 <plugins>
-
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>gwt-maven-plugin</artifactId>
@@ -282,7 +265,6 @@
                             <enableClosureCompiler>false</enableClosureCompiler>
                         </configuration>
                     </plugin>
-
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-surefire-plugin</artifactId>
@@ -290,15 +272,13 @@
                             <skipTests>true</skipTests>
                         </configuration>
                     </plugin>
-
                 </plugins>
             </build>
         </profile>
 
+
         <profile>
-
             <!-- Red Hat look & feel -->
-
             <id>eap</id>
             <properties>
                 <env>default</env>
@@ -307,7 +287,6 @@
             </properties>
             <build>
                 <plugins>
-
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>gwt-maven-plugin</artifactId>
@@ -317,10 +296,10 @@
                             <module>org.jboss.as.console.composite.App_RH</module>
                         </configuration>
                     </plugin>
-
                 </plugins>
             </build>
         </profile>
+
 
         <profile>
             <id>compile-report</id>
@@ -334,9 +313,7 @@
                         </configuration>
                     </plugin>
                 </plugins>
-
             </build>
-
             <reporting>
                 <plugins>
                     <plugin>
@@ -353,6 +330,7 @@
                 </plugins>
             </reporting>
         </profile>
+
 
         <profile>
             <id>xxl</id>
@@ -383,14 +361,4 @@
             </build>
         </profile>
     </profiles>
-
-    <pluginRepositories>
-        <pluginRepository>
-            <id>gwtplatform.plugin</id>
-            <name>Gwtplatform custom plugin repository</name>
-            <url>http://maven.gwt-platform.googlecode.com/hg/</url>
-            <layout>default</layout>
-        </pluginRepository>
-    </pluginRepositories>
-
 </project>

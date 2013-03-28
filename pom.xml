@@ -16,7 +16,6 @@
   ~ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
   ~ MA  02110-1301, USA.
   -->
-
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
@@ -25,24 +24,23 @@
     <artifactId>jboss-as-console-parent</artifactId>
     <version>1.6.0-SNAPSHOT</version>
     <packaging>pom</packaging>
-
     <description>JBoss AS 7 Management Console</description>
+
 
     <url>
         http://github.com/heiko-braun/as7-console
     </url>
-
     <scm>
         <connection>scm:git@github.com:jbossas/console.git</connection>
         <developerConnection>scm:git:git@github.com:jbossas/console.git</developerConnection>
         <url>git@github.com:jbossas/console.git</url>
     </scm>
 
+
     <organization>
         <name>JBoss, a division of Red Hat</name>
         <url>http://www.jboss.org</url>
     </organization>
-
     <developers>
         <developer>
             <name>Heiko Braun</name>
@@ -72,11 +70,13 @@
         </developer>
     </developers>
 
+
     <!-- IssueManagement -->
     <issueManagement>
         <system>jira</system>
         <url>https://issues.jboss.org/browse/JBAS</url>
     </issueManagement>
+
 
     <!-- licenses -->
     <licenses>
@@ -86,9 +86,20 @@
         </license>
     </licenses>
 
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <ballroom.version>1.5.2.Final</ballroom.version>
+        <gwt.version>2.5.0</gwt.version>
+        <gwtp.version>0.7</gwtp.version>
+        <gwt.maven>2.5.0</gwt.maven>
+        <gwt-log.version>3.1.8</gwt-log.version>
+        <gwt-vis.version>1.1.1</gwt-vis.version>
+        <junit.version>4.8.1</junit.version>
+        <gin.version>1.5.0</gin.version>
+        <guice.version>3.0</guice.version>
     </properties>
+
 
     <modules>
         <module>bom</module>
@@ -103,28 +114,82 @@
         <module>diagnostics</module>
     </modules>
 
+
     <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-antrun-plugin</artifactId>
+                    <version>1.7</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-clean-plugin</artifactId>
+                    <version>2.5</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-deploy-plugin</artifactId>
+                    <version>2.7</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-install-plugin</artifactId>
+                    <version>2.4</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <version>2.4</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-source-plugin</artifactId>
+                    <version>2.2.1</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>2.14</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-war-plugin</artifactId>
+                    <version>2.3</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>build-helper-maven-plugin</artifactId>
+                    <version>1.7</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.bsc.maven</groupId>
+                    <artifactId>maven-processor-plugin</artifactId>
+                    <version>2.0.7.2-redhat</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>gwt-maven-plugin</artifactId>
+                    <version>${gwt.maven}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.zanata</groupId>
+                    <artifactId>zanata-maven-plugin</artifactId>
+                    <version>2.2.0</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
+
         <plugins>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-install-plugin</artifactId>
-                <version>2.3</version>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-deploy-plugin</artifactId>
-                <version>2.6</version>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-war-plugin</artifactId>
-                <version>2.1.1</version>
-            </plugin>
-
-            <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <skipTests>true</skipTests>
@@ -139,19 +204,19 @@
                 </configuration>
             </plugin>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <source>1.6</source>
-                    <target>1.6</target>
+                    <source>1.7</source>
+                    <target>1.7</target>
                     <showDeprecation>false</showDeprecation>
                     <showWarnings>true</showWarnings>
                     <optimize>true</optimize>
-                    <compilerArgument>-proc:none</compilerArgument>
                 </configuration>
             </plugin>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>2.2</version>
                 <configuration>
                     <archive>
                         <manifest>
@@ -160,8 +225,8 @@
                     </archive>
                 </configuration>
             </plugin>
-
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
                 <executions>
                     <execution>
@@ -172,14 +237,12 @@
                     </execution>
                 </executions>
             </plugin>
-
         </plugins>
-
     </build>
+
 
     <!-- Profiles -->
     <profiles>
-
         <profile>
             <id>enableTests</id>
             <build>
@@ -193,7 +256,6 @@
                 </plugins>
             </build>
         </profile>
-
     </profiles>
 
 
@@ -212,7 +274,6 @@
             </snapshots>
         </repository>
     </repositories>
-
     <pluginRepositories>
         <pluginRepository>
             <id>jboss-public-repository-group</id>
@@ -226,8 +287,8 @@
                 <updatePolicy>never</updatePolicy>
             </snapshots>
         </pluginRepository>
-
     </pluginRepositories>
+
 
     <!-- DistributionManagement -->
     <distributionManagement>
@@ -236,13 +297,10 @@
             <name>JBoss Releases Repository</name>
             <url>https://repository.jboss.org/nexus/service/local/staging/deploy/maven2/</url>
         </repository>
-
         <snapshotRepository>
             <id>jboss-snapshots-repository</id>
             <name>JBoss Snapshots Repository</name>
             <url>https://repository.jboss.org/nexus/content/repositories/snapshots/</url>
         </snapshotRepository>
-
     </distributionManagement>
-
 </project>
