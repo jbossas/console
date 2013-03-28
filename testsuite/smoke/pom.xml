@@ -119,7 +119,7 @@
                         <id>copy.gui.classes</id>
                         <phase>process-test-resources</phase>
                         <configuration>
-                            <tasks>
+                            <target>
                                 <taskdef resource="net/sf/antcontrib/antcontrib.properties"
                                          classpathref="maven.plugin.classpath" />
 
@@ -139,7 +139,7 @@
                                 <copy todir="${gui.classes.target}">
                                     <fileset dir="${gui.classes.org}"/>
                                 </copy>
-                            </tasks>
+                            </target>
                         </configuration>
                         <goals>
                             <goal>run</goal>

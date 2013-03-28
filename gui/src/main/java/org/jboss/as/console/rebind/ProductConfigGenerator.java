@@ -19,7 +19,11 @@ package org.jboss.as.console.rebind;
  * MA  02110-1301, USA.
  */
 
+import java.io.PrintWriter;
+import java.util.List;
+
 import com.google.gwt.core.ext.BadPropertyValueException;
+import com.google.gwt.core.ext.ConfigurationProperty;
 import com.google.gwt.core.ext.Generator;
 import com.google.gwt.core.ext.GeneratorContext;
 import com.google.gwt.core.ext.PropertyOracle;
@@ -29,8 +33,6 @@ import com.google.gwt.core.ext.typeinfo.JClassType;
 import com.google.gwt.core.ext.typeinfo.TypeOracle;
 import com.google.gwt.user.rebind.ClassSourceFileComposerFactory;
 import com.google.gwt.user.rebind.SourceWriter;
-
-import java.io.PrintWriter;
 
 /**
  * @author Heiko Braun
@@ -57,6 +59,7 @@ public class ProductConfigGenerator extends Generator {
     public String generate(TreeLogger logger, GeneratorContext context, String typeName)
             throws UnableToCompleteException
     {
+        System.out.println("\n\n\n################# Generating " + typeName + "\n\n");
         this.typeName = typeName;
         TypeOracle typeOracle = context.getTypeOracle();
 
@@ -167,11 +170,27 @@ public class ProductConfigGenerator extends Generator {
         String consoleProductVersion = (prodVersionProperty != null) ?
                 prodVersionProperty : "";
 
-        String devHostProperty =
-                       propertyOracle.getConfigurationProperty("console.dev.host").getValues().get(0);
-
-        String consoleDevHost = (devHostProperty!= null) ?
-                       devHostProperty : "127.0.0.1";
+        String devHostProperty = null;
+        try
+        {
+            ConfigurationProperty configurationProperty = propertyOracle.getConfigurationProperty("console.dev.host");
+            if (configurationProperty != null)
+            {
+                List<String> values = configurationProperty.getValues();
+                if (values != null && !values.isEmpty())
+                {
+                    devHostProperty = values.get(0);
+                }
+            }
+        }
+        finally
+        {
+            // fall back to localhost
+            if (devHostProperty == null)
+            {
+                devHostProperty = "127.0.0.1";
+            }
+        }
 
         // most of the config attributes are by default empty
         // they need be overriden by custom gwt.xml descriptor on a project/product level
