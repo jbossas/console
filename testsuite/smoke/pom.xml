@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <name>JBoss 7 - Management Console :: Test Suite :: Smoke Tests</name>
-    <groupId>org.jboss.as</groupId>
     <artifactId>jboss-as-console-testsuite-smoke</artifactId>
     <packaging>jar</packaging>
+
 
     <parent>
         <groupId>org.jboss.as</groupId>
@@ -13,9 +15,20 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <properties>
-        <ballroom.version>1.0.0.Beta10</ballroom.version>
-    </properties>
+
+    <!--  Dependencies -->
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.jboss.as</groupId>
+                <artifactId>jboss-as-console-bom</artifactId>
+                <type>pom</type>
+                <version>${project.version}</version>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
 
     <dependencies>
         <dependency>
@@ -23,66 +36,52 @@
             <artifactId>gwt-servlet</artifactId>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>com.google.gwt</groupId>
             <artifactId>gwt-user</artifactId>
         </dependency>
-
         <dependency>
             <groupId>com.google.gwt</groupId>
             <artifactId>gwt-dev</artifactId>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>org.jboss.ballroom</groupId>
             <artifactId>widgets</artifactId>
-            <version>${ballroom.version}</version>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>javax.validation</groupId>
             <artifactId>validation-api</artifactId>
-            <version>1.0.0.GA</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>javax.validation</groupId>
             <artifactId>validation-api</artifactId>
-            <version>1.0.0.GA</version>
             <classifier>sources</classifier>
             <scope>provided</scope>
         </dependency>
-
         <dependency>
             <groupId>com.google.code.gwt-log</groupId>
             <artifactId>gwt-log</artifactId>
         </dependency>
-
         <dependency>
             <groupId>com.gwtplatform</groupId>
             <artifactId>gwtp-mvp-client</artifactId>
             <scope>provided</scope>
         </dependency>
-
         <dependency>
             <groupId>com.google.inject</groupId>
             <artifactId>guice</artifactId>
         </dependency>
-
         <dependency>
             <groupId>com.google.inject.extensions</groupId>
             <artifactId>guice-assistedinject</artifactId>
         </dependency>
-
         <dependency>
             <groupId>com.google.gwt.inject</groupId>
             <artifactId>gin</artifactId>
         </dependency>
-
-
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
@@ -90,17 +89,17 @@
         </dependency>
     </dependencies>
 
+
     <build>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <source>1.6</source>
-                    <target>1.6</target>
+                    <source>1.7</source>
+                    <target>1.7</target>
                 </configuration>
             </plugin>
-
             <plugin>
                 <artifactId>maven-source-plugin</artifactId>
                 <executions>
@@ -112,12 +111,9 @@
                     </execution>
                 </executions>
             </plugin>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-antrun-plugin</artifactId>
-                <version>1.2</version>
-
                 <executions>
                     <execution>
                         <id>copy.gui.classes</id>
@@ -161,6 +157,7 @@
         </plugins>
     </build>
 
+
     <profiles>
         <profile>
             <id>integration-tests</id>
@@ -170,7 +167,6 @@
                     <name>smoke</name>
                 </property>
             </activation>
-
             <build>
                 <plugins>
                     <plugin>
@@ -185,4 +181,3 @@
         </profile>
     </profiles>
 </project>
-

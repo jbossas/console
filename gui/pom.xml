@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <name>JBoss 7 - Management Console :: GUI</name>
-    <groupId>org.jboss.as</groupId>
     <artifactId>jboss-as-console-core</artifactId>
     <packaging>jar</packaging>
+
 
     <!-- Parent -->
     <parent>
@@ -14,12 +16,13 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
+
     <properties>
-        <gwt.maven>2.3.0</gwt.maven>
         <console.profile>jboss</console.profile>
         <product.version>7.2</product.version>
         <gwt.bindAddress>127.0.0.1</gwt.bindAddress>
     </properties>
+
 
     <!--  Dependencies -->
     <dependencyManagement>
@@ -34,47 +37,37 @@
         </dependencies>
     </dependencyManagement>
 
+
     <dependencies>
-
-
         <dependency>
             <groupId>org.jboss.as</groupId>
             <artifactId>jboss-as-console-dmr</artifactId>
-            <version>${project.version}</version>
         </dependency>
-
         <dependency>
             <groupId>org.jboss.ballroom</groupId>
             <artifactId>widgets</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.jboss.as</groupId>
             <artifactId>jboss-as-console-flow</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.jboss.as</groupId>
             <artifactId>console-spi</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.jboss.as</groupId>
             <artifactId>console-spi</artifactId>
             <classifier>sources</classifier>
         </dependency>
-
         <dependency>
             <groupId>org.jboss.as</groupId>
             <artifactId>diagnostics</artifactId>
-            <version>${project.version}</version>
         </dependency>
-
         <dependency>
             <groupId>org.jboss.as</groupId>
             <artifactId>diagnostics</artifactId>
             <classifier>sources</classifier>
-            <version>${project.version}</version>
         </dependency>
 
         <!-- GWT -->
@@ -82,88 +75,75 @@
             <groupId>com.google.gwt</groupId>
             <artifactId>gwt-servlet</artifactId>
         </dependency>
-
         <dependency>
             <groupId>com.google.gwt</groupId>
             <artifactId>gwt-dev</artifactId>
             <scope>provided</scope>
         </dependency>
-
         <dependency>
             <groupId>com.google.code</groupId>
             <artifactId>gwt-visualization</artifactId>
         </dependency>
-
         <dependency>
             <groupId>com.google.gwt</groupId>
             <artifactId>gwt-user</artifactId>
         </dependency>
-
         <dependency>
             <groupId>javax.validation</groupId>
             <artifactId>validation-api</artifactId>
             <scope>provided</scope>
         </dependency>
-
         <dependency>
             <groupId>javax.validation</groupId>
             <artifactId>validation-api</artifactId>
             <classifier>sources</classifier>
             <scope>provided</scope>
         </dependency>
-
         <dependency>
             <groupId>com.google.code.gwt-log</groupId>
             <artifactId>gwt-log</artifactId>
         </dependency>
-
         <dependency>
             <groupId>com.gwtplatform</groupId>
             <artifactId>gwtp-mvp-client</artifactId>
         </dependency>
-
         <dependency>
             <groupId>com.gwtplatform</groupId>
             <artifactId>gwtp-processors</artifactId>
         </dependency>
-
         <dependency>
             <groupId>com.google.inject</groupId>
             <artifactId>guice</artifactId>
         </dependency>
-
         <dependency>
             <groupId>com.google.inject.extensions</groupId>
             <artifactId>guice-assistedinject</artifactId>
         </dependency>
-
         <dependency>
             <groupId>com.google.gwt.inject</groupId>
             <artifactId>gin</artifactId>
         </dependency>
 
+        <!-- Test -->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <scope>test</scope>
         </dependency>
-
-
     </dependencies>
 
-    <!-- Plugins -->
+
     <build>
         <finalName>as7-console</finalName>
         <outputDirectory>war/WEB-INF/classes</outputDirectory>
-
         <resources>
             <resource>
                 <directory>src/main/java</directory>
             </resource>
         </resources>
 
-        <plugins>
 
+        <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-antrun-plugin</artifactId>
@@ -178,7 +158,6 @@
                             <tasks>
                                 <!-- bump number first-->
                                 <buildnumber/>
-
                                 <ant antfile="../scripts/antrun-version.xml" inheritAll="false" inheritRefs="false">
                                     <property file="build.number"/>
                                     <property name="version" value="${project.version}"/>
@@ -186,7 +165,6 @@
                                     <property name="src.dir" value="${project.build.directory}/generated-sources/ant" />
                                     <property name="console.profile" value="${console.profile}" />
                                     <property name="product.version" value="${product.version}" />
-
                                     <!-- only used in hosted mode, see BootstrapContext -->
                                     <property name="dev.host" value="${gwt.bindAddress}" />
                                 </ant>
@@ -198,11 +176,9 @@
                     </execution>
                 </executions>
             </plugin>
-
             <plugin>
                 <groupId>org.bsc.maven</groupId>
                 <artifactId>maven-processor-plugin</artifactId>
-                <version>2.0.7.1-redhat</version>
                 <executions>
                     <execution>
                         <id>process-spi</id>
@@ -243,11 +219,9 @@
                     </dependency>
                 </dependencies>
             </plugin>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
-                <version>2.2</version>
                 <executions>
                     <execution>
                         <id>attach-sources</id>
@@ -258,28 +232,22 @@
                     </execution>
                 </executions>
             </plugin>
-
         </plugins>
     </build>
 
+
     <profiles>
-
         <profile>
-
-
             <!--
-                    Enable zanata integration. Used to push i18n resources
-                    to http://translate.jboss.org
+                Enable zanata integration. Used to push i18n resources
+                to http://translate.jboss.org
             -->
-
             <id>i18n</id>
             <build>
                 <plugins>
                     <plugin>
-
                         <groupId>org.zanata</groupId>
                         <artifactId>zanata-maven-plugin</artifactId>
-                        <version>1.5.0</version>
                         <configuration>
                             <projectType>properties</projectType>
                             <includes>UIConstants.properties,UIMessages.properties</includes>
@@ -288,11 +256,9 @@
                             <transDir>${project.build.directory}/i18n</transDir>
                         </configuration>
                     </plugin>
-
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-antrun-plugin</artifactId>
-                        <version>1.7</version>
                         <executions>
                             <execution>
                                 <id>prepare.zanata</id>
@@ -304,7 +270,6 @@
                                               tofile="${project.build.directory}/i18n/UIConstants.properties" overwrite="true"/>
                                         <copy file="./src/main/java/org/jboss/as/console/client/core/UIMessages.properties"
                                               todir="${project.build.directory}/i18n" overwrite="true"/>
-
                                         <copy todir="${project.build.directory}/i18n">
                                             <fileset dir="./src/main/java/org/jboss/as/console/client/core/">
                                                 <include name="UIConstants_de.properties"/>
@@ -316,7 +281,6 @@
                                                 <include name="UIConstants_zh_Hans.properties"/>
                                             </fileset>
                                         </copy>
-
                                         <copy todir="${project.build.directory}/i18n">
                                             <fileset dir="./src/main/java/org/jboss/as/console/client/core/">
                                                 <include name="UIMessages_de.properties"/>
@@ -339,7 +303,5 @@
                 </plugins>
             </build>
         </profile>
-
     </profiles>
-
 </project>
