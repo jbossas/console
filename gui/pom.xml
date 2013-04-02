@@ -197,30 +197,15 @@
                         <configuration>
                             <outputDiagnostics>false</outputDiagnostics>
                             <options>
-                                <bindAddress>${gwt.bindAddress}</bindAddress>
-                                <console.dev.host>${gwt.console.dev.host}</console.dev.host>
-                                <console.product.version>${gwt.console.product.version}</console.product.version>
+                                <gwt.console.dev.host>${gwt.console.dev.host}</gwt.console.dev.host>
+                                <gwt.console.product.version>${gwt.console.product.version}</gwt.console.product.version>
                             </options>
                             <processors>
                                 <processor>org.jboss.as.console.spi.SPIProcessor</processor>
                             </processors>
                         </configuration>
                     </execution>
-                    <execution>
-                        <id>process-gwtp</id>
-                        <goals>
-                            <goal>process</goal>
-                        </goals>
-                        <phase>generate-sources</phase>
-                    </execution>
                 </executions>
-                <dependencies>
-                    <dependency>
-                        <groupId>com.gwtplatform</groupId>
-                        <artifactId>gwtp-processors</artifactId>
-                        <version>${gwtp.version}</version>
-                    </dependency>
-                </dependencies>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
