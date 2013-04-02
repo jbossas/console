@@ -159,6 +159,8 @@
                         <phase>generate-sources</phase>
                         <configuration>
                             <outputDiagnostics>false</outputDiagnostics>
+                            <appendSourceArtifacts>true</appendSourceArtifacts>
+                            <sourceClassifier>sources</sourceClassifier>
                             <options>
                                 <gwt.console.dev.host>${gwt.console.dev.host}</gwt.console.dev.host>
                                 <gwt.console.product.version>${gwt.console.product.version}</gwt.console.product.version>
@@ -183,7 +185,6 @@
                         <configuration>
                             <sources>
                                 <source>${project.build.directory}/generated-sources/ant</source>
-                                <source>${project.build.directory}/generated-sources/apt</source>
                             </sources>
                         </configuration>
                     </execution>
