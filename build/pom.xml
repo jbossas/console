@@ -161,13 +161,13 @@
                             <outputDiagnostics>false</outputDiagnostics>
                             <appendSourceArtifacts>true</appendSourceArtifacts>
                             <sourceClassifier>sources</sourceClassifier>
+                            <processors>
+                                <processor>org.jboss.as.console.spi.SPIProcessor</processor>
+                            </processors>
                             <options>
                                 <gwt.console.dev.host>${gwt.bindAddress}</gwt.console.dev.host>
                                 <gwt.console.product.version>${gwt.console.product.version}</gwt.console.product.version>
                             </options>
-                            <processors>
-                                <processor>org.jboss.as.console.spi.SPIProcessor</processor>
-                            </processors>
                         </configuration>
                     </execution>
                 </executions>
