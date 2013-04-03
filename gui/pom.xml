@@ -189,7 +189,9 @@
                         </goals>
                         <phase>generate-sources</phase>
                         <configuration>
-                            <outputDiagnostics>false</outputDiagnostics>
+                            <outputDiagnostics>true</outputDiagnostics>
+                            <addCompileSourceRoots>false</addCompileSourceRoots>
+                            <appendSourceArtifacts>true</appendSourceArtifacts>
                             <processors>
                                 <processor>org.jboss.as.console.spi.SPIProcessor</processor>
                             </processors>
@@ -197,24 +199,6 @@
                                 <gwt.console.dev.host>${gwt.bindAddress}</gwt.console.dev.host>
                                 <gwt.console.product.version>${gwt.console.product.version}</gwt.console.product.version>
                             </options>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>build-helper-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>add-source</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>add-source</goal>
-                        </goals>
-                        <configuration>
-                            <sources>
-                                <source>${project.build.directory}/generated-sources/ant</source>
-                            </sources>
                         </configuration>
                     </execution>
                 </executions>

@@ -65,7 +65,9 @@
                         </goals>
                         <phase>generate-sources</phase>
                         <configuration>
-                            <outputDiagnostics>false</outputDiagnostics>
+                            <outputDiagnostics>true</outputDiagnostics>
+                            <addCompileSourceRoots>false</addCompileSourceRoots>
+                            <appendSourceArtifacts>true</appendSourceArtifacts>
                             <processors>
                                 <processor>org.jboss.as.console.spi.SPIProcessor</processor>
                             </processors>
