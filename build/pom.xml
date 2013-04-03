@@ -125,7 +125,7 @@
                 <artifactId>gwt-maven-plugin</artifactId>
                 <configuration>
                     <inplace>true</inplace>
-                    <logLevel>TRACE</logLevel>
+                    <logLevel>INFO</logLevel>
                     <runTarget>App.html</runTarget>
                     <warSourceDirectory>war</warSourceDirectory>
                     <extraJvmArgs>-Xmx1024m -DDEBUG -XX:MaxPermSize=256M</extraJvmArgs>
@@ -144,47 +144,6 @@
                         <goals>
                             <goal>compile</goal>
                         </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.bsc.maven</groupId>
-                <artifactId>maven-processor-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>process-spi</id>
-                        <goals>
-                            <goal>process</goal>
-                        </goals>
-                        <phase>generate-sources</phase>
-                        <configuration>
-                            <outputDiagnostics>false</outputDiagnostics>
-                            <processors>
-                                <processor>org.jboss.as.console.spi.SPIProcessor</processor>
-                            </processors>
-                            <options>
-                                <gwt.console.dev.host>${gwt.bindAddress}</gwt.console.dev.host>
-                                <gwt.console.product.version>${gwt.console.product.version}</gwt.console.product.version>
-                            </options>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>build-helper-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>add-source</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>add-source</goal>
-                        </goals>
-                        <configuration>
-                            <sources>
-                                <source>${project.build.directory}/generated-sources/apt</source>
-                            </sources>
-                        </configuration>
                     </execution>
                 </executions>
             </plugin>
