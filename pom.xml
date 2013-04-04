@@ -55,6 +55,9 @@
         <developer>
             <name>Harald Pehl</name>
             <id>hpehl</id>
+            <email>hpehl@redhat.com</email>
+            <organization>Red Hat</organization>
+            <timezone>+1</timezone>
         </developer>
         <developer>
             <name>Stan Silvert</name>
@@ -90,9 +93,9 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <ballroom.version>1.5.2.Final</ballroom.version>
-        <gwt.version>2.5.0</gwt.version>
-        <gwtp.version>0.7</gwtp.version>
-        <gwt.maven>2.5.0</gwt.maven>
+        <gwt.version>2.5.1</gwt.version>
+        <gwtp.version>1.0-RC-2</gwtp.version>
+        <gwt.maven>2.5.1</gwt.maven>
         <gwt-log.version>3.2.1</gwt-log.version>
         <gwt-vis.version>1.1.1</gwt-vis.version>
         <junit.version>4.11</junit.version>

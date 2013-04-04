@@ -137,7 +137,6 @@
                     <disableCastChecking>true</disableCastChecking>
                     <disableClassMetadata>true</disableClassMetadata>
                     <enableClosureCompiler>true</enableClosureCompiler>
-                    <fragmentCount>30</fragmentCount>
                 </configuration>
                 <executions>
                     <execution>
