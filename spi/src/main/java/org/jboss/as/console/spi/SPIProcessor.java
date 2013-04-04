@@ -1,24 +1,7 @@
 package org.jboss.as.console.spi;
 
-import com.gwtplatform.mvp.client.annotations.NameToken;
-import org.jboss.as.console.client.plugins.RuntimeExtensionMetaData;
-import org.jboss.as.console.client.plugins.SubsystemExtensionMetaData;
+import static javax.lang.model.SourceVersion.RELEASE_7;
 
-import javax.annotation.processing.AbstractProcessor;
-import javax.annotation.processing.Filer;
-import javax.annotation.processing.Messager;
-import javax.annotation.processing.ProcessingEnvironment;
-import javax.annotation.processing.RoundEnvironment;
-import javax.annotation.processing.SupportedSourceVersion;
-import javax.lang.model.element.AnnotationMirror;
-import javax.lang.model.element.AnnotationValue;
-import javax.lang.model.element.Element;
-import javax.lang.model.element.PackageElement;
-import javax.lang.model.element.TypeElement;
-import javax.lang.model.type.TypeMirror;
-import javax.tools.FileObject;
-import javax.tools.JavaFileObject;
-import javax.tools.StandardLocation;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -30,14 +13,30 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static javax.lang.model.SourceVersion.RELEASE_6;
+import javax.annotation.processing.AbstractProcessor;
+import javax.annotation.processing.Filer;
+import javax.annotation.processing.ProcessingEnvironment;
+import javax.annotation.processing.RoundEnvironment;
+import javax.annotation.processing.SupportedSourceVersion;
+import javax.lang.model.element.AnnotationMirror;
+import javax.lang.model.element.AnnotationValue;
+import javax.lang.model.element.Element;
+import javax.lang.model.element.PackageElement;
+import javax.lang.model.element.TypeElement;
+import javax.tools.FileObject;
+import javax.tools.JavaFileObject;
+import javax.tools.StandardLocation;
+
+import com.gwtplatform.mvp.client.annotations.NameToken;
+import org.jboss.as.console.client.plugins.RuntimeExtensionMetaData;
+import org.jboss.as.console.client.plugins.SubsystemExtensionMetaData;
 
 /**
  * @author Heiko Braun
  * @date 9/13/12
  */
 
-@SupportedSourceVersion(RELEASE_6)
+@SupportedSourceVersion(RELEASE_7)
 public class SPIProcessor extends AbstractProcessor {
 
 
@@ -66,7 +65,6 @@ public class SPIProcessor extends AbstractProcessor {
 
 
     private Filer filer;
-    private Messager messager;
     private ProcessingEnvironment processingEnv;
     private List<String> discoveredExtensions;
     private List<ExtensionDeclaration> discoveredBindings;
@@ -74,43 +72,25 @@ public class SPIProcessor extends AbstractProcessor {
     private List<String> categoryClasses;
     private List<SubsystemExtensionMetaData> subsystemDeclararions;
     private List<RuntimeExtensionMetaData> runtimeExtensions;
-    private Set<String> modules = new LinkedHashSet<String>();
+    private Set<String> modules = new LinkedHashSet<>();
     private Set<String> nameTokens;
-    private HashMap<String, String> gwtConfigProps;
 
     @Override
     public void init(ProcessingEnvironment env) {
         this.processingEnv = env;
         this.filer = env.getFiler();
-        this.messager = env.getMessager();
-        this.discoveredExtensions = new ArrayList<String>();
-        this.discoveredBindings= new ArrayList<ExtensionDeclaration>();
-        this.discoveredBeanFactories = new ArrayList<String>();
-        this.categoryClasses = new ArrayList<String>();
-        this.subsystemDeclararions = new ArrayList<SubsystemExtensionMetaData>();
-        this.runtimeExtensions = new ArrayList<RuntimeExtensionMetaData>();
-        this.nameTokens = new HashSet<String>();
-
-
-        parseGwtProperties();
-    }
-
-    private void parseGwtProperties() {
-        // GWT config properties
-        Map<String, String> options = processingEnv.getOptions();
-        gwtConfigProps = new HashMap<String, String>();
-        for(String key : options.keySet())
-        {
-            if(key.startsWith("gwt."))
-            {
-                gwtConfigProps.put(key.substring(4, key.length()), options.get(key));
-            }
-        }
+        this.discoveredExtensions = new ArrayList<>();
+        this.discoveredBindings= new ArrayList<>();
+        this.discoveredBeanFactories = new ArrayList<>();
+        this.categoryClasses = new ArrayList<>();
+        this.subsystemDeclararions = new ArrayList<>();
+        this.runtimeExtensions = new ArrayList<>();
+        this.nameTokens = new HashSet<>();
     }
 
     @Override
     public Set<String> getSupportedAnnotationTypes() {
-        Set<String> types = new HashSet<String>();
+        Set<String> types = new HashSet<>();
         types.add(GinExtension.class.getName());
         types.add(GinExtensionBinding.class.getName());
         types.add(BeanFactoryExtension.class.getName());
@@ -123,6 +103,7 @@ public class SPIProcessor extends AbstractProcessor {
     public boolean process(Set<? extends TypeElement> typeElements, RoundEnvironment roundEnv) {
 
         if(!roundEnv.processingOver()) {
+
             System.out.println("Begin Components discovery ...");
 
             Set<? extends Element> extensionElements = roundEnv.getElementsAnnotatedWith(GinExtension.class);
@@ -244,6 +225,7 @@ public class SPIProcessor extends AbstractProcessor {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private void handleBeanFactoryElement(Element element) {
         List<? extends AnnotationMirror> annotationMirrors = element.getAnnotationMirrors();
 
@@ -253,7 +235,6 @@ public class SPIProcessor extends AbstractProcessor {
 
             if ( annotationType.equals(BeanFactoryExtension.class.getName()) )
             {
-                BeanFactoryExtension factory  = element.getAnnotation(BeanFactoryExtension.class);
                 PackageElement packageElement = processingEnv.getElementUtils().getPackageOf(element);
                 String fqn = packageElement.getQualifiedName().toString()+"."+
                         element.getSimpleName().toString();
@@ -263,7 +244,7 @@ public class SPIProcessor extends AbstractProcessor {
                 final Collection<? extends AnnotationValue> values = mirror.getElementValues().values();
                 if (values.size() > 0) {
                     for (AnnotationValue categoryClass : (List<? extends AnnotationValue>)values.iterator().next().getValue()) {
-                        categoryClasses.add(((TypeMirror)categoryClass.getValue()).toString());
+                        categoryClasses.add(categoryClass.getValue().toString());
                     }
                 }
             }
@@ -314,7 +295,7 @@ public class SPIProcessor extends AbstractProcessor {
     }
 
     private void writeRuntimeFile() throws Exception {
-        Map<String, Object> model = new HashMap<String, Object>();
+        Map<String, Object> model = new HashMap<>();
         model.put("runtimeMenuItemExtensions", runtimeExtensions);
 
         JavaFileObject sourceFile = filer.createSourceFile(RUNTIME_FILENAME);
@@ -325,7 +306,7 @@ public class SPIProcessor extends AbstractProcessor {
     }
 
     private void writeSubsystemFile() throws Exception{
-        Map<String, Object> model = new HashMap<String, Object>();
+        Map<String, Object> model = new HashMap<>();
         model.put("subsystemExtensions", subsystemDeclararions);
 
         JavaFileObject sourceFile = filer.createSourceFile(SUBSYSTEM_FILENAME);
@@ -336,7 +317,7 @@ public class SPIProcessor extends AbstractProcessor {
     }
 
     private void writeBeanFactoryFile() throws Exception{
-        Map<String, Object> model = new HashMap<String, Object>();
+        Map<String, Object> model = new HashMap<>();
         model.put("extensions", discoveredBeanFactories);
         model.put("categoryClasses", categoryClasses);
 
@@ -349,7 +330,7 @@ public class SPIProcessor extends AbstractProcessor {
 
     private void writeBindingFile() throws Exception {
         JavaFileObject sourceFile = filer.createSourceFile(BINDING_FILENAME);
-        Map<String, Object> model = new HashMap<String, Object>();
+        Map<String, Object> model = new HashMap<>();
         model.put("extensions", discoveredBindings);
 
         OutputStream output = sourceFile.openOutputStream();
@@ -361,7 +342,7 @@ public class SPIProcessor extends AbstractProcessor {
 
     private void writeGinjectorFile() throws Exception {
 
-        Map<String, Object> model = new HashMap<String, Object>();
+        Map<String, Object> model = new HashMap<>();
         model.put("extensions", discoveredExtensions);
 
         JavaFileObject sourceFile = filer.createSourceFile(EXTENSION_FILENAME);
@@ -376,9 +357,9 @@ public class SPIProcessor extends AbstractProcessor {
 
         try
         {
-            Map<String, Object> model = new HashMap<String, Object>();
+            Map<String, Object> model = new HashMap<>();
             model.put("modules", modules);
-            model.put("properties", gwtConfigProps);
+            model.put("properties", processingEnv.getOptions());
 
             FileObject sourceFile = filer.createResource(StandardLocation.SOURCE_OUTPUT, MODULE_PACKAGENAME,
                     MODULE_FILENAME);
@@ -397,9 +378,9 @@ public class SPIProcessor extends AbstractProcessor {
 
         try
         {
-            Map<String, Object> model = new HashMap<String, Object>();
+            Map<String, Object> model = new HashMap<>();
             model.put("modules", modules);
-            model.put("properties", gwtConfigProps);
+            model.put("properties", processingEnv.getOptions());
 
             FileObject sourceFile = filer.createResource(StandardLocation.SOURCE_OUTPUT, MODULE_PACKAGENAME,
                     MODULE_DEV_FILENAME);
@@ -418,9 +399,9 @@ public class SPIProcessor extends AbstractProcessor {
 
         try
         {
-            Map<String, Object> model = new HashMap<String, Object>();
+            Map<String, Object> model = new HashMap<>();
             model.put("modules", modules);
-            model.put("properties", gwtConfigProps);
+            model.put("properties", processingEnv.getOptions());
 
             FileObject sourceFile = filer.createResource(StandardLocation.SOURCE_OUTPUT, MODULE_PACKAGENAME,
                     MODULE_PRODUCT_FILENAME);
@@ -440,10 +421,10 @@ public class SPIProcessor extends AbstractProcessor {
 
         try
         {
-            String devHostUrl = gwtConfigProps.get("console.dev.host") != null ?
-                    gwtConfigProps.get("console.dev.host") : "127.0.0.1";
+            String devHostUrl = processingEnv.getOptions().get("console.dev.host") != null ?
+                    processingEnv.getOptions().get("console.dev.host") : "127.0.0.1";
 
-            Map<String, Object> model = new HashMap<String, Object>();
+            Map<String, Object> model = new HashMap<>();
             model.put("devHost", devHostUrl);
 
             FileObject sourceFile = filer.createResource(

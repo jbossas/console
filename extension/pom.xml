@@ -7,6 +7,7 @@
     <packaging>pom</packaging>
     <description>Extension modules should inherit from this pom</description>
 
+
     <!-- Parent -->
     <parent>
         <groupId>org.jboss.as</groupId>
@@ -15,13 +16,13 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
+
     <!--
     ~  USAGE:
     ~  Inherit from this pom.
     ~  Add maven-dependency-plugin to build.
     ~  Add dependencies for extensions.  Use "provided" scope.
     -->
-
     <!--  Dependencies -->
     <dependencyManagement>
         <dependencies>
@@ -35,56 +36,48 @@
         </dependencies>
     </dependencyManagement>
 
-    <dependencies>
 
+    <dependencies>
         <dependency>
             <groupId>org.jboss.as</groupId>
             <artifactId>jboss-as-console-core</artifactId>
             <scope>provided</scope>
         </dependency>
-
         <dependency>
             <groupId>org.jboss.as</groupId>
             <artifactId>jboss-as-console-core</artifactId>
             <classifier>sources</classifier>
             <scope>provided</scope>
         </dependency>
-
     </dependencies>
 
-    <!-- Plugins -->
+
     <build>
-
         <plugins>
-
             <plugin>
                 <groupId>org.bsc.maven</groupId>
                 <artifactId>maven-processor-plugin</artifactId>
-                <version>2.0.7.2-redhat</version>
                 <executions>
                     <execution>
-                        <id>process</id>
+                        <id>process-spi</id>
                         <goals>
                             <goal>process</goal>
                         </goals>
                         <phase>generate-sources</phase>
                         <configuration>
-                            <outputDiagnostics>false</outputDiagnostics>
+                            <outputDiagnostics>true</outputDiagnostics>
+                            <addCompileSourceRoots>false</addCompileSourceRoots>
+                            <appendSourceArtifacts>true</appendSourceArtifacts>
                             <processors>
                                 <processor>org.jboss.as.console.spi.SPIProcessor</processor>
                             </processors>
-                            <appendSourceArtifacts>true</appendSourceArtifacts>
-                            <sourceClassifier>sources</sourceClassifier>
                         </configuration>
-
                     </execution>
                 </executions>
             </plugin>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
-                <version>2.2</version>
                 <executions>
                     <execution>
                         <id>attach-sources</id>
@@ -95,25 +88,19 @@
                     </execution>
                 </executions>
             </plugin>
-
         </plugins>
-
     </build>
 
-    <profiles>
 
+    <profiles>
         <profile>
             <id>default-properties</id>
             <properties>
                 <env>default</env>
-                <gwt.bindAddress>127.0.0.1</gwt.bindAddress>
-                <gwt.console.product.version></gwt.console.product.version>
             </properties>
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
         </profile>
-
     </profiles>
-
 </project>
