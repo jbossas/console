@@ -195,7 +195,7 @@
                         </goals>
                         <phase>generate-sources</phase>
                         <configuration>
-                            <outputDiagnostics>true</outputDiagnostics>
+                            <outputDiagnostics>false</outputDiagnostics>
                             <addCompileSourceRoots>false</addCompileSourceRoots>
                             <appendSourceArtifacts>true</appendSourceArtifacts>
                             <processors>
