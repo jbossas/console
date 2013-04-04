@@ -19,7 +19,11 @@ package org.jboss.as.console.rebind;
  * MA  02110-1301, USA.
  */
 
+import java.io.PrintWriter;
+import java.util.List;
+
 import com.google.gwt.core.ext.BadPropertyValueException;
+import com.google.gwt.core.ext.ConfigurationProperty;
 import com.google.gwt.core.ext.Generator;
 import com.google.gwt.core.ext.GeneratorContext;
 import com.google.gwt.core.ext.PropertyOracle;
@@ -30,29 +34,24 @@ import com.google.gwt.core.ext.typeinfo.TypeOracle;
 import com.google.gwt.user.rebind.ClassSourceFileComposerFactory;
 import com.google.gwt.user.rebind.SourceWriter;
 
-import java.io.PrintWriter;
-
 /**
  * @author Heiko Braun
  * @date 4/19/11
  */
-public class ProductConfigGenerator extends Generator {
-
+public class ProductConfigGenerator extends Generator
+{
     /**
      * Simple name of class to be generated
      */
     private String className = null;
-
     /**
      * Package name of class to be generated
      */
     private String packageName = null;
-
     /**
      * Fully qualified class name passed into GWT.create()
      */
     private String typeName = null;
-
 
     public String generate(TreeLogger logger, GeneratorContext context, String typeName)
             throws UnableToCompleteException
@@ -96,7 +95,7 @@ public class ProductConfigGenerator extends Generator {
         PrintWriter printWriter = context.tryCreate(logger, packageName, className);
 
         // print writer if null, source code has ALREADY been generated, return
-        if (printWriter == null) return;
+        if (printWriter == null) { return; }
 
         // init composer, set class properties, create source writer
         ClassSourceFileComposerFactory composerFactory =
@@ -131,7 +130,8 @@ public class ProductConfigGenerator extends Generator {
         context.commit(logger, printWriter);
     }
 
-    private void generateFields(SourceWriter sourceWriter) {
+    private void generateFields(SourceWriter sourceWriter)
+    {
         //sourceWriter.println("private static Map<Class<?>, List<PropertyBinding>> registry = new HashMap<Class<?>,List<PropertyBinding>>();");
 
     }
@@ -142,40 +142,24 @@ public class ProductConfigGenerator extends Generator {
         sourceWriter.println("public " + className + "() { ");
         sourceWriter.indent();
         sourceWriter.println("super();");
-
         // TODO
-
         sourceWriter.outdent();
         sourceWriter.println("}");
     }
 
-
     private void generateMethods(SourceWriter sourceWriter, GeneratorContext context) throws Throwable
     {
-
         PropertyOracle propertyOracle = context.getPropertyOracle();
-        String consoleProfileProperty =
-                propertyOracle.getConfigurationProperty("console.profile").getValues().get(0);
-
-        if(null==consoleProfileProperty)
+        String profile = failSafeGetProperty(propertyOracle, "console.profile", null);
+        if (null == profile)
+        {
             throw new BadPropertyValueException("Missing configuration property 'console.profile'!");
-
-
-        String prodVersionProperty =
-                propertyOracle.getConfigurationProperty("console.product.version").getValues().get(0);
-
-        String consoleProductVersion = (prodVersionProperty != null) ?
-                prodVersionProperty : "";
-
-        String devHostProperty =
-                       propertyOracle.getConfigurationProperty("console.dev.host").getValues().get(0);
-
-        String consoleDevHost = (devHostProperty!= null) ?
-                       devHostProperty : "127.0.0.1";
+        }
+        String productVersion = failSafeGetProperty(propertyOracle, "console.product.version", "");
+        String devHost = failSafeGetProperty(propertyOracle, "console.dev.host", "127.0.0.1");
 
         // most of the config attributes are by default empty
         // they need be overriden by custom gwt.xml descriptor on a project/product level
-
         sourceWriter.println("public String getProductTitle() { ");
         sourceWriter.indent();
         sourceWriter.println("return \"\";");
@@ -184,7 +168,7 @@ public class ProductConfigGenerator extends Generator {
 
         sourceWriter.println("public String getProductVersion() { ");
         sourceWriter.indent();
-        sourceWriter.println("return \""+consoleProductVersion+"\";");
+        sourceWriter.println("return \"" + productVersion + "\";");
         sourceWriter.outdent();
         sourceWriter.println("}");
 
@@ -196,20 +180,40 @@ public class ProductConfigGenerator extends Generator {
 
         sourceWriter.println("public String getDevHost() { ");
         sourceWriter.indent();
-        sourceWriter.println("return \""+devHostProperty+"\";");
+        sourceWriter.println("return \"" + devHost + "\";");
         sourceWriter.outdent();
         sourceWriter.println("}");
 
         sourceWriter.println("public ProductConfig.Profile getProfile() { ");
         sourceWriter.indent();
-        if("eap".equals(consoleProfileProperty))
-            sourceWriter.println("return ProductConfig.Profile.EAP;");
+        if ("eap".equals(profile))
+        { sourceWriter.println("return ProductConfig.Profile.EAP;"); }
         else
-            sourceWriter.println("return ProductConfig.Profile.JBOSS;");
+        { sourceWriter.println("return ProductConfig.Profile.JBOSS;"); }
         sourceWriter.outdent();
         sourceWriter.println("}");
 
     }
 
-
+    private String failSafeGetProperty(PropertyOracle propertyOracle, String name, String defaultValue)
+    {
+        String value = defaultValue;
+        try
+        {
+            ConfigurationProperty property = propertyOracle.getConfigurationProperty(name);
+            if (property != null)
+            {
+                List<String> values = property.getValues();
+                if (values != null && !values.isEmpty())
+                {
+                    value = values.get(0);
+                }
+            }
+        }
+        catch (BadPropertyValueException e)
+        {
+            // ignore and return defaul value
+        }
+        return value;
+    }
 }
