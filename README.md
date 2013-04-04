@@ -2,7 +2,10 @@
 
 ## Prerequisites
 
-In order to work on the console you a need running JBoss 7
+- JDK 7
+- JBoss 8
+
+In order to work on the console you a need running JBoss 
 instance on your local host. You can download it here:
 
 http://www.jboss.org/jbossas/downloads
