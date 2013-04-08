@@ -25,7 +25,7 @@
 
     <!-- export as JS API -->
     <inherits name='org.timepedia.exporter.Exporter'/>
-    <set-property name="export" value="yes"/>
+    <set-property name="export" value="no"/>
 
     <entry-point class='org.jboss.dmr.client.Bootstrap'/>
 
