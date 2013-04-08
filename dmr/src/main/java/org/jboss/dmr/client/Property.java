@@ -19,9 +19,14 @@
 
 package org.jboss.dmr.client;
 
+import org.timepedia.exporter.client.Export;
+import org.timepedia.exporter.client.ExportPackage;
+
 /**
  * @author <a href="mailto:david.lloyd@redhat.com">David M. Lloyd</a>
  */
+@ExportPackage("dmr")
+@Export
 public final class Property implements Cloneable {
     private final String name;
     private final ModelNode value;
