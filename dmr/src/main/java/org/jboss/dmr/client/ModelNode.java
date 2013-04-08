@@ -19,6 +19,11 @@
 
 package org.jboss.dmr.client;
 
+import org.timepedia.exporter.client.Export;
+import org.timepedia.exporter.client.ExportPackage;
+import org.timepedia.exporter.client.Exportable;
+import org.timepedia.exporter.client.NoExport;
+
 import javax.servlet.jsp.tagext.TagSupport;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -44,7 +49,9 @@ import java.util.Set;
  *
  * @author <a href="mailto:david.lloyd@redhat.com">David M. Lloyd</a>
  */
-public class ModelNode implements Cloneable {
+@ExportPackage("dmr")
+@Export
+public class ModelNode implements Cloneable, Exportable {
 
     private static final long serialVersionUID = 2030456323088551487L;
     private static final String OUTCOME = "outcome";
@@ -271,6 +278,7 @@ public class ModelNode implements Cloneable {
      * @param newValue the new value
      * @return this node
      */
+    @Export("setInt")
     public ModelNode set(final int newValue) {
         checkProtect();
         value = new IntModelValue(newValue);
@@ -283,6 +291,7 @@ public class ModelNode implements Cloneable {
      * @param newValue the new value
      * @return this node
      */
+    @NoExport
     public ModelNode set(final long newValue) {
         checkProtect();
         value = new LongModelValue(newValue);
@@ -295,6 +304,7 @@ public class ModelNode implements Cloneable {
      * @param newValue the new value
      * @return this node
      */
+    @Export("setDouble")
     public ModelNode set(final double newValue) {
         checkProtect();
         value = new DoubleModelValue(newValue);
@@ -307,6 +317,7 @@ public class ModelNode implements Cloneable {
      * @param newValue the new value
      * @return this node
      */
+    @Export("setBoolean")
     public ModelNode set(final boolean newValue) {
         checkProtect();
         value = BooleanModelValue.valueOf(newValue);
@@ -334,6 +345,7 @@ public class ModelNode implements Cloneable {
      * @param newValue the new value
      * @return this node
      */
+    @Export("setString")
     public ModelNode set(final String newValue) {
         if (newValue == null) {
             throw new IllegalArgumentException("newValue is null");
@@ -343,6 +355,7 @@ public class ModelNode implements Cloneable {
         return this;
     }
 
+    @NoExport
     public ModelNode set(ModelType type, Object propValue)
     {
         if(type.equals(ModelType.STRING))
@@ -387,6 +400,7 @@ public class ModelNode implements Cloneable {
      * @param newValue the new value
      * @return this node
      */
+    @NoExport
     public ModelNode set(final BigDecimal newValue) {
         if (newValue == null) {
             throw new IllegalArgumentException("newValue is null");
@@ -402,6 +416,7 @@ public class ModelNode implements Cloneable {
      * @param newValue the new value
      * @return this node
      */
+    @NoExport
     public ModelNode set(final BigInteger newValue) {
         if (newValue == null) {
             throw new IllegalArgumentException("newValue is null");
@@ -417,6 +432,7 @@ public class ModelNode implements Cloneable {
      * @param newValue the new value
      * @return this node
      */
+    @Export("setModelNode")
     public ModelNode set(final ModelNode newValue) {
         if (newValue == null) {
             throw new IllegalArgumentException("newValue is null");
@@ -436,6 +452,7 @@ public class ModelNode implements Cloneable {
      * @param newValue the new value
      * @return this node
      */
+    @Export("setByteArray")
     public ModelNode set(final byte[] newValue) {
         if (newValue == null) {
             throw new IllegalArgumentException("newValue is null");
@@ -445,7 +462,7 @@ public class ModelNode implements Cloneable {
         for (int i = 0; i < newValue.length; i++) {
         	clone[i] = newValue[i];
         }
-                               
+
         value = new BytesModelValue(newValue.length == 0 ? newValue : clone);
         return this;
     }
@@ -456,6 +473,7 @@ public class ModelNode implements Cloneable {
      * @param newValue the new value
      * @return this node
      */
+    @Export("setType")
     public ModelNode set(final ModelType newValue) {
         if (newValue == null) {
             throw new IllegalArgumentException("newValue is null");
@@ -471,6 +489,7 @@ public class ModelNode implements Cloneable {
      * @param newValue the new value
      * @return this node
      */
+    @NoExport
     public ModelNode set(final Property newValue) {
         if (newValue == null) {
             throw new IllegalArgumentException("newValue is null");
@@ -486,6 +505,7 @@ public class ModelNode implements Cloneable {
      * @param propertyValue the property value
      * @return this node
      */
+    @Export("setProperty")
     public ModelNode set(final String propertyName, final ModelNode propertyValue) {
         checkProtect();
         value = new PropertyModelValue(propertyName, propertyValue, true);
@@ -504,6 +524,7 @@ public class ModelNode implements Cloneable {
      * @param propertyValue the property value
      * @return this node
      */
+    @Export("setPropertyInt")
     public ModelNode set(final String propertyName, final int propertyValue) {
         checkProtect();
         final ModelNode node = new ModelNode();
@@ -519,6 +540,7 @@ public class ModelNode implements Cloneable {
      * @param propertyValue the property value
      * @return this node
      */
+    @NoExport
     public ModelNode set(final String propertyName, final long propertyValue) {
         checkProtect();
         final ModelNode node = new ModelNode();
@@ -534,6 +556,7 @@ public class ModelNode implements Cloneable {
      * @param propertyValue the property value
      * @return this node
      */
+    @Export("setPropertyValueDouble")
     public ModelNode set(final String propertyName, final double propertyValue) {
         checkProtect();
         final ModelNode node = new ModelNode();
@@ -549,6 +572,7 @@ public class ModelNode implements Cloneable {
      * @param propertyValue the property value
      * @return this node
      */
+    @Export("setPropertyValueBoolean")
     public ModelNode set(final String propertyName, final boolean propertyValue) {
         checkProtect();
         final ModelNode node = new ModelNode();
@@ -564,6 +588,7 @@ public class ModelNode implements Cloneable {
      * @param propertyValue the property value
      * @return this node
      */
+    @Export("setPropertyValueString")
     public ModelNode set(final String propertyName, final String propertyValue) {
         checkProtect();
         final ModelNode node = new ModelNode();
@@ -594,6 +619,7 @@ public class ModelNode implements Cloneable {
      * @param propertyValue the property value
      * @return this node
      */
+    @NoExport
     public ModelNode set(final String propertyName, final BigDecimal propertyValue) {
         checkProtect();
         final ModelNode node = new ModelNode();
@@ -609,6 +635,7 @@ public class ModelNode implements Cloneable {
      * @param propertyValue the property value
      * @return this node
      */
+    @NoExport
     public ModelNode set(final String propertyName, final BigInteger propertyValue) {
         checkProtect();
         final ModelNode node = new ModelNode();
@@ -624,6 +651,7 @@ public class ModelNode implements Cloneable {
      * @param propertyValue the property value
      * @return this node
      */
+    @Export("setPropertyByteArray")
     public ModelNode set(final String propertyName, final byte[] propertyValue) {
         checkProtect();
         final ModelNode node = new ModelNode();
@@ -639,6 +667,7 @@ public class ModelNode implements Cloneable {
      * @param propertyValue the property value
      * @return this node
      */
+    @NoExport
     public ModelNode set(final String propertyName, final ModelType propertyValue) {
         checkProtect();
         final ModelNode node = new ModelNode();
@@ -653,6 +682,7 @@ public class ModelNode implements Cloneable {
      * @param newValue the list value
      * @return this node
      */
+    @NoExport
     public ModelNode set(final Collection<ModelNode> newValue) {
         if (newValue == null) {
             throw new IllegalArgumentException("newValue is null");
@@ -790,6 +820,7 @@ public class ModelNode implements Cloneable {
      * @param newValue the new value to add
      * @return this node
      */
+    @Export("addInt")
     public ModelNode add(final int newValue) {
         add().set(newValue);
         return this;
@@ -802,6 +833,7 @@ public class ModelNode implements Cloneable {
      * @param newValue the new value to add
      * @return this node
      */
+    @NoExport
     public ModelNode add(final long newValue) {
         add().set(newValue);
         return this;
@@ -814,6 +846,7 @@ public class ModelNode implements Cloneable {
      * @param newValue the new value to add
      * @return this node
      */
+    @NoExport
     public ModelNode add(final double newValue) {
         add().set(newValue);
         return this;
@@ -826,6 +859,7 @@ public class ModelNode implements Cloneable {
      * @param newValue the new value to add
      * @return this node
      */
+    @NoExport
     public ModelNode add(final boolean newValue) {
         add().set(newValue);
         return this;
@@ -862,6 +896,7 @@ public class ModelNode implements Cloneable {
      * @param newValue the new value to add
      * @return this node
      */
+    @NoExport
     public ModelNode add(final BigDecimal newValue) {
         add().set(newValue);
         return this;
@@ -874,6 +909,7 @@ public class ModelNode implements Cloneable {
      * @param newValue the new value to add
      * @return this node
      */
+    @NoExport
     public ModelNode add(final BigInteger newValue) {
         add().set(newValue);
         return this;
@@ -886,6 +922,7 @@ public class ModelNode implements Cloneable {
      * @param newValue the new value to add
      * @return this node
      */
+    @Export("addModelNode")
     public ModelNode add(final ModelNode newValue) {
         add().set(newValue);
         return this;
@@ -903,6 +940,7 @@ public class ModelNode implements Cloneable {
      * @param newValue the new value to add
      * @return this node
      */
+    @NoExport
     public ModelNode add(final byte[] newValue) {
         add().set(newValue);
         return this;
@@ -916,6 +954,7 @@ public class ModelNode implements Cloneable {
      * @param propertyValue the property value
      * @return this node
      */
+    @Export("addIntProperty")
     public ModelNode add(final String propertyName, final int propertyValue) {
         add().set(propertyName, propertyValue);
         return this;
@@ -929,6 +968,7 @@ public class ModelNode implements Cloneable {
      * @param propertyValue the property value
      * @return this node
      */
+    @NoExport
     public ModelNode add(final String propertyName, final long propertyValue) {
         add().set(propertyName, propertyValue);
         return this;
@@ -942,6 +982,7 @@ public class ModelNode implements Cloneable {
      * @param propertyValue the property value
      * @return this node
      */
+    @Export("addDoubleProperty")
     public ModelNode add(final String propertyName, final double propertyValue) {
         add().set(propertyName, propertyValue);
         return this;
@@ -955,6 +996,7 @@ public class ModelNode implements Cloneable {
      * @param propertyValue the property value
      * @return this node
      */
+    @Export("addBooleanProperty")
     public ModelNode add(final String propertyName, final boolean propertyValue) {
         add().set(propertyName, propertyValue);
         return this;
@@ -968,6 +1010,7 @@ public class ModelNode implements Cloneable {
      * @param propertyValue the property value
      * @return this node
      */
+    @Export("addStringProperty")
     public ModelNode add(final String propertyName, final String propertyValue) {
         add().set(propertyName, propertyValue);
         return this;
@@ -981,6 +1024,7 @@ public class ModelNode implements Cloneable {
      * @param propertyValue the property value
      * @return this node
      */
+    @NoExport
     public ModelNode add(final String propertyName, final BigDecimal propertyValue) {
         add().set(propertyName, propertyValue);
         return this;
@@ -994,6 +1038,7 @@ public class ModelNode implements Cloneable {
      * @param propertyValue the property value
      * @return this node
      */
+    @NoExport
     public ModelNode add(final String propertyName, final BigInteger propertyValue) {
         add().set(propertyName, propertyValue);
         return this;
@@ -1007,6 +1052,7 @@ public class ModelNode implements Cloneable {
      * @param propertyValue the property value
      * @return this node
      */
+    @Export("addModelNodeProperty")
     public ModelNode add(final String propertyName, final ModelNode propertyValue) {
         add().set(propertyName, propertyValue);
         return this;
@@ -1020,6 +1066,7 @@ public class ModelNode implements Cloneable {
      * @param propertyValue the property value
      * @return this node
      */
+    @NoExport
     public ModelNode add(final String propertyName, final byte[] propertyValue) {
         add().set(propertyName, propertyValue);
         return this;
@@ -1031,6 +1078,7 @@ public class ModelNode implements Cloneable {
      *
      * @return the new node
      */
+    @NoExport
     public ModelNode add() {
         checkProtect();
         ModelValue value = this.value;
@@ -1082,6 +1130,7 @@ public class ModelNode implements Cloneable {
      * @param key the name
      * @return {@code true} if there is a (possibly undefined) node at the given key
      */
+    @Export("hasKey")
     public boolean has(final String key) {
         return value.has(key);
     }
@@ -1104,6 +1153,7 @@ public class ModelNode implements Cloneable {
      * @param key the name
      * @return {@code true} if there is a node at the given index and its {@link #getType() type} is not {@link ModelType.UNDEFINED}
      */
+    @Export("hasDefinedKey")
     public boolean hasDefined(String key) {
         return value.has(key) && get(key).isDefined();
     }

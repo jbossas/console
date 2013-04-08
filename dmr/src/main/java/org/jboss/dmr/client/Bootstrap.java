@@ -20,6 +20,7 @@
 package org.jboss.dmr.client;
 
 import com.google.gwt.core.client.EntryPoint;
+import org.timepedia.exporter.client.ExporterUtil;
 
 /**
  * @author Heiko Braun
@@ -29,6 +30,7 @@ public class Bootstrap implements EntryPoint {
 
     @Override
     public void onModuleLoad() {
+        ExporterUtil.exportAll();
         System.out.println("Loaded DMR module");
     }
 }
