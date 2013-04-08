@@ -21,6 +21,7 @@ package org.jboss.dmr.client;
 
 import org.timepedia.exporter.client.Export;
 import org.timepedia.exporter.client.ExportPackage;
+import org.timepedia.exporter.client.ExportStaticMethod;
 import org.timepedia.exporter.client.Exportable;
 import org.timepedia.exporter.client.NoExport;
 
@@ -153,6 +154,7 @@ public class ModelNode implements Cloneable, Exportable {
      *
      * @return the string value
      */
+    @Export
     public String asString() {
         return value.asString();
     }
@@ -164,6 +166,7 @@ public class ModelNode implements Cloneable, Exportable {
      * @throws IllegalArgumentException if no conversion is possible
      * @return the double value
      */
+    @Export
     public double asDouble() throws IllegalArgumentException {
         return value.asDouble();
     }
@@ -232,6 +235,7 @@ public class ModelNode implements Cloneable, Exportable {
      * @return the property value
      * @throws IllegalArgumentException if no conversion is possible
      */
+    @Export
     public Property asProperty() throws IllegalArgumentException {
         return value.asProperty();
     }
@@ -1220,7 +1224,8 @@ public class ModelNode implements Cloneable, Exportable {
         return value.toJSONString(false);
     }
 
-    
+
+    @ExportStaticMethod()
     public static ModelNode fromBase64(String encoded) {
     	ModelNode node = new ModelNode();
     	try {
@@ -1230,7 +1235,8 @@ public class ModelNode implements Cloneable, Exportable {
 		}
     	return node;
     }
-    
+
+    @Export()
     public String toBase64String() {
     	DataOutput out = new DataOutput();
     	try {

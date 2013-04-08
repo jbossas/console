@@ -46,10 +46,12 @@ public final class Property implements Cloneable {
         this.value = copy ? value.clone() : value;
     }
 
+    @Export
     public String getName() {
         return name;
     }
 
+    @Export
     public ModelNode getValue() {
         return value;
     }
