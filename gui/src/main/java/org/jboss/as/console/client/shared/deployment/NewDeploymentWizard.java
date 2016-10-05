@@ -43,6 +43,10 @@ import org.jboss.ballroom.client.widgets.window.Feedback;
  * @date 4/7/11
  */
 public class NewDeploymentWizard  {
+
+    private static final String HEADER_CONTENT_TYPE = "Content-Type";
+    private static final String APPLICATION_JSON = "application/json";
+
     private VerticalPanel layout;
     private DeckPanel deck;
 
@@ -158,6 +162,7 @@ public class NewDeploymentWizard  {
                 RequestBuilder.POST,
                 Console.getBootstrapContext().getProperty(BootstrapContext.DOMAIN_API)
         );
+        rb.setHeader(HEADER_CONTENT_TYPE, APPLICATION_JSON);
 
         rb.setHeader(HEADER_CONTENT_TYPE, APPLICATION_JSON);
 
